@@ -75,11 +75,16 @@
             font-size: 2pc;
         }
 
-        .chain-wrapper {
+        .channels-wrapper {
             min-width: 24rem;
             display: flex;
             align-items: flex-start;
-            flex-direction: column;
+            flex-direction: row;
+            flex-wrap: wrap;
+        }
+
+        #remaining-time {
+            font-weight: bold;
         }
     </style>
 </head>
@@ -90,7 +95,19 @@
     </h1>
     <hr>
     <span>Currently part of <%=guilds.size%> guilds</span>
+    <div>Next guaranteed spawn in:<span id="remaining-time">
+            <%= time %>
+        </span></div>
     <ul>
+        Active Channels:
+        <div class="channels-wrapper">
+
+            <% channels.forEach((channel)=>{ %>
+                <li>
+                    #<%= channel %>
+                </li>
+                <%});%>
+        </div>
         <% guilds.forEach((guild)=> { %>
             <li>
 
@@ -106,7 +123,32 @@
             </li>
             <% }); %>
     </ul>
+    <script>
+        function updateRemainingTime() {
+            const remainingTimeElem = document.getElementById('remaining-time');
+            const updatedTime = formatTime(parseTimeToMilliseconds(remainingTimeElem.textContent) - 1000)
+            remainingTimeElem.textContent = updatedTime
+        }
 
+        updateRemainingTime();
+
+        setInterval(updateRemainingTime, 1000);
+
+        function formatTime(milliseconds) {
+            const date = new Date(milliseconds);
+            const hours = date.getUTCHours().toString().padStart(2, '0');
+            const minutes = date.getUTCMinutes().toString().padStart(2, '0');
+            const seconds = date.getUTCSeconds().toString().padStart(2, '0');
+            return `${hours}:${minutes}:${seconds}`;
+        }
+        function parseTimeToMilliseconds(time) {
+            const [hours, minutes, seconds] = time.split(':');
+            const milliseconds = (parseInt(hours, 10) * 60 * 60 * 1000) +
+                (parseInt(minutes, 10) * 60 * 1000) +
+                (parseInt(seconds, 10) * 1000);
+            return milliseconds;
+        }
+    </script>
 </body>
 
 </html>

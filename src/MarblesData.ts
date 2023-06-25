@@ -98,11 +98,11 @@ export function getTeamByMarble(marble: Marble) {
 
 export function getRandomRarity(): Rarity {
     const colorMap = new Map<string, ColorResolvable>()
-    colorMap.set('Common', "White");
-    colorMap.set('Uncommon', "Green");
-    colorMap.set('Rare', "Blue");
-    colorMap.set('Epic', "Purple");
-    colorMap.set('Legendary', "Gold");
+    colorMap.set('Round', "White");
+    colorMap.set('Naughty', "Green");
+    colorMap.set('Rolling', "Blue");
+    colorMap.set('Nasty', "Purple");
+    colorMap.set('Gnarly', "Gold");
     const random = Math.floor(Math.random() * Array.from(colorMap.keys()).length);
     const color = Array.from(colorMap.values())[random];
     const rarity = Array.from(colorMap.keys())[random];

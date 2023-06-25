@@ -12,9 +12,12 @@ export class CountingSet<T> extends Set<T> {
         this.countMap.set(value, count + 1);
         return this;
     }
-    getValue(value: T): number {
-        return this.countMap.get(value) || 0;
+    getValue(key: T): number {
+        return this.countMap.get(key) || 0;
+    }
+    protected setValue(key: T, value: number) {
+        this.countMap.set(key, value);
     }
 
-    
+
 }

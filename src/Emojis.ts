@@ -1,13 +1,11 @@
 export const emojis = new Map<string, string>([
     ['fire', '🔥'],
     ['coffee', '☕'],
+    ['sparkles', '✨'],
     ['red_heart', '❤️'],
     ['blue_heart', '💙'],
-    ['green_heart', '💚'],
-    ['white_heart', '🤍'],
-    ['purple_heart', '💜'],
-    ['orange_heart', '🧡'],
-    ['yellow_heart', '💛'],
+    ['red_circle', '🔴'],
+    ['blue_circle', '🔵'],
 ])
 export function getRandomEmoji() {
     const possibleEmojis = Array.from(emojis.keys())
@@ -22,7 +20,9 @@ export function getRandomSpawnMessage() {
         "came into existance",
         "wants to be catched",
         "is coming to life",
-        "is getting angry",
+        "is on a roll",
+        "fell from the sky",
+        "became whole"
     ]
     const randomIndex = Math.floor(Math.random() * possibleMessages.length)
     return possibleMessages[randomIndex]

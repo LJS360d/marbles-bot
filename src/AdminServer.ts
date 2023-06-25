@@ -4,8 +4,11 @@ import express, {
 } from 'express';
 import http from 'http';
 
-import { client } from './main';
-import { collections } from './MarbleCollections';
+import { spawnChannels } from './EventManager';
+import {
+    client,
+    remainingTime,
+} from './main';
 
 export function startAdminServer() {
     const app: express.Application = express();
@@ -16,14 +19,22 @@ export function startAdminServer() {
         const props = {
             client: client,
             guilds: client.guilds.cache,
-            collections: collections
+            channels: new Set<string>(),
+            time: formatTime(remainingTime)
         };
-        /*client.guilds.cache.forEach(guild => {
-        
-        }) */
-        res.render('admin', props);
-    });
+        client.guilds.cache.forEach(guild => {
+            guild.channels.cache.forEach(channel => {
+                if (spawnChannels.has(channel.id))
+                    props.channels.add(channel.name);
+            })
+        })
 
+        res.render('admin', props);
+
+    });
+    app.get('/time', (req: Request, res: Response) => {
+        res.json(formatTime(remainingTime));
+    })
     //const PORT: number | string = process.env.PORT || 8080;
     const PORT = 8080;
     httpServer.listen(PORT, () => {
@@ -31,4 +42,10 @@ export function startAdminServer() {
     });
 
 }
-
+function formatTime(milliseconds: number) {
+    const date = new Date(milliseconds);
+    const hours = date.getUTCHours().toString().padStart(2, '0');
+    const minutes = date.getUTCMinutes().toString().padStart(2, '0');
+    const seconds = date.getUTCSeconds().toString().padStart(2, '0');
+    return `${hours}:${minutes}:${seconds}`;
+}

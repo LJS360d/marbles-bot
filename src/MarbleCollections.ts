@@ -1,11 +1,12 @@
+import {
+    readdir,
+    readFileSync,
+    writeFileSync,
+} from 'fs';
+
 import { CountingSet } from './structures/CountingSet';
 
-//Remove comments on database stuff in production
-//const Database = require("@replit/database")
-
 export const collections = new Map<string, MarbleCollection>();
-//export const DB = new Database();
-export const DB = new Map<string, string>();
 interface MarbleCollectionJSON {
     userId: string;
     guildId: string;
@@ -34,9 +35,7 @@ export class MarbleCollection extends CountingSet<string>
     }
 
     saveCollection() {
-        const collection = collections.get(`${this.userId}-${this.guildId}`);
-        const collectionJSON = JSON.stringify(collection.toJSON());
-        DB.set(`${this.userId}-${this.guildId}`, collectionJSON)
+        writeFileSync(`./data/collections/${this.userId}-${this.guildId}.json`, JSON.stringify(this.toJSON()))
     }
 
     private toJSON(): MarbleCollectionJSON {
@@ -55,18 +54,20 @@ export class MarbleCollection extends CountingSet<string>
     private fromJSON(json: MarbleCollectionJSON): void {
         for (const key in json.map.counts) {
             this.add(key);
+            this.setValue(key, json.map.counts[key]);
         }
     }
 }
 
 export async function loadAllCollections() {
-    /* DB.list().then(async (keys) => {
-        for (const key of keys) {
-            const collection = new MarbleCollection(key.split('-')[0], key.split('-')[1]);
-            collection.loadCollection(await DB.get(key) as string);
-        }
-
-    }) */
+    readdir('./data/collections', (err, files) => {
+        if (err) console.log(err);
+        files.forEach(file => {
+            const content = readFileSync(`./data/collections/${file}`, 'utf8');
+            const collection = new MarbleCollection(file.split('-')[0], file.split('-')[1].replace('.json', ''));
+            collection.loadCollection(content);
+        })
+    })
 
 }
 

@@ -1,9 +1,9 @@
 import {
     ChatInputCommandInteraction,
     Client,
-    EmbedBuilder,
     GatewayIntentBits,
     GuildTextBasedChannel,
+    Message,
     MessageReaction,
     User,
 } from 'discord.js';
@@ -15,15 +15,8 @@ import {
     loadSpawnChannels,
     spawnChannels,
 } from './EventManager';
-import {
-    collections,
-    loadAllCollections,
-    MarbleCollection,
-} from './MarbleCollections';
-import {
-    getMarbleByName,
-    loadMarblesData,
-} from './MarblesData';
+import { loadAllCollections } from './MarbleCollections';
+import { loadMarblesData } from './MarblesData';
 
 // IMPORTANT !!!
 loadMarblesData()
@@ -70,73 +63,42 @@ try {
                 EventManager.toggleSpawn(interaction)
                 break;
             case 'spawn':
-                await interaction.reply('Spawning...')
-                EventManager.spawnMarble(interaction.channel)
+                if (EventManager.checkAdmin(interaction)) {
+                    await interaction.reply('Spawning...')
+                    EventManager.spawnMarble(interaction.channel)
+                }
                 break;
             case "collection":
-                const collection = collections.get(`${interaction.user.id}-${interaction.guildId}`);
-
-                const collectionEmbed = new EmbedBuilder()
-                    .setTitle(`Your Collection ${collection ? `${collection.size} Marbles` : "is Empty"}`);
-                if (collection !== undefined) {
-                    const marbles = collection.getMarblesNames();
-                    marbles.forEach((marble) => {
-                        collectionEmbed.addFields(
-                            { name: `${marble}`, value: `x${collection.getValue(marble)}` },
-                        )
-                    })
-                }
-                await interaction.reply({
-                    embeds: [collectionEmbed]
-                })
+                EventManager.showCollection(interaction);
                 break;
 
         }
     })
     client.on('messageReactionAdd', async (reaction: MessageReaction, user: User) => {
-        if (user.bot) return; // Ignore reactions from other bots
-
-        const embed = reaction.message.embeds[0]
-        const emoji = embed.fields.at(-1).value.split(' ')[1]
-
-        if (reaction.message.author.id === client.user.id && reaction.emoji.name == emoji) {
-            // Delete the message
-            reaction.message.delete();
-            const marbleName = embed.title.split('`')[1]
-            const marble = getMarbleByName(marbleName)
-
-            // When instanciating a new MarbleCollection the object gets automatically 
-            // added to the collections map, in the constructor
-            const collection = collections.get(user.id + reaction.message.guildId) ?? new MarbleCollection(user.id, reaction.message.guildId);
-
-            collection.add(marble.name)
-
-            //Remove Comment in production
-            //collection.saveCollection()
-
-
-            const responseEmbed = new EmbedBuilder()
-                .setColor(embed.color)
-                .setDescription(`<@${user.id}> ${reaction.emoji} \n\n\`${marbleName}\` Was added to your collection.`)
-                .setImage(embed.image.url)
-                .setThumbnail(embed.thumbnail.url)
-
-            await reaction.message.channel.send({
-                embeds: [responseEmbed]
-            });
-        }
+        EventManager.reactionAdded(reaction, user);
     });
+    client.on('messageCreate', (message: Message) => {
+        if (message.author.id === client.user.id) return;
+        const onePercent = Math.floor(Math.random() * 100)
+        if (onePercent === 1) {
+            EventManager.spawnMarble(message.channel as GuildTextBasedChannel)
+        }
+
+    })
 } catch (error) {
     console.log(error);
 }
 
 
 client.login(TOKEN);
-setInterval(spawnRoutine, 1000 * 60 * 10) // 10 minutes
+export let remainingTime = 1000 * 60 * 30; // 30 minutes
+setInterval(spawnRoutine, remainingTime)
+setInterval(() => { remainingTime -= 1000; }, 1000)
 startAdminServer()
 function spawnRoutine() {
     for (const channelId of spawnChannels) {
         const channel = client.channels.cache.get(channelId) as GuildTextBasedChannel
         EventManager.spawnMarble(channel)
     }
+    remainingTime = 1000 * 60 * 30;
 }
