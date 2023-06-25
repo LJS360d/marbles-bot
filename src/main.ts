@@ -8,6 +8,7 @@ import {
     User,
 } from 'discord.js';
 
+import { startAdminServer } from './AdminServer';
 import { commands } from './Commands';
 import {
     EventManager,
@@ -48,7 +49,7 @@ const options = {
     ],
 }
 
-const client = new Client(options);
+export const client = new Client(options);
 try {
     client.on('ready', () => {
         refreshCommands().then(() => { console.log('Successfully reloaded application (/) commands.') })
@@ -110,8 +111,8 @@ try {
 
             collection.add(marble.name)
 
-            //TODO Find a less expensive way to save collections
-            collection.saveCollection()
+            //Remove Comment in production
+            //collection.saveCollection()
 
 
             const responseEmbed = new EmbedBuilder()
@@ -132,6 +133,7 @@ try {
 
 client.login(TOKEN);
 setInterval(spawnRoutine, 1000 * 60 * 10) // 10 minutes
+startAdminServer()
 function spawnRoutine() {
     for (const channelId of spawnChannels) {
         const channel = client.channels.cache.get(channelId) as GuildTextBasedChannel

@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Marbles Management</title>
+    <style>
+        @import url('https://fonts.cdnfonts.com/css/montserrat');
+
+        body {
+            font-family: 'Montserrat', sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f5f5f5;
+            overflow: hidden;
+        }
+
+        h1 {
+            color: #333;
+            font-size: 32px;
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        h2 {
+            color: #777;
+            font-size: 24px;
+            margin-bottom: 10px;
+        }
+
+        lb {
+            font-weight: 600;
+        }
+
+        ul {
+            list-style: none;
+            padding: 0;
+            overflow-y: auto;
+            overflow-x: hidden;
+            height: 75vh;
+        }
+
+        li {
+            margin-bottom: 10px;
+            background-color: #fff;
+            padding: 10px;
+            border-radius: 4px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+
+            display: flex;
+            align-items: center;
+            gap: 2rem;
+            justify-content: space-between;
+        }
+
+        li div {
+            gap: 0.5rem;
+            display: flex;
+            align-items: center;
+        }
+
+        img.guild-icon {
+            height: 5rem;
+            aspect-ratio: 1;
+        }
+
+        .guild-wrapper {
+            display: flex;
+        }
+
+        .guild-wrapper span {
+            font-size: 2pc;
+        }
+
+        .chain-wrapper {
+            min-width: 24rem;
+            display: flex;
+            align-items: flex-start;
+            flex-direction: column;
+        }
+    </style>
+</head>
+
+<body>
+    <h1><img class="guild-icon" src="<%=client.user.avatarURL()%>">
+        <%= client.user.tag%>
+    </h1>
+    <hr>
+    <span>Currently part of <%=guilds.size%> guilds</span>
+    <ul>
+        <% guilds.forEach((guild)=> { %>
+            <li>
+
+                <div class="guild-wrapper">
+                    <img class="guild-icon" src="<%=guild.iconURL()%>">
+                    <span>
+                        <%= guild.name %>
+                            | Members:
+                            <%= guild.memberCount%>
+                    </span>
+                </div>
+
+            </li>
+            <% }); %>
+    </ul>
+
+</body>
+
+</html>

@@ -1,10 +1,11 @@
 import { CountingSet } from './structures/CountingSet';
 
-const Database = require("@replit/database")
+//Remove comments on database stuff in production
+//const Database = require("@replit/database")
 
 export const collections = new Map<string, MarbleCollection>();
-export const DB = new Database();
-
+//export const DB = new Database();
+export const DB = new Map<string, string>();
 interface MarbleCollectionJSON {
     userId: string;
     guildId: string;
@@ -59,13 +60,14 @@ export class MarbleCollection extends CountingSet<string>
 }
 
 export async function loadAllCollections() {
-    DB.list().then(async (keys) => {
+    /* DB.list().then(async (keys) => {
         for (const key of keys) {
             const collection = new MarbleCollection(key.split('-')[0], key.split('-')[1]);
             collection.loadCollection(await DB.get(key) as string);
         }
 
-    })
+    }) */
+
 }
 
 
