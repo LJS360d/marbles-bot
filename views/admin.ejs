@@ -48,7 +48,7 @@
             padding: 10px;
             border-radius: 4px;
             box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-
+            width: min-content;
             display: flex;
             align-items: center;
             gap: 2rem;
@@ -64,6 +64,11 @@
         img.guild-icon {
             height: 5rem;
             aspect-ratio: 1;
+        }
+
+        span,
+        b {
+            width: max-content;
         }
 
         .guilds-wrapper {
@@ -85,6 +90,11 @@
             align-items: flex-start;
             flex-direction: row;
             flex-wrap: wrap;
+        }
+
+        .collection-wrapper {
+            cursor: pointer;
+            width: max-content;
         }
 
         #remaining-time {
@@ -139,14 +149,14 @@
     <ul class="collections-wrapper">
         <% collections.forEach(collection=> { %>
             <li>
-                <div class="collection-wrapper">
+                <div class="collection-wrapper"
+                    onclick="window.open(`/<%= collection.userId %>-<%= collection.guildId%>`,'_self')">
                     <%= `${(collection.userId)} in`%>
-                        <b>
-                            <%=guilds.get(collection.guildId)%>
-                        </b>:
-                        <b>
-                            <%= collection.size %> Marbles
-                        </b>
+                        <%=guilds.get(collection.guildId)%>
+                            :
+                            <b>
+                                <%= collection.size %> Marbles
+                            </b>
 
                 </div>
                 <%});%>

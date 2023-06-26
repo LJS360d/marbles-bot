@@ -32,10 +32,16 @@ export function startAdminServer() {
         })
         res.render('admin', props);
 
+        Array.from(collections.keys()).forEach(collection => {
+            app.get(`/${collection}`, (req: Request, res: Response) => {
+                res.json(collections.get(collection));
+            });
+        });
     });
     app.get('/time', (req: Request, res: Response) => {
         res.json(formatTime(remainingTime));
     })
+
     //const PORT: number | string = process.env.PORT || 8080;
     const PORT = 8080;
     httpServer.listen(PORT, () => {

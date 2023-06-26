@@ -61,9 +61,9 @@ try {
         EventManager.reactionAdded(reaction, user);
     });
     client.on('messageCreate', (message: Message) => {
-        if (message.author.id === client.user.id) return;
+        if (message.client.user.bot) return;
         const onePercent = Math.floor(Math.random() * 100)
-        if (onePercent === 1) {
+        if (onePercent <= 1) {
             EventManager.spawnMarble(message.channel as GuildTextBasedChannel)
         }
 
