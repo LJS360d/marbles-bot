@@ -40,7 +40,6 @@
             padding: 0;
             overflow-y: auto;
             overflow-x: hidden;
-            height: 75vh;
         }
 
         li {
@@ -67,12 +66,17 @@
             aspect-ratio: 1;
         }
 
-        .guild-wrapper {
+        .guilds-wrapper {
             display: flex;
+            flex-direction: row;
+            flex-wrap: wrap;
+            align-items: flex-start;
         }
 
-        .guild-wrapper span {
-            font-size: 2pc;
+        .guild-wrapper {
+            display: flex;
+            flex-direction: column;
+            font-size: .9pc;
         }
 
         .channels-wrapper {
@@ -89,66 +93,92 @@
     </style>
 </head>
 
-<body>
-    <h1><img class="guild-icon" src="<%=client.user.avatarURL()%>">
-        <%= client.user.tag%>
-    </h1>
-    <hr>
-    <span>Currently part of <%=guilds.size%> guilds</span>
-    <div>Next guaranteed spawn in:<span id="remaining-time">
-            <%= time %>
-        </span></div>
-    <ul>
-        Active Channels:
-        <div class="channels-wrapper">
+<h1><img class="guild-icon" src="<%=client.user.avatarURL()%>">
+    <%= client.user.tag%>
+</h1>
+<hr>
+<span>Currently part of <b>
+        <%=guilds.size%> guilds
+    </b></span>
 
-            <% channels.forEach((channel)=>{ %>
-                <li>
-                    #<%= channel %>
-                </li>
-                <%});%>
-        </div>
+<div>Next guaranteed spawn in:<span id="remaining-time">
+        <%= time %>
+    </span></div>
+<ul>
+    Active Channels: <b>
+        <%= Array.from(channels).length%>
+    </b>
+    <div class="channels-wrapper">
+
+        <% channels.forEach((channel)=>{ %>
+            <li>
+                #<%= channel %>
+            </li>
+            <%});%>
+    </div>
+</ul>
+<div class="guilds-collections">
+    Guilds:
+    <ul class="guilds-wrapper">
         <% guilds.forEach((guild)=> { %>
             <li>
-
                 <div class="guild-wrapper">
-                    <img class="guild-icon" src="<%=guild.iconURL()%>">
                     <span>
                         <%= guild.name %>
-                            | Members:
-                            <%= guild.memberCount%>
+                    </span>
+                    <img class="guild-icon" src="<%=guild.iconURL()%>">
+                    <span>
+                        <%= guild.memberCount%> members
                     </span>
                 </div>
 
             </li>
             <% }); %>
     </ul>
-    <script>
-        function updateRemainingTime() {
-            const remainingTimeElem = document.getElementById('remaining-time');
-            const updatedTime = formatTime(parseTimeToMilliseconds(remainingTimeElem.textContent) - 1000)
-            remainingTimeElem.textContent = updatedTime
-        }
+    Collections:
+    <ul class="collections-wrapper">
+        <% collections.forEach(collection=> { %>
+            <li>
+                <div class="collection-wrapper">
+                    <%= `${(collection.userId)} in`%>
+                        <b>
+                            <%=guilds.get(collection.guildId)%>
+                        </b>:
+                        <b>
+                            <%= collection.size %> Marbles
+                        </b>
 
-        updateRemainingTime();
+                </div>
+                <%});%>
+            </li>
+    </ul>
+</div>
+<script>
+    function updateRemainingTime() {
+        const remainingTimeElem = document.getElementById('remaining-time');
+        const updatedTime = formatTime(parseTimeToMilliseconds(remainingTimeElem.textContent) - 1000)
+        remainingTimeElem.textContent = updatedTime
+    }
 
-        setInterval(updateRemainingTime, 1000);
+    updateRemainingTime();
 
-        function formatTime(milliseconds) {
-            const date = new Date(milliseconds);
-            const hours = date.getUTCHours().toString().padStart(2, '0');
-            const minutes = date.getUTCMinutes().toString().padStart(2, '0');
-            const seconds = date.getUTCSeconds().toString().padStart(2, '0');
-            return `${hours}:${minutes}:${seconds}`;
-        }
-        function parseTimeToMilliseconds(time) {
-            const [hours, minutes, seconds] = time.split(':');
-            const milliseconds = (parseInt(hours, 10) * 60 * 60 * 1000) +
-                (parseInt(minutes, 10) * 60 * 1000) +
-                (parseInt(seconds, 10) * 1000);
-            return milliseconds;
-        }
-    </script>
+    setInterval(updateRemainingTime, 1000);
+
+    function formatTime(milliseconds) {
+        const date = new Date(milliseconds);
+        const hours = date.getUTCHours().toString().padStart(2, '0');
+        const minutes = date.getUTCMinutes().toString().padStart(2, '0');
+        const seconds = date.getUTCSeconds().toString().padStart(2, '0');
+        return `${hours}:${minutes}:${seconds}`;
+    }
+    function parseTimeToMilliseconds(time) {
+        const [hours, minutes, seconds] = time.split(':');
+        const milliseconds = (parseInt(hours, 10) * 60 * 60 * 1000) +
+            (parseInt(minutes, 10) * 60 * 1000) +
+            (parseInt(seconds, 10) * 1000);
+        return milliseconds;
+    }
+</script>
 </body>
 
 </html>

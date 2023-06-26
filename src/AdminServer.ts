@@ -9,6 +9,7 @@ import {
     client,
     remainingTime,
 } from './main';
+import { collections } from './MarbleCollections';
 
 export function startAdminServer() {
     const app: express.Application = express();
@@ -20,7 +21,8 @@ export function startAdminServer() {
             client: client,
             guilds: client.guilds.cache,
             channels: new Set<string>(),
-            time: formatTime(remainingTime)
+            time: formatTime(remainingTime),
+            collections: collections
         };
         client.guilds.cache.forEach(guild => {
             guild.channels.cache.forEach(channel => {
@@ -28,7 +30,6 @@ export function startAdminServer() {
                     props.channels.add(channel.name);
             })
         })
-
         res.render('admin', props);
 
     });

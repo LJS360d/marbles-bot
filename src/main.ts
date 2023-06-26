@@ -1,7 +1,6 @@
 import {
     ChatInputCommandInteraction,
     Client,
-    GatewayIntentBits,
     GuildTextBasedChannel,
     Message,
     MessageReaction,
@@ -17,6 +16,7 @@ import {
 } from './EventManager';
 import { loadAllCollections } from './MarbleCollections';
 import { loadMarblesData } from './MarblesData';
+import { options } from './Options';
 
 // IMPORTANT !!!
 loadMarblesData()
@@ -24,23 +24,6 @@ loadMarblesData()
 require('dotenv').config();
 
 const TOKEN = process.env['TOKEN'];
-const options = {
-    intents: [
-        GatewayIntentBits.Guilds,
-        GatewayIntentBits.GuildMembers,
-        GatewayIntentBits.GuildScheduledEvents,
-        // GatewayIntentBits.GuildInvites,
-        // GatewayIntentBits.GuildPresences,
-        // GatewayIntentBits.GuildVoiceStates,
-        GatewayIntentBits.GuildMessages,
-        GatewayIntentBits.GuildMessageReactions,
-        GatewayIntentBits.GuildMessageTyping,
-        // GatewayIntentBits.DirectMessages,
-        // GatewayIntentBits.DirectMessageReactions,
-        // GatewayIntentBits.DirectMessageTyping,
-        GatewayIntentBits.MessageContent,
-    ],
-}
 
 export const client = new Client(options);
 try {
