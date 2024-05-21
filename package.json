@@ -1,20 +1,18 @@
 {
-  "name": "marbles-bot-turbo",
-  "private": true,
-  "scripts": {
-    "build": "turbo build",
-    "dev": "turbo dev",
-    "lint": "turbo lint",
-    "format": "prettier --write \"**/*.{ts,tsx,md}\""
-  },
-  "devDependencies": {
-    "@repo/eslint-config": "workspace:*",
-    "@repo/typescript-config": "workspace:*",
-    "prettier": "^3.2.5",
-    "turbo": "latest"
-  },
-  "packageManager": "pnpm@8.9.0",
-  "engines": {
-    "node": ">=18"
-  }
+	"name": "marbles-bot",
+	"private": true,
+	"scripts": {
+		"build": "turbo build",
+		"dev": "turbo dev",
+		"lint": "turbo lint",
+		"lint:fix": "turbo lint:fix"
+	},
+	"devDependencies": {
+		"tsconfig": "workspace:*",
+		"turbo": "latest"
+	},
+	"packageManager": "pnpm@9.1.0",
+	"engines": {
+		"node": ">=20"
+	}
 }
