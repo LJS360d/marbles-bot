@@ -1,0 +1,439 @@
+[
+	{
+		"name": "Jungle Jumpers",
+		"color": "Green with black stripes",
+		"coach": "Tarzan",
+		"manager": "Joy",
+		"members": ["Jump", "Hop", "Leap", "Skip", "Bounce"],
+		"logo": "https://raw.githubusercontent.com/LJS360d/marbles-bot/master/public/assets/teams/jungle_jumpers.png"
+	},
+	{
+		"name": "Mellow Yellow",
+		"color": "Solid yellow",
+		"coach": "Mellow",
+		"manager": "Giallo",
+		"members": ["Yellow", "Yelley", "Yellah", "Yellup", "Yellim", "Yeller"],
+		"logo": "https://raw.githubusercontent.com/LJS360d/marbles-bot/master/public/assets/teams/mellow_yellow.png"
+	},
+	{
+		"name": "Quicksilvers",
+		"color": "Transparent silver",
+		"coach": "No coach",
+		"manager": "No manager",
+		"members": ["Argent", "Mercurial", "Quix", "Silvery", "Gallum"],
+		"logo": "https://raw.githubusercontent.com/LJS360d/marbles-bot/master/public/assets/teams/quicksilvers.png"
+	},
+	{
+		"name": "Noxious Ivy",
+		"color": "Green with white stripes",
+		"coach": "Rattler",
+		"manager": "Nox",
+		"members": ["Ivy", "Vine", "Stem", "Leaf", "Trunk"],
+		"logo": "https://raw.githubusercontent.com/LJS360d/marbles-bot/master/public/assets/teams/noxious_ivy.png"
+	},
+	{
+		"name": "Constrictors",
+		"color": "Yellow with black and red stripes",
+		"coach": "Charmer",
+		"manager": "Serpent",
+		"members": ["Boa", "Ana", "Conda", "Python", "Eryx"],
+		"logo": "https://raw.githubusercontent.com/LJS360d/marbles-bot/master/public/assets/teams/constrictors.png"
+	},
+	{
+		"name": "Bluefastics",
+		"color": "Blue with white stripes",
+		"coach": "No coach",
+		"manager": "No manager",
+		"members": ["Baloo", "Dory", "Gonzo", "Mako"],
+		"logo": "https://raw.githubusercontent.com/LJS360d/marbles-bot/master/public/assets/teams/bluefastics.png"
+	},
+	{
+		"name": "Thunderbolts",
+		"color": "Blue with yellow swirls",
+		"coach": "Thunderstorm",
+		"manager": "Static",
+		"members": [
+			"Bolta",
+			"Bolto",
+			"Bolty",
+			"Boltu",
+			"Boltew",
+			"Thunder",
+			"Lightning",
+			"Bolt",
+			"Shock",
+			"Zap"
+		],
+		"logo": "https://raw.githubusercontent.com/LJS360d/marbles-bot/master/public/assets/teams/thunderbolts.png"
+	},
+	{
+		"name": "Indigo Stars",
+		"color": "Indigo",
+		"coach": "Ringo",
+		"manager": "Mango",
+		"members": ["Indie", "Gogo", "Diego", "Bingo", "Montoya"],
+		"logo": "https://raw.githubusercontent.com/LJS360d/marbles-bot/master/public/assets/teams/indigo_stars.png"
+	},
+	{
+		"name": "Strixes",
+		"color": "Tan with brown stripes",
+		"coach": "Scops",
+		"manager": "Eagle",
+		"members": ["Tawny", "Barn", "Specs", "Screech", "Pygmy"],
+		"logo": "https://raw.githubusercontent.com/LJS360d/marbles-bot/master/public/assets/teams/strixes.png"
+	},
+	{
+		"name": "Raspberry Racers",
+		"color": "Shades of magenta with baby pink stripes",
+		"coach": "Berry",
+		"manager": "Pi",
+		"members": ["Razzy", "Rezzy", "Rizzy", "Rozzy", "Ruzzy"],
+		"logo": "https://raw.githubusercontent.com/LJS360d/marbles-bot/master/public/assets/teams/raspberry_racers.png"
+	},
+	{
+		"name": "Hornets",
+		"color": "Black with Yellow stripes",
+		"coach": "Swarm",
+		"manager": "Thorax",
+		"members": ["Stinger", "Wasp", "Vespa", "Hive", "Yellowjacket"],
+		"logo": "https://raw.githubusercontent.com/LJS360d/marbles-bot/master/public/assets/teams/hornets.png"
+	},
+	{
+		"name": "Ruby Rollers",
+		"color": "Red with white stripes",
+		"coach": "No coach",
+		"manager": "No manager",
+		"members": ["Rolla", "Rollew", "Rollo", "Rolly"],
+		"logo": "https://raw.githubusercontent.com/LJS360d/marbles-bot/master/public/assets/teams/ruby_rollers.png"
+	},
+	{
+		"name": "Jawbreakers",
+		"color": "White with red, blue and green swirls",
+		"coach": "Gummy",
+		"manager": "Mouthful",
+		"members": [
+			"Candy",
+			"Taffy",
+			"Sugar",
+			"Sweet",
+			"Tidbit",
+			"Mouthful",
+			"Tongue Twister"
+		],
+		"logo": "https://raw.githubusercontent.com/LJS360d/marbles-bot/master/public/assets/teams/jawbreakers.png"
+	},
+	{
+		"name": "Chocolatiers",
+		"color": "Brown with tan stripes",
+		"coach": "Truffle",
+		"manager": "Caramel",
+		"members": ["Choc", "Cocoa", "Mocha", "Bonbon", "Fudge"],
+		"logo": "https://raw.githubusercontent.com/LJS360d/marbles-bot/master/public/assets/teams/chocolatiers.png"
+	},
+	{
+		"name": "Valiant Violets",
+		"color": "Violet with white stripes",
+		"coach": "No coach",
+		"manager": "No manager",
+		"members": ["Lantana", "Madeira", "Salvia", "Vivid"],
+		"logo": "https://raw.githubusercontent.com/LJS360d/marbles-bot/master/public/assets/teams/valiant_violets.png"
+	},
+	{
+		"name": "Balls of Chaos",
+		"color": "Transparent with red, blue and yellow",
+		"coach": "Harmony",
+		"manager": "Entropy",
+		"members": ["Anarchy", "Tumult", "Clutter", "Snarl", "Disarray"],
+		"logo": "https://raw.githubusercontent.com/LJS360d/marbles-bot/master/public/assets/teams/balls_of_chaos.png"
+	},
+	{
+		"name": "Team Phoenix",
+		"color": "Yellow with red stripes",
+		"coach": "No coach",
+		"manager": "No manager",
+		"members": ["Nix", "Nixy", "Phee", "Phoeny"],
+		"logo": "https://raw.githubusercontent.com/LJS360d/marbles-bot/master/public/assets/teams/team_phoenix.png"
+	},
+	{
+		"name": "Purple Rockets",
+		"color": "Violet with white stripes",
+		"coach": "Rocket",
+		"manager": "Shuttle",
+		"members": ["Orbit", "Sulfur", "Dwarf", "Saucer", "Blast"],
+		"logo": "https://raw.githubusercontent.com/LJS360d/marbles-bot/master/public/assets/teams/purple_rockets.png"
+	},
+	{
+		"name": "Solar Flares",
+		"color": "Red-orange with navy blue and yellow stripes",
+		"coach": "Eclipse",
+		"manager": "Helios",
+		"members": ["Flare", "Scorch", "Radiance", "Ember", "Blaze"],
+		"logo": "https://raw.githubusercontent.com/LJS360d/marbles-bot/master/public/assets/teams/solar_flares.png"
+	},
+	{
+		"name": "Hazers",
+		"color": "Smokey gray and white",
+		"coach": "Smokey",
+		"manager": "Shade",
+		"members": ["Hazy", "Smoggy", "Foggy", "Misty", "Cloudy", "Murky"],
+		"logo": "https://raw.githubusercontent.com/LJS360d/marbles-bot/master/public/assets/teams/hazers.png"
+	},
+	{
+		"name": "Kobalts",
+		"color": "Royal blue with light blue swirls",
+		"coach": "Sapphire",
+		"manager": "Dodger",
+		"members": ["Azure", "Meepo", "Gnome", "Cerulean", "Royal", "Dodger"],
+		"logo": "https://raw.githubusercontent.com/LJS360d/marbles-bot/master/public/assets/teams/kobalts.png"
+	},
+	{
+		"name": "Bumblebees",
+		"color": "Yellow with brown stripesBlack with yellow stripes",
+		"coach": "Queen",
+		"manager": "Nectar and Beeline",
+		"members": ["Bumble", "Bea", "Swax", "Honey", "Bomble", "Stinger", "Hive"],
+		"logo": "https://raw.githubusercontent.com/LJS360d/marbles-bot/master/public/assets/teams/bumblebees.png"
+	},
+	{
+		"name": "Limers",
+		"color": "Neon lime green with white and light blue swirls.",
+		"coach": "Limelight",
+		"manager": "Blimey",
+		"members": [
+			"Sublime",
+			"Lemonlime",
+			"Goolime",
+			"Limelime",
+			"Slimelime",
+			"Jellime"
+		],
+		"logo": "https://raw.githubusercontent.com/LJS360d/marbles-bot/master/public/assets/teams/limers.png"
+	},
+	{
+		"name": "Black Jacks",
+		"color": "Black",
+		"coach": "Jack",
+		"manager": "King",
+		"members": [
+			"Jack of Clubs",
+			"Club",
+			"Jack of Diamonds",
+			"Diamond",
+			"Jack of Hearts",
+			"Heart",
+			"Jack of Spades",
+			"Spade",
+			"Ace"
+		],
+		"logo": "https://raw.githubusercontent.com/LJS360d/marbles-bot/master/public/assets/teams/black_jacks.png"
+	},
+	{
+		"name": "Wolfpack",
+		"color": "Gray with black, white and yellow stripes",
+		"coach": "Akela",
+		"manager": "Nova",
+		"members": ["Balto", "Remus", "Sirius", "Fenrir", "Sheep"],
+		"logo": "https://raw.githubusercontent.com/LJS360d/marbles-bot/master/public/assets/teams/wolfpack.png"
+	},
+	{
+		"name": "Team Momary",
+		"color": "Team Momo Colors and Team Primary Colors",
+		"coach": "No coach",
+		"manager": "No manager",
+		"members": ["Mo", "Prim", "Momo", "Mary", "Mimo"],
+		"logo": "https://raw.githubusercontent.com/LJS360d/marbles-bot/master/public/assets/teams/team_momary.png"
+	},
+	{
+		"name": "Team Plasma",
+		"color": "Red-Orange (2018)Transparent with red stripes (2022 - Present)",
+		"coach": "Cell",
+		"manager": "Ion",
+		"members": ["Ecto", "Fearo", "Gloomo", "Phanto", "Ghost", "Ghosto"],
+		"logo": "https://raw.githubusercontent.com/LJS360d/marbles-bot/master/public/assets/teams/team_plasma.png"
+	},
+	{
+		"name": "Midnight Wisps",
+		"color": "Black with blue swirls.",
+		"coach": "Wyspy",
+		"manager": "Willow",
+		"members": ["Wispy", "Wespy", "Wospy", "Wuspy", "Waspy"],
+		"logo": "https://raw.githubusercontent.com/LJS360d/marbles-bot/master/public/assets/teams/midnight_wisps.png"
+	},
+	{
+		"name": "Turtle Sliders",
+		"color": "Blue with Yellow and Brown Stripes",
+		"coach": "Splint",
+		"manager": "Verne",
+		"members": ["Crush", "Squirt", "Shelly", "Dash", "Frank"],
+		"logo": "https://raw.githubusercontent.com/LJS360d/marbles-bot/master/public/assets/teams/turtle_sliders.png"
+	},
+	{
+		"name": "Green Ducks",
+		"color": "Army green with dark brown/black swirls",
+		"coach": "Bombay",
+		"manager": "Honk",
+		"members": ["Mallard", "Billy", "Quacky", "Ducky", "Goose"],
+		"logo": "https://raw.githubusercontent.com/LJS360d/marbles-bot/master/public/assets/teams/green_ducks.png"
+	},
+	{
+		"name": "Green Gang",
+		"color": "Green with blue and yellow stripes",
+		"coach": "No coach",
+		"manager": "No manager",
+		"members": ["Baldie", "Bugsy", "Parole", "Rattler"],
+		"logo": "https://raw.githubusercontent.com/LJS360d/marbles-bot/master/public/assets/teams/green_gang.png"
+	},
+	{
+		"name": "Snowballs",
+		"color": "White",
+		"coach": "Blizzard",
+		"manager": "Avalanche",
+		"members": [
+			"Snow",
+			"Snowy",
+			"Snowflake",
+			"Snowstorm",
+			"Snowblast",
+			"Snowdrift",
+			"Snowfall"
+		],
+		"logo": "https://raw.githubusercontent.com/LJS360d/marbles-bot/master/public/assets/teams/snowballs.png"
+	},
+	{
+		"name": "Crazy Cat's Eyes",
+		"color": "Transparent with varying colored \"Cat's Eyes\"",
+		"coach": "White Eye",
+		"manager": "Bullseye",
+		"members": ["Red Eye", "Blue Eye", "Yellow Eye", "Green Eye", "Cyan Eye"],
+		"logo": "https://raw.githubusercontent.com/LJS360d/marbles-bot/master/public/assets/teams/crazy_cat's_eyes.png"
+	},
+	{
+		"name": "Golden Orbs",
+		"color": "Transparent gold with white streaks",
+		"coach": "No coach",
+		"manager": "No manager",
+		"members": [
+			"Fairy",
+			"Orby",
+			"Pixie",
+			"Glorby",
+			"Spirit",
+			"Gorby",
+			"Willo",
+			"Goldby",
+			"Glordby"
+		],
+		"logo": "https://raw.githubusercontent.com/LJS360d/marbles-bot/master/public/assets/teams/golden_orbs.png"
+	},
+	{
+		"name": "Team Galactic",
+		"color": "Transparent with brown and silver ribbons",
+		"coach": "Black Hole",
+		"manager": "Atlas",
+		"members": ["Cosmo", "Starry", "Astron", "Pulsar", "Quasar"],
+		"logo": "https://raw.githubusercontent.com/LJS360d/marbles-bot/master/public/assets/teams/team_galactic.png"
+	},
+	{
+		"name": "O'rangers",
+		"color": "Orange",
+		"coach": "Rango",
+		"manager": "Mandarin",
+		"members": ["Clementin", "Kinnowin", "Mandarin", "Orangin", "Tangerin"],
+		"logo": "https://raw.githubusercontent.com/LJS360d/marbles-bot/master/public/assets/teams/o'rangers.png"
+	},
+	{
+		"name": "Shining Swarm",
+		"color": "Silver with green and blue stripes",
+		"coach": "Gleam",
+		"manager": "Sheen",
+		"members": ["Shiny", "Sparkle", "Shimmer", "Sterling", "Glimmer"],
+		"logo": "https://raw.githubusercontent.com/LJS360d/marbles-bot/master/public/assets/teams/shining_swarm.png"
+	},
+	{
+		"name": "Pinkies",
+		"color": "Solid pale pink (2016-2017, 2019-present)Bright striped pink (2018)Transparent with pink patches (Winter Special)",
+		"coach": "Pinky Promise",
+		"manager": "Pinky Ring",
+		"members": [
+			"Pinky Toe",
+			"Pinky Rosa",
+			"Pinky Winky",
+			"Pinky Panther",
+			"Pinkydink"
+		],
+		"logo": "https://raw.githubusercontent.com/LJS360d/marbles-bot/master/public/assets/teams/pinkies.png"
+	},
+	{
+		"name": "Team Primary",
+		"color": "Red, yellow, and blue",
+		"coach": "Secondary",
+		"manager": "Rypr",
+		"members": ["Prim", "Rima", "Imar", "Mary", "Aryp"],
+		"logo": "https://raw.githubusercontent.com/LJS360d/marbles-bot/master/public/assets/teams/team_primary.png"
+	},
+	{
+		"name": "Gliding Glaciers",
+		"color": "White with light blue and brown swirls",
+		"coach": "Glide",
+		"manager": "Glace",
+		"members": [
+			"Glide",
+			"Glidy",
+			"Glace",
+			"Glacie",
+			"Glacier",
+			"Alpine",
+			"Frost",
+			"Iceberg",
+			"Polar",
+			"Sheet"
+		],
+		"logo": "https://raw.githubusercontent.com/LJS360d/marbles-bot/master/public/assets/teams/gliding_glaciers.png"
+	},
+	{
+		"name": "Rojo Rollers",
+		"color": "Red with blue/brown stripes",
+		"coach": "Rojo Oro (31 August 2021 - Present)Rojo Cero (25 February 2019 - 31 August 2021)",
+		"manager": "Rojo Macho",
+		"members": ["Rojo Uno", "Rojo Dos", "Rojo Tres", "Rojo Cuatro", "Rojo Cinco"],
+		"logo": "https://raw.githubusercontent.com/LJS360d/marbles-bot/master/public/assets/teams/rojo_rollers.png"
+	},
+	{
+		"name": "Savage Speeders",
+		"color": "Red with yellow and white",
+		"coach": "Quickly",
+		"manager": "Savvy",
+		"members": ["Speedy", "Rapidly", "Swifty", "Velocity", "Whizzy"],
+		"logo": "https://raw.githubusercontent.com/LJS360d/marbles-bot/master/public/assets/teams/savage_speeders.png"
+	},
+	{
+		"name": "Minty Maniacs",
+		"color": "Mint-green with blue and brown swirls",
+		"coach": "Minty Hint",
+		"manager": "Spearmint",
+		"members": [
+			"Minty Flav",
+			"Minty Drizzel",
+			"Minty Fresh",
+			"Minty Swirl",
+			"Minty Mint"
+		],
+		"logo": "https://raw.githubusercontent.com/LJS360d/marbles-bot/master/public/assets/teams/minty_maniacs.png"
+	},
+	{
+		"name": "Oceanics",
+		"color": "Dark blue with blue stripes",
+		"coach": "Neptune (3 October 2023 - Present)Lagoon (4 June 2019 - 3 October 2023)Tide (15 March 2019 - 1 June 2019)",
+		"manager": "Thetis (3 October 2023 - Present)Reef (Late 2017 - 3 October 2023)",
+		"members": ["Ocean", "Sea", "Shore", "Aqua", "Bay", "Tide", "Ounce"],
+		"logo": "https://raw.githubusercontent.com/LJS360d/marbles-bot/master/public/assets/teams/oceanics.png"
+	},
+	{
+		"name": "Team Momo",
+		"color": "Dark green with blue and yellow swirls",
+		"coach": "Momomomomo",
+		"manager": "Memo",
+		"members": ["Mo", "Momo", "Momomo", "Momomomo", "Mimo"],
+		"logo": "https://raw.githubusercontent.com/LJS360d/marbles-bot/master/public/assets/teams/team_momo.png"
+	}
+]

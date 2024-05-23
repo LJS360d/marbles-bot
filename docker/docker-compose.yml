@@ -1,0 +1,38 @@
+version: '3'
+services:
+  mongodb:
+    container_name: $COMPOSE_PROJECT_NAME-mongo
+    image: mongo:latest
+    restart: always
+    ports:
+      - '0.0.0.0:$MONGO_EXTERNAL_PORT:$MONGO_INTERNAL_PORT'
+    environment:
+      MONGO_INITDB_ROOT_DATABASE: $MONGO_DATABASE
+      MONGO_INITDB_ROOT_USERNAME: $MONGO_USERNAME
+      MONGO_INITDB_ROOT_PASSWORD: $MONGO_PASSWORD
+    volumes:
+      - ./mongodb-seed/mongodb-seed.sh:/docker-entrypoint-initdb.d/mongodb-seed.sh:ro
+      - ./mongodb-seed/marbles.seed.json:/docker-entrypoint-initdb.d/marbles.seed.json:ro
+      - ./mongodb-seed/teams.seed.json:/docker-entrypoint-initdb.d/teams.seed.json:ro
+  node:
+    container_name: $COMPOSE_PROJECT_NAME-node
+    image: node:${NODE_VERSION}-alpine
+    restart: no
+    ports:
+      - 0.0.0.0:$NODE_EXTERNAL_PORT:$NODE_INTERNAL_PORT
+    volumes:
+      - ../.env:/.env
+      - ../dist:/dist
+      - ../public:/public
+      - ../package.json:/package.json
+      - ../node_modules:/node_modules
+      - ../views:/views
+    command: npm run start
+  cloudflared:
+    container_name: $COMPOSE_PROJECT_NAME-cloudflared
+    image: cloudflare/cloudflared:$CLOUDFLARED_VERSION
+    restart: unless-stopped
+    command: tunnel --no-autoupdate --url http://$CLOUDFLARED_TUNNEL_HOST:$CLOUDFLARED_TUNNEL_PORT
+    network_mode: host
+    environment:
+      TUNNEL_TOKEN: $CLOUDFLARED_TOKEN

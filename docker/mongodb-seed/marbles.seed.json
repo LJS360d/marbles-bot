@@ -1,0 +1,3692 @@
+[
+	{
+		"name": "Ace",
+		"team": "Black Jacks",
+		"image": "https://raw.githubusercontent.com/LJS360d/marbles-bot/master/public/assets/marbles/ace.png",
+		"color": "Black",
+		"position": "RESERVE",
+		"competition": "",
+		"extra": ""
+	},
+	{
+		"name": "Akela",
+		"team": "Wolfpack",
+		"image": "https://raw.githubusercontent.com/LJS360d/marbles-bot/master/public/assets/marbles/akela.png",
+		"color": "Gray with black, white and yellow stripes",
+		"position": "COACH",
+		"competition": "",
+		"extra": ""
+	},
+	{
+		"name": "Alpine",
+		"team": "Gliding Glaciers",
+		"image": "https://raw.githubusercontent.com/LJS360d/marbles-bot/master/public/assets/marbles/alpine.png",
+		"color": "White with light blue and brown swirls",
+		"position": "CAPTAIN",
+		"competition": "",
+		"extra": ""
+	},
+	{
+		"name": "Alvin",
+		"team": "None",
+		"image": "https://raw.githubusercontent.com/LJS360d/marbles-bot/master/public/assets/marbles/alvin.png",
+		"color": "Transparent with swirls of red, white and blue",
+		"position": "MASCOT",
+		"competition": "",
+		"extra": "Marble League 2019"
+	},
+	{
+		"name": "Amethyst",
+		"team": "None",
+		"image": "https://raw.githubusercontent.com/LJS360d/marbles-bot/master/public/assets/marbles/amethyst.png",
+		"color": "Purple",
+		"position": "COMPETITOR",
+		"competition": "Marble Rally",
+		"extra": ""
+	},
+	{
+		"name": "Ana",
+		"team": "Constrictors",
+		"image": "https://raw.githubusercontent.com/LJS360d/marbles-bot/master/public/assets/marbles/ana.png",
+		"color": "Yellow with black and red stripes",
+		"position": "MEMBER",
+		"competition": "",
+		"extra": ""
+	},
+	{
+		"name": "Anarchy",
+		"team": "Balls of Chaos",
+		"image": "https://raw.githubusercontent.com/LJS360d/marbles-bot/master/public/assets/marbles/anarchy.png",
+		"color": "Clear with yellow, red & blue stripes",
+		"position": "MEMBER",
+		"competition": "",
+		"extra": ""
+	},
+	{
+		"name": "Angry Amber",
+		"team": "None",
+		"image": "https://raw.githubusercontent.com/LJS360d/marbles-bot/master/public/assets/marbles/angry_amber.png",
+		"color": "",
+		"position": "COMPETITOR",
+		"competition": "Sand Rally",
+		"extra": ""
+	},
+	{
+		"name": "Aqua",
+		"team": "Oceanics",
+		"image": "https://raw.githubusercontent.com/LJS360d/marbles-bot/master/public/assets/marbles/aqua.png",
+		"color": "Dark blue with blue stripes",
+		"position": "MEMBER",
+		"competition": "",
+		"extra": ""
+	},
+	{
+		"name": "Arctic",
+		"team": "Arctics",
+		"image": "",
+		"color": "",
+		"position": "MEMBER",
+		"competition": "",
+		"extra": ""
+	},
+	{
+		"name": "Argent",
+		"team": "Quicksilvers",
+		"image": "https://raw.githubusercontent.com/LJS360d/marbles-bot/master/public/assets/marbles/argent.png",
+		"color": "Transparent Silver",
+		"position": "MEMBER",
+		"competition": "",
+		"extra": ""
+	},
+	{
+		"name": "Aryp",
+		"team": "Team Primary",
+		"image": "https://raw.githubusercontent.com/LJS360d/marbles-bot/master/public/assets/marbles/aryp.png",
+		"color": "Yellow with red and blue stripes",
+		"position": "CAPTAIN",
+		"competition": "",
+		"extra": ""
+	},
+	{
+		"name": "Astron",
+		"team": "Team Galactic",
+		"image": "https://raw.githubusercontent.com/LJS360d/marbles-bot/master/public/assets/marbles/astron.png",
+		"color": "Transparent with brown and silver ribbons",
+		"position": "MEMBER",
+		"competition": "",
+		"extra": ""
+	},
+	{
+		"name": "Atlas",
+		"team": "Team Galactic",
+		"image": "",
+		"color": "",
+		"position": "MANAGER",
+		"competition": "",
+		"extra": ""
+	},
+	{
+		"name": "Avalanche",
+		"team": "Snowballs",
+		"image": "",
+		"color": "",
+		"position": "MANAGER",
+		"competition": "",
+		"extra": ""
+	},
+	{
+		"name": "Azure",
+		"team": "Kobalts",
+		"image": "https://raw.githubusercontent.com/LJS360d/marbles-bot/master/public/assets/marbles/azure.png",
+		"color": "Blue with light blue swirls",
+		"position": "MEMBER",
+		"competition": "",
+		"extra": ""
+	},
+	{
+		"name": "Baldie",
+		"team": "Green Gang",
+		"image": "",
+		"color": "",
+		"position": "MEMBER",
+		"competition": "",
+		"extra": ""
+	},
+	{
+		"name": "Baloo",
+		"team": "Bluefastics",
+		"image": "https://raw.githubusercontent.com/LJS360d/marbles-bot/master/public/assets/marbles/baloo.png",
+		"color": "Blue with white stripes",
+		"position": "MEMBER",
+		"competition": "",
+		"extra": ""
+	},
+	{
+		"name": "Balto",
+		"team": "Wolfpack",
+		"image": "https://raw.githubusercontent.com/LJS360d/marbles-bot/master/public/assets/marbles/balto.png",
+		"color": "Gray with black, white and yellow stripes",
+		"position": "CAPTAIN",
+		"competition": "",
+		"extra": ""
+	},
+	{
+		"name": "Barn",
+		"team": "Strixes",
+		"image": "https://raw.githubusercontent.com/LJS360d/marbles-bot/master/public/assets/marbles/barn.png",
+		"color": "Tan with brown stripes",
+		"position": "MEMBER",
+		"competition": "",
+		"extra": ""
+	},
+	{
+		"name": "Baron",
+		"team": "CMM",
+		"image": "",
+		"color": "",
+		"position": "PHOTOGRAPHER",
+		"competition": "",
+		"extra": ""
+	},
+	{
+		"name": "Bay",
+		"team": "Oceanics",
+		"image": "https://raw.githubusercontent.com/LJS360d/marbles-bot/master/public/assets/marbles/bay.png",
+		"color": "Dark blue with blue stripes",
+		"position": "MEMBER",
+		"competition": "",
+		"extra": ""
+	},
+	{
+		"name": "Bea",
+		"team": "Bumblebees",
+		"image": "https://raw.githubusercontent.com/LJS360d/marbles-bot/master/public/assets/marbles/bea.png",
+		"color": "Yellow with brown stripes",
+		"position": "MEMBER",
+		"competition": "",
+		"extra": ""
+	},
+	{
+		"name": "Beeline",
+		"team": "Bumblebees",
+		"image": "",
+		"color": "",
+		"position": "MANAGER",
+		"competition": "",
+		"extra": ""
+	},
+	{
+		"name": "Berry",
+		"team": "Raspberry Racers",
+		"image": "https://raw.githubusercontent.com/LJS360d/marbles-bot/master/public/assets/marbles/berry.png",
+		"color": "Magenta with pink stripes",
+		"position": "COACH",
+		"competition": "",
+		"extra": ""
+	},
+	{
+		"name": "Big Pearl",
+		"team": "None",
+		"image": "https://raw.githubusercontent.com/LJS360d/marbles-bot/master/public/assets/marbles/big_pearl.png",
+		"color": "Tan",
+		"position": "COMPETITOR",
+		"competition": "Marble Rally",
+		"extra": ""
+	},
+	{
+		"name": "Billy",
+		"team": "Green Ducks",
+		"image": "https://raw.githubusercontent.com/LJS360d/marbles-bot/master/public/assets/marbles/billy.png",
+		"color": "Green with black stripes",
+		"position": "MEMBER",
+		"competition": "",
+		"extra": ""
+	},
+	{
+		"name": "Bingo",
+		"team": "Indigo Stars",
+		"image": "https://raw.githubusercontent.com/LJS360d/marbles-bot/master/public/assets/marbles/bingo.png",
+		"color": "Indigo",
+		"position": "MEMBER",
+		"competition": "",
+		"extra": ""
+	},
+	{
+		"name": "Black Hole",
+		"team": "Team Galactic",
+		"image": "https://raw.githubusercontent.com/LJS360d/marbles-bot/master/public/assets/marbles/black_hole.png",
+		"color": "Transparent with brown and silver ribbons",
+		"position": "COACH",
+		"competition": "",
+		"extra": ""
+	},
+	{
+		"name": "Black Knight",
+		"team": "None",
+		"image": "https://raw.githubusercontent.com/LJS360d/marbles-bot/master/public/assets/marbles/black_knight.png",
+		"color": "Black with red and yellow swirls (2018 - Present)Solid black (2016 - 2017)",
+		"position": "COMPETITOR",
+		"competition": "Marble Rally",
+		"extra": ""
+	},
+	{
+		"name": "Blast",
+		"team": "Purple Rockets",
+		"image": "https://raw.githubusercontent.com/LJS360d/marbles-bot/master/public/assets/marbles/blast.png",
+		"color": "Violet with white stripes",
+		"position": "RESERVE",
+		"competition": "",
+		"extra": ""
+	},
+	{
+		"name": "Blaze",
+		"team": "Solar Flares",
+		"image": "https://raw.githubusercontent.com/LJS360d/marbles-bot/master/public/assets/marbles/blaze.png",
+		"color": "Red-orange with navy blue and yellow stripes",
+		"position": "RESERVE",
+		"competition": "",
+		"extra": ""
+	},
+	{
+		"name": "Blazing Fireball",
+		"team": "None",
+		"image": "https://raw.githubusercontent.com/LJS360d/marbles-bot/master/public/assets/marbles/blazing_fireball.png",
+		"color": "Solid maroon",
+		"position": "COMPETITOR",
+		"competition": "Marble Rally",
+		"extra": ""
+	},
+	{
+		"name": "Blimey",
+		"team": "Limers",
+		"image": "",
+		"color": "",
+		"position": "MANAGER",
+		"competition": "",
+		"extra": ""
+	},
+	{
+		"name": "Blizzard",
+		"team": "Snowballs",
+		"image": "https://raw.githubusercontent.com/LJS360d/marbles-bot/master/public/assets/marbles/blizzard.png",
+		"color": "White",
+		"position": "COACH",
+		"competition": "",
+		"extra": ""
+	},
+	{
+		"name": "Blizzard Blaster",
+		"team": "None",
+		"image": "https://raw.githubusercontent.com/LJS360d/marbles-bot/master/public/assets/marbles/blizzard_blaster.png",
+		"color": "Swirly green, blue, white and maroon",
+		"position": "COMPETITOR",
+		"competition": "Marble Rally",
+		"extra": ""
+	},
+	{
+		"name": "Blue Eye",
+		"team": "Crazy Cat's Eyes",
+		"image": "https://raw.githubusercontent.com/LJS360d/marbles-bot/master/public/assets/marbles/blue_eye.png",
+		"color": "Transparent with a blue center",
+		"position": "MEMBER",
+		"competition": "",
+		"extra": ""
+	},
+	{
+		"name": "Blue Moon",
+		"team": "None",
+		"image": "https://raw.githubusercontent.com/LJS360d/marbles-bot/master/public/assets/marbles/blue_moon.png",
+		"color": "Transparent metallic blue",
+		"position": "COMPETITOR",
+		"competition": "Marble Rally",
+		"extra": ""
+	},
+	{
+		"name": "Blue Smoke",
+		"team": "None",
+		"image": "https://raw.githubusercontent.com/LJS360d/marbles-bot/master/public/assets/marbles/blue_smoke.png",
+		"color": "Dark blue with white swirls",
+		"position": "COMPETITOR",
+		"competition": "Marble Rally",
+		"extra": ""
+	},
+	{
+		"name": "Blurry",
+		"team": "Hazers",
+		"image": "",
+		"color": "",
+		"position": "SENSEI",
+		"competition": "",
+		"extra": ""
+	},
+	{
+		"name": "Boa",
+		"team": "Constrictors",
+		"image": "https://raw.githubusercontent.com/LJS360d/marbles-bot/master/public/assets/marbles/boa.png",
+		"color": "Yellow with black and red stripes",
+		"position": "CAPTAIN",
+		"competition": "",
+		"extra": ""
+	},
+	{
+		"name": "Bolt",
+		"team": "Thunderbolts",
+		"image": "https://raw.githubusercontent.com/LJS360d/marbles-bot/master/public/assets/marbles/bolt.png",
+		"color": "Blue with yellow swirls",
+		"position": "MEMBER",
+		"competition": "",
+		"extra": ""
+	},
+	{
+		"name": "Bolta",
+		"team": "Thunderbolts",
+		"image": "https://raw.githubusercontent.com/LJS360d/marbles-bot/master/public/assets/marbles/bolta.png",
+		"color": "Blue with yellow swirls",
+		"position": "MEMBER",
+		"competition": "",
+		"extra": ""
+	},
+	{
+		"name": "Boltew",
+		"team": "Thunderbolts",
+		"image": "https://raw.githubusercontent.com/LJS360d/marbles-bot/master/public/assets/marbles/boltew.png",
+		"color": "Blue with yellow swirls",
+		"position": "RESERVE",
+		"competition": "",
+		"extra": ""
+	},
+	{
+		"name": "Bolto",
+		"team": "Thunderbolts",
+		"image": "https://raw.githubusercontent.com/LJS360d/marbles-bot/master/public/assets/marbles/bolto.png",
+		"color": "Blue with yellow swirls",
+		"position": "MEMBER",
+		"competition": "",
+		"extra": ""
+	},
+	{
+		"name": "Boltu",
+		"team": "Thunderbolts",
+		"image": "https://raw.githubusercontent.com/LJS360d/marbles-bot/master/public/assets/marbles/boltu.png",
+		"color": "Blue with yellow swirls",
+		"position": "MEMBER",
+		"competition": "",
+		"extra": ""
+	},
+	{
+		"name": "Bolty",
+		"team": "Thunderbolts",
+		"image": "https://raw.githubusercontent.com/LJS360d/marbles-bot/master/public/assets/marbles/bolty.png",
+		"color": "Blue with yellow swirls",
+		"position": "MEMBER",
+		"competition": "",
+		"extra": ""
+	},
+	{
+		"name": "Bombay",
+		"team": "Green Ducks",
+		"image": "https://raw.githubusercontent.com/LJS360d/marbles-bot/master/public/assets/marbles/bombay.png",
+		"color": "Green with black swirls",
+		"position": "COACH",
+		"competition": "",
+		"extra": ""
+	},
+	{
+		"name": "Bomble",
+		"team": "Bumblebees",
+		"image": "https://raw.githubusercontent.com/LJS360d/marbles-bot/master/public/assets/marbles/bomble.png",
+		"color": "Yellow with brown stripes",
+		"position": "RESERVE",
+		"competition": "",
+		"extra": ""
+	},
+	{
+		"name": "Bonbon",
+		"team": "Chocolatiers",
+		"image": "https://raw.githubusercontent.com/LJS360d/marbles-bot/master/public/assets/marbles/bonbon.png",
+		"color": "Brown with tan stripes",
+		"position": "MEMBER",
+		"competition": "",
+		"extra": ""
+	},
+	{
+		"name": "Bounce",
+		"team": "Jungle Jumpers",
+		"image": "https://raw.githubusercontent.com/LJS360d/marbles-bot/master/public/assets/marbles/bounce.png",
+		"color": "Green with black stripes",
+		"position": "RESERVE",
+		"competition": "",
+		"extra": ""
+	},
+	{
+		"name": "Bugsy",
+		"team": "Green Gang",
+		"image": "",
+		"color": "",
+		"position": "MEMBER",
+		"competition": "",
+		"extra": ""
+	},
+	{
+		"name": "Bullseye",
+		"team": "Crazy Cat's Eyes",
+		"image": "",
+		"color": "",
+		"position": "MANAGER",
+		"competition": "",
+		"extra": ""
+	},
+	{
+		"name": "Bumble",
+		"team": "Bumblebees",
+		"image": "https://raw.githubusercontent.com/LJS360d/marbles-bot/master/public/assets/marbles/bumble.png",
+		"color": "Yellow with brown stripes",
+		"position": "CAPTAIN",
+		"competition": "",
+		"extra": ""
+	},
+	{
+		"name": "Candy",
+		"team": "Jawbreakers",
+		"image": "https://raw.githubusercontent.com/LJS360d/marbles-bot/master/public/assets/marbles/candy.png",
+		"color": "White with red, blue, and green swirls",
+		"position": "CAPTAIN",
+		"competition": "",
+		"extra": ""
+	},
+	{
+		"name": "Caramel",
+		"team": "Chocolatiers",
+		"image": "",
+		"color": "",
+		"position": "MANAGER",
+		"competition": "",
+		"extra": ""
+	},
+	{
+		"name": "Celestial",
+		"team": "Team Galactic",
+		"image": "",
+		"color": "",
+		"position": "INTERN",
+		"competition": "",
+		"extra": ""
+	},
+	{
+		"name": "Cell",
+		"team": "Team Plasma",
+		"image": "https://raw.githubusercontent.com/LJS360d/marbles-bot/master/public/assets/marbles/cell.png",
+		"color": "Transparent orange-gold with red stripes",
+		"position": "COACH",
+		"competition": "",
+		"extra": ""
+	},
+	{
+		"name": "Cerulean",
+		"team": "Kobalts",
+		"image": "https://raw.githubusercontent.com/LJS360d/marbles-bot/master/public/assets/marbles/cerulean.png",
+		"color": "Blue with light blue swirls",
+		"position": "MEMBER",
+		"competition": "",
+		"extra": ""
+	},
+	{
+		"name": "Charmer",
+		"team": "Constrictors",
+		"image": "https://raw.githubusercontent.com/LJS360d/marbles-bot/master/public/assets/marbles/charmer.png",
+		"color": "Yellow with black and red stripes",
+		"position": "COACH",
+		"competition": "",
+		"extra": ""
+	},
+	{
+		"name": "Choc",
+		"team": "Chocolatiers",
+		"image": "https://raw.githubusercontent.com/LJS360d/marbles-bot/master/public/assets/marbles/choc.png",
+		"color": "Brown with tan stripes",
+		"position": "CAPTAIN",
+		"competition": "",
+		"extra": ""
+	},
+	{
+		"name": "Clementin",
+		"team": "O'rangers",
+		"image": "https://raw.githubusercontent.com/LJS360d/marbles-bot/master/public/assets/marbles/clementin.png",
+		"color": "Orange",
+		"position": "MEMBER",
+		"competition": "",
+		"extra": ""
+	},
+	{
+		"name": "Cleocatra",
+		"team": "Marble League 2021",
+		"image": "https://raw.githubusercontent.com/LJS360d/marbles-bot/master/public/assets/marbles/cleocatra.png",
+		"color": "Transparent with red, light blue and white",
+		"position": "MASCOT",
+		"competition": "",
+		"extra": ""
+	},
+	{
+		"name": "Cloudy",
+		"team": "Hazers",
+		"image": "https://raw.githubusercontent.com/LJS360d/marbles-bot/master/public/assets/marbles/cloudy.png",
+		"color": "Smokey gray and white",
+		"position": "MEMBER",
+		"competition": "",
+		"extra": ""
+	},
+	{
+		"name": "Club",
+		"team": "Black Jacks",
+		"image": "https://raw.githubusercontent.com/LJS360d/marbles-bot/master/public/assets/marbles/club.png",
+		"color": "Black",
+		"position": "MEMBER",
+		"competition": "",
+		"extra": ""
+	},
+	{
+		"name": "Clutter",
+		"team": "Balls of Chaos",
+		"image": "https://raw.githubusercontent.com/LJS360d/marbles-bot/master/public/assets/marbles/clutter.png",
+		"color": "Clear with yellow, red & blue stripes",
+		"position": "MEMBER",
+		"competition": "",
+		"extra": ""
+	},
+	{
+		"name": "Cobra",
+		"team": "None",
+		"image": "https://raw.githubusercontent.com/LJS360d/marbles-bot/master/public/assets/marbles/cobra.png",
+		"color": "Light green with black swirls",
+		"position": "COMPETITOR",
+		"competition": "Marble Rally",
+		"extra": ""
+	},
+	{
+		"name": "Cocoa",
+		"team": "Chocolatiers",
+		"image": "https://raw.githubusercontent.com/LJS360d/marbles-bot/master/public/assets/marbles/cocoa.png",
+		"color": "Brown with tan stripes",
+		"position": "MEMBER",
+		"competition": "",
+		"extra": ""
+	},
+	{
+		"name": "Comet",
+		"team": "None",
+		"image": "https://raw.githubusercontent.com/LJS360d/marbles-bot/master/public/assets/marbles/comet.png",
+		"color": "Cyan with a yellow streak",
+		"position": "COMPETITOR",
+		"competition": "Marble Rally",
+		"extra": ""
+	},
+	{
+		"name": "Conda",
+		"team": "Constrictors",
+		"image": "https://raw.githubusercontent.com/LJS360d/marbles-bot/master/public/assets/marbles/conda.png",
+		"color": "Yellow with black and red stripes",
+		"position": "MEMBER",
+		"competition": "",
+		"extra": ""
+	},
+	{
+		"name": "Cool Moody",
+		"team": "None",
+		"image": "https://raw.githubusercontent.com/LJS360d/marbles-bot/master/public/assets/marbles/cool_moody.png",
+		"color": "Solid yellow with a face wearing sunglasses",
+		"position": "COMPETITOR",
+		"competition": "Marble Rally",
+		"extra": ""
+	},
+	{
+		"name": "Cosmo",
+		"team": "Team Galactic",
+		"image": "https://raw.githubusercontent.com/LJS360d/marbles-bot/master/public/assets/marbles/cosmo.png",
+		"color": "Transparent with brown and silver ribbons",
+		"position": "CAPTAIN",
+		"competition": "",
+		"extra": ""
+	},
+	{
+		"name": "Crazy Cat's Eye",
+		"team": "None",
+		"image": "https://raw.githubusercontent.com/LJS360d/marbles-bot/master/public/assets/marbles/crazy_cat's_eye.png",
+		"color": "Transparent with a yellow, brown and red center",
+		"position": "COMPETITOR",
+		"competition": "Marble Rally",
+		"extra": ""
+	},
+	{
+		"name": "Crush",
+		"team": "Turtle Sliders",
+		"image": "https://raw.githubusercontent.com/LJS360d/marbles-bot/master/public/assets/marbles/crush.png",
+		"color": "Blue with yellow and brown stripes",
+		"position": "CAPTAIN",
+		"competition": "",
+		"extra": ""
+	},
+	{
+		"name": "Cyan Eye",
+		"team": "Crazy Cat's Eyes",
+		"image": "https://raw.githubusercontent.com/LJS360d/marbles-bot/master/public/assets/marbles/cyan_eye.png",
+		"color": "Transparent with a cyan center",
+		"position": "RESERVE",
+		"competition": "",
+		"extra": ""
+	},
+	{
+		"name": "Dash",
+		"team": "Turtle Sliders",
+		"image": "https://raw.githubusercontent.com/LJS360d/marbles-bot/master/public/assets/marbles/dash.png",
+		"color": "Blue with yellow and brown stripes",
+		"position": "MEMBER",
+		"competition": "",
+		"extra": ""
+	},
+	{
+		"name": "Deep Ocean",
+		"team": "None",
+		"image": "https://raw.githubusercontent.com/LJS360d/marbles-bot/master/public/assets/marbles/deep_ocean.png",
+		"color": "Teal with white and black swirls",
+		"position": "COMPETITOR",
+		"competition": "Marble Rally",
+		"extra": ""
+	},
+	{
+		"name": "Diamond",
+		"team": "Black Jacks",
+		"image": "https://raw.githubusercontent.com/LJS360d/marbles-bot/master/public/assets/marbles/diamond.png",
+		"color": "Black",
+		"position": "MEMBER",
+		"competition": "",
+		"extra": ""
+	},
+	{
+		"name": "Diego",
+		"team": "Indigo Stars",
+		"image": "https://raw.githubusercontent.com/LJS360d/marbles-bot/master/public/assets/marbles/diego.png",
+		"color": "Indigo",
+		"position": "MEMBER",
+		"competition": "",
+		"extra": ""
+	},
+	{
+		"name": "Dion Bakker",
+		"team": "Jelle Bakker",
+		"image": "https://raw.githubusercontent.com/LJS360d/marbles-bot/master/public/assets/marbles/dion_bakker.png",
+		"color": "Black and White",
+		"position": "BROTHER",
+		"competition": "",
+		"extra": ""
+	},
+	{
+		"name": "Disarray",
+		"team": "Balls of Chaos",
+		"image": "https://raw.githubusercontent.com/LJS360d/marbles-bot/master/public/assets/marbles/disarray.png",
+		"color": "Clear with yellow, red & blue stripes",
+		"position": "MEMBER",
+		"competition": "",
+		"extra": ""
+	},
+	{
+		"name": "Dodger",
+		"team": "Kobalts",
+		"image": "https://raw.githubusercontent.com/LJS360d/marbles-bot/master/public/assets/marbles/dodger.png",
+		"color": "Blue with light blue swirls",
+		"position": "MANAGER",
+		"competition": "",
+		"extra": ""
+	},
+	{
+		"name": "Dory",
+		"team": "Bluefastics",
+		"image": "https://raw.githubusercontent.com/LJS360d/marbles-bot/master/public/assets/marbles/dory.png",
+		"color": "Blue with white stripes",
+		"position": "MEMBER",
+		"competition": "",
+		"extra": ""
+	},
+	{
+		"name": "Dragon's Egg",
+		"team": "None",
+		"image": "https://raw.githubusercontent.com/LJS360d/marbles-bot/master/public/assets/marbles/dragon's_egg.png",
+		"color": "Dark green with orange and white swirls",
+		"position": "COMPETITOR",
+		"competition": "Marble Rally",
+		"extra": ""
+	},
+	{
+		"name": "Ducktape",
+		"team": "None",
+		"image": "https://raw.githubusercontent.com/LJS360d/marbles-bot/master/public/assets/marbles/ducktape.png",
+		"color": "Transparent with a lilac center with silver stripes",
+		"position": "COMPETITOR",
+		"competition": "Marble Rally",
+		"extra": ""
+	},
+	{
+		"name": "Ducky",
+		"team": "Green Ducks",
+		"image": "https://raw.githubusercontent.com/LJS360d/marbles-bot/master/public/assets/marbles/ducky.png",
+		"color": "Green with black/brown stripes",
+		"position": "MEMBER",
+		"competition": "",
+		"extra": ""
+	},
+	{
+		"name": "Dwarf",
+		"team": "Purple Rockets",
+		"image": "https://raw.githubusercontent.com/LJS360d/marbles-bot/master/public/assets/marbles/dwarf.png",
+		"color": "Violet with white stripes",
+		"position": "MEMBER",
+		"competition": "",
+		"extra": ""
+	},
+	{
+		"name": "Eagle",
+		"team": "Strixes",
+		"image": "",
+		"color": "",
+		"position": "MANAGER",
+		"competition": "",
+		"extra": ""
+	},
+	{
+		"name": "Eclipse",
+		"team": "Solar Flares",
+		"image": "https://raw.githubusercontent.com/LJS360d/marbles-bot/master/public/assets/marbles/eclipse.png",
+		"color": "Red-orange with navy blue and yellow stripes",
+		"position": "COACH",
+		"competition": "",
+		"extra": ""
+	},
+	{
+		"name": "Ecto",
+		"team": "Team Plasma",
+		"image": "https://raw.githubusercontent.com/LJS360d/marbles-bot/master/public/assets/marbles/ecto.png",
+		"color": "Red (2018)Transparent orange-gold with red stripes (2022 - Present)",
+		"position": "MEMBER",
+		"competition": "",
+		"extra": ""
+	},
+	{
+		"name": "El Capitan",
+		"team": "None",
+		"image": "https://raw.githubusercontent.com/LJS360d/marbles-bot/master/public/assets/marbles/el_capitan.png",
+		"color": "Dark red with white swirls",
+		"position": "COMPETITOR",
+		"competition": "Marble Rally",
+		"extra": ""
+	},
+	{
+		"name": "Ember",
+		"team": "Solar Flares",
+		"image": "https://raw.githubusercontent.com/LJS360d/marbles-bot/master/public/assets/marbles/ember.png",
+		"color": "Red-orange with navy blue and yellow stripes",
+		"position": "MEMBER",
+		"competition": "",
+		"extra": ""
+	},
+	{
+		"name": "Entropy",
+		"team": "Balls of Chaos",
+		"image": "",
+		"color": "",
+		"position": "MANAGER",
+		"competition": "",
+		"extra": ""
+	},
+	{
+		"name": "Eryx",
+		"team": "Constrictors",
+		"image": "https://raw.githubusercontent.com/LJS360d/marbles-bot/master/public/assets/marbles/eryx.png",
+		"color": "Yellow with black and red stripes",
+		"position": "RESERVE",
+		"competition": "",
+		"extra": ""
+	},
+	{
+		"name": "Fairy",
+		"team": "Golden Orbs",
+		"image": "https://raw.githubusercontent.com/LJS360d/marbles-bot/master/public/assets/marbles/fairy.png",
+		"color": "Transparent gold with white streaks",
+		"position": "MEMBER",
+		"competition": "",
+		"extra": ""
+	},
+	{
+		"name": "Fantasy",
+		"team": "None",
+		"image": "https://raw.githubusercontent.com/LJS360d/marbles-bot/master/public/assets/marbles/fantasy.png",
+		"color": "Yellow with red and blue swirls",
+		"position": "COMPETITOR",
+		"competition": "Marble Rally",
+		"extra": ""
+	},
+	{
+		"name": "Fearo",
+		"team": "Team Plasma",
+		"image": "https://raw.githubusercontent.com/LJS360d/marbles-bot/master/public/assets/marbles/fearo.png",
+		"color": "Red (2018)Transparent orange-gold with red stripes (2022 - Present)",
+		"position": "CAPTAIN",
+		"competition": "",
+		"extra": ""
+	},
+	{
+		"name": "Felid",
+		"team": "Tiger Eyes, a team that are five-time winners",
+		"image": "",
+		"color": "",
+		"position": "MEMBER",
+		"competition": "",
+		"extra": ""
+	},
+	{
+		"name": "Fenrir",
+		"team": "Wolfpack",
+		"image": "https://raw.githubusercontent.com/LJS360d/marbles-bot/master/public/assets/marbles/fenrir.png",
+		"color": "Gray with black, white and yellow stripes",
+		"position": "MEMBER",
+		"competition": "",
+		"extra": ""
+	},
+	{
+		"name": "Flare",
+		"team": "Solar Flares",
+		"image": "https://raw.githubusercontent.com/LJS360d/marbles-bot/master/public/assets/marbles/flare.png",
+		"color": "Red-orange with navy blue and yellow stripes",
+		"position": "CAPTAIN",
+		"competition": "",
+		"extra": ""
+	},
+	{
+		"name": "Foggy",
+		"team": "Hazers",
+		"image": "https://raw.githubusercontent.com/LJS360d/marbles-bot/master/public/assets/marbles/foggy.png",
+		"color": "Smokey gray and white",
+		"position": "MEMBER",
+		"competition": "",
+		"extra": ""
+	},
+	{
+		"name": "Frank",
+		"team": "Turtle Sliders",
+		"image": "https://raw.githubusercontent.com/LJS360d/marbles-bot/master/public/assets/marbles/frank.png",
+		"color": "Blue with yellow and brown stripes",
+		"position": "RESERVE",
+		"competition": "",
+		"extra": ""
+	},
+	{
+		"name": "Frost",
+		"team": "Gliding Glaciers",
+		"image": "https://raw.githubusercontent.com/LJS360d/marbles-bot/master/public/assets/marbles/frost.png",
+		"color": "White with light blue and brown swirls",
+		"position": "MEMBER",
+		"competition": "",
+		"extra": ""
+	},
+	{
+		"name": "Fudge",
+		"team": "Chocolatiers",
+		"image": "https://raw.githubusercontent.com/LJS360d/marbles-bot/master/public/assets/marbles/fudge.png",
+		"color": "Brown with tan stripes",
+		"position": "RESERVE",
+		"competition": "",
+		"extra": ""
+	},
+	{
+		"name": "Gallum",
+		"team": "Quicksilvers",
+		"image": "https://raw.githubusercontent.com/LJS360d/marbles-bot/master/public/assets/marbles/gallum.png",
+		"color": "Transparent silver",
+		"position": "RESERVE",
+		"competition": "",
+		"extra": ""
+	},
+	{
+		"name": "Ghost Marble",
+		"team": "None",
+		"image": "https://raw.githubusercontent.com/LJS360d/marbles-bot/master/public/assets/marbles/ghost_marble.png",
+		"color": "",
+		"position": "RELEASER",
+		"competition": "",
+		"extra": ""
+	},
+	{
+		"name": "Ghost Plasma",
+		"team": "None",
+		"image": "https://raw.githubusercontent.com/LJS360d/marbles-bot/master/public/assets/marbles/ghost_plasma.png",
+		"color": "Slightly transparent red/orange",
+		"position": "COMPETITOR",
+		"competition": "Marble Rally",
+		"extra": ""
+	},
+	{
+		"name": "Ghosto",
+		"team": "Team Plasma",
+		"image": "https://raw.githubusercontent.com/LJS360d/marbles-bot/master/public/assets/marbles/ghosto.png",
+		"color": "Red (2018) Transparent orange-gold with red stripes (2022 - Present)",
+		"position": "RESERVE",
+		"competition": "",
+		"extra": ""
+	},
+	{
+		"name": "Giallo",
+		"team": "Mellow Yellow",
+		"image": "",
+		"color": "",
+		"position": "MANAGER",
+		"competition": "",
+		"extra": ""
+	},
+	{
+		"name": "Glace",
+		"team": "Gliding Glaciers",
+		"image": "https://raw.githubusercontent.com/LJS360d/marbles-bot/master/public/assets/marbles/glace.png",
+		"color": "White with light blue and brown swirls",
+		"position": "MANAGER",
+		"competition": "",
+		"extra": ""
+	},
+	{
+		"name": "Glacie",
+		"team": "Gliding Glaciers",
+		"image": "https://raw.githubusercontent.com/LJS360d/marbles-bot/master/public/assets/marbles/glacie.png",
+		"color": "White with light blue and brown swirls",
+		"position": "MEMBER",
+		"competition": "",
+		"extra": ""
+	},
+	{
+		"name": "Glacier",
+		"team": "Gliding Glaciers",
+		"image": "https://raw.githubusercontent.com/LJS360d/marbles-bot/master/public/assets/marbles/glacier.png",
+		"color": "White with light blue and brown swirls",
+		"position": "RESERVE",
+		"competition": "",
+		"extra": ""
+	},
+	{
+		"name": "Glassy",
+		"team": "None",
+		"image": "https://raw.githubusercontent.com/LJS360d/marbles-bot/master/public/assets/marbles/glassy.png",
+		"color": "Transparent green",
+		"position": "COMPETITOR",
+		"competition": "Marble Rally",
+		"extra": ""
+	},
+	{
+		"name": "Gleam",
+		"team": "Shining Swarm",
+		"image": "https://raw.githubusercontent.com/LJS360d/marbles-bot/master/public/assets/marbles/gleam.png",
+		"color": "Silver with green and blue stripes",
+		"position": "COACH",
+		"competition": "",
+		"extra": ""
+	},
+	{
+		"name": "Glide",
+		"team": "Gliding Glaciers",
+		"image": "https://raw.githubusercontent.com/LJS360d/marbles-bot/master/public/assets/marbles/glide.png",
+		"color": "White with light blue and brown swirls",
+		"position": "COACH",
+		"competition": "",
+		"extra": ""
+	},
+	{
+		"name": "Glidy",
+		"team": "Gliding Glaciers",
+		"image": "https://raw.githubusercontent.com/LJS360d/marbles-bot/master/public/assets/marbles/glidy.png",
+		"color": "White with blue and brown stripes",
+		"position": "MEMBER",
+		"competition": "",
+		"extra": ""
+	},
+	{
+		"name": "Glimmer",
+		"team": "Shining Swarm",
+		"image": "https://raw.githubusercontent.com/LJS360d/marbles-bot/master/public/assets/marbles/glimmer.png",
+		"color": "Silver with green and cyan stripes",
+		"position": "MEMBER",
+		"competition": "",
+		"extra": ""
+	},
+	{
+		"name": "Gloomo",
+		"team": "Team Plasma",
+		"image": "https://raw.githubusercontent.com/LJS360d/marbles-bot/master/public/assets/marbles/gloomo.png",
+		"color": "Red (2018)Transparent orange-gold with red stripes (2022 - Present)",
+		"position": "MEMBER",
+		"competition": "",
+		"extra": ""
+	},
+	{
+		"name": "Glorby",
+		"team": "Golden Orbs",
+		"image": "https://raw.githubusercontent.com/LJS360d/marbles-bot/master/public/assets/marbles/glorby.png",
+		"color": "Transparent gold with white streaks",
+		"position": "MEMBER",
+		"competition": "",
+		"extra": ""
+	},
+	{
+		"name": "Glordby",
+		"team": "Golden Orbs",
+		"image": "https://raw.githubusercontent.com/LJS360d/marbles-bot/master/public/assets/marbles/glordby.png",
+		"color": "Transparent gold with white streaks",
+		"position": "RESERVE",
+		"competition": "",
+		"extra": ""
+	},
+	{
+		"name": "Gnome",
+		"team": "Kobalts",
+		"image": "https://raw.githubusercontent.com/LJS360d/marbles-bot/master/public/assets/marbles/gnome.png",
+		"color": "Blue with light blue swirls",
+		"position": "MEMBER",
+		"competition": "",
+		"extra": ""
+	},
+	{
+		"name": "Gogo",
+		"team": "Indigo Stars",
+		"image": "https://raw.githubusercontent.com/LJS360d/marbles-bot/master/public/assets/marbles/gogo.png",
+		"color": "Indigo",
+		"position": "MEMBER",
+		"competition": "",
+		"extra": ""
+	},
+	{
+		"name": "Goldby",
+		"team": "Golden Orbs",
+		"image": "https://raw.githubusercontent.com/LJS360d/marbles-bot/master/public/assets/marbles/goldby.png",
+		"color": "Transparent gold with white streaks",
+		"position": "MEMBER",
+		"competition": "",
+		"extra": ""
+	},
+	{
+		"name": "Gonzo",
+		"team": "Bluefastics",
+		"image": "https://raw.githubusercontent.com/LJS360d/marbles-bot/master/public/assets/marbles/gonzo.png",
+		"color": "Blue with white stripes",
+		"position": "MEMBER",
+		"competition": "",
+		"extra": ""
+	},
+	{
+		"name": "Goolime",
+		"team": "Limers",
+		"image": "https://raw.githubusercontent.com/LJS360d/marbles-bot/master/public/assets/marbles/goolime.png",
+		"color": "Lime green with white and grey swirls",
+		"position": "MEMBER",
+		"competition": "",
+		"extra": ""
+	},
+	{
+		"name": "Goose",
+		"team": "Green Ducks",
+		"image": "https://raw.githubusercontent.com/LJS360d/marbles-bot/master/public/assets/marbles/goose.png",
+		"color": "Green with black/brown stripes",
+		"position": "RESERVE",
+		"competition": "",
+		"extra": ""
+	},
+	{
+		"name": "Gorby",
+		"team": "Golden Orbs",
+		"image": "https://raw.githubusercontent.com/LJS360d/marbles-bot/master/public/assets/marbles/gorby.png",
+		"color": "Gorby competing in the Funnel Race (2018)",
+		"position": "MEMBER",
+		"competition": "",
+		"extra": ""
+	},
+	{
+		"name": "Grasshopper",
+		"team": "None",
+		"image": "https://raw.githubusercontent.com/LJS360d/marbles-bot/master/public/assets/marbles/grasshopper.png",
+		"color": "Green with light green swirls",
+		"position": "COMPETITOR",
+		"competition": "Marble Rally",
+		"extra": ""
+	},
+	{
+		"name": "Green Eye",
+		"team": "Crazy Cat's Eyes",
+		"image": "https://raw.githubusercontent.com/LJS360d/marbles-bot/master/public/assets/marbles/green_eye.png",
+		"color": "Transparent with a green center",
+		"position": "MEMBER",
+		"competition": "",
+		"extra": ""
+	},
+	{
+		"name": "Green Turtle",
+		"team": "None",
+		"image": "https://raw.githubusercontent.com/LJS360d/marbles-bot/master/public/assets/marbles/green_turtle.png",
+		"color": "Yellow and green swirls",
+		"position": "COMPETITOR",
+		"competition": "Marble Rally",
+		"extra": ""
+	},
+	{
+		"name": "Greg Woods",
+		"team": "JMRC",
+		"image": "https://raw.githubusercontent.com/LJS360d/marbles-bot/master/public/assets/marbles/greg_woods.png",
+		"color": "Black base with white swirls and iridescent coating",
+		"position": "COMMENTATOR",
+		"competition": "",
+		"extra": ""
+	},
+	{
+		"name": "Gummy",
+		"team": "Jawbreakers",
+		"image": "https://raw.githubusercontent.com/LJS360d/marbles-bot/master/public/assets/marbles/gummy.png",
+		"color": "White with red, blue and green swirls",
+		"position": "COACH",
+		"competition": "",
+		"extra": ""
+	},
+	{
+		"name": "H2 Blue",
+		"team": "None",
+		"image": "https://raw.githubusercontent.com/LJS360d/marbles-bot/master/public/assets/marbles/h2_blue.png",
+		"color": "Transparent white with blue stripe",
+		"position": "COMPETITOR",
+		"competition": "Marble Rally",
+		"extra": ""
+	},
+	{
+		"name": "Hamlin",
+		"team": "O'rangers",
+		"image": "",
+		"color": "",
+		"position": "RELATIVE",
+		"competition": "",
+		"extra": ""
+	},
+	{
+		"name": "Harmony",
+		"team": "Balls of Chaos",
+		"image": "https://raw.githubusercontent.com/LJS360d/marbles-bot/master/public/assets/marbles/harmony.png",
+		"color": "Transparent with red, blue and yellow stripes",
+		"position": "COACH",
+		"competition": "",
+		"extra": ""
+	},
+	{
+		"name": "Hazy",
+		"team": "Hazers",
+		"image": "https://raw.githubusercontent.com/LJS360d/marbles-bot/master/public/assets/marbles/hazy.png",
+		"color": "Smokey gray and white",
+		"position": "CAPTAIN",
+		"competition": "",
+		"extra": ""
+	},
+	{
+		"name": "Heart",
+		"team": "Black Jacks",
+		"image": "https://raw.githubusercontent.com/LJS360d/marbles-bot/master/public/assets/marbles/heart.png",
+		"color": "Black",
+		"position": "CAPTAIN",
+		"competition": "",
+		"extra": ""
+	},
+	{
+		"name": "Helios",
+		"team": "Solar Flares",
+		"image": "",
+		"color": "Red-orange with navy blue and yellow stripes",
+		"position": "MANAGER",
+		"competition": "",
+		"extra": ""
+	},
+	{
+		"name": "Hive",
+		"team": "Bumblebees, former member",
+		"image": "https://raw.githubusercontent.com/LJS360d/marbles-bot/master/public/assets/marbles/hive.png",
+		"color": "Black with yellow stripes",
+		"position": "MEMBER",
+		"competition": "",
+		"extra": ""
+	},
+	{
+		"name": "Hop",
+		"team": "Jungle Jumpers",
+		"image": "https://raw.githubusercontent.com/LJS360d/marbles-bot/master/public/assets/marbles/hop.png",
+		"color": "Green with black stripes",
+		"position": "MEMBER",
+		"competition": "",
+		"extra": ""
+	},
+	{
+		"name": "Honey",
+		"team": "Bumblebees",
+		"image": "https://raw.githubusercontent.com/LJS360d/marbles-bot/master/public/assets/marbles/honey.png",
+		"color": "Yellow with brown stripes",
+		"position": "MEMBER",
+		"competition": "",
+		"extra": ""
+	},
+	{
+		"name": "Honk",
+		"team": "Green Ducks",
+		"image": "",
+		"color": "",
+		"position": "MANAGER",
+		"competition": "",
+		"extra": ""
+	},
+	{
+		"name": "Iceberg",
+		"team": "Gliding Glaciers",
+		"image": "https://raw.githubusercontent.com/LJS360d/marbles-bot/master/public/assets/marbles/iceberg.png",
+		"color": "White with light blue and brown swirls",
+		"position": "MEMBER",
+		"competition": "",
+		"extra": ""
+	},
+	{
+		"name": "Imar",
+		"team": "Team Primary",
+		"image": "https://raw.githubusercontent.com/LJS360d/marbles-bot/master/public/assets/marbles/imar.png",
+		"color": "Yellow with red and blue stripes",
+		"position": "MEMBER",
+		"competition": "",
+		"extra": ""
+	},
+	{
+		"name": "Indie",
+		"team": "Indigo Stars",
+		"image": "https://raw.githubusercontent.com/LJS360d/marbles-bot/master/public/assets/marbles/indie.png",
+		"color": "Indigo",
+		"position": "CAPTAIN",
+		"competition": "",
+		"extra": ""
+	},
+	{
+		"name": "Ion",
+		"team": "Team Plasma",
+		"image": "",
+		"color": "",
+		"position": "MANAGER",
+		"competition": "",
+		"extra": ""
+	},
+	{
+		"name": "Ivy",
+		"team": "Noxious Ivy",
+		"image": "https://raw.githubusercontent.com/LJS360d/marbles-bot/master/public/assets/marbles/ivy.png",
+		"color": "Green with white stripes",
+		"position": "CAPTAIN",
+		"competition": "",
+		"extra": ""
+	},
+	{
+		"name": "Jack",
+		"team": "Black Jacks",
+		"image": "https://raw.githubusercontent.com/LJS360d/marbles-bot/master/public/assets/marbles/jack.png",
+		"color": "Black",
+		"position": "COACH",
+		"competition": "",
+		"extra": ""
+	},
+	{
+		"name": "Jaguar",
+		"team": "Tiger Eyes",
+		"image": "",
+		"color": "",
+		"position": "CAPTAIN",
+		"competition": "",
+		"extra": ""
+	},
+	{
+		"name": "Jelle",
+		"team": "Yarble Yellers",
+		"image": "",
+		"color": "",
+		"position": "COACH",
+		"competition": "",
+		"extra": ""
+	},
+	{
+		"name": "Jelle Bakker",
+		"team": "Jelle's Marble Runs",
+		"image": "https://raw.githubusercontent.com/LJS360d/marbles-bot/master/public/assets/marbles/jelle_bakker.png",
+		"color": "Orange with a purple flower",
+		"position": "FOUNDER",
+		"competition": "",
+		"extra": ""
+	},
+	{
+		"name": "Jellime",
+		"team": "Limers",
+		"image": "https://raw.githubusercontent.com/LJS360d/marbles-bot/master/public/assets/marbles/jellime.png",
+		"color": "Lime green with white and grey swirls",
+		"position": "MEMBER",
+		"competition": "",
+		"extra": ""
+	},
+	{
+		"name": "John Rolliver",
+		"team": "None",
+		"image": "https://raw.githubusercontent.com/LJS360d/marbles-bot/master/public/assets/marbles/john_rolliver.png",
+		"color": "Metallic silver with red and blue stripes",
+		"position": "SPONSOR",
+		"competition": "",
+		"extra": "Marble League 2020"
+	},
+	{
+		"name": "Joy",
+		"team": "Jungle Jumpers",
+		"image": "",
+		"color": "",
+		"position": "MANAGER",
+		"competition": "",
+		"extra": ""
+	},
+	{
+		"name": "Jump",
+		"team": "Jungle Jumpers",
+		"image": "https://raw.githubusercontent.com/LJS360d/marbles-bot/master/public/assets/marbles/jump.png",
+		"color": "Green with black stripes",
+		"position": "CAPTAIN",
+		"competition": "",
+		"extra": ""
+	},
+	{
+		"name": "Keylime",
+		"team": "Limers",
+		"image": "https://raw.githubusercontent.com/LJS360d/marbles-bot/master/public/assets/marbles/keylime.png",
+		"color": "Green with white and grey swirls",
+		"position": "COACH",
+		"competition": "",
+		"extra": ""
+	},
+	{
+		"name": "Killian Bladestar",
+		"team": "JMRC",
+		"image": "",
+		"color": "",
+		"position": "MEMBER",
+		"competition": "",
+		"extra": "They regularly performed on the streets of Galeem"
+	},
+	{
+		"name": "King",
+		"team": "Black Jacks",
+		"image": "",
+		"color": "",
+		"position": "MEMBER",
+		"competition": "",
+		"extra": ""
+	},
+	{
+		"name": "Kinnowin",
+		"team": "O'rangers",
+		"image": "https://raw.githubusercontent.com/LJS360d/marbles-bot/master/public/assets/marbles/kinnowin.png",
+		"color": "Orange",
+		"position": "CAPTAIN",
+		"competition": "",
+		"extra": ""
+	},
+	{
+		"name": "Lagoon",
+		"team": "Oceanics",
+		"image": "https://raw.githubusercontent.com/LJS360d/marbles-bot/master/public/assets/marbles/lagoon.png",
+		"color": "Dark Blue with Blue Stripes",
+		"position": "COACH",
+		"competition": "",
+		"extra": ""
+	},
+	{
+		"name": "Lamon",
+		"team": "Zesty Lemons",
+		"image": "",
+		"color": "",
+		"position": "MEMBER",
+		"competition": "",
+		"extra": ""
+	},
+	{
+		"name": "Lantana",
+		"team": "Valiant Violets",
+		"image": "https://raw.githubusercontent.com/LJS360d/marbles-bot/master/public/assets/marbles/lantana.png",
+		"color": "Violet with white stripes",
+		"position": "MEMBER",
+		"competition": "",
+		"extra": ""
+	},
+	{
+		"name": "Leaf",
+		"team": "Noxious Ivy",
+		"image": "https://raw.githubusercontent.com/LJS360d/marbles-bot/master/public/assets/marbles/leaf.png",
+		"color": "Green with white stripes",
+		"position": "MEMBER",
+		"competition": "",
+		"extra": ""
+	},
+	{
+		"name": "Leap",
+		"team": "Jungle Jumpers",
+		"image": "https://raw.githubusercontent.com/LJS360d/marbles-bot/master/public/assets/marbles/leap.png",
+		"color": "Green with black stripes",
+		"position": "MEMBER",
+		"competition": "",
+		"extra": ""
+	},
+	{
+		"name": "Lemon",
+		"team": "Zesty Lemons",
+		"image": "",
+		"color": "",
+		"position": "MEMBER",
+		"competition": "",
+		"extra": ""
+	},
+	{
+		"name": "Lemonlime",
+		"team": "Limers",
+		"image": "https://raw.githubusercontent.com/LJS360d/marbles-bot/master/public/assets/marbles/lemonlime.png",
+		"color": "Lime green with white and grey swirls",
+		"position": "MEMBER",
+		"competition": "",
+		"extra": ""
+	},
+	{
+		"name": "Lewis Marbleton",
+		"team": "None",
+		"image": "",
+		"color": "",
+		"position": "Celebrity",
+		"competition": "",
+		"extra": ""
+	},
+	{
+		"name": "Lightning",
+		"team": "Thunderbolts",
+		"image": "https://raw.githubusercontent.com/LJS360d/marbles-bot/master/public/assets/marbles/lightning.png",
+		"color": "Blue with yellow swirls",
+		"position": "MEMBER",
+		"competition": "",
+		"extra": ""
+	},
+	{
+		"name": "Limelight",
+		"team": "Limers",
+		"image": "https://raw.githubusercontent.com/LJS360d/marbles-bot/master/public/assets/marbles/limelight.png",
+		"color": "Lime green with white and light blue swirls",
+		"position": "COACH",
+		"competition": "",
+		"extra": ""
+	},
+	{
+		"name": "Limelime",
+		"team": "Limers",
+		"image": "https://raw.githubusercontent.com/LJS360d/marbles-bot/master/public/assets/marbles/limelime.png",
+		"color": "Lime green with white and grey swirls",
+		"position": "MEMBER",
+		"competition": "",
+		"extra": ""
+	},
+	{
+		"name": "Little",
+		"team": "Strixes",
+		"image": "",
+		"color": "",
+		"position": "MEMBER",
+		"competition": "",
+		"extra": ""
+	},
+	{
+		"name": "Lollipop",
+		"team": "None",
+		"image": "https://raw.githubusercontent.com/LJS360d/marbles-bot/master/public/assets/marbles/lollipop.png",
+		"color": "Yellow, blue and red wavy stripes with a patch of white on one end",
+		"position": "COMPETITOR",
+		"competition": "Marble Rally",
+		"extra": ""
+	},
+	{
+		"name": "Lumon",
+		"team": "Zesty Lemons",
+		"image": "",
+		"color": "",
+		"position": "MEMBER",
+		"competition": "",
+		"extra": ""
+	},
+	{
+		"name": "Madeira",
+		"team": "Valiant Violets",
+		"image": "https://raw.githubusercontent.com/LJS360d/marbles-bot/master/public/assets/marbles/madeira.png",
+		"color": "Violet with white stripes",
+		"position": "MEMBER",
+		"competition": "",
+		"extra": ""
+	},
+	{
+		"name": "Mako",
+		"team": "Bluefastics",
+		"image": "https://raw.githubusercontent.com/LJS360d/marbles-bot/master/public/assets/marbles/mako.png",
+		"color": "Blue with white stripes",
+		"position": "MEMBER",
+		"competition": "",
+		"extra": ""
+	},
+	{
+		"name": "Mallard",
+		"team": "Green Ducks",
+		"image": "https://raw.githubusercontent.com/LJS360d/marbles-bot/master/public/assets/marbles/mallard.png",
+		"color": "Green with black/brown stripes",
+		"position": "CAPTAIN",
+		"competition": "",
+		"extra": ""
+	},
+	{
+		"name": "Mandarin",
+		"team": "O'rangers",
+		"image": "https://raw.githubusercontent.com/LJS360d/marbles-bot/master/public/assets/marbles/mandarin.png",
+		"color": "Orange",
+		"position": "MANAGER",
+		"competition": "",
+		"extra": ""
+	},
+	{
+		"name": "Mango",
+		"team": "Indigo Stars",
+		"image": "",
+		"color": "",
+		"position": "MANAGER",
+		"competition": "",
+		"extra": ""
+	},
+	{
+		"name": "Marbly McMarbleface",
+		"team": "None",
+		"image": "https://raw.githubusercontent.com/LJS360d/marbles-bot/master/public/assets/marbles/marbly_mc_marbleface.png",
+		"color": "Transparent with blue swirls",
+		"position": "COMPETITOR",
+		"competition": "Marble Rally",
+		"extra": ""
+	},
+	{
+		"name": "Marina",
+		"team": "land",
+		"image": "",
+		"color": "",
+		"position": "CO-RULER",
+		"competition": "",
+		"extra": ""
+	},
+	{
+		"name": "Mary",
+		"team": "Team Primary",
+		"image": "https://raw.githubusercontent.com/LJS360d/marbles-bot/master/public/assets/marbles/mary.png",
+		"color": "Yellow with red and blue stripes",
+		"position": "MEMBER",
+		"competition": "",
+		"extra": ""
+	},
+	{
+		"name": "Meepo",
+		"team": "Kobalts",
+		"image": "https://raw.githubusercontent.com/LJS360d/marbles-bot/master/public/assets/marbles/meepo.png",
+		"color": "Blue with light blue swirls",
+		"position": "RESERVE",
+		"competition": "",
+		"extra": ""
+	},
+	{
+		"name": "Melanie",
+		"team": "O'rangers",
+		"image": "",
+		"color": "",
+		"position": "FAN",
+		"competition": "",
+		"extra": ""
+	},
+	{
+		"name": "Mellow",
+		"team": "Mellow Yellow",
+		"image": "https://raw.githubusercontent.com/LJS360d/marbles-bot/master/public/assets/marbles/mellow.png",
+		"color": "Yellow",
+		"position": "COACH",
+		"competition": "",
+		"extra": ""
+	},
+	{
+		"name": "Memo",
+		"team": "Team Momo",
+		"image": "",
+		"color": "",
+		"position": "MANAGER",
+		"competition": "",
+		"extra": ""
+	},
+	{
+		"name": "Mercurial",
+		"team": "Quicksilvers",
+		"image": "https://raw.githubusercontent.com/LJS360d/marbles-bot/master/public/assets/marbles/mercurial.png",
+		"color": "Transparent Silver",
+		"position": "MEMBER",
+		"competition": "",
+		"extra": ""
+	},
+	{
+		"name": "Mimo",
+		"team": "Team Momo",
+		"image": "https://raw.githubusercontent.com/LJS360d/marbles-bot/master/public/assets/marbles/mimo.png",
+		"color": "Dark Green with blue and yellow swirls",
+		"position": "RESERVE",
+		"competition": "",
+		"extra": ""
+	},
+	{
+		"name": "Minty Drizzel",
+		"team": "Minty Maniacs",
+		"image": "https://raw.githubusercontent.com/LJS360d/marbles-bot/master/public/assets/marbles/minty_drizzel.png",
+		"color": "Mint green with blue and brown swirls",
+		"position": "MEMBER",
+		"competition": "",
+		"extra": ""
+	},
+	{
+		"name": "Minty Flav",
+		"team": "Minty Maniacs",
+		"image": "https://raw.githubusercontent.com/LJS360d/marbles-bot/master/public/assets/marbles/minty_flav.png",
+		"color": "Mint green with blue and brown swirls",
+		"position": "MEMBER",
+		"competition": "",
+		"extra": ""
+	},
+	{
+		"name": "Minty Fresh",
+		"team": "Minty Maniacs",
+		"image": "https://raw.githubusercontent.com/LJS360d/marbles-bot/master/public/assets/marbles/minty_fresh.png",
+		"color": "Mint green with blue and brown swirls",
+		"position": "CAPTAIN",
+		"competition": "",
+		"extra": ""
+	},
+	{
+		"name": "Minty Hint",
+		"team": "Minty Maniacs",
+		"image": "https://raw.githubusercontent.com/LJS360d/marbles-bot/master/public/assets/marbles/minty_hint.png",
+		"color": "Mint-green with blue and brown swirls",
+		"position": "COACH",
+		"competition": "",
+		"extra": ""
+	},
+	{
+		"name": "Minty Mint",
+		"team": "Minty Maniacs",
+		"image": "https://raw.githubusercontent.com/LJS360d/marbles-bot/master/public/assets/marbles/minty_mint.png",
+		"color": "Mint green with blue and brown swirls",
+		"position": "RESERVE",
+		"competition": "",
+		"extra": ""
+	},
+	{
+		"name": "Minty Swirl",
+		"team": "Minty Maniacs",
+		"image": "https://raw.githubusercontent.com/LJS360d/marbles-bot/master/public/assets/marbles/minty_swirl.png",
+		"color": "Mint green with blue and brown swirls",
+		"position": "MEMBER",
+		"competition": "",
+		"extra": ""
+	},
+	{
+		"name": "Misty",
+		"team": "Hazers",
+		"image": "https://raw.githubusercontent.com/LJS360d/marbles-bot/master/public/assets/marbles/misty.png",
+		"color": "Smokey gray and white",
+		"position": "CAPTAIN",
+		"competition": "",
+		"extra": ""
+	},
+	{
+		"name": "Mo",
+		"team": "Team Momo",
+		"image": "https://raw.githubusercontent.com/LJS360d/marbles-bot/master/public/assets/marbles/mo.png",
+		"color": "Dark Green with blue and yellow swirls",
+		"position": "MEMBER",
+		"competition": "",
+		"extra": ""
+	},
+	{
+		"name": "Mocha",
+		"team": "Chocolatiers",
+		"image": "https://raw.githubusercontent.com/LJS360d/marbles-bot/master/public/assets/marbles/mocha.png",
+		"color": "Brown with tan stripes",
+		"position": "MEMBER",
+		"competition": "",
+		"extra": ""
+	},
+	{
+		"name": "Mocha Madness",
+		"team": "None",
+		"image": "https://raw.githubusercontent.com/LJS360d/marbles-bot/master/public/assets/marbles/mocha_madness.png",
+		"color": "Tan with dark brown stripes",
+		"position": "COMPETITOR",
+		"competition": "Marble Rally",
+		"extra": ""
+	},
+	{
+		"name": "Momo",
+		"team": "Team Momo",
+		"image": "https://raw.githubusercontent.com/LJS360d/marbles-bot/master/public/assets/marbles/momo.png",
+		"color": "Dark green, blue, yellow",
+		"position": "CAPTAIN",
+		"competition": "",
+		"extra": ""
+	},
+	{
+		"name": "Momomo",
+		"team": "Team Momo",
+		"image": "https://raw.githubusercontent.com/LJS360d/marbles-bot/master/public/assets/marbles/momomo.png",
+		"color": "Dark Green with blue and yellow swirls",
+		"position": "MEMBER",
+		"competition": "",
+		"extra": ""
+	},
+	{
+		"name": "Momomomo",
+		"team": "Team Momo",
+		"image": "https://raw.githubusercontent.com/LJS360d/marbles-bot/master/public/assets/marbles/momomomo.png",
+		"color": "Dark green with blue and yellow swirls",
+		"position": "MEMBER",
+		"competition": "",
+		"extra": ""
+	},
+	{
+		"name": "Momomomomo",
+		"team": "Team Momo",
+		"image": "https://raw.githubusercontent.com/LJS360d/marbles-bot/master/public/assets/marbles/momomomomo.png",
+		"color": "Dark green with blue and yellow swirls",
+		"position": "COACH",
+		"competition": "",
+		"extra": ""
+	},
+	{
+		"name": "Montoya",
+		"team": "Indigo Stars",
+		"image": "https://raw.githubusercontent.com/LJS360d/marbles-bot/master/public/assets/marbles/montoya.png",
+		"color": "Indigo",
+		"position": "RESERVE",
+		"competition": "",
+		"extra": ""
+	},
+	{
+		"name": "Mouthful",
+		"team": "Jawbreakers",
+		"image": "https://raw.githubusercontent.com/LJS360d/marbles-bot/master/public/assets/marbles/mouthful.png",
+		"color": "White with red, blue, and green swirls",
+		"position": "MEMBER",
+		"competition": "",
+		"extra": ""
+	},
+	{
+		"name": "Mrollin",
+		"team": "None",
+		"image": "",
+		"color": "",
+		"position": "COMPOSER",
+		"competition": "",
+		"extra": "Their Third Symphony was notoriously hard to play"
+	},
+	{
+		"name": "Murky",
+		"team": "Hazers",
+		"image": "https://raw.githubusercontent.com/LJS360d/marbles-bot/master/public/assets/marbles/murky.png",
+		"color": "Smokey gray and white",
+		"position": "RESERVE",
+		"competition": "",
+		"extra": ""
+	},
+	{
+		"name": "Navelin",
+		"team": "O'rangers",
+		"image": "",
+		"color": "",
+		"position": "RELATIVE",
+		"competition": "",
+		"extra": ""
+	},
+	{
+		"name": "Nectar",
+		"team": "Bumblebees",
+		"image": "",
+		"color": "",
+		"position": "MANAGER",
+		"competition": "",
+		"extra": ""
+	},
+	{
+		"name": "Nemo",
+		"team": "None",
+		"image": "https://raw.githubusercontent.com/LJS360d/marbles-bot/master/public/assets/marbles/nemo.png",
+		"color": "Orange with black and green swirls",
+		"position": "COMPETITOR",
+		"competition": "Marble Rally",
+		"extra": ""
+	},
+	{
+		"name": "Neptune",
+		"team": "Oceanics",
+		"image": "https://raw.githubusercontent.com/LJS360d/marbles-bot/master/public/assets/marbles/neptune.png",
+		"color": "Dark Blue with Blue Stripes",
+		"position": "COACH",
+		"competition": "",
+		"extra": ""
+	},
+	{
+		"name": "Nix",
+		"team": "Team Phoenix",
+		"image": "https://raw.githubusercontent.com/LJS360d/marbles-bot/master/public/assets/marbles/nix.png",
+		"color": "Yellow with red stripes",
+		"position": "MEMBER",
+		"competition": "",
+		"extra": ""
+	},
+	{
+		"name": "Nixy",
+		"team": "Team Phoenix",
+		"image": "https://raw.githubusercontent.com/LJS360d/marbles-bot/master/public/assets/marbles/nixy.png",
+		"color": "Yellow with red stripes",
+		"position": "MEMBER",
+		"competition": "",
+		"extra": ""
+	},
+	{
+		"name": "Nova",
+		"team": "Wolfpack",
+		"image": "",
+		"color": "Gray with black, white and yellow stripes",
+		"position": "MANAGER",
+		"competition": "",
+		"extra": ""
+	},
+	{
+		"name": "Nox",
+		"team": "Noxious Ivy",
+		"image": "",
+		"color": "",
+		"position": "MANAGER",
+		"competition": "",
+		"extra": ""
+	},
+	{
+		"name": "Ocean",
+		"team": "Oceanics",
+		"image": "https://raw.githubusercontent.com/LJS360d/marbles-bot/master/public/assets/marbles/ocean.png",
+		"color": "Dark blue with blue stripes",
+		"position": "MEMBER",
+		"competition": "",
+		"extra": ""
+	},
+	{
+		"name": "Ocho",
+		"team": "None",
+		"image": "",
+		"color": "",
+		"position": "OWNER",
+		"competition": "",
+		"extra": "is the owner of Ocho's Marble Competitions"
+	},
+	{
+		"name": "Oddball",
+		"team": "None",
+		"image": "https://raw.githubusercontent.com/LJS360d/marbles-bot/master/public/assets/marbles/oddball.png",
+		"color": "Navy blue with light blue and orange swirls",
+		"position": "COMPETITOR",
+		"competition": "Marble Rally",
+		"extra": ""
+	},
+	{
+		"name": "Olympia",
+		"team": "None",
+		"image": "https://raw.githubusercontent.com/LJS360d/marbles-bot/master/public/assets/marbles/olympia.png",
+		"color": "White with brown, blue and red stripes",
+		"position": "COMPETITOR",
+		"competition": "Marble Rally",
+		"extra": ""
+	},
+	{
+		"name": "Orangin",
+		"team": "O'rangers",
+		"image": "https://raw.githubusercontent.com/LJS360d/marbles-bot/master/public/assets/marbles/orangin.png",
+		"color": "Orange",
+		"position": "MEMBER",
+		"competition": "",
+		"extra": ""
+	},
+	{
+		"name": "Orbit",
+		"team": "Purple Rockets",
+		"image": "https://raw.githubusercontent.com/LJS360d/marbles-bot/master/public/assets/marbles/orbit.png",
+		"color": "Violet with white stripes",
+		"position": "CAPTAIN",
+		"competition": "",
+		"extra": ""
+	},
+	{
+		"name": "Orbitball",
+		"team": "JMA",
+		"image": "",
+		"color": "",
+		"position": "HOST",
+		"competition": "",
+		"extra": "In an alternate universe they were a conductor on a train."
+	},
+	{
+		"name": "Orby",
+		"team": "Golden Orbs",
+		"image": "https://raw.githubusercontent.com/LJS360d/marbles-bot/master/public/assets/marbles/orby.png",
+		"color": "Transparent gold with white streaks",
+		"position": "MEMBER",
+		"competition": "",
+		"extra": ""
+	},
+	{
+		"name": "Ounce",
+		"team": "Oceanics",
+		"image": "https://raw.githubusercontent.com/LJS360d/marbles-bot/master/public/assets/marbles/ounce.png",
+		"color": "Dark blue with blue stripes",
+		"position": "RESERVE",
+		"competition": "",
+		"extra": ""
+	},
+	{
+		"name": "Parole",
+		"team": "Green Gang",
+		"image": "",
+		"color": "",
+		"position": "MEMBER",
+		"competition": "",
+		"extra": ""
+	},
+	{
+		"name": "Phanto",
+		"team": "Team Plasma",
+		"image": "https://raw.githubusercontent.com/LJS360d/marbles-bot/master/public/assets/marbles/phanto.png",
+		"color": "Red (2018)Transparent orange-gold with red stripes (2022 - Present)",
+		"position": "MEMBER",
+		"competition": "",
+		"extra": ""
+	},
+	{
+		"name": "Phee",
+		"team": "Team Phoenix",
+		"image": "https://raw.githubusercontent.com/LJS360d/marbles-bot/master/public/assets/marbles/phee.png",
+		"color": "Yellow with red stripes",
+		"position": "MEMBER",
+		"competition": "",
+		"extra": ""
+	},
+	{
+		"name": "Phoenix",
+		"team": "None",
+		"image": "https://raw.githubusercontent.com/LJS360d/marbles-bot/master/public/assets/marbles/phoenix.png",
+		"color": "Yellow with red stripes",
+		"position": "COMPETITOR",
+		"competition": "Marble Rally",
+		"extra": ""
+	},
+	{
+		"name": "Phoeny",
+		"team": "Team Phoenix",
+		"image": "https://raw.githubusercontent.com/LJS360d/marbles-bot/master/public/assets/marbles/phoeny.png",
+		"color": "Yellow with red stripes",
+		"position": "MEMBER",
+		"competition": "",
+		"extra": ""
+	},
+	{
+		"name": "Pi",
+		"team": "Raspberry Racers",
+		"image": "",
+		"color": "",
+		"position": "MANAGER",
+		"competition": "",
+		"extra": ""
+	},
+	{
+		"name": "Pim Leurs",
+		"team": "None",
+		"image": "",
+		"color": "",
+		"position": "GRAPHIC DESIGNER",
+		"competition": "",
+		"extra": "Designed the Marble League logo"
+	},
+	{
+		"name": "Pincer",
+		"team": "Scorpions",
+		"image": "",
+		"color": "",
+		"position": "CAPTAIN",
+		"competition": "",
+		"extra": "After the original team retired, they joined the managing board of the Bug Circuit."
+	},
+	{
+		"name": "Pinky Panther",
+		"team": "Pinkies",
+		"image": "https://raw.githubusercontent.com/LJS360d/marbles-bot/master/public/assets/marbles/pinky_panther.png",
+		"color": "Pink",
+		"position": "MEMBER",
+		"competition": "",
+		"extra": ""
+	},
+	{
+		"name": "Pinky Promise",
+		"team": "Pinkies",
+		"image": "https://raw.githubusercontent.com/LJS360d/marbles-bot/master/public/assets/marbles/pinky_promise.png",
+		"color": "Dark pink with white stripes",
+		"position": "COACH",
+		"competition": "",
+		"extra": ""
+	},
+	{
+		"name": "Pinky Ring",
+		"team": "Pinkies",
+		"image": "",
+		"color": "",
+		"position": "MANAGER",
+		"competition": "",
+		"extra": ""
+	},
+	{
+		"name": "Pinky Rosa",
+		"team": "Pinkies",
+		"image": "https://raw.githubusercontent.com/LJS360d/marbles-bot/master/public/assets/marbles/pinky_rosa.png",
+		"color": "Pink",
+		"position": "MEMBER",
+		"competition": "",
+		"extra": ""
+	},
+	{
+		"name": "Pinky Toe",
+		"team": "Pinkies",
+		"image": "https://raw.githubusercontent.com/LJS360d/marbles-bot/master/public/assets/marbles/pinky_toe.png",
+		"color": "Pink",
+		"position": "CAPTAIN",
+		"competition": "",
+		"extra": ""
+	},
+	{
+		"name": "Pinky Winky",
+		"team": "Pinkies",
+		"image": "https://raw.githubusercontent.com/LJS360d/marbles-bot/master/public/assets/marbles/pinky_winky.png",
+		"color": "Pink",
+		"position": "MEMBER",
+		"competition": "",
+		"extra": ""
+	},
+	{
+		"name": "Pinkydink",
+		"team": "Pinkies",
+		"image": "https://raw.githubusercontent.com/LJS360d/marbles-bot/master/public/assets/marbles/pinkydink.png",
+		"color": "Pink",
+		"position": "RESERVE",
+		"competition": "",
+		"extra": ""
+	},
+	{
+		"name": "Pixie",
+		"team": "Golden Orbs",
+		"image": "https://raw.githubusercontent.com/LJS360d/marbles-bot/master/public/assets/marbles/pixie.png",
+		"color": "Transparent gold with white streaks",
+		"position": "MEMBER",
+		"competition": "",
+		"extra": ""
+	},
+	{
+		"name": "Polar",
+		"team": "Gliding Glaciers",
+		"image": "https://raw.githubusercontent.com/LJS360d/marbles-bot/master/public/assets/marbles/polar.png",
+		"color": "White with light blue and brown swirls",
+		"position": "MEMBER",
+		"competition": "",
+		"extra": ""
+	},
+	{
+		"name": "Pollo Loco",
+		"team": "None",
+		"image": "https://raw.githubusercontent.com/LJS360d/marbles-bot/master/public/assets/marbles/pollo_loco.png",
+		"color": "Yellow with brown and green swirls",
+		"position": "COMPETITOR",
+		"competition": "Marble Rally",
+		"extra": ""
+	},
+	{
+		"name": "Prim",
+		"team": "Team Primary",
+		"image": "https://raw.githubusercontent.com/LJS360d/marbles-bot/master/public/assets/marbles/prim.png",
+		"color": "Yellow with red and blue stripes",
+		"position": "RESERVE",
+		"competition": "",
+		"extra": ""
+	},
+	{
+		"name": "Pulsar",
+		"team": "Team Galactic",
+		"image": "https://raw.githubusercontent.com/LJS360d/marbles-bot/master/public/assets/marbles/pulsar.png",
+		"color": "Transparent with brown and silver ribbons",
+		"position": "MEMBER",
+		"competition": "",
+		"extra": ""
+	},
+	{
+		"name": "Pygmy",
+		"team": "Strixes",
+		"image": "https://raw.githubusercontent.com/LJS360d/marbles-bot/master/public/assets/marbles/pygmy.png",
+		"color": "Tan with brown stripes",
+		"position": "RESERVE",
+		"competition": "",
+		"extra": ""
+	},
+	{
+		"name": "Python",
+		"team": "Constrictors",
+		"image": "https://raw.githubusercontent.com/LJS360d/marbles-bot/master/public/assets/marbles/python.png",
+		"color": "Yellow with black and red stripes",
+		"position": "MEMBER",
+		"competition": "",
+		"extra": ""
+	},
+	{
+		"name": "Quacky",
+		"team": "Green Ducks",
+		"image": "https://raw.githubusercontent.com/LJS360d/marbles-bot/master/public/assets/marbles/quacky.png",
+		"color": "Green with black/brown stripes",
+		"position": "MEMBER",
+		"competition": "",
+		"extra": ""
+	},
+	{
+		"name": "Quasar",
+		"team": "Team Galactic",
+		"image": "https://raw.githubusercontent.com/LJS360d/marbles-bot/master/public/assets/marbles/quasar.png",
+		"color": "Transparent with brown and silver ribbons",
+		"position": "RESERVE",
+		"competition": "",
+		"extra": ""
+	},
+	{
+		"name": "Queen",
+		"team": "Bumblebees",
+		"image": "https://raw.githubusercontent.com/LJS360d/marbles-bot/master/public/assets/marbles/queen.png",
+		"color": "Yellow with brown stripes",
+		"position": "COACH",
+		"competition": "",
+		"extra": ""
+	},
+	{
+		"name": "Quickly",
+		"team": "Savage Speeders",
+		"image": "https://raw.githubusercontent.com/LJS360d/marbles-bot/master/public/assets/marbles/quickly.png",
+		"color": "Red and white",
+		"position": "COACH",
+		"competition": "",
+		"extra": ""
+	},
+	{
+		"name": "Quicksilver",
+		"team": "None",
+		"image": "https://raw.githubusercontent.com/LJS360d/marbles-bot/master/public/assets/marbles/quicksilver.png",
+		"color": "Transparent with white center",
+		"position": "COMPETITOR",
+		"competition": "Marble Rally",
+		"extra": ""
+	},
+	{
+		"name": "Quix",
+		"team": "Quicksilvers",
+		"image": "https://raw.githubusercontent.com/LJS360d/marbles-bot/master/public/assets/marbles/quix.png",
+		"color": "Transparent Silver",
+		"position": "MEMBER",
+		"competition": "",
+		"extra": ""
+	},
+	{
+		"name": "Radiance",
+		"team": "Solar Flares",
+		"image": "https://raw.githubusercontent.com/LJS360d/marbles-bot/master/public/assets/marbles/radiance.png",
+		"color": "Red-orange with navy blue and yellow stripes",
+		"position": "MEMBER",
+		"competition": "",
+		"extra": ""
+	},
+	{
+		"name": "Rango",
+		"team": "O'rangers",
+		"image": "https://raw.githubusercontent.com/LJS360d/marbles-bot/master/public/assets/marbles/rango.png",
+		"color": "Orange",
+		"position": "COACH",
+		"competition": "",
+		"extra": ""
+	},
+	{
+		"name": "Rapidly",
+		"team": "Savage Speeders",
+		"image": "https://raw.githubusercontent.com/LJS360d/marbles-bot/master/public/assets/marbles/rapidly.png",
+		"color": "Red, white and yellow",
+		"position": "MEMBER",
+		"competition": "",
+		"extra": ""
+	},
+	{
+		"name": "Rastafarian",
+		"team": "None",
+		"image": "https://raw.githubusercontent.com/LJS360d/marbles-bot/master/public/assets/marbles/rastafarian.png",
+		"color": "White with red, green and yellow swirls",
+		"position": "COMPETITOR",
+		"competition": "Marble Rally",
+		"extra": ""
+	},
+	{
+		"name": "Rattler",
+		"team": "Green Gang",
+		"image": "",
+		"color": "",
+		"position": "MEMBER",
+		"competition": "",
+		"extra": ""
+	},
+	{
+		"name": "Razzy",
+		"team": "Raspberry Racers",
+		"image": "https://raw.githubusercontent.com/LJS360d/marbles-bot/master/public/assets/marbles/razzy.png",
+		"color": "Magenta with pink stripes",
+		"position": "CAPTAIN",
+		"competition": "",
+		"extra": ""
+	},
+	{
+		"name": "Red Eye",
+		"team": "Crazy Cat's Eyes",
+		"image": "https://raw.githubusercontent.com/LJS360d/marbles-bot/master/public/assets/marbles/red_eye.png",
+		"color": "Transparent with a red center",
+		"position": "CAPTAIN",
+		"competition": "",
+		"extra": ""
+	},
+	{
+		"name": "Red Number 3",
+		"team": "None",
+		"image": "https://raw.githubusercontent.com/LJS360d/marbles-bot/master/public/assets/marbles/red_number_3.png",
+		"color": "Solid red with a white circle and a black \"3\"",
+		"position": "COMPETITOR",
+		"competition": "Marble Rally",
+		"extra": ""
+	},
+	{
+		"name": "Red Tarantula",
+		"team": "None",
+		"image": "https://raw.githubusercontent.com/LJS360d/marbles-bot/master/public/assets/marbles/red_tarantula.png",
+		"color": "Solid maroon",
+		"position": "COMPETITOR",
+		"competition": "Marble Rally",
+		"extra": ""
+	},
+	{
+		"name": "Reef",
+		"team": "Oceanics",
+		"image": "",
+		"color": "",
+		"position": "MANAGER",
+		"competition": "",
+		"extra": ""
+	},
+	{
+		"name": "Reflektor",
+		"team": "None",
+		"image": "https://raw.githubusercontent.com/LJS360d/marbles-bot/master/public/assets/marbles/reflektor.png",
+		"color": "Metallic purple/maroon",
+		"position": "COMPETITOR",
+		"competition": "Marble Rally",
+		"extra": ""
+	},
+	{
+		"name": "Remus",
+		"team": "Wolfpack",
+		"image": "https://raw.githubusercontent.com/LJS360d/marbles-bot/master/public/assets/marbles/remus.png",
+		"color": "Gray with black, white and yellow stripes",
+		"position": "MEMBER",
+		"competition": "",
+		"extra": ""
+	},
+	{
+		"name": "Rezzy",
+		"team": "Raspberry Racers",
+		"image": "https://raw.githubusercontent.com/LJS360d/marbles-bot/master/public/assets/marbles/rezzy.png",
+		"color": "Magenta with pink stripes",
+		"position": "MEMBER",
+		"competition": "",
+		"extra": ""
+	},
+	{
+		"name": "Rick O'Shea",
+		"team": "None",
+		"image": "https://raw.githubusercontent.com/LJS360d/marbles-bot/master/public/assets/marbles/rick_o'_shea.png",
+		"color": "Orange with a purple flower",
+		"position": "REPORTER",
+		"competition": "",
+		"extra": ""
+	},
+	{
+		"name": "Rima",
+		"team": "Team Primary",
+		"image": "https://raw.githubusercontent.com/LJS360d/marbles-bot/master/public/assets/marbles/rima.png",
+		"color": "Yellow with red and blue stripes",
+		"position": "MEMBER",
+		"competition": "",
+		"extra": ""
+	},
+	{
+		"name": "Ringo",
+		"team": "Indigo Stars",
+		"image": "https://raw.githubusercontent.com/LJS360d/marbles-bot/master/public/assets/marbles/ringo.png",
+		"color": "Transparent with indigo center",
+		"position": "COACH",
+		"competition": "",
+		"extra": ""
+	},
+	{
+		"name": "Rizzy",
+		"team": "Raspberry Racers",
+		"image": "https://raw.githubusercontent.com/LJS360d/marbles-bot/master/public/assets/marbles/rizzy.png",
+		"color": "Magenta with pink stripes",
+		"position": "MEMBER",
+		"competition": "",
+		"extra": ""
+	},
+	{
+		"name": "Rocket",
+		"team": "Purple Rockets",
+		"image": "https://raw.githubusercontent.com/LJS360d/marbles-bot/master/public/assets/marbles/rocket.png",
+		"color": "Violet with white stripes",
+		"position": "COACH",
+		"competition": "",
+		"extra": ""
+	},
+	{
+		"name": "Rojo Cero",
+		"team": "Rojo Rollers",
+		"image": "https://raw.githubusercontent.com/LJS360d/marbles-bot/master/public/assets/marbles/rojo_cero.png",
+		"color": "Red with blue and brown swirls",
+		"position": "COACH",
+		"competition": "",
+		"extra": ""
+	},
+	{
+		"name": "Rojo Cinco",
+		"team": "Rojo Rollers",
+		"image": "https://raw.githubusercontent.com/LJS360d/marbles-bot/master/public/assets/marbles/rojo_cinco.png",
+		"color": "Red with blue/brown stripes",
+		"position": "MEMBER",
+		"competition": "",
+		"extra": ""
+	},
+	{
+		"name": "Rojo Cuatro",
+		"team": "Rojo Rollers",
+		"image": "https://raw.githubusercontent.com/LJS360d/marbles-bot/master/public/assets/marbles/rojo_cuatro.png",
+		"color": "Red with blue/brown stripes",
+		"position": "MEMBER",
+		"competition": "",
+		"extra": ""
+	},
+	{
+		"name": "Rojo Dos",
+		"team": "Rojo Rollers",
+		"image": "https://raw.githubusercontent.com/LJS360d/marbles-bot/master/public/assets/marbles/rojo_dos.png",
+		"color": "Red with blue/brown stripes",
+		"position": "MEMBER",
+		"competition": "",
+		"extra": ""
+	},
+	{
+		"name": "Rojo Macho",
+		"team": "Rojo Rollers",
+		"image": "",
+		"color": "",
+		"position": "MANAGER",
+		"competition": "",
+		"extra": ""
+	},
+	{
+		"name": "Rojo Oro",
+		"team": "Rojo Rollers",
+		"image": "https://raw.githubusercontent.com/LJS360d/marbles-bot/master/public/assets/marbles/rojo_oro.png",
+		"color": "Red with blue/brown stripes",
+		"position": "COACH",
+		"competition": "",
+		"extra": ""
+	},
+	{
+		"name": "Rojo Tres",
+		"team": "Rojo Rollers",
+		"image": "https://raw.githubusercontent.com/LJS360d/marbles-bot/master/public/assets/marbles/rojo_tres.png",
+		"color": "Red with blue/brown stripes",
+		"position": "MEMBER",
+		"competition": "",
+		"extra": ""
+	},
+	{
+		"name": "Rojo Uno",
+		"team": "Rojo Rollers",
+		"image": "https://raw.githubusercontent.com/LJS360d/marbles-bot/master/public/assets/marbles/rojo_uno.png",
+		"color": "Red with blue/brown stripes",
+		"position": "CAPTAIN",
+		"competition": "",
+		"extra": ""
+	},
+	{
+		"name": "Roldo",
+		"team": "None",
+		"image": "https://raw.githubusercontent.com/LJS360d/marbles-bot/master/public/assets/marbles/roldo.png",
+		"color": "Red, yellow, and white stripes on a dark blue base",
+		"position": "HIDDEN",
+		"competition": "",
+		"extra": ""
+	},
+	{
+		"name": "Rolla",
+		"team": "Ruby Rollers",
+		"image": "https://raw.githubusercontent.com/LJS360d/marbles-bot/master/public/assets/marbles/rolla.png",
+		"color": "Red with white stripes",
+		"position": "MEMBER",
+		"competition": "",
+		"extra": ""
+	},
+	{
+		"name": "Rollew",
+		"team": "Ruby Rollers",
+		"image": "https://raw.githubusercontent.com/LJS360d/marbles-bot/master/public/assets/marbles/rollew.png",
+		"color": "Red with white stripes",
+		"position": "MEMBER",
+		"competition": "",
+		"extra": ""
+	},
+	{
+		"name": "Rollo",
+		"team": "Ruby Rollers",
+		"image": "https://raw.githubusercontent.com/LJS360d/marbles-bot/master/public/assets/marbles/rollo.png",
+		"color": "Red with white stripes",
+		"position": "MEMBER",
+		"competition": "",
+		"extra": ""
+	},
+	{
+		"name": "Rolly",
+		"team": "Ruby Rollers",
+		"image": "https://raw.githubusercontent.com/LJS360d/marbles-bot/master/public/assets/marbles/rolly.png",
+		"color": "Red with white stripes",
+		"position": "MEMBER",
+		"competition": "",
+		"extra": ""
+	},
+	{
+		"name": "Rose",
+		"team": "None",
+		"image": "",
+		"color": "",
+		"position": "SIBLING",
+		"competition": "",
+		"extra": "is the older sibling of Prim and Mary and is an art connoisseur."
+	},
+	{
+		"name": "Royal",
+		"team": "Kobalts",
+		"image": "https://raw.githubusercontent.com/LJS360d/marbles-bot/master/public/assets/marbles/royal.png",
+		"color": "Blue with light blue swirls",
+		"position": "CAPTAIN",
+		"competition": "",
+		"extra": ""
+	},
+	{
+		"name": "Rozzy",
+		"team": "Raspberry Racers",
+		"image": "https://raw.githubusercontent.com/LJS360d/marbles-bot/master/public/assets/marbles/rozzy.png",
+		"color": "Magenta with pink stripes",
+		"position": "MEMBER",
+		"competition": "",
+		"extra": ""
+	},
+	{
+		"name": "Ruzzy",
+		"team": "Raspberry Racers",
+		"image": "https://raw.githubusercontent.com/LJS360d/marbles-bot/master/public/assets/marbles/ruzzy.png",
+		"color": "Magenta with pink stripes",
+		"position": "RESERVE",
+		"competition": "",
+		"extra": ""
+	},
+	{
+		"name": "Rypr",
+		"team": "Team Primary",
+		"image": "",
+		"color": "",
+		"position": "MANAGER",
+		"competition": "",
+		"extra": ""
+	},
+	{
+		"name": "Safety Marble",
+		"team": "stuck marbles in Marbula One",
+		"image": "",
+		"color": "",
+		"position": "RELEASE",
+		"competition": "",
+		"extra": ""
+	},
+	{
+		"name": "Salvia",
+		"team": "Valiant Violets",
+		"image": "https://raw.githubusercontent.com/LJS360d/marbles-bot/master/public/assets/marbles/salvia.png",
+		"color": "Violet with white stripes",
+		"position": "MEMBER",
+		"competition": "",
+		"extra": ""
+	},
+	{
+		"name": "Sapphire",
+		"team": "Kobalts",
+		"image": "https://raw.githubusercontent.com/LJS360d/marbles-bot/master/public/assets/marbles/sapphire.png",
+		"color": "Blue with light blue swirls",
+		"position": "MEMBER",
+		"competition": "",
+		"extra": ""
+	},
+	{
+		"name": "Saucer",
+		"team": "Purple Rockets",
+		"image": "https://raw.githubusercontent.com/LJS360d/marbles-bot/master/public/assets/marbles/saucer.png",
+		"color": "Violet with white stripes",
+		"position": "MEMBER",
+		"competition": "",
+		"extra": ""
+	},
+	{
+		"name": "Savvy",
+		"team": "Savage Speeders",
+		"image": "",
+		"color": "",
+		"position": "MANAGER",
+		"competition": "",
+		"extra": ""
+	},
+	{
+		"name": "Scops",
+		"team": "Strixes",
+		"image": "https://raw.githubusercontent.com/LJS360d/marbles-bot/master/public/assets/marbles/scops.png",
+		"color": "Tan with brown stripes",
+		"position": "COACH",
+		"competition": "",
+		"extra": ""
+	},
+	{
+		"name": "Scorch",
+		"team": "Solar Flares",
+		"image": "https://raw.githubusercontent.com/LJS360d/marbles-bot/master/public/assets/marbles/scorch.png",
+		"color": "Red-orange with navy blue and yellow stripes",
+		"position": "MEMBER",
+		"competition": "",
+		"extra": ""
+	},
+	{
+		"name": "Screech",
+		"team": "Strixes",
+		"image": "https://raw.githubusercontent.com/LJS360d/marbles-bot/master/public/assets/marbles/screech.png",
+		"color": "Tan with brown stripes",
+		"position": "MEMBER",
+		"competition": "",
+		"extra": ""
+	},
+	{
+		"name": "Sea",
+		"team": "Oceanics",
+		"image": "https://raw.githubusercontent.com/LJS360d/marbles-bot/master/public/assets/marbles/sea.png",
+		"color": "Dark blue with blue stripes",
+		"position": "CAPTAIN",
+		"competition": "",
+		"extra": ""
+	},
+	{
+		"name": "Secondary",
+		"team": "Team Primary",
+		"image": "https://raw.githubusercontent.com/LJS360d/marbles-bot/master/public/assets/marbles/secondary.png",
+		"color": "Yellow with red and blue swirls",
+		"position": "COACH",
+		"competition": "",
+		"extra": ""
+	},
+	{
+		"name": "Serpent",
+		"team": "Constrictors",
+		"image": "",
+		"color": "",
+		"position": "MANAGER",
+		"competition": "",
+		"extra": ""
+	},
+	{
+		"name": "Sevillin",
+		"team": "O'rangers",
+		"image": "",
+		"color": "",
+		"position": "RELATIVE",
+		"competition": "",
+		"extra": ""
+	},
+	{
+		"name": "Shade",
+		"team": "Hazers",
+		"image": "",
+		"color": "",
+		"position": "MANAGER",
+		"competition": "",
+		"extra": ""
+	},
+	{
+		"name": "Sheen",
+		"team": "Shining Swarm",
+		"image": "",
+		"color": "",
+		"position": "MANAGER",
+		"competition": "",
+		"extra": ""
+	},
+	{
+		"name": "Sheep",
+		"team": "Wolfpack",
+		"image": "https://raw.githubusercontent.com/LJS360d/marbles-bot/master/public/assets/marbles/sheep.png",
+		"color": "Gray with black, white and yellow stripes",
+		"position": "RESERVE",
+		"competition": "",
+		"extra": ""
+	},
+	{
+		"name": "Sheet",
+		"team": "Gliding Glaciers",
+		"image": "https://raw.githubusercontent.com/LJS360d/marbles-bot/master/public/assets/marbles/sheet.png",
+		"color": "White with light blue and brown swirls",
+		"position": "RESERVE",
+		"competition": "",
+		"extra": ""
+	},
+	{
+		"name": "Sheev",
+		"team": "Sheet",
+		"image": "",
+		"color": "",
+		"position": "COUSIN",
+		"competition": "",
+		"extra": ""
+	},
+	{
+		"name": "Shelly",
+		"team": "Turtle Sliders",
+		"image": "https://raw.githubusercontent.com/LJS360d/marbles-bot/master/public/assets/marbles/shelly.png",
+		"color": "Blue with yellow and brown stripes",
+		"position": "MEMBER",
+		"competition": "",
+		"extra": ""
+	},
+	{
+		"name": "Shimmer",
+		"team": "Shining Swarm",
+		"image": "https://raw.githubusercontent.com/LJS360d/marbles-bot/master/public/assets/marbles/shimmer.png",
+		"color": "Silver with green and blue stripes",
+		"position": "MEMBER",
+		"competition": "",
+		"extra": ""
+	},
+	{
+		"name": "Shiny",
+		"team": "Shining Swarm",
+		"image": "https://raw.githubusercontent.com/LJS360d/marbles-bot/master/public/assets/marbles/shiny.png",
+		"color": "Silver with green and blue stripes",
+		"position": "CAPTAIN",
+		"competition": "",
+		"extra": ""
+	},
+	{
+		"name": "Shock",
+		"team": "Thunderbolts",
+		"image": "https://raw.githubusercontent.com/LJS360d/marbles-bot/master/public/assets/marbles/shock.png",
+		"color": "Blue with yellow swirls",
+		"position": "MEMBER",
+		"competition": "",
+		"extra": ""
+	},
+	{
+		"name": "Shore",
+		"team": "Oceanics",
+		"image": "https://raw.githubusercontent.com/LJS360d/marbles-bot/master/public/assets/marbles/shore.png",
+		"color": "Dark blue with blue stripes",
+		"position": "MEMBER",
+		"competition": "",
+		"extra": ""
+	},
+	{
+		"name": "Shuttle",
+		"team": "Purple Rockets",
+		"image": "",
+		"color": "",
+		"position": "MANAGER",
+		"competition": "",
+		"extra": ""
+	},
+	{
+		"name": "Silver Bolt",
+		"team": "None",
+		"image": "https://raw.githubusercontent.com/LJS360d/marbles-bot/master/public/assets/marbles/silver_bolt.png",
+		"color": "Silver with red and navy blue swirls",
+		"position": "COMPETITOR",
+		"competition": "Marble Rally",
+		"extra": ""
+	},
+	{
+		"name": "Silvery",
+		"team": "Quicksilvers",
+		"image": "https://raw.githubusercontent.com/LJS360d/marbles-bot/master/public/assets/marbles/silvery.png",
+		"color": "Transparent Silver",
+		"position": "MEMBER",
+		"competition": "",
+		"extra": ""
+	},
+	{
+		"name": "Sirius",
+		"team": "Wolfpack",
+		"image": "https://raw.githubusercontent.com/LJS360d/marbles-bot/master/public/assets/marbles/sirius.png",
+		"color": "Gray with black, white and yellow stripes",
+		"position": "MEMBER",
+		"competition": "",
+		"extra": ""
+	},
+	{
+		"name": "Skip",
+		"team": "Jungle Jumpers",
+		"image": "https://raw.githubusercontent.com/LJS360d/marbles-bot/master/public/assets/marbles/skip.png",
+		"color": "Green with black stripes",
+		"position": "MEMBER",
+		"competition": "",
+		"extra": ""
+	},
+	{
+		"name": "Slimelime",
+		"team": "Limers",
+		"image": "https://raw.githubusercontent.com/LJS360d/marbles-bot/master/public/assets/marbles/slimelime.png",
+		"color": "Lime green with white and grey swirls",
+		"position": "RESERVE",
+		"competition": "",
+		"extra": ""
+	},
+	{
+		"name": "Slimer",
+		"team": "None",
+		"image": "https://raw.githubusercontent.com/LJS360d/marbles-bot/master/public/assets/marbles/slimer.png",
+		"color": "Dark green",
+		"position": "COMPETITOR",
+		"competition": "Marble Rally",
+		"extra": ""
+	},
+	{
+		"name": "Smoggy",
+		"team": "Hazers",
+		"image": "https://raw.githubusercontent.com/LJS360d/marbles-bot/master/public/assets/marbles/smoggy.png",
+		"color": "Smokey gray and white",
+		"position": "MEMBER",
+		"competition": "",
+		"extra": ""
+	},
+	{
+		"name": "Smokey",
+		"team": "Hazers",
+		"image": "https://raw.githubusercontent.com/LJS360d/marbles-bot/master/public/assets/marbles/smokey.png",
+		"color": "Smokey blue and white",
+		"position": "COACH",
+		"competition": "",
+		"extra": ""
+	},
+	{
+		"name": "Snake's Tub",
+		"team": "None",
+		"image": "https://raw.githubusercontent.com/LJS360d/marbles-bot/master/public/assets/marbles/snake's_tub.png",
+		"color": "Transparent with yellow, orange and brown stripes",
+		"position": "COMPETITOR",
+		"competition": "Marble Rally",
+		"extra": ""
+	},
+	{
+		"name": "Snarl",
+		"team": "Balls of Chaos",
+		"image": "https://raw.githubusercontent.com/LJS360d/marbles-bot/master/public/assets/marbles/snarl.png",
+		"color": "Clear with yellow, red & blue stripes",
+		"position": "RESERVE",
+		"competition": "",
+		"extra": ""
+	},
+	{
+		"name": "Snow",
+		"team": "Snowballs",
+		"image": "https://raw.githubusercontent.com/LJS360d/marbles-bot/master/public/assets/marbles/snow.png",
+		"color": "White",
+		"position": "MEMBER",
+		"competition": "",
+		"extra": ""
+	},
+	{
+		"name": "Snowblast",
+		"team": "Snowballs",
+		"image": "https://raw.githubusercontent.com/LJS360d/marbles-bot/master/public/assets/marbles/snowblast.png",
+		"color": "White",
+		"position": "RESERVE",
+		"competition": "",
+		"extra": ""
+	},
+	{
+		"name": "Snowdrift",
+		"team": "Snowballs",
+		"image": "https://raw.githubusercontent.com/LJS360d/marbles-bot/master/public/assets/marbles/snowdrift.png",
+		"color": "White",
+		"position": "MEMBER",
+		"competition": "",
+		"extra": ""
+	},
+	{
+		"name": "Snowfall",
+		"team": "Snowballs",
+		"image": "https://raw.githubusercontent.com/LJS360d/marbles-bot/master/public/assets/marbles/snowfall.png",
+		"color": "White",
+		"position": "MEMBER",
+		"competition": "",
+		"extra": ""
+	},
+	{
+		"name": "Snowflake",
+		"team": "Snowballs",
+		"image": "https://raw.githubusercontent.com/LJS360d/marbles-bot/master/public/assets/marbles/snowflake.png",
+		"color": "White",
+		"position": "MEMBER",
+		"competition": "",
+		"extra": ""
+	},
+	{
+		"name": "Snowstorm",
+		"team": "Snowballs",
+		"image": "https://raw.githubusercontent.com/LJS360d/marbles-bot/master/public/assets/marbles/snowstorm.png",
+		"color": "White",
+		"position": "MEMBER",
+		"competition": "",
+		"extra": ""
+	},
+	{
+		"name": "Snowy",
+		"team": "Snowballs",
+		"image": "https://raw.githubusercontent.com/LJS360d/marbles-bot/master/public/assets/marbles/snowy.png",
+		"color": "White",
+		"position": "CAPTAIN",
+		"competition": "",
+		"extra": ""
+	},
+	{
+		"name": "Souless Wonder",
+		"team": "None",
+		"image": "https://raw.githubusercontent.com/LJS360d/marbles-bot/master/public/assets/marbles/souless_wonder.png",
+		"color": "",
+		"position": "COMPETITOR",
+		"competition": "Sand Rally",
+		"extra": ""
+	},
+	{
+		"name": "Spade",
+		"team": "Black Jacks",
+		"image": "https://raw.githubusercontent.com/LJS360d/marbles-bot/master/public/assets/marbles/spade.png",
+		"color": "Black",
+		"position": "MEMBER",
+		"competition": "",
+		"extra": ""
+	},
+	{
+		"name": "Sparkle",
+		"team": "Shining Swarm",
+		"image": "https://raw.githubusercontent.com/LJS360d/marbles-bot/master/public/assets/marbles/sparkle.png",
+		"color": "Silver with green and blue stripes",
+		"position": "RESERVE",
+		"competition": "",
+		"extra": ""
+	},
+	{
+		"name": "Spearmint",
+		"team": "Minty Maniacs",
+		"image": "",
+		"color": "",
+		"position": "MANAGER",
+		"competition": "",
+		"extra": ""
+	},
+	{
+		"name": "Specs",
+		"team": "Strixes",
+		"image": "https://raw.githubusercontent.com/LJS360d/marbles-bot/master/public/assets/marbles/specs.png",
+		"color": "Tan with brown stripes",
+		"position": "MEMBER",
+		"competition": "",
+		"extra": ""
+	},
+	{
+		"name": "Speedy",
+		"team": "Savage Speeders",
+		"image": "https://raw.githubusercontent.com/LJS360d/marbles-bot/master/public/assets/marbles/speedy.png",
+		"color": "Red, white and yellow",
+		"position": "CAPTAIN",
+		"competition": "",
+		"extra": ""
+	},
+	{
+		"name": "Speny",
+		"team": "The Bourne Network's Marble Games They live in Old Zeldan",
+		"image": "",
+		"color": "",
+		"position": "MANAGER",
+		"competition": "",
+		"extra": ""
+	},
+	{
+		"name": "Spirit",
+		"team": "Golden Orbs",
+		"image": "https://raw.githubusercontent.com/LJS360d/marbles-bot/master/public/assets/marbles/spirit.png",
+		"color": "Transparent gold with white streaks",
+		"position": "MEMBER",
+		"competition": "",
+		"extra": ""
+	},
+	{
+		"name": "Splint",
+		"team": "Turtle Sliders",
+		"image": "https://raw.githubusercontent.com/LJS360d/marbles-bot/master/public/assets/marbles/splint.png",
+		"color": "Blue with Yellow and Brown Stripes",
+		"position": "COACH",
+		"competition": "",
+		"extra": ""
+	},
+	{
+		"name": "Squirt",
+		"team": "Turtle Sliders",
+		"image": "https://raw.githubusercontent.com/LJS360d/marbles-bot/master/public/assets/marbles/squirt.png",
+		"color": "Blue with yellow and brown stripes",
+		"position": "MEMBER",
+		"competition": "",
+		"extra": ""
+	},
+	{
+		"name": "Stardust",
+		"team": "land of Team Galactic",
+		"image": "https://raw.githubusercontent.com/LJS360d/marbles-bot/master/public/assets/marbles/stardust.png",
+		"color": "Silver",
+		"position": "LEADER",
+		"competition": "",
+		"extra": ""
+	},
+	{
+		"name": "Starman",
+		"team": "None",
+		"image": "https://raw.githubusercontent.com/LJS360d/marbles-bot/master/public/assets/marbles/starman.png",
+		"color": "Black with white speckles",
+		"position": "COMPETITOR",
+		"competition": "Marble Rally",
+		"extra": ""
+	},
+	{
+		"name": "Starry",
+		"team": "Team Galactic",
+		"image": "https://raw.githubusercontent.com/LJS360d/marbles-bot/master/public/assets/marbles/starry.png",
+		"color": "Transparent with brown and silver ribbons",
+		"position": "MEMBER",
+		"competition": "",
+		"extra": ""
+	},
+	{
+		"name": "Static",
+		"team": "Thunderbolts",
+		"image": "",
+		"color": "",
+		"position": "MANAGER",
+		"competition": "",
+		"extra": ""
+	},
+	{
+		"name": "Stem",
+		"team": "Noxious Ivy",
+		"image": "https://raw.githubusercontent.com/LJS360d/marbles-bot/master/public/assets/marbles/stem.png",
+		"color": "Green with white stripes",
+		"position": "MEMBER",
+		"competition": "",
+		"extra": ""
+	},
+	{
+		"name": "Sterling",
+		"team": "Shining Swarm",
+		"image": "https://raw.githubusercontent.com/LJS360d/marbles-bot/master/public/assets/marbles/sterling.png",
+		"color": "Silver with green and blue stripes",
+		"position": "MEMBER",
+		"competition": "",
+		"extra": ""
+	},
+	{
+		"name": "Stinger",
+		"team": "Bumblebees, former captain",
+		"image": "https://raw.githubusercontent.com/LJS360d/marbles-bot/master/public/assets/marbles/stinger.png",
+		"color": "Black with yellow stripes",
+		"position": "MEMBER",
+		"competition": "",
+		"extra": ""
+	},
+	{
+		"name": "Sublime",
+		"team": "Limers",
+		"image": "https://raw.githubusercontent.com/LJS360d/marbles-bot/master/public/assets/marbles/sublime.png",
+		"color": "Lime green with white, blue and grey swirls",
+		"position": "CAPTAIN",
+		"competition": "",
+		"extra": ""
+	},
+	{
+		"name": "Sugar",
+		"team": "Jawbreakers",
+		"image": "https://raw.githubusercontent.com/LJS360d/marbles-bot/master/public/assets/marbles/sugar.png",
+		"color": "White with red, blue, and green swirls",
+		"position": "MEMBER",
+		"competition": "",
+		"extra": ""
+	},
+	{
+		"name": "Sulfur",
+		"team": "Purple Rockets",
+		"image": "https://raw.githubusercontent.com/LJS360d/marbles-bot/master/public/assets/marbles/sulfur.png",
+		"color": "Violet with white stripes",
+		"position": "MEMBER",
+		"competition": "",
+		"extra": ""
+	},
+	{
+		"name": "Summer Sky",
+		"team": "None",
+		"image": "https://raw.githubusercontent.com/LJS360d/marbles-bot/master/public/assets/marbles/summer_sky.png",
+		"color": "Blue with light blue swirls",
+		"position": "COMPETITOR",
+		"competition": "Marble Rally",
+		"extra": ""
+	},
+	{
+		"name": "Superball",
+		"team": "None",
+		"image": "https://raw.githubusercontent.com/LJS360d/marbles-bot/master/public/assets/marbles/superball.png",
+		"color": "Soccer ball pattern",
+		"position": "COMPETITOR",
+		"competition": "Marble Rally",
+		"extra": ""
+	},
+	{
+		"name": "SuperJackJack",
+		"team": "Super JackJack's Marble Games",
+		"image": "",
+		"color": "",
+		"position": "HOST",
+		"competition": "",
+		"extra": ""
+	},
+	{
+		"name": "Supernova",
+		"team": "None",
+		"image": "",
+		"color": "",
+		"position": "COMPETITOR",
+		"competition": "Sand Rally",
+		"extra": ""
+	},
+	{
+		"name": "Swarm",
+		"team": "Hornets",
+		"image": "https://raw.githubusercontent.com/LJS360d/marbles-bot/master/public/assets/marbles/swarm.png",
+		"color": "Black with Yellow stripes",
+		"position": "COACH",
+		"competition": "",
+		"extra": ""
+	},
+	{
+		"name": "Swax",
+		"team": "Bumblebees",
+		"image": "https://raw.githubusercontent.com/LJS360d/marbles-bot/master/public/assets/marbles/swax.png",
+		"color": "Yellow with brown stripes",
+		"position": "RESERVE",
+		"competition": "",
+		"extra": ""
+	},
+	{
+		"name": "Sweet",
+		"team": "Jawbreakers",
+		"image": "https://raw.githubusercontent.com/LJS360d/marbles-bot/master/public/assets/marbles/sweet.png",
+		"color": "White with red, blue, and green swirls",
+		"position": "MEMBER",
+		"competition": "",
+		"extra": ""
+	},
+	{
+		"name": "Swifty",
+		"team": "Savage Speeders",
+		"image": "https://raw.githubusercontent.com/LJS360d/marbles-bot/master/public/assets/marbles/swifty.png",
+		"color": "Red and white",
+		"position": "MEMBER",
+		"competition": "",
+		"extra": ""
+	},
+	{
+		"name": "Taffy",
+		"team": "Jawbreakers",
+		"image": "https://raw.githubusercontent.com/LJS360d/marbles-bot/master/public/assets/marbles/taffy.png",
+		"color": "White with red, blue, and green swirls",
+		"position": "MEMBER",
+		"competition": "",
+		"extra": ""
+	},
+	{
+		"name": "Tangerin",
+		"team": "O'rangers",
+		"image": "https://raw.githubusercontent.com/LJS360d/marbles-bot/master/public/assets/marbles/tangerin.png",
+		"color": "Orange",
+		"position": "RESERVE",
+		"competition": "",
+		"extra": ""
+	},
+	{
+		"name": "Tarantula",
+		"team": "None",
+		"image": "https://raw.githubusercontent.com/LJS360d/marbles-bot/master/public/assets/marbles/tarantula.png",
+		"color": "Transparent with brown stripes",
+		"position": "COMPETITOR",
+		"competition": "Marble Rally",
+		"extra": ""
+	},
+	{
+		"name": "Tarzan",
+		"team": "Jungle Jumpers",
+		"image": "https://raw.githubusercontent.com/LJS360d/marbles-bot/master/public/assets/marbles/tarzan.png",
+		"color": "Dark green with light green stripes",
+		"position": "COACH",
+		"competition": "",
+		"extra": ""
+	},
+	{
+		"name": "Tawny",
+		"team": "Strixes",
+		"image": "https://raw.githubusercontent.com/LJS360d/marbles-bot/master/public/assets/marbles/tawny.png",
+		"color": "Tan with brown stripes",
+		"position": "CAPTAIN",
+		"competition": "",
+		"extra": ""
+	},
+	{
+		"name": "Term",
+		"team": "O'rangers",
+		"image": "",
+		"color": "",
+		"position": "FAN",
+		"competition": "",
+		"extra": ""
+	},
+	{
+		"name": "The Emperor",
+		"team": "JMA, host",
+		"image": "",
+		"color": "",
+		"position": "MEMBER",
+		"competition": "",
+		"extra": ""
+	},
+	{
+		"name": "The Flash",
+		"team": "None",
+		"image": "https://raw.githubusercontent.com/LJS360d/marbles-bot/master/public/assets/marbles/the_flash.png",
+		"color": "White with red and blue swirls",
+		"position": "COMPETITOR",
+		"competition": "Marble Rally",
+		"extra": ""
+	},
+	{
+		"name": "Thetis",
+		"team": "Oceanics",
+		"image": "",
+		"color": "",
+		"position": "MANAGER",
+		"competition": "",
+		"extra": ""
+	},
+	{
+		"name": "Thorax",
+		"team": "Hornets",
+		"image": "",
+		"color": "",
+		"position": "MANAGER",
+		"competition": "",
+		"extra": ""
+	},
+	{
+		"name": "Thunder",
+		"team": "Thunderbolts",
+		"image": "https://raw.githubusercontent.com/LJS360d/marbles-bot/master/public/assets/marbles/thunder.png",
+		"color": "Blue with yellow swirls",
+		"position": "CAPTAIN",
+		"competition": "",
+		"extra": ""
+	},
+	{
+		"name": "Thunderstorm",
+		"team": "Thunderbolts",
+		"image": "https://raw.githubusercontent.com/LJS360d/marbles-bot/master/public/assets/marbles/thunderstorm.png",
+		"color": "Blue with yellow swirls",
+		"position": "COACH",
+		"competition": "",
+		"extra": ""
+	},
+	{
+		"name": "Tidbit",
+		"team": "Jawbreakers",
+		"image": "https://raw.githubusercontent.com/LJS360d/marbles-bot/master/public/assets/marbles/tidbit.png",
+		"color": "White with red, blue, and green swirls",
+		"position": "RESERVE",
+		"competition": "",
+		"extra": ""
+	},
+	{
+		"name": "Tide",
+		"team": "Oceanics",
+		"image": "https://raw.githubusercontent.com/LJS360d/marbles-bot/master/public/assets/marbles/tide.png",
+		"color": "Light blue with white stripes",
+		"position": "RESERVE",
+		"competition": "",
+		"extra": ""
+	},
+	{
+		"name": "Tongue Twister",
+		"team": "Jawbreakers",
+		"image": "https://raw.githubusercontent.com/LJS360d/marbles-bot/master/public/assets/marbles/tongue_twister.png",
+		"color": "White with red, blue, and green swirls",
+		"position": "MEMBER",
+		"competition": "",
+		"extra": ""
+	},
+	{
+		"name": "Triton",
+		"team": "land",
+		"image": "https://raw.githubusercontent.com/LJS360d/marbles-bot/master/public/assets/marbles/triton.png",
+		"color": "Blue and green with a pink flower",
+		"position": "CO-RULER",
+		"competition": "",
+		"extra": ""
+	},
+	{
+		"name": "Truffle",
+		"team": "Chocolatiers",
+		"image": "https://raw.githubusercontent.com/LJS360d/marbles-bot/master/public/assets/marbles/truffle.png",
+		"color": "Brown with tan stripes",
+		"position": "COACH",
+		"competition": "",
+		"extra": ""
+	},
+	{
+		"name": "Trunk",
+		"team": "Noxious Ivy",
+		"image": "https://raw.githubusercontent.com/LJS360d/marbles-bot/master/public/assets/marbles/trunk.png",
+		"color": "Green with white stripes",
+		"position": "RESERVE",
+		"competition": "",
+		"extra": ""
+	},
+	{
+		"name": "Tumult",
+		"team": "Balls of Chaos",
+		"image": "https://raw.githubusercontent.com/LJS360d/marbles-bot/master/public/assets/marbles/tumult.png",
+		"color": "Clear with yellow, red & blue stripes",
+		"position": "CAPTAIN",
+		"competition": "",
+		"extra": ""
+	},
+	{
+		"name": "Twist",
+		"team": "Valiant Vanillas",
+		"image": "",
+		"color": "",
+		"position": "MEMBER",
+		"competition": "",
+		"extra": ""
+	},
+	{
+		"name": "Tyto",
+		"team": "Royal Olkinhem Orchestra and close friend",
+		"image": "",
+		"color": "",
+		"position": "CONDUCTOR",
+		"competition": "",
+		"extra": ""
+	},
+	{
+		"name": "Valencin",
+		"team": "O'rangers",
+		"image": "",
+		"color": "",
+		"position": "RELATIVE",
+		"competition": "",
+		"extra": ""
+	},
+	{
+		"name": "Velocity",
+		"team": "Savage Speeders",
+		"image": "https://raw.githubusercontent.com/LJS360d/marbles-bot/master/public/assets/marbles/velocity.png",
+		"color": "Red, white and yellow",
+		"position": "MEMBER",
+		"competition": "",
+		"extra": ""
+	},
+	{
+		"name": "Verne",
+		"team": "Turtle Sliders",
+		"image": "",
+		"color": "",
+		"position": "MANAGER",
+		"competition": "",
+		"extra": ""
+	},
+	{
+		"name": "Vespa",
+		"team": "Hornets",
+		"image": "https://raw.githubusercontent.com/LJS360d/marbles-bot/master/public/assets/marbles/vespa.png",
+		"color": "Black with yellow stripes",
+		"position": "MEMBER",
+		"competition": "",
+		"extra": ""
+	},
+	{
+		"name": "Vine",
+		"team": "Noxious Ivy",
+		"image": "https://raw.githubusercontent.com/LJS360d/marbles-bot/master/public/assets/marbles/vine.png",
+		"color": "Green with white stripes",
+		"position": "MEMBER",
+		"competition": "",
+		"extra": ""
+	},
+	{
+		"name": "Violet Eye",
+		"team": "None",
+		"image": "",
+		"color": "",
+		"position": "COMMENTATOR",
+		"competition": "",
+		"extra": "newspaper pundit from Felynia"
+	},
+	{
+		"name": "Vivia",
+		"team": "Valiant Violets",
+		"image": "",
+		"color": "",
+		"position": "MEMBER",
+		"competition": "",
+		"extra": ""
+	},
+	{
+		"name": "Vivid",
+		"team": "Valiant Violets",
+		"image": "https://raw.githubusercontent.com/LJS360d/marbles-bot/master/public/assets/marbles/vivid.png",
+		"color": "Violet with white stripes",
+		"position": "MEMBER",
+		"competition": "",
+		"extra": ""
+	},
+	{
+		"name": "Wasp",
+		"team": "Hornets",
+		"image": "https://raw.githubusercontent.com/LJS360d/marbles-bot/master/public/assets/marbles/wasp.png",
+		"color": "Black with yellow stripes",
+		"position": "MEMBER",
+		"competition": "",
+		"extra": ""
+	},
+	{
+		"name": "Waspy",
+		"team": "Midnight Wisps",
+		"image": "https://raw.githubusercontent.com/LJS360d/marbles-bot/master/public/assets/marbles/waspy.png",
+		"color": "Black with blue swirls",
+		"position": "RESERVE",
+		"competition": "",
+		"extra": ""
+	},
+	{
+		"name": "Wespy",
+		"team": "Midnight Wisps",
+		"image": "https://raw.githubusercontent.com/LJS360d/marbles-bot/master/public/assets/marbles/wespy.png",
+		"color": "Black with blue swirls",
+		"position": "CAPTAIN",
+		"competition": "",
+		"extra": ""
+	},
+	{
+		"name": "White Eye",
+		"team": "Crazy Cat's Eyes",
+		"image": "https://raw.githubusercontent.com/LJS360d/marbles-bot/master/public/assets/marbles/white_eye.png",
+		"color": "Transparent with a white center",
+		"position": "COACH",
+		"competition": "",
+		"extra": ""
+	},
+	{
+		"name": "White Widow",
+		"team": "None",
+		"image": "https://raw.githubusercontent.com/LJS360d/marbles-bot/master/public/assets/marbles/white_widow.png",
+		"color": "Solid pearl white",
+		"position": "COMPETITOR",
+		"competition": "Marble Rally",
+		"extra": ""
+	},
+	{
+		"name": "Whizzy",
+		"team": "Savage Speeders",
+		"image": "https://raw.githubusercontent.com/LJS360d/marbles-bot/master/public/assets/marbles/whizzy.png",
+		"color": "Red, white and yellow",
+		"position": "RESERVE",
+		"competition": "",
+		"extra": ""
+	},
+	{
+		"name": "Willo",
+		"team": "Golden Orbs",
+		"image": "https://raw.githubusercontent.com/LJS360d/marbles-bot/master/public/assets/marbles/willo.png",
+		"color": "Transparent gold with white streaks",
+		"position": "MEMBER",
+		"competition": "",
+		"extra": ""
+	},
+	{
+		"name": "Willow",
+		"team": "Midnight Wisps",
+		"image": "",
+		"color": "",
+		"position": "MANAGER",
+		"competition": "",
+		"extra": ""
+	},
+	{
+		"name": "Wisp of Darkness",
+		"team": "None",
+		"image": "https://raw.githubusercontent.com/LJS360d/marbles-bot/master/public/assets/marbles/wisp_of_darkness.png",
+		"color": "Black and white",
+		"position": "COMPETITOR",
+		"competition": "Marble Rally",
+		"extra": ""
+	},
+	{
+		"name": "Wispy",
+		"team": "Midnight Wisps",
+		"image": "https://raw.githubusercontent.com/LJS360d/marbles-bot/master/public/assets/marbles/wispy.png",
+		"color": "Black with blue swirls",
+		"position": "MEMBER",
+		"competition": "",
+		"extra": ""
+	},
+	{
+		"name": "Wospy",
+		"team": "Midnight Wisps",
+		"image": "https://raw.githubusercontent.com/LJS360d/marbles-bot/master/public/assets/marbles/wospy.png",
+		"color": "Black with blue swirls",
+		"position": "MEMBER",
+		"competition": "",
+		"extra": ""
+	},
+	{
+		"name": "Wuspy",
+		"team": "Midnight Wisps",
+		"image": "https://raw.githubusercontent.com/LJS360d/marbles-bot/master/public/assets/marbles/wuspy.png",
+		"color": "Black with blue swirls",
+		"position": "MEMBER",
+		"competition": "",
+		"extra": ""
+	},
+	{
+		"name": "Wyspy",
+		"team": "Midnight Wisps",
+		"image": "https://raw.githubusercontent.com/LJS360d/marbles-bot/master/public/assets/marbles/wyspy.png",
+		"color": "Black with blue swirls",
+		"position": "COACH",
+		"competition": "",
+		"extra": ""
+	},
+	{
+		"name": "Yap",
+		"team": "Yarble Yellers",
+		"image": "",
+		"color": "",
+		"position": "MEMBER",
+		"competition": "",
+		"extra": ""
+	},
+	{
+		"name": "Yawn",
+		"team": "Yarble Yellers",
+		"image": "",
+		"color": "",
+		"position": "MEMBER",
+		"competition": "",
+		"extra": ""
+	},
+	{
+		"name": "Yell",
+		"team": "Yarble Yellers",
+		"image": "",
+		"color": "",
+		"position": "CAPTAIN",
+		"competition": "",
+		"extra": ""
+	},
+	{
+		"name": "Yellah",
+		"team": "Mellow Yellow",
+		"image": "https://raw.githubusercontent.com/LJS360d/marbles-bot/master/public/assets/marbles/yellah.png",
+		"color": "Yellow",
+		"position": "MEMBER",
+		"competition": "",
+		"extra": ""
+	},
+	{
+		"name": "Yeller",
+		"team": "Mellow Yellow",
+		"image": "https://raw.githubusercontent.com/LJS360d/marbles-bot/master/public/assets/marbles/yeller.png",
+		"color": "Yellow",
+		"position": "RESERVE",
+		"competition": "",
+		"extra": ""
+	},
+	{
+		"name": "Yelley",
+		"team": "Mellow Yellow",
+		"image": "https://raw.githubusercontent.com/LJS360d/marbles-bot/master/public/assets/marbles/yelley.png",
+		"color": "Yellow",
+		"position": "MEMBER",
+		"competition": "",
+		"extra": ""
+	},
+	{
+		"name": "Yellim",
+		"team": "Mellow Yellow",
+		"image": "https://raw.githubusercontent.com/LJS360d/marbles-bot/master/public/assets/marbles/yellim.png",
+		"color": "Yellow",
+		"position": "MEMBER",
+		"competition": "",
+		"extra": ""
+	},
+	{
+		"name": "Yellow",
+		"team": "Mellow Yellow",
+		"image": "https://raw.githubusercontent.com/LJS360d/marbles-bot/master/public/assets/marbles/yellow.png",
+		"color": "Solid yellow",
+		"position": "CAPTAIN",
+		"competition": "",
+		"extra": ""
+	},
+	{
+		"name": "Yellow Eye",
+		"team": "Crazy Cat's Eyes",
+		"image": "https://raw.githubusercontent.com/LJS360d/marbles-bot/master/public/assets/marbles/yellow_eye.png",
+		"color": "Transparent with a yellow center",
+		"position": "MEMBER",
+		"competition": "",
+		"extra": ""
+	},
+	{
+		"name": "Yellowjacket",
+		"team": "Hornets",
+		"image": "https://raw.githubusercontent.com/LJS360d/marbles-bot/master/public/assets/marbles/yellowjacket.png",
+		"color": "Black with yellow stripes",
+		"position": "RESERVE",
+		"competition": "",
+		"extra": ""
+	},
+	{
+		"name": "Yellup",
+		"team": "Mellow Yellow",
+		"image": "https://raw.githubusercontent.com/LJS360d/marbles-bot/master/public/assets/marbles/yellup.png",
+		"color": "Yellow",
+		"position": "MEMBER",
+		"competition": "",
+		"extra": ""
+	},
+	{
+		"name": "Yelp",
+		"team": "Yarble Yellers",
+		"image": "",
+		"color": "",
+		"position": "MEMBER",
+		"competition": "",
+		"extra": ""
+	},
+	{
+		"name": "Yodel",
+		"team": "Yarble Yellers",
+		"image": "",
+		"color": "",
+		"position": "MEMBER",
+		"competition": "",
+		"extra": ""
+	},
+	{
+		"name": "Zap",
+		"team": "Thunderbolts",
+		"image": "https://raw.githubusercontent.com/LJS360d/marbles-bot/master/public/assets/marbles/zap.png",
+		"color": "Blue with yellow swirls",
+		"position": "RESERVE",
+		"competition": "",
+		"extra": ""
+	}
+]
