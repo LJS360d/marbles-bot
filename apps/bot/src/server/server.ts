@@ -1,22 +1,18 @@
+import { monitor, type MonitorOptions } from '@colyseus/monitor';
+import { WebSocketTransport } from '@colyseus/ws-transport';
+import { Server } from 'colyseus';
 import type { Client } from 'discord.js';
-import express, { type Request, type Response } from 'express';
+import express from 'express';
 import { Fonzi2Server, Logger, type ServerController } from 'fonzi2';
 import { resolve } from 'node:path';
-import env from '../env';
-import { Server } from 'colyseus';
-import { WebSocketTransport } from '@colyseus/ws-transport';
 import { GameRoom } from './colyseus/rooms/GameRoom';
-import { type MonitorOptions, monitor } from '@colyseus/monitor';
 
 export class MarblesServer extends Fonzi2Server {
 	public readonly colyseus: Server;
 	constructor(client: Client<true>, controllers: ServerController[]) {
 		super(client, controllers);
 		this.app.use(express.static(resolve(process.cwd(), 'public')));
-		this.app.set('views', [
-			this.app.get('views'),
-			resolve(process.cwd(), 'views'),
-		]);
+
 		this.colyseus = new Server({
 			transport: new WebSocketTransport({
 				server: this.httpServer,
@@ -40,7 +36,7 @@ export class MarblesServer extends Fonzi2Server {
 		super.start();
 	}
 
-	override dashboard(req: Request, res: Response) {
+	/* override dashboard(req: Request, res: Response) {
 		const props = {
 			client: this.client,
 			inviteLink: env.INVITE_LINK,
@@ -50,5 +46,5 @@ export class MarblesServer extends Fonzi2Server {
 			guilds: this.client.guilds.cache,
 		};
 		return res.render('default/dashboard', props);
-	}
+	} */
 }

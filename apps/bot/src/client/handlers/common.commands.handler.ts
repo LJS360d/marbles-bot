@@ -75,7 +75,7 @@ export class CommonCommandsHandler extends DiscordHandler {
 		}`;
 		const collectionFields = collection.toJson().map(([marble, count]) => ({
 			name: marble,
-			value: `x${count}`,
+			value: `×${count}`,
 			inline: true,
 		}));
 

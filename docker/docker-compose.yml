@@ -33,6 +33,5 @@ services:
     image: cloudflare/cloudflared:$CLOUDFLARED_VERSION
     restart: unless-stopped
     command: tunnel --no-autoupdate --url http://$CLOUDFLARED_TUNNEL_HOST:$CLOUDFLARED_TUNNEL_PORT
-    network_mode: host
     environment:
       TUNNEL_TOKEN: $CLOUDFLARED_TOKEN

@@ -12,7 +12,7 @@
 		"dev": "cross-env NODE_ENV=development tsnd --debounce --transpile-only src/main.ts",
 		"build": "webpack --config webpack.config.cjs --mode production",
 		"start": "cross-env NODE_ENV=production node dist/bundle.js",
-		"lint": "biome check ./src  && tsc",
+		"lint": "biome check ./src && tsc",
 		"lint:fix": "biome check --apply-unsafe ./src "
 	},
 	"keywords": [],

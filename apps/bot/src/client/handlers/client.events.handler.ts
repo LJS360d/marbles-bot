@@ -61,7 +61,7 @@ export default class ClientEventsHandler extends DiscordHandler {
 		}
 		const emoji = embed.fields.at(-1)?.value.split(' ').at(2);
 		if (reaction.emoji.name === emoji) {
-			// ? Delete the message
+			// ? Delete the spawn message
 			void reaction.message.delete();
 			const marbleName = embed.title?.split('`').at(1);
 			if (!marbleName) return;
