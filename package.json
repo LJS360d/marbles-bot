@@ -9,7 +9,7 @@
 		"tunnel": "cloudflared --url http://localhost:3000"
 	},
 	"devDependencies": {
-		"tsconfig": "workspace:*",
+		"@biomejs/biome": "^1.7.3",
 		"turbo": "latest"
 	},
 	"packageManager": "pnpm@9.1.0",

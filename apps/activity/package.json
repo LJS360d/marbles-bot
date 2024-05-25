@@ -1,0 +1,22 @@
+{
+	"name": "marble-stones-game",
+	"version": "0.0.0",
+	"type": "module",
+	"scripts": {
+		"dev": "vite --host",
+		"build": "vite build",
+		"preview": "vite preview",
+		"lint": "biome check ./src",
+		"lint:fix": "biome check --apply-unsafe ./src"
+	},
+	"devDependencies": {
+		"typescript": "^5.3.3",
+		"vite": "^5.0.8"
+	},
+	"dependencies": {
+		"@biomejs/biome": "^1.7.3",
+		"@discord/embedded-app-sdk": "^1.0.2",
+		"colyseus.js": "^0.15.18",
+		"phaser": "^3.80.1"
+	}
+}
