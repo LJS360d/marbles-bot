@@ -17,9 +17,6 @@ importers:
 
   apps/activity:
     dependencies:
-      '@biomejs/biome':
-        specifier: ^1.7.3
-        version: 1.7.3
       '@discord/embedded-app-sdk':
         specifier: ^1.0.2
         version: 1.2.0
@@ -30,6 +27,9 @@ importers:
         specifier: ^3.80.1
         version: 3.80.1
     devDependencies:
+      '@biomejs/biome':
+        specifier: ^1.7.3
+        version: 1.7.3
       typescript:
         specifier: ^5.3.3
         version: 5.4.5
