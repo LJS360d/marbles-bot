@@ -6,7 +6,6 @@ export class Background extends Scene {
 	}
 
 	create() {
-		this.cameras.main.setBackgroundColor(0xff00ff);
 		this.scene.sendToBack();
 
 		const fridge_bg = this.add.image(

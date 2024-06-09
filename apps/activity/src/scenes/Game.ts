@@ -1,7 +1,7 @@
-import { Scene } from 'phaser';
+import Phaser from 'phaser';
 import { type Room, Client } from 'colyseus.js';
 
-export class Game extends Scene {
+export class Game extends Phaser.Scene {
 	room: Room;
 
 	constructor() {
@@ -17,8 +17,11 @@ export class Game extends Scene {
 			'grid'
 		);
 		grid.setScale(0.6);
-
-		await this.connect();
+		try {
+			await this.connect();
+		} catch (error) {
+			// TODO show popup error
+		}
 
 		this.room.state.draggables.onAdd((draggable: any, draggableId: string) => {
 			const image = this.add
@@ -61,14 +64,9 @@ export class Game extends Scene {
 	}
 
 	async connect() {
-		const url =
-			location.host === 'localhost:3000'
-				? 'ws://localhost:3001'
-				: `wss://${location.host}:3001/api/colyseus`;
-
-		const client = new Client(`${url}`);
-
+		const url = 'ws://localhost:8080';
 		try {
+			const client = new Client(`${url}`);
 			this.room = await client.joinOrCreate('game', {
 				// Let's send our client screen dimensions to the server for initial positioning
 				screenWidth: this.game.config.width,
@@ -81,7 +79,8 @@ export class Game extends Scene {
 
 			console.log('Successfully connected!');
 		} catch (e) {
-			console.log(`Could not connect with the server: ${e}`);
+			console.error('Could not connect to the server:', e);
+			throw e;
 		}
 	}
 }

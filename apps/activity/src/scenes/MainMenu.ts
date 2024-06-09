@@ -1,6 +1,7 @@
 import { Scene } from 'phaser';
-import { defaultTextStyle } from '../utils/text/text.style';
+import { Menu } from '../components/Menu';
 export class MainMenu extends Scene {
+	private menu: Menu;
 	constructor() {
 		super('MainMenu');
 	}
@@ -17,15 +18,25 @@ export class MainMenu extends Scene {
 		bg.setScale(scale).setScrollFactor(0);
 
 		this.add.image(Number(this.game.config.width) * 0.5, 300, 'logo');
+		this.menu = new Menu(
+			this,
+			[
+				{
+					text: 'Start Game',
+					callback: () => this.scene.start('Game'),
+				},
+				{
+					text: 'Settings',
+					callback: () => this.scene.start('Settings'),
+				},
+			],
+			this.halfWidth - 120,
+			this.halfHeight
+		);
+	}
 
-		this.add
-			.text(this.halfWidth, this.halfHeight + 50, 'Main Menu', defaultTextStyle)
-			.setOrigin(0.5);
-		const settingsButton = this.add
-			.text(this.halfWidth, this.halfHeight + 100, 'Settings', defaultTextStyle)
-			.setOrigin(0.5)
-			.setInteractive()
-			.on('pointerdown', () => this.scene.start('SettingsMenu'));
+	update(time: number, delta: number): void {
+		this.menu.update();
 	}
 
 	get width() {

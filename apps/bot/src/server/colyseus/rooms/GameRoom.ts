@@ -1,9 +1,9 @@
 import { type Client, Room } from 'colyseus';
 import { GameState, Draggables } from '../schemas/GameState';
+import { Logger } from 'fonzi2';
 
 export class GameRoom extends Room<GameState> {
-	readonly maxClients = 25; // Current Discord limit is 25
-
+	readonly maxClients = 25;
 	onCreate(options: any) {
 		this.setState(new GameState());
 
@@ -51,10 +51,10 @@ export class GameRoom extends Room<GameState> {
 	}
 
 	onJoin(client: Client, options?: any, auth?: any) {
-		console.log(`Client joined: ${client.sessionId}`);
+		Logger.info(`Client joined: ${client.sessionId}`);
 	}
 
 	onLeave(client: Client, consented: boolean) {
-		console.log(`Client left: ${client.sessionId}`);
+		Logger.info(`Client left: ${client.sessionId}`);
 	}
 }

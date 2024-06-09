@@ -5,9 +5,8 @@
 	"main": "index.js",
 	"private": true,
 	"engines": {
-		"node": ">=18"
+		"node": ">=20"
 	},
-	"packageManager": "pnpm@9.1.0",
 	"scripts": {
 		"dev": "cross-env NODE_ENV=development tsnd --debounce --transpile-only src/main.ts",
 		"build": "webpack --config webpack.config.cjs --mode production",

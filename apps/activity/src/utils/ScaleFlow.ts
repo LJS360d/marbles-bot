@@ -62,9 +62,9 @@ export class ScaleFlow {
 	}
 
 	onResizeHandler() {
-		const parentBounds = this.parent.getBoundingClientRect();
-		const canvasBounds = this.canvas.getBoundingClientRect();
-		const guideBounds = this.guide.getBoundingClientRect();
+		const parentBounds = this.parent?.getBoundingClientRect() ?? new DOMRect();
+		const canvasBounds = this.canvas?.getBoundingClientRect() ?? new DOMRect();
+		const guideBounds = this.guide?.getBoundingClientRect() ?? new DOMRect();
 
 		const widthScale = parentBounds.width / ScaleFlow.width;
 		const heightScale = parentBounds.height / ScaleFlow.height;
