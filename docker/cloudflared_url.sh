@@ -5,6 +5,7 @@ source "$SCRIPT_DIR/.env"
 
 container=$COMPOSE_PROJECT_NAME-cloudflared
 url=$(docker logs $container 2>&1 | grep -o 'https://.*\.trycloudflare.com' | tail -n 1)
+url=${url#https://}
 
 if [ -n "$url" ]; then
   echo $url
