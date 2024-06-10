@@ -1,6 +1,4 @@
-import { config } from 'dotenv';
-
-config({ path: 'config/.env' });
+import 'dotenv/config';
 
 const env = {
 	TOKEN: process.env.TOKEN!,
