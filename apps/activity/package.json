@@ -10,13 +10,13 @@
 		"lint:fix": "biome check --apply-unsafe ./src"
 	},
 	"dependencies": {
-		"@discord/embedded-app-sdk": "^1.0.2",
-		"colyseus.js": "^0.15.18",
+		"@discord/embedded-app-sdk": "^1.2.0",
+		"colyseus.js": "^0.15.23",
 		"phaser": "^3.80.1"
 	},
 	"devDependencies": {
-		"@biomejs/biome": "^1.7.3",
-		"typescript": "^5.3.3",
-		"vite": "^5.0.8"
+		"@biomejs/biome": "^1.8.1",
+		"typescript": "^5.4.5",
+		"vite": "^5.2.13"
 	}
 }

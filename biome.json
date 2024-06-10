@@ -1,5 +1,5 @@
 {
-	"$schema": "https://biomejs.dev/schemas/1.5.3/schema.json",
+	"$schema": "https://biomejs.dev/schemas/1.8.1/schema.json",
 	"organizeImports": {
 		"enabled": false
 	},
@@ -8,12 +8,17 @@
 			"enabled": true,
 			"arrowParentheses": "always",
 			"bracketSpacing": true,
-			"trailingComma": "es5",
 			"bracketSameLine": true,
 			"quoteStyle": "single",
 			"jsxQuoteStyle": "single",
 			"quoteProperties": "asNeeded",
-			"semicolons": "always"
+			"semicolons": "always",
+			"trailingCommas": "es5",
+			"attributePosition": "auto",
+			"lineWidth": 80,
+			"indentStyle": "space",
+			"indentWidth": 2,
+			"lineEnding": "lf"
 		},
 		"parser": {
 			"unsafeParameterDecoratorsEnabled": true
@@ -44,7 +49,8 @@
 			"style": {
 				"recommended": true,
 				"noNonNullAssertion": "off",
-				"noParameterAssign": "off"
+				"noParameterAssign": "off",
+				"noUselessElse": "warn"
 			},
 			"suspicious": {
 				"noArrayIndexKey": "off",
@@ -53,7 +59,10 @@
 			"complexity": {
 				"useLiteralKeys": "off",
 				"noForEach": "off",
-				"noStaticOnlyClass": "off"
+				"noStaticOnlyClass": "warn",
+				"noBannedTypes": "warn",
+				"useSimplifiedLogicExpression": "warn",
+				"noExcessiveCognitiveComplexity": "error"
 			},
 			"security": {
 				"recommended": true
