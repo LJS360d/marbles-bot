@@ -12,7 +12,8 @@
 	"dependencies": {
 		"@discord/embedded-app-sdk": "^1.2.0",
 		"colyseus.js": "^0.15.23",
-		"phaser": "^3.80.1"
+		"phaser": "^3.80.1",
+		"phaser3-rex-plugins": "^1.80.4"
 	},
 	"devDependencies": {
 		"@biomejs/biome": "^1.8.1",
