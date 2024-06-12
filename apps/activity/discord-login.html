@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login with Discord...</title>
+</head>
+
+<body>
+  <script>
+    function handleOAuthRedirect() {
+      const fragment = window.location.hash.substring(1);
+      if (!fragment) {
+        return;
+      }
+      const params = new URLSearchParams(fragment);
+      const accessToken = params.get('access_token');
+      setCookie('access_token', accessToken, 180);
+      window.location.href = '/';
+    }
+
+    function setCookie(name, value, days) {
+      const expires = new Date();
+      expires.setTime(expires.getTime() + days * 24 * 60 * 60 * 1000);
+      document.cookie = `${name}=${value};expires=${expires.toUTCString()};path=/`;
+    }
+
+    handleOAuthRedirect();
+  </script>
+</body>
+
+</html>

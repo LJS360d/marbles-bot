@@ -45,8 +45,7 @@ export class Login extends Scene {
               x: 0,
               y: 0,
               onClick: () => {
-                console.log('Login with Discord');
-                this.scene.start('MainMenu');
+                window.open('/api/login/discord', '_self');
               },
             }),
           ],
