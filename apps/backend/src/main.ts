@@ -1,11 +1,12 @@
+import { type MonitorOptions, monitor } from '@colyseus/monitor';
 import { WebSocketTransport } from '@colyseus/ws-transport';
 import { Server as ColyseusServer } from 'colyseus';
+import 'reflect-metadata';
 import Container from 'typedi';
 import { GameRoom } from './colyseus/rooms/GameRoom';
 import env from './env';
-import { httpServer } from './express.app';
+import app, { httpServer } from './express.app';
 import logger, { CC } from './logger';
-import registerRoutes from './api';
 
 async function main() {
   const server = new ColyseusServer({
@@ -19,7 +20,6 @@ async function main() {
     gracefullyShutdown: true,
     greet: false,
   });
-  registerRoutes();
   server
     .define('game', GameRoom)
     // filterBy allows us to call joinOrCreate and then hold one game per channel
@@ -30,6 +30,7 @@ async function main() {
     `Listening on ${CC.underline}http://localhost:${env.PORT}${CC.stop}`
   );
   Container.set(ColyseusServer, server);
+  app.use('/colyseus/monitor', monitor(server as Partial<MonitorOptions>));
 }
 
-main();
+main().catch((err) => logger.error(err));

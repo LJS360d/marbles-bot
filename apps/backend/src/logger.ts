@@ -2,6 +2,14 @@ import { createLogger, format, transports } from 'winston';
 const { combine, timestamp, printf, colorize, align } = format;
 
 const logger = createLogger({
+  levels: {
+    trace: 0,
+    debug: 1,
+    info: 2,
+    warn: 3,
+    error: 4,
+    fatal: 5,
+  },
   format: combine(
     format((info) => {
       info.level = info.level.trim().toUpperCase();
