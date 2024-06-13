@@ -1,5 +1,6 @@
 import axios, { type AxiosResponse } from 'axios';
 import { Controller, CookieParam, Get } from 'routing-controllers';
+import logger from '../logger';
 
 @Controller('/auth')
 export class AuthController {
@@ -7,8 +8,6 @@ export class AuthController {
   async getDiscordUserInfo(
     @CookieParam('access_token') accessToken: string
   ): Promise<DiscordUserInfo> {
-    console.log(accessToken);
-
     const authResponse: AxiosResponse<DiscordUserInfo, any> = await axios.get(
       'https://discord.com/api/v10/users/@me',
       {
@@ -21,6 +20,7 @@ export class AuthController {
     const userAvatarHash = authResponse.data.avatar;
     authResponse.data.avatar = `https://cdn.discordapp.com/avatars/${userId}/${userAvatarHash}.png`;
     authResponse.data.role = 'user';
+    logger.info(`Discord user ${authResponse.data.username} logged in`);
     return authResponse.data;
   }
 }

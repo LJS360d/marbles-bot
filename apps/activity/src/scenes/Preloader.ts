@@ -1,5 +1,5 @@
 import { Scene } from 'phaser';
-import { getCookie } from '../utils/cookies.utils';
+import { getAccessToken } from '../utils/auth.utils';
 
 export class Preloader extends Scene {
   constructor() {
@@ -64,10 +64,52 @@ export class Preloader extends Scene {
     this.load.image('cross_2', 'cross.png');
     this.load.image('cross_3', 'cross.png');
     this.load.image('grid', 'grid.png');
+    // icons
+    // read the icons from the assets/icons folder
+    // iterate over them and load them
+    const icons = [
+      'cart',
+      'cross',
+      'exclamation',
+      'exit',
+      'gear',
+      'home',
+      'info',
+      'levels',
+      'locker-locked',
+      'locker-unlocked',
+      'mediumarrow-left',
+      'mediumarrow-right',
+      'multiplayer',
+      'music-off',
+      'music-on',
+      'pause',
+      'play',
+      'player',
+      'podium',
+      'question',
+      'repeat-right',
+      'sharelink',
+      'solidarrow-left',
+      'solidarrow-right',
+      'sound-none',
+      'sound-one',
+      'sound-three',
+      'sound-two',
+      'star',
+      'talkbubble',
+      'thumb-down',
+      'thumb-up',
+      'tick',
+      'twoplayer',
+    ];
+    icons.forEach((icon) => {
+      this.load.svg(icon, `../icons/${icon}.svg`);
+    });
   }
 
   create() {
-    const accessToken = getCookie('access_token');
+    const accessToken = getAccessToken();
     if (accessToken) {
       this.scene.start('MainMenu');
       return;

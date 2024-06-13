@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Login with Discord...</title>
+  <title>Logging in with Discord...</title>
 </head>
 
 <body>
@@ -17,7 +17,20 @@
       const params = new URLSearchParams(fragment);
       const accessToken = params.get('access_token');
       setCookie('access_token', accessToken, 180);
-      window.location.href = '/';
+      fetch('/api/auth/discord/@me', {
+        method: 'GET',
+        credentials: 'include',
+      }).then((res) => {
+        console.log(res.s);
+        if (res.status === 200) {
+          window.location.href = '/';
+        } else {
+          window.location.href = '/login-error';
+        }
+      }).catch((err) => {
+        console.error(err);
+        window.location.href = '/login-error';
+      });
     }
 
     function setCookie(name, value, days) {
