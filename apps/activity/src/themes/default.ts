@@ -1,38 +1,82 @@
 import type Theme from './common/theme.definition';
 
+const colors = {
+  white: '#f2f2f2',
+  black: '#0f0f0f',
+  primary: '#22d3ee',
+  secondary: '#00a8ff',
+  accent: '#007aff',
+  neutral: '#150200',
+  'base-100': '#0f2735',
+  info: '#0096ea',
+  success: '#3ed31e',
+  warning: '#ff7800',
+  error: '#ff436f',
+} as const;
+
+const hexColors = Object.fromEntries(
+  Object.entries(colors).map(([key, value]) => [
+    key,
+    Number(value.replace('#', '0x')),
+  ])
+);
+
 export default {
+  colors,
+  hexColors,
   text: {
     headline: {
       fontFamily: 'Arial Black',
       fontSize: 38,
-      color: '#ffffff',
-      stroke: '#000000',
+      color: colors.white,
+      stroke: colors.black,
       strokeThickness: 8,
       align: 'left',
     },
-    button: {
-      fontSize: '24px',
-      color: '#00ff00',
-      backgroundColor: '#000000',
-      padding: { left: 20, right: 20, top: 10, bottom: 10 },
-      align: 'center',
-    },
-    buttonActive: {
-      fontSize: '24px',
-      color: '#7289da',
-      backgroundColor: '#000000',
-      padding: { left: 20, right: 20, top: 10, bottom: 10 },
-      align: 'center',
-    },
     bodyText: {
       fontSize: '18px',
-      color: '#ffffff',
+      color: colors.white,
       align: 'left',
     },
-    caption: {
-      fontSize: '14px',
-      color: '#aaaaaa',
-      align: 'left',
+  },
+
+  button: {
+    ghost: {
+      fontSize: '24px',
+      color: colors.white,
+      stroke: colors.black,
+      strokeThickness: 8,
+      padding: { left: 20, right: 20, top: 10, bottom: 10 },
+      align: 'center',
+      fontFamily: 'Arial Black',
+    },
+    primary: {
+      fontSize: '24px',
+      color: colors.white,
+      backgroundColor: colors.primary,
+      stroke: colors.black,
+      strokeThickness: 8,
+      padding: { left: 20, right: 20, top: 10, bottom: 10 },
+      align: 'center',
+      fontFamily: 'Arial Black',
+    },
+    success: {
+      fontSize: '24px',
+      color: colors.white,
+      backgroundColor: colors.success,
+      stroke: colors.black,
+      strokeThickness: 8,
+      padding: { left: 20, right: 20, top: 10, bottom: 10 },
+      align: 'center',
+      fontFamily: 'Arial Black',
+    },
+    error: {
+      fontSize: '24px',
+      color: colors.white,
+      backgroundColor: colors.error,
+      padding: { left: 20, right: 20, top: 10, bottom: 10 },
+      align: 'center',
+      fontFamily: 'Arial Black',
     },
   },
 
@@ -40,7 +84,7 @@ export default {
     default: {
       lineStyle: {
         width: 2,
-        color: 0xffffff,
+        color: hexColors.white,
         alpha: 1,
       },
       fillStyle: {
@@ -51,11 +95,11 @@ export default {
     highlighted: {
       lineStyle: {
         width: 4,
-        color: 0xff0000,
+        color: hexColors.error,
         alpha: 1,
       },
       fillStyle: {
-        color: 0xffff00,
+        color: hexColors.warning,
         alpha: 1,
       },
     },

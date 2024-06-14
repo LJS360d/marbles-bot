@@ -8,11 +8,27 @@ export class Login extends Scene {
   }
 
   create() {
+    const bg = this.add.image(
+      this.cameras.main.width / 2,
+      this.cameras.main.height / 2,
+      'background'
+    );
+    const scaleX = this.cameras.main.width / bg.width + 0.2;
+    const scaleY = this.cameras.main.height / bg.height + 0.2;
+    const scale = Math.max(scaleX, scaleY);
+    bg.setScale(scale).setScrollFactor(0);
     const dialog = this.rexUI.add
       .dialog({
         x: Number(this.game.config.width) * 0.5,
         y: Number(this.game.config.height) * 0.5,
-        background: this.rexUI.add.roundRectangle(0, 0, 100, 100, 20, 0x1565c0),
+        background: this.rexUI.add.roundRectangle(
+          0,
+          0,
+          100,
+          100,
+          20,
+          Theme.hexColors.transparent
+        ),
         title: this.rexUI.add.label({
           text: this.add.text(0, 0, 'Wait, who are you?', Theme.text.headline),
         }),
@@ -25,7 +41,7 @@ export class Login extends Scene {
             top: 10,
             bottom: 10,
           },
-          align: 'top',
+          align: 'left',
           orientation: 'vertical',
           setValueCallback: (value) => {
             console.log(value);
@@ -39,6 +55,7 @@ export class Login extends Scene {
                 console.log('Enter as a guest');
                 this.scene.start('MainMenu');
               },
+              style: Theme.button.success,
             }),
             new TextButton(this, {
               text: 'Login with Discord',
@@ -47,6 +64,7 @@ export class Login extends Scene {
               onClick: () => {
                 window.open('/api/login/discord', '_self');
               },
+              style: Theme.button.ghost,
             }),
           ],
         }),
