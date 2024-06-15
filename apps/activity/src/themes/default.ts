@@ -14,12 +14,19 @@ const colors = {
   error: '#ff436f',
 } as const;
 
-const hexColors = Object.fromEntries(
-  Object.entries(colors).map(([key, value]) => [
-    key,
-    Number(value.replace('#', '0x')),
-  ])
-);
+const hexColors = {
+  white: 0xf2f2f2,
+  black: 0x0f0f0f,
+  primary: 0x22d3ee,
+  secondary: 0x00a8ff,
+  accent: 0x007aff,
+  neutral: 0x150200,
+  'base-100': 0x0f2735,
+  info: 0x0096ea,
+  success: 0x3ed31e,
+  warning: 0xff7800,
+  error: 0xff436f,
+} as const;
 
 export default {
   colors,

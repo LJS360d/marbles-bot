@@ -1,8 +1,8 @@
-import { Scene } from 'phaser';
-import { Theme } from '../../theme';
 import { TextButton } from '../../components/TextButton';
+import { Theme } from '../../theme';
+import { BaseScene } from '../common/base.scene';
 
-export class Login extends Scene {
+export class Login extends BaseScene {
   constructor() {
     super('Login');
   }

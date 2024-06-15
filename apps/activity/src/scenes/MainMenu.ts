@@ -1,9 +1,9 @@
-import { Scene } from 'phaser';
-import { Menu } from '../components/Menu';
-import { Icon } from '../components/Icon';
+import { HexGrid } from '../components/HexGrid';
 import { IconButton } from '../components/IconButton';
+import { Menu } from '../components/Menu';
 import { logout } from '../utils/auth.utils';
-export class MainMenu extends Scene {
+import { BaseScene } from './common/base.scene';
+export class MainMenu extends BaseScene {
   private menu: Menu;
   constructor() {
     super('MainMenu');
@@ -19,6 +19,10 @@ export class MainMenu extends Scene {
     const scaleY = this.cameras.main.height / bg.height + 0.2;
     const scale = Math.max(scaleX, scaleY);
     bg.setScale(scale).setScrollFactor(0);
+    new HexGrid(this, {
+      x: 0,
+      y: 50,
+    });
     new IconButton(this, {
       x: this.width * 0.985,
       y: this.height * 0.055,
@@ -29,7 +33,7 @@ export class MainMenu extends Scene {
       },
     });
 
-    this.add.image(Number(this.game.config.width) * 0.5, 300, 'logo');
+    // this.add.image(Number(this.game.config.width) * 0.5, 300, 'logo');
     this.menu = new Menu(
       this,
       [

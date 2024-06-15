@@ -10,6 +10,7 @@ import { SettingsMenu } from './scenes/SettingsMenu';
 import { DebugConsole } from './debug/DebugConsole';
 import { Login } from './scenes/auth/Login';
 import UIPlugin from 'phaser3-rex-plugins/templates/ui/ui-plugin';
+import GridAlignPlugin from 'phaser3-rex-plugins/plugins/gridalign-plugin.js';
 
 (async () => {
   initiateDiscordSDK();
@@ -31,6 +32,13 @@ import UIPlugin from 'phaser3-rex-plugins/templates/ui/ui-plugin';
           key: 'rexUI',
           plugin: UIPlugin,
           mapping: 'rexUI',
+          start: true,
+        },
+        {
+          key: 'rexUIGridAlign',
+          plugin: GridAlignPlugin,
+          mapping: 'rexUIGridAlign',
+          start: true,
         },
       ],
     },
