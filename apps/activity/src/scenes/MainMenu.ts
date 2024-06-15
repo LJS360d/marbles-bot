@@ -1,7 +1,9 @@
-import { HexGrid } from '../components/HexGrid';
+import { HexGrid } from '../components/HexGrid/HexGrid';
 import { IconButton } from '../components/IconButton';
 import { Menu } from '../components/Menu';
+import { MapBuilderKey } from '../debug/MapBuilder';
 import { logout } from '../utils/auth.utils';
+import { SettingsMenuKey } from './SettingsMenu';
 import { BaseScene } from './common/base.scene';
 export class MainMenu extends BaseScene {
   private menu: Menu;
@@ -33,7 +35,7 @@ export class MainMenu extends BaseScene {
       },
     });
 
-    // this.add.image(Number(this.game.config.width) * 0.5, 300, 'logo');
+    this.add.image(Number(this.game.config.width) * 0.5, 300, 'logo');
     this.menu = new Menu(
       this,
       [
@@ -43,7 +45,11 @@ export class MainMenu extends BaseScene {
         },
         {
           text: 'Settings',
-          callback: () => this.scene.start('Settings'),
+          callback: () => this.scene.start(SettingsMenuKey),
+        },
+        {
+          text: 'MapBuilder',
+          callback: () => this.scene.start(MapBuilderKey),
         },
       ],
       this.halfWidth - 120,
@@ -53,19 +59,5 @@ export class MainMenu extends BaseScene {
 
   update(time: number, delta: number): void {
     this.menu.update();
-  }
-
-  get width() {
-    return Number(this.game.config.width);
-  }
-  get halfWidth() {
-    return this.width * 0.5;
-  }
-
-  get height() {
-    return Number(this.game.config.height);
-  }
-  get halfHeight() {
-    return this.height * 0.5;
   }
 }

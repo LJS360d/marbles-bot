@@ -11,6 +11,7 @@ import { DebugConsole } from './debug/DebugConsole';
 import { Login } from './scenes/auth/Login';
 import UIPlugin from 'phaser3-rex-plugins/templates/ui/ui-plugin';
 import GridAlignPlugin from 'phaser3-rex-plugins/plugins/gridalign-plugin.js';
+import { MapBuilder } from './debug/MapBuilder';
 
 (async () => {
   initiateDiscordSDK();
@@ -48,7 +49,16 @@ import GridAlignPlugin from 'phaser3-rex-plugins/plugins/gridalign-plugin.js';
       min: 30,
       target: 60,
     },
-    scene: [Boot, Preloader, MainMenu, Game, Background, SettingsMenu, Login],
+    scene: [
+      Boot,
+      Preloader,
+      MainMenu,
+      Game,
+      MapBuilder,
+      Background,
+      SettingsMenu,
+      Login,
+    ],
   });
 
   window.addEventListener('keydown', (event: KeyboardEvent) => {
