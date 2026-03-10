@@ -7,14 +7,15 @@ defmodule Marbles.Schema.Marble do
 
   schema "marbles" do
     field :name, :string
-    field :edition, :string, default: "Standard"
+    field :edition, :string, default: "standard"
     field :role, Ecto.Enum, values: [:athlete, :coach, :support, :manager]
-    field :rarity, Ecto.Enum, values: [:common, :uncommon, :rare, :epic, :legendary]
+    field :rarity, :integer
 
     # Stats like %{"speed" => 50, "weight" => 70, "stamina" => 40}
     field :base_stats, :map, default: %{}
 
     belongs_to :team, Marbles.Schema.Team
+    many_to_many :packs, Marbles.Schema.Pack, join_through: "pack_contents"
     has_many :user_marbles, Marbles.Schema.UserMarble
     has_many :assets, Marbles.Schema.MarbleAsset
 

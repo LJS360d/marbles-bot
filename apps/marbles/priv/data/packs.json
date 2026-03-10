@@ -1,0 +1,12 @@
+[
+  {
+    "name": "Standard",
+    "description": "",
+    "cost": 100,
+    "marbles": [
+      { "name": "Hazy", "edition": "standard" },
+      { "name": "Red Eye", "edition": "standard" },
+      { "name": "Fairy", "edition": "standard" }
+    ]
+  }
+]

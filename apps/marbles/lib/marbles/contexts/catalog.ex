@@ -12,7 +12,8 @@ defmodule Marbles.Catalog do
   ## Marbles
   def list_pack_marbles_by_rarity(pack_id, rarity) do
     from(m in Marble,
-      where: m.pack_id == ^pack_id and m.rarity == ^rarity,
+      join: p in assoc(m, :packs),
+      where: p.id == ^pack_id and m.rarity == ^rarity,
       preload: [:assets, :team]
     )
     |> Repo.all()

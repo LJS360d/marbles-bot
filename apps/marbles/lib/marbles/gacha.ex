@@ -1,19 +1,12 @@
 defmodule Marbles.Gacha do
-  alias Marbles.{Repo, Catalog, Collection}
+  alias Marbles.{Catalog}
   require Logger
 
   # Weighted probabilities (out of 1000 for precision)
   @weights %{
-    # 70%
-    common: 700,
-    # 20%
-    uncommon: 200,
-    # 8%
-    rare: 80,
-    # 1.5%
-    epic: 15,
-    # 0.5%
-    legendary: 5
+    1 => 900,
+    2 => 95,
+    3 => 5
   }
 
   def pull_from_pack(pack_id) do

@@ -1,3 +1,4 @@
+alias Marbles.Schema.Pack
 alias Marbles.Repo
 alias Marbles.Schema.{Team, Marble, MarbleAsset}
 require Logger
@@ -44,17 +45,18 @@ if File.exists?(teams_file) do
           full_data =
             marble_data
             |> Map.put("team_id", team.id)
-            |> Map.put("base_stats", marble_data["stats"])
+            |> Map.put("base_stats", marble_data["base_stats"])
+
+          marble =
+            %Marble{}
+            |> Marble.changeset(full_data)
+            |> Repo.insert!(on_conflict: :nothing)
 
           Enum.each(marble_data["assets"] || [], fn asset_data ->
             %MarbleAsset{}
-            |> MarbleAsset.changeset(Map.put(asset_data, "marble_id", marble_data.id))
+            |> MarbleAsset.changeset(Map.put(asset_data, "marble_id", marble.id))
             |> Repo.insert!(on_conflict: :nothing)
           end)
-
-          %Marble{}
-          |> Marble.changeset(full_data)
-          |> Repo.insert(on_conflict: :nothing, conflict_target: [:name, :edition])
         end)
       end
     end)
@@ -66,5 +68,62 @@ if File.exists?(teams_file) do
       Logger.error("Failed to seed teams.json: #{inspect(reason)}")
   end
 else
-  Logger.warning("#{teams_file} not found, skipping seeding.")
+  raise "#{teams_file} not found, cannot proceed with seeding"
+end
+
+# --- Packs ---
+packs_file = data_path.("packs.json")
+
+if File.exists?(packs_file) do
+  with {:ok, binary} <- File.read(packs_file),
+       {:ok, packs_json} <- Jason.decode(binary) do
+    Enum.each(packs_json, fn pack_data ->
+      pack =
+        %Pack{}
+        |> Pack.changeset(pack_data)
+        |> Repo.insert(on_conflict: :nothing, conflict_target: :name, returning: true)
+        |> case do
+          {:ok, %Pack{id: nil}} ->
+            Repo.get_by!(Pack, name: pack_data["name"])
+
+          {:ok, inserted} ->
+            inserted
+
+          {:error, changeset} ->
+            Logger.error(
+              "Could not insert pack #{pack_data["name"]}: #{inspect(changeset.errors)}"
+            )
+
+            nil
+        end
+
+      if pack do
+        marbles_to_link =
+          (pack_data["marbles"] || [])
+          |> Enum.map(fn m_query ->
+            Repo.get_by(Marble, name: m_query["name"], edition: m_query["edition"])
+          end)
+          # Remove entries if a marble wasn't found in DB
+          |> Enum.reject(&is_nil/1)
+
+        Logger.info("found #{length(marbles_to_link)} marbles to link to pack #{pack.name}")
+
+        pack
+        |> Repo.preload(:marbles)
+        |> Ecto.Changeset.change()
+        |> Ecto.Changeset.put_assoc(:marbles, marbles_to_link)
+        |> Repo.update!()
+
+        Logger.info("Pack '#{pack.name}' seeded with #{length(marbles_to_link)} marbles.")
+      end
+    end)
+
+    Logger.info("Teams and Marbles seeded successfully.")
+    Logger.info("Seeding process complete.")
+  else
+    {:error, reason} ->
+      Logger.error("Failed to seed teams.json: #{inspect(reason)}")
+  end
+else
+  raise "#{teams_file} not found, cannot proceed with seeding"
 end

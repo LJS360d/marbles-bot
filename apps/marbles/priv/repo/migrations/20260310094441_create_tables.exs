@@ -34,11 +34,33 @@ defmodule Marbles.Repo.Migrations.CreateTables do
       add :edition, :string, default: "Standard"
       # Stored as string for Ecto.Enum
       add :role, :string, null: false
-      add :rarity, :string, null: false
+      add :rarity, :integer, null: false
       add :base_stats, :map, default: "{}"
       add :team_id, references(:teams, type: :binary_id, on_delete: :nilify_all)
       timestamps()
     end
+
+    # Packs
+    create table(:packs, primary_key: false) do
+      add :id, :binary_id, primary_key: true
+      add :name, :string, null: false
+      add :description, :text
+      add :cost, :integer, default: 0
+      add :active, :boolean, default: true, null: false
+
+      timestamps()
+    end
+
+    create unique_index(:packs, [:name])
+
+    # Pack contents Join Table (many-to-many)
+    create table(:pack_contents, primary_key: false) do
+      add :pack_id, references(:packs, type: :binary_id, on_delete: :delete_all), null: false
+      add :marble_id, references(:marbles, type: :binary_id, on_delete: :delete_all), null: false
+    end
+
+    # Composite index for faster lookups and to prevent duplicate entries
+    create unique_index(:pack_contents, [:pack_id, :marble_id])
 
     # Marble Assets
     create table(:marble_assets, primary_key: false) do
@@ -56,7 +78,7 @@ defmodule Marbles.Repo.Migrations.CreateTables do
 
     # Indexing marble_id is vital for performance when preloading assets
     create index(:marble_assets, [:marble_id])
-    # Optional: ensure a marble doesn't have two 'splash' images
+    # ensure a marble doesn't have two 'splash' images
     create unique_index(:marble_assets, [:marble_id, :type])
 
     # User Collection (The "Owned" Marbles)

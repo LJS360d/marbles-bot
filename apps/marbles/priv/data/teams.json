@@ -1,0 +1,87 @@
+[
+  {
+    "name": "Hazers",
+    "logo_url": "team_logos/hazers.png",
+    "color_hex": "",
+    "marbles": [
+      {
+        "name": "Hazy",
+        "role": "athlete",
+        "rarity": 3,
+        "assets": [
+          { "type": "thumbnail", "filename": "hazy/thumb.png" },
+          { "type": "splash", "filename": "hazy/full_art.png" }
+        ],
+        "base_stats": {
+          "speed": 80,
+          "weight": 20,
+          "power": 40,
+          "stability": 90,
+          "roughness": 10
+        }
+      },
+      {
+        "name": "Cloudy",
+        "role": "athlete",
+        "rarity": 2,
+        "assets": [
+          { "type": "thumbnail", "filename": "cloudy/thumb.png" },
+          { "type": "splash", "filename": "cloudy/full_art.png" }
+        ],
+        "base_stats": {
+          "speed": 65,
+          "weight": 30,
+          "power": 30,
+          "stability": 40,
+          "roughness": 40
+        }
+      }
+    ]
+  },
+  {
+    "name": "Crazy Cat's Eyes",
+    "logo_url": "team_logos/crazy_cat_s_eyes.png",
+    "color_hex": "",
+    "marbles": [
+      {
+        "name": "Red Eye",
+        "role": "athlete",
+        "rarity": 3,
+        "assets": [
+          { "id": 1, "type": "thumbnail", "filename": "red_eye/thumb.png" },
+          { "type": "splash", "filename": "red_eye/full_art.png" }
+        ],
+        "base_stats": {
+          "speed": 95,
+          "weight": 10,
+          "power": 50,
+          "stability": 90,
+          "roughness": 10
+        }
+      }
+    ]
+  },
+  {
+    "name": "Golden Orbs",
+    "logo_url": "team_logos/golden_orbs.png",
+    "color_hex": "",
+    "marbles": [
+      {
+        "name": "Fairy",
+        "role": "athlete",
+        "rarity": 1,
+        "assets": [
+          { "id": 1, "type": "thumbnail", "filename": "fairy/thumb.png" },
+          { "type": "splash", "filename": "fairy/full_art.png" }
+        ],
+        "base_stats": {
+          "speed": 15,
+          "weight": 70,
+          "power": 40,
+          "stability": 50,
+          "roughness": 10
+        }
+      }
+    ]
+  }
+]
