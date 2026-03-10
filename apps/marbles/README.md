@@ -1,3 +1,3 @@
 # Marbles
 
-**TODO: Add description**
+Core lib
