@@ -1,40 +1,72 @@
 defmodule MarblesDiscordbot.Commands do
   alias Nostrum.Api.ApplicationCommand
+  alias Nostrum.Constants.ApplicationCommandOptionType
+  alias Marbles.Catalog
   require Logger
 
-  @commands [
-    %{
-      name: "pull",
-      description: "Pull a random marble!",
-      # ChatInput (Slash Command)
-      type: 1
-    },
-    %{
-      name: "trade",
-      description: "Trade a marble with another user",
-      # Guild-only
-      dm_permission: false,
-      options: [
-        %{
-          # USER type
-          type: 6,
-          name: "target",
-          description: "The user you want to trade with",
-          required: true
-        }
-      ]
-    },
-    %{
-      name: "packs",
-      description: "Show currently available packs",
-      type: 1
-    },
-    %{
-      name: "analytics",
-      description: "Show analytics about the bot",
-      type: 1
-    }
-  ]
+  def commands do
+    packs_choices =
+      Catalog.list_active_packs()
+      |> Enum.map(fn pack -> %{name: pack.name, value: pack.id} end)
+
+    [
+      %{
+        name: "pull",
+        description: "Pull a random marble from a pack",
+        options: [
+          %{
+            type: ApplicationCommandOptionType.string(),
+            name: "pack",
+            description: "The pack you want to pull from",
+            required: true,
+            choices: packs_choices
+          }
+        ]
+      },
+      %{
+        name: "trade",
+        description: "Trade a marble with another user",
+        # Guild-only
+        dm_permission: false,
+        options: [
+          %{
+            type: ApplicationCommandOptionType.user(),
+            name: "target",
+            description: "The user you want to trade with",
+            required: true
+          }
+        ]
+      },
+      %{
+        name: "spawnrate",
+        description: "View or edit spawn rate in this channel",
+        dm_permission: false,
+        options: [
+          %{
+            type: ApplicationCommandOptionType.number(),
+            name: "rate",
+            description: "the rate in % ",
+            required: false
+          }
+        ]
+      },
+      %{
+        name: "channels",
+        description: "View access and spawnrate of available channels",
+        dm_permission: false
+      },
+      %{
+        name: "packs",
+        description: "Show currently available packs",
+        type: 1
+      },
+      %{
+        name: "analytics",
+        description: "Show analytics about the bot",
+        type: 1
+      }
+    ]
+  end
 
   defp needs_resync?(remote, local) do
     if length(remote) != length(local) do
@@ -56,10 +88,10 @@ defmodule MarblesDiscordbot.Commands do
   def sync do
     case ApplicationCommand.global_commands() do
       {:ok, remote_commands} ->
-        if needs_resync?(remote_commands, @commands) do
+        if needs_resync?(remote_commands, commands()) do
           Logger.info("Syncing slash command interactions...")
 
-          case ApplicationCommand.bulk_overwrite_global_commands(@commands) do
+          case sync_force() do
             {:ok, _} -> Logger.info("Commands synced successfully.")
             {:error, reason} -> Logger.error("Failed to sync commands: #{inspect(reason)}")
           end
@@ -70,5 +102,9 @@ defmodule MarblesDiscordbot.Commands do
       {:error, _} ->
         Logger.error("Could not verify commands")
     end
+  end
+
+  def sync_force do
+    ApplicationCommand.bulk_overwrite_global_commands(commands())
   end
 end

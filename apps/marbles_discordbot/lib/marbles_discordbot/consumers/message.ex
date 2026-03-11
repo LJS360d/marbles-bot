@@ -5,6 +5,7 @@ defmodule MarblesDiscordbot.Consumers.Message do
 
   def handle_event({:MESSAGE_CREATE, %Message{} = msg, _ws_state}) do
     IO.inspect(msg.content)
+    # TODO roll a weighted dice, configurable at guild level
   end
 
   # Ignore any other events

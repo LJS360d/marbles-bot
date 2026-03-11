@@ -20,6 +20,7 @@ defmodule MarblesDiscordbot.Consumers.Interaction do
     Logger.info("From user '#{user.username}' in #{location}: /#{i.data.name}")
 
     response = handle_command(i.data.name, i)
+
     if response do
       case Api.create_interaction_response(i, response) do
         {:ok} -> :ok
@@ -32,6 +33,7 @@ defmodule MarblesDiscordbot.Consumers.Interaction do
 
   defp handle_command("packs", _i) do
     packs = Catalog.list_active_packs()
+
     content =
       if packs == [] do
         "No packs are currently available."
@@ -41,10 +43,25 @@ defmodule MarblesDiscordbot.Consumers.Interaction do
             count = length(p.marbles || [])
             "**#{p.name}** — #{p.cost} coins · #{count} marbles"
           end)
+
         "**Available packs**\n" <> Enum.join(lines, "\n")
       end
 
     %{type: 4, data: %{content: content}}
+  end
+
+  defp handle_command("spawnrate", i) do
+    spawnrate = i.data.options |> Enum.find(fn o -> o.name == "spawnrate" end) |> Map.get(:value)
+
+    case spawnrate do
+      # respond to the interaction with the current spawnrate
+      nil ->
+        %{type: 4, data: %{content: ""}}
+
+      # set the spawnrate to n in db
+      n ->
+        %{type: 4, data: %{content: "Spawnrate set to #{n}"}}
+    end
   end
 
   defp handle_command(_, _), do: nil
