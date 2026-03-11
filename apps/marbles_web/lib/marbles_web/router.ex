@@ -10,22 +10,63 @@ defmodule MarblesWeb.Router do
     plug :put_secure_browser_headers
   end
 
+  pipeline :auth do
+    plug MarblesWeb.Plugs.Auth
+  end
+
+  pipeline :require_user do
+    plug MarblesWeb.Plugs.Auth, :require_user
+  end
+
+  pipeline :require_owner do
+    plug MarblesWeb.Plugs.Auth, :require_owner
+  end
+
+  pipeline :require_server_admin_or_owner do
+    plug MarblesWeb.Plugs.Auth, :require_server_admin_or_owner
+  end
+
   pipeline :api do
     plug :accepts, ["json"]
   end
 
   scope "/", MarblesWeb do
-    pipe_through :browser
+    pipe_through [:browser, :auth]
 
     get "/", PageController, :home
+    get "/login", AuthController, :login_page
+    get "/auth/:provider", AuthController, :request
+    get "/auth/:provider/callback", AuthController, :callback
+    delete "/logout", AuthController, :logout
   end
 
-  # Other scopes may use custom stacks.
-  # scope "/api", MarblesWeb do
-  #   pipe_through :api
-  # end
+  scope "/admin", MarblesWeb.Admin do
+    pipe_through [:browser, :auth, :require_user, :require_server_admin_or_owner]
 
-  # Enable LiveDashboard and Swoosh mailbox preview in development
+    live_session :guild_admin,
+      on_mount: [{MarblesWeb.Live.AuthHooks, :assign_current_user}] do
+      live "/", GuildAdminLive, :index
+    end
+  end
+
+  scope "/admin/owner", MarblesWeb.Admin do
+    pipe_through [:browser, :auth, :require_user, :require_owner]
+
+    live_session :owner_admin,
+      on_mount: [{MarblesWeb.Live.AuthHooks, :assign_current_user}] do
+      live "/", OwnerAdminLive, :index
+    end
+  end
+
+  scope "/broadcast", MarblesWeb do
+    pipe_through [:browser, :auth, :require_user, :require_owner]
+
+    live_session :broadcast,
+      on_mount: [{MarblesWeb.Live.AuthHooks, :assign_current_user}] do
+      live "/", BroadcastLive, :index
+    end
+  end
+
   if Application.compile_env(:marbles_web, :dev_routes) do
     # If you want to use the LiveDashboard in production, you should put
     # it behind authentication and allow only admins to access it.

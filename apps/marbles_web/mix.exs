@@ -59,7 +59,9 @@ defmodule MarblesWeb.MixProject do
       {:gettext, "~> 1.0"},
       {:marbles, in_umbrella: true},
       {:jason, "~> 1.2"},
-      {:bandit, "~> 1.5"}
+      {:bandit, "~> 1.5"},
+      {:ueberauth, "~> 0.10"},
+      {:ueberauth_discord, "~> 0.7"}
     ]
   end
 

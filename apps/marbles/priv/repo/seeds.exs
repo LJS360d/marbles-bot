@@ -78,20 +78,27 @@ if File.exists?(packs_file) do
   with {:ok, binary} <- File.read(packs_file),
        {:ok, packs_json} <- Jason.decode(binary) do
     Enum.each(packs_json, fn pack_data ->
+      pack_attrs =
+        if pack_data["name"] == "Standard" do
+          Map.merge(pack_data, %{"start_date" => ~D[2000-01-01], "end_date" => nil})
+        else
+          pack_data
+        end
+
       pack =
         %Pack{}
-        |> Pack.changeset(pack_data)
+        |> Pack.changeset(pack_attrs)
         |> Repo.insert(on_conflict: :nothing, conflict_target: :name, returning: true)
         |> case do
           {:ok, %Pack{id: nil}} ->
-            Repo.get_by!(Pack, name: pack_data["name"])
+            Repo.get_by!(Pack, name: pack_attrs["name"])
 
           {:ok, inserted} ->
             inserted
 
           {:error, changeset} ->
             Logger.error(
-              "Could not insert pack #{pack_data["name"]}: #{inspect(changeset.errors)}"
+              "Could not insert pack #{pack_attrs["name"]}: #{inspect(changeset.errors)}"
             )
 
             nil
@@ -99,7 +106,7 @@ if File.exists?(packs_file) do
 
       if pack do
         marbles_to_link =
-          (pack_data["marbles"] || [])
+          (pack_attrs["marbles"] || pack_data["marbles"] || [])
           |> Enum.map(fn m_query ->
             Repo.get_by(Marble, name: m_query["name"], edition: m_query["edition"])
           end)
@@ -118,12 +125,11 @@ if File.exists?(packs_file) do
       end
     end)
 
-    Logger.info("Teams and Marbles seeded successfully.")
-    Logger.info("Seeding process complete.")
+    Logger.info("Packs seeded successfully.")
   else
     {:error, reason} ->
-      Logger.error("Failed to seed teams.json: #{inspect(reason)}")
+      Logger.error("Failed to seed packs.json: #{inspect(reason)}")
   end
 else
-  raise "#{teams_file} not found, cannot proceed with seeding"
+  raise "#{packs_file} not found, cannot proceed with seeding"
 end

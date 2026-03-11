@@ -25,6 +25,11 @@ defmodule MarblesDiscordbot.Commands do
       ]
     },
     %{
+      name: "packs",
+      description: "Show currently available packs",
+      type: 1
+    },
+    %{
       name: "analytics",
       description: "Show analytics about the bot",
       type: 1

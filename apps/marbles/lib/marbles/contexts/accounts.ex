@@ -3,6 +3,8 @@ defmodule Marbles.Accounts do
   alias Marbles.Repo
   alias Marbles.Schema.User
 
+  def get_user!(id), do: Repo.get!(User, id)
+
   def get_user_by_platform(platform_id, platform \\ "discord") do
     Repo.get_by(User, platform_id: platform_id, platform: platform)
   end
@@ -22,6 +24,12 @@ defmodule Marbles.Accounts do
   def update_currency(user, amount) do
     user
     |> User.changeset(%{currency: user.currency + amount})
+    |> Repo.update()
+  end
+
+  def set_role(user, role) when role in [:regular, :server_admin, :owner] do
+    user
+    |> User.changeset(%{role: role})
     |> Repo.update()
   end
 end

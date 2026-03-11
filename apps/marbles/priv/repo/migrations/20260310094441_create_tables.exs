@@ -21,6 +21,7 @@ defmodule Marbles.Repo.Migrations.CreateTables do
       add :platform, :string, null: false
       add :platform_id, :string, null: false
       add :currency, :integer, default: 0
+      add :role, :string, null: false, default: "regular"
       timestamps()
     end
 
@@ -46,6 +47,8 @@ defmodule Marbles.Repo.Migrations.CreateTables do
       add :name, :string, null: false
       add :description, :text
       add :cost, :integer, default: 0
+      add :start_date, :date, null: true
+      add :end_date, :date, null: true
       add :active, :boolean, default: true, null: false
 
       timestamps()

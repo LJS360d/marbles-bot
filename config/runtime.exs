@@ -23,6 +23,13 @@ config :nostrum,
 config :nostrum, youtubedl: nil
 config :nostrum, streamlink: nil
 
+config :ueberauth, Ueberauth.Strategy.Discord.OAuth,
+  client_id: System.get_env("DISCORD_OAUTH_CLIENT_ID"),
+  client_secret: System.get_env("DISCORD_OAUTH_CLIENT_SECRET")
+
+config :marbles_web, :owner_platform_ids,
+  System.get_env("OWNER_USER_IDS", "") |> String.split(",", trim: true)
+
 if config_env() == :prod do
   database_path =
     System.get_env("DATABASE_PATH") ||
