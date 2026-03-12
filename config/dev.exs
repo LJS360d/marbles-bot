@@ -70,6 +70,9 @@ config :marbles_web, dev_routes: true
 # Do not include metadata nor timestamps in development logs
 config :logger, :default_formatter, format: "[$level] $message\n"
 
+config :marbles, :assets_base_url,
+  System.get_env("ASSETS_BASE_URL") || "http://127.0.0.1:4000/uploads"
+
 # Initialize plugs at runtime for faster development compilation
 config :phoenix, :plug_init_mode, :runtime
 

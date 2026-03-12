@@ -1,0 +1,14 @@
+_build
+deps
+.git
+.gitignore
+*.db
+*.db-*
+.env.*
+.env.example
+doc
+cover
+.elixir_ls
+*.ez
+*.md
+mise.toml

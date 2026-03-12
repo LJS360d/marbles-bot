@@ -80,7 +80,7 @@ if File.exists?(packs_file) do
     Enum.each(packs_json, fn pack_data ->
       pack_attrs =
         if pack_data["name"] == "Standard" do
-          Map.merge(pack_data, %{"start_date" => ~D[2000-01-01], "end_date" => nil})
+          Map.merge(pack_data, %{"start_date" => nil, "end_date" => nil})
         else
           pack_data
         end

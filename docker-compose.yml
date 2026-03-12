@@ -1,0 +1,50 @@
+# Marbles umbrella: web app + Discord bot + DB.
+# Run from repo root. Requires .env with DISCORD_BOT_TOKEN (and optionally
+# DISCORD_OAUTH_*, SECRET_KEY_BASE, DATABASE_PATH).
+#
+# For dev with SQLite (default): app uses DATABASE_PATH volume.
+# For Postgres: set DATABASE_URL and use postgres service; add ecto_psql to marbles deps and configure Repo accordingly.
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: marbles
+      POSTGRES_PASSWORD: marbles
+      POSTGRES_DB: marbles_dev
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U marbles"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    env_file: .env
+    environment:
+      MIX_ENV: prod
+      PORT: 4000
+      # Use SQLite in container unless DATABASE_URL is set for Postgres
+      DATABASE_PATH: /app/data/marbles.db
+      # Discord (required for bot)
+      # DISCORD_BOT_TOKEN: set in .env
+    ports:
+      - "4000:4000"
+    volumes:
+      - app_data:/app/data
+    # When using Postgres, add: depends_on: { postgres: { condition: service_healthy } }
+    command: >
+      sh -c "
+        /app/bin/marbles_umbrella eval 'Marbles.Release.migrate()' &&
+        exec /app/bin/marbles_umbrella start
+      "
+
+volumes:
+  postgres_data:
+  app_data:

@@ -4,11 +4,13 @@ defmodule MarblesDiscordbot.Application do
   @impl true
   def start(_type, _args) do
     children = [
-      # 3. Start your Consumer process
+      MarblesDiscordbot.PendingSpawns,
+      MarblesDiscordbot.CommandsResyncSubscriber,
       MarblesDiscordbot.Consumers.Ready,
       MarblesDiscordbot.Consumers.Message,
-      MarblesDiscordbot.Consumers.Interaction
-      # {Nostrum.Bot, bot_config}
+      MarblesDiscordbot.Consumers.Reaction,
+      MarblesDiscordbot.Consumers.Interaction,
+      MarblesDiscordbot.Consumers.Component
     ]
 
     opts = [strategy: :one_for_one, name: MarblesDiscordbot.Supervisor]

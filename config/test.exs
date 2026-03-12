@@ -17,6 +17,8 @@ config :marbles_web, MarblesWeb.Endpoint,
   secret_key_base: "QIj5BYh1sRz4TMbbrE063yDeRMsRz+E4aHZWotYSzW1NyXdaQR6eIlQ/EoYXPAJb",
   server: false
 
+config :marbles, :assets_base_url, System.get_env("ASSETS_BASE_URL") || "https://assets.test"
+
 # Print only warnings and errors during test
 config :logger, level: :warning
 

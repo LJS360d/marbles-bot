@@ -3,6 +3,9 @@
     "name": "Standard",
     "description": "",
     "cost": 100,
+    "start_date": null,
+    "end_date": null,
+    "active": true,
     "marbles": [
       { "name": "Hazy", "edition": "standard" },
       { "name": "Red Eye", "edition": "standard" },

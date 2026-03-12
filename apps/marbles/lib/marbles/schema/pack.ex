@@ -10,6 +10,7 @@ defmodule Marbles.Schema.Pack do
     field :active, :boolean, default: true
     field :start_date, :date
     field :end_date, :date
+    field :banner_path, :string
 
     many_to_many :marbles, Marbles.Schema.Marble, join_through: "pack_contents"
 
@@ -18,7 +19,7 @@ defmodule Marbles.Schema.Pack do
 
   def changeset(pack, attrs) do
     pack
-    |> cast(attrs, [:name, :description, :cost, :active, :start_date, :end_date])
+    |> cast(attrs, [:name, :description, :cost, :active, :start_date, :end_date, :banner_path])
     |> validate_required([:name, :cost])
   end
 end

@@ -6,8 +6,8 @@ defmodule MarblesDiscordbot.Commands do
 
   def commands do
     packs_choices =
-      Catalog.list_active_packs()
-      |> Enum.map(fn pack -> %{name: pack.name, value: pack.id} end)
+      Catalog.list_active_packs(Date.utc_today(), :name)
+      |> Enum.map(fn pack -> %{name: pack.name, value: to_string(pack.id)} end)
 
     [
       %{
@@ -25,7 +25,7 @@ defmodule MarblesDiscordbot.Commands do
       },
       %{
         name: "trade",
-        description: "Trade a marble with another user",
+        description: "Trade with another user",
         # Guild-only
         dm_permission: false,
         options: [
@@ -39,14 +39,16 @@ defmodule MarblesDiscordbot.Commands do
       },
       %{
         name: "spawnrate",
-        description: "View or edit spawn rate in this channel",
+        description: "View or set the spawn rate in this channel",
         dm_permission: false,
         options: [
           %{
             type: ApplicationCommandOptionType.number(),
             name: "rate",
             description: "the rate in % ",
-            required: false
+            required: false,
+            max_value: 100.0,
+            min_value: 0.0
           }
         ]
       },
@@ -54,6 +56,11 @@ defmodule MarblesDiscordbot.Commands do
         name: "channels",
         description: "View access and spawnrate of available channels",
         dm_permission: false
+      },
+      %{
+        name: "collection",
+        description: "See your marbles collection",
+        type: 1
       },
       %{
         name: "packs",

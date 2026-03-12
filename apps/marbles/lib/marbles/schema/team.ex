@@ -5,7 +5,7 @@ defmodule Marbles.Schema.Team do
   @primary_key {:id, :binary_id, autogenerate: true}
   schema "teams" do
     field :name, :string
-    field :logo_url, :string
+    field :logo_path, :string
     field :color_hex, :string
 
     has_many :marbles, Marbles.Schema.Marble
@@ -15,7 +15,7 @@ defmodule Marbles.Schema.Team do
 
   def changeset(team, attrs) do
     team
-    |> cast(attrs, [:name, :logo_url, :color_hex])
+    |> cast(attrs, [:name, :logo_path, :color_hex])
     |> validate_required([:name])
     |> unique_constraint(:name)
   end

@@ -1,7 +1,7 @@
 [
   {
     "name": "Hazers",
-    "logo_url": "team_logos/hazers.png",
+    "logo_path": "team_logos/hazers.png",
     "color_hex": "",
     "marbles": [
       {
@@ -40,7 +40,7 @@
   },
   {
     "name": "Crazy Cat's Eyes",
-    "logo_url": "team_logos/crazy_cat_s_eyes.png",
+    "logo_path": "team_logos/crazy_cat_s_eyes.png",
     "color_hex": "",
     "marbles": [
       {
@@ -63,7 +63,7 @@
   },
   {
     "name": "Golden Orbs",
-    "logo_url": "team_logos/golden_orbs.png",
+    "logo_path": "team_logos/golden_orbs.png",
     "color_hex": "",
     "marbles": [
       {

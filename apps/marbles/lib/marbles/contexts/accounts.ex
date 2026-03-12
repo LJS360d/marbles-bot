@@ -32,4 +32,15 @@ defmodule Marbles.Accounts do
     |> User.changeset(%{role: role})
     |> Repo.update()
   end
+
+  def can_free_pull?(user) do
+    today = Date.utc_today()
+    is_nil(user.last_free_pull_at) or Date.compare(user.last_free_pull_at, today) == :lt
+  end
+
+  def set_last_free_pull_at(user) do
+    user
+    |> User.changeset(%{last_free_pull_at: Date.utc_today()})
+    |> Repo.update()
+  end
 end

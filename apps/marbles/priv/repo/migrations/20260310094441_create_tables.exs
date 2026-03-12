@@ -2,11 +2,29 @@ defmodule Marbles.Repo.Migrations.CreateTables do
   use Ecto.Migration
 
   def change do
+    # Discord guilds (servers)
+    create table(:guilds, primary_key: false) do
+      add :id, :string, primary_key: true
+      add :name, :string, null: false
+      timestamps()
+    end
+
+    # Discord channel spawn config (channel_id is Discord snowflake)
+    create table(:channels, primary_key: false) do
+      add :id, :string, primary_key: true
+      add :name, :string, null: false
+      add :guild_id, references(:guilds, type: :string, on_delete: :delete_all), null: false
+      add :spawn_rate, :float, default: 0.0, null: false
+      timestamps()
+    end
+
+    create index(:channels, [:guild_id])
+
     # Teams
     create table(:teams, primary_key: false) do
       add :id, :binary_id, primary_key: true
       add :name, :string, null: false
-      add :logo_url, :string
+      add :logo_path, :string
       add :color_hex, :string
       timestamps()
     end
@@ -22,6 +40,7 @@ defmodule Marbles.Repo.Migrations.CreateTables do
       add :platform_id, :string, null: false
       add :currency, :integer, default: 0
       add :role, :string, null: false, default: "regular"
+      add :last_free_pull_at, :date
       timestamps()
     end
 
@@ -50,6 +69,7 @@ defmodule Marbles.Repo.Migrations.CreateTables do
       add :start_date, :date, null: true
       add :end_date, :date, null: true
       add :active, :boolean, default: true, null: false
+      add :banner_path, :string
 
       timestamps()
     end
@@ -97,5 +117,20 @@ defmodule Marbles.Repo.Migrations.CreateTables do
 
     create index(:user_marbles, [:user_id])
     create index(:user_marbles, [:marble_id])
+
+    # Analytics (dev adapter): pulls and spawns; prod can use a different adapter
+    # guild_id/channel_id as string for Discord snowflakes
+    create table(:analytics_events, primary_key: false) do
+      add :id, :binary_id, primary_key: true
+      add :event_type, :string, null: false
+      add :guild_id, :string
+      add :channel_id, :string
+      add :user_id, references(:users, type: :binary_id, on_delete: :nilify_all)
+      add :meta, :map, default: %{}
+      timestamps()
+    end
+
+    create index(:analytics_events, [:event_type, :inserted_at])
+    create index(:analytics_events, [:guild_id, :inserted_at])
   end
 end

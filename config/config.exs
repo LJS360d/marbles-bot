@@ -11,7 +11,8 @@ import Config
 
 # Configure Mix tasks and generators
 config :marbles,
-  ecto_repos: [Marbles.Repo]
+  ecto_repos: [Marbles.Repo],
+  analytics_adapter: Marbles.Analytics.SQLAdapter
 
 # Configure the mailer
 #
