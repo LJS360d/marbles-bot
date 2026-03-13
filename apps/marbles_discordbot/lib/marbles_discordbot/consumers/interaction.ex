@@ -82,21 +82,31 @@ defmodule MarblesDiscordbot.Consumers.Interaction do
       channel_name =
         channel_id &&
           case Nostrum.Cache.GuildCache.get(i.guild_id) do
-            {:ok, guild} ->
-              guild.channels
-              |> then(fn c -> (c && c.name) || "Unknown" end)
+            {:ok, guild} when is_map(guild.channels) ->
+              id = String.to_integer(channel_id)
+              case Map.get(guild.channels, id) do
+                %{name: name} when is_binary(name) -> name
+                _ -> "Unknown"
+              end
 
             _ ->
               "Unknown"
           end
 
       if channel_id && guild_id do
+        image_url =
+          case Nostrum.Cache.GuildCache.get(i.guild_id) do
+            {:ok, g} -> Nostrum.Struct.Guild.icon_url(g)
+            _ -> nil
+          end
+
         case Guilds.upsert_channel_spawn_rate(
                channel_id,
                guild_id,
                guild_name,
                channel_name,
-               rate
+               rate,
+               image_url: image_url
              ) do
           {:ok, ch} ->
             %{

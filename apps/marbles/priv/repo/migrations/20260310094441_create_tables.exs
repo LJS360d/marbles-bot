@@ -2,10 +2,12 @@ defmodule Marbles.Repo.Migrations.CreateTables do
   use Ecto.Migration
 
   def change do
-    # Discord guilds (servers)
+    # Guilds/servers (Discord, Matrix, etc.)
     create table(:guilds, primary_key: false) do
       add :id, :string, primary_key: true
       add :name, :string, null: false
+      add :platform, :string, null: false, default: "discord"
+      add :image_url, :string
       timestamps()
     end
 
@@ -31,21 +33,28 @@ defmodule Marbles.Repo.Migrations.CreateTables do
 
     create unique_index(:teams, [:name])
 
-    # Users
+    # Internal users (one per person; multiple platform logins link here)
     create table(:users, primary_key: false) do
       add :id, :binary_id, primary_key: true
-      add :username, :string, null: false
       add :display_name, :string
-      add :platform, :string, null: false
-      add :platform_id, :string, null: false
       add :currency, :integer, default: 0
       add :role, :string, null: false, default: "regular"
       add :last_free_pull_at, :date
       timestamps()
     end
 
-    create unique_index(:users, [:username])
-    create unique_index(:users, [:platform, :platform_id])
+    # Platform identities (Discord, Google, Matrix, etc.) linking to internal user
+    create table(:user_identities, primary_key: false) do
+      add :id, :binary_id, primary_key: true
+      add :user_id, references(:users, type: :binary_id, on_delete: :delete_all), null: false
+      add :platform, :string, null: false
+      add :platform_id, :string, null: false
+      add :username, :string, null: false
+      timestamps()
+    end
+
+    create unique_index(:user_identities, [:platform, :platform_id])
+    create index(:user_identities, [:user_id])
 
     # Marbles (The Templates)
     create table(:marbles, primary_key: false) do

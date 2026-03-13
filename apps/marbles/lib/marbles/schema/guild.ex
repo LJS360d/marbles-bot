@@ -5,13 +5,15 @@ defmodule Marbles.Schema.Guild do
   @primary_key {:id, :string, autogenerate: false}
   schema "guilds" do
     field :name, :string
+    field :platform, :string, default: "discord"
+    field :image_url, :string
     has_many :channels, Marbles.Schema.Channel
     timestamps()
   end
 
   def changeset(guild, attrs) do
     guild
-    |> cast(attrs, [:id, :name])
+    |> cast(attrs, [:id, :name, :platform, :image_url])
     |> validate_required([:id, :name])
   end
 end

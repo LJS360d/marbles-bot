@@ -56,7 +56,7 @@ defmodule MarblesWeb.CoreComponents do
       id={@id}
       phx-click={JS.push("lv:clear-flash", value: %{key: @kind}) |> hide("##{@id}")}
       role="alert"
-      class="toast toast-top toast-end z-50"
+      class="z-50"
       {@rest}
     >
       <div class={[
@@ -335,7 +335,7 @@ defmodule MarblesWeb.CoreComponents do
 
       <.table id="users" rows={@users}>
         <:col :let={user} label="id">{user.id}</:col>
-        <:col :let={user} label="username">{user.username}</:col>
+        <:col :let={user} label="name">{user.name}</:col>
       </.table>
   """
   attr :id, :string, required: true
@@ -442,6 +442,22 @@ defmodule MarblesWeb.CoreComponents do
   def icon(%{name: "hero-" <> _} = assigns) do
     ~H"""
     <span class={[@name, @class]} />
+    """
+  end
+
+  attr :guild, :map, required: true
+  attr :class, :any, default: nil
+  def guild_avatar(assigns) do
+    ~H"""
+    <div class={["shrink-0 overflow-hidden rounded-full bg-base-300", @class]}>
+      <%= if @guild.image_url do %>
+        <img src={@guild.image_url} alt="" class="h-full w-full object-cover" />
+      <% else %>
+        <span class="flex h-full w-full items-center justify-center text-base-content/50" aria-hidden="true">
+          <.icon name="hero-server-stack" class="h-1/2 w-1/2" />
+        </span>
+      <% end %>
+    </div>
     """
   end
 

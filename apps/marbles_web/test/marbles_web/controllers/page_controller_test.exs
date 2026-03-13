@@ -3,6 +3,8 @@ defmodule MarblesWeb.PageControllerTest do
 
   test "GET /", %{conn: conn} do
     conn = get(conn, ~p"/")
-    assert html_response(conn, 200) =~ "Peace of mind from prototype to production"
+    html = html_response(conn, 200)
+    assert html =~ "Marbles"
+    assert html =~ "Log in"
   end
 end

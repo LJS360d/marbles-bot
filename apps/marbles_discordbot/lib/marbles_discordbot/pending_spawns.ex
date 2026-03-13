@@ -8,7 +8,11 @@ defmodule MarblesDiscordbot.PendingSpawns do
   end
 
   def create(message_id, channel_id, marble_id, emoji, expires_at) do
-    GenServer.cast(__MODULE__, {:put, message_id, %{channel_id: channel_id, marble_id: marble_id, emoji: emoji, expires_at: expires_at}})
+    GenServer.cast(
+      __MODULE__,
+      {:put, message_id,
+       %{channel_id: channel_id, marble_id: marble_id, emoji: emoji, expires_at: expires_at}}
+    )
   end
 
   def get_by_message(message_id) do
@@ -28,6 +32,7 @@ defmodule MarblesDiscordbot.PendingSpawns do
   @impl true
   def handle_call({:get, message_id}, _from, state) do
     now = DateTime.utc_now()
+
     result =
       case :ets.lookup(state.tid, message_id) do
         [{^message_id, %{expires_at: expires_at} = entry}] ->
@@ -37,9 +42,11 @@ defmodule MarblesDiscordbot.PendingSpawns do
             :ets.delete(state.tid, message_id)
             nil
           end
+
         [] ->
           nil
       end
+
     {:reply, result, state}
   end
 

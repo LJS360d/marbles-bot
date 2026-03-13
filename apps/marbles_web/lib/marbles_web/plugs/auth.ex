@@ -25,6 +25,7 @@ defmodule MarblesWeb.Plugs.Auth do
 
   def require_owner(conn, _opts) do
     user = conn.assigns[:current_user]
+
     if owner?(user) do
       conn
     else
@@ -37,6 +38,7 @@ defmodule MarblesWeb.Plugs.Auth do
 
   def require_server_admin_or_owner(conn, _opts) do
     user = conn.assigns[:current_user]
+
     if user && (user.role == :server_admin || owner?(user)) do
       conn
     else
@@ -48,8 +50,5 @@ defmodule MarblesWeb.Plugs.Auth do
   end
 
   defp owner?(nil), do: false
-  defp owner?(user) do
-    user.role == :owner ||
-      user.platform_id in (Application.get_env(:marbles_web, :owner_platform_ids, []) || [])
-  end
+  defp owner?(user), do: user.role == :owner
 end

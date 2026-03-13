@@ -7,6 +7,18 @@ defmodule Marbles.Catalog do
   ## Teams
   def list_teams, do: Repo.all(Team)
 
+  def create_team(attrs \\ %{}) do
+    %Team{}
+    |> Team.changeset(attrs)
+    |> Repo.insert()
+  end
+
+  def update_team(%Team{} = team, attrs) do
+    team
+    |> Team.changeset(attrs)
+    |> Repo.update()
+  end
+
   ## Packs
   def list_active_packs(as_of \\ Date.utc_today(), order \\ :name) do
     base =
@@ -55,9 +67,38 @@ defmodule Marbles.Catalog do
 
   def get_marble!(id), do: Repo.get!(Marble, id) |> Repo.preload([:assets, :team])
 
+  def list_marbles(opts \\ []) do
+    page = Keyword.get(opts, :page, 1)
+    per = Keyword.get(opts, :per_page, 25)
+    offset = (max(1, page) - 1) * per
+    base = from(m in Marble, preload: [:team], order_by: [asc: m.name])
+    total = Repo.aggregate(base, :count, :id)
+    marbles = base |> offset(^offset) |> limit(^per) |> Repo.all()
+    {marbles, total}
+  end
+
   def create_marble(attrs \\ %{}) do
     %Marble{}
     |> Marble.changeset(attrs)
     |> Repo.insert()
+  end
+
+  def update_marble(%Marble{} = marble, attrs) do
+    marble
+    |> Marble.changeset(attrs)
+    |> Repo.update()
+  end
+
+  def list_all_packs(opts \\ []) do
+    order = Keyword.get(opts, :order, :name)
+    base = from(p in Pack, preload: [:marbles])
+
+    ordered =
+      case order do
+        :newest -> from(p in base, order_by: [desc: p.inserted_at])
+        _ -> from(p in base, order_by: [asc: p.name])
+      end
+
+    Repo.all(ordered)
   end
 end

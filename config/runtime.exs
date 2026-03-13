@@ -27,16 +27,19 @@ config :ueberauth, Ueberauth.Strategy.Discord.OAuth,
   client_id: System.get_env("DISCORD_OAUTH_CLIENT_ID"),
   client_secret: System.get_env("DISCORD_OAUTH_CLIENT_SECRET")
 
-config :marbles_web, :owner_platform_ids,
-  System.get_env("OWNER_USER_IDS", "") |> String.split(",", trim: true)
+owner_platform_ids = System.get_env("OWNER_USER_IDS", "") |> String.split(",", trim: true)
+config :marbles_web, :owner_platform_ids, owner_platform_ids
+config :marbles, :owner_platform_ids, owner_platform_ids
 
 assets_base_url = System.get_env("ASSETS_BASE_URL")
+
 if config_env() == :prod and (is_nil(assets_base_url) or assets_base_url == "") do
   raise """
   environment variable ASSETS_BASE_URL is required in production.
   Set it to the base URL where asset paths are served (e.g. CDN or bucket URL).
   """
 end
+
 if assets_base_url != nil and assets_base_url != "" do
   config :marbles, :assets_base_url, assets_base_url
 end

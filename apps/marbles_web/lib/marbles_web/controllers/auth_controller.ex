@@ -26,11 +26,13 @@ defmodule MarblesWeb.AuthController do
 
     case Accounts.ensure_user(attrs) do
       {:ok, user} ->
-        user = maybe_promote_owner(user)
+        user = maybe_promote_owner(user, attrs.platform_id)
+
         conn
         |> put_session(:user_id, user.id)
         |> put_flash(:info, "Logged in.")
         |> redirect(to: ~p"/")
+
       {:error, _changeset} ->
         conn
         |> put_flash(:error, "Could not create or find your account.")
@@ -38,9 +40,10 @@ defmodule MarblesWeb.AuthController do
     end
   end
 
-  defp maybe_promote_owner(user) do
+  defp maybe_promote_owner(user, platform_id) do
     owner_ids = Application.get_env(:marbles_web, :owner_platform_ids, [])
-    if user.platform_id in owner_ids do
+
+    if platform_id in owner_ids do
       case Accounts.set_role(user, :owner) do
         {:ok, updated} -> updated
         {:error, _} -> user

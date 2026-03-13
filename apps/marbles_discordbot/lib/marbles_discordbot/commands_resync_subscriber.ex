@@ -16,10 +16,12 @@ defmodule MarblesDiscordbot.CommandsResyncSubscriber do
   @impl true
   def handle_info(:resync, state) do
     Logger.info("Commands resync requested via PubSub.")
+
     case Commands.sync_force() do
       {:ok, _} -> Logger.info("Commands resynced successfully.")
       {:error, reason} -> Logger.error("Commands resync failed: #{inspect(reason)}")
     end
+
     {:noreply, state}
   end
 end

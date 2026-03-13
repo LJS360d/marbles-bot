@@ -28,6 +28,14 @@ defmodule MarblesWeb.Router do
 
   pipeline :api do
     plug :accepts, ["json"]
+    plug :fetch_session
+  end
+
+  scope "/api/owner", MarblesWeb.Api.Owner do
+    pipe_through [:api, :auth, :require_owner]
+
+    get "/stats", StatsController, :index
+    post "/broadcast", BroadcastController, :create
   end
 
   scope "/", MarblesWeb do
@@ -55,6 +63,17 @@ defmodule MarblesWeb.Router do
     live_session :owner_admin,
       on_mount: [{MarblesWeb.Live.AuthHooks, :assign_current_user}] do
       live "/", OwnerAdminLive, :index
+      live "/users", OwnerUsersLive, :index
+      live "/users/:id", OwnerUserDetailLive, :show
+      live "/users/:id/edit", OwnerUserEditLive, :edit
+      live "/marbles", OwnerMarblesLive, :index
+      live "/marbles/:id/edit", OwnerMarbleEditLive, :edit
+      live "/packs", OwnerPacksLive, :index
+      live "/packs/new", OwnerPackBuilderLive, :new
+      live "/packs/:id/edit", OwnerPackBuilderLive, :edit
+      live "/teams", OwnerTeamsLive, :index
+      live "/teams/:id/edit", OwnerTeamEditLive, :edit
+      live "/guilds", OwnerGuildsLive, :index
     end
   end
 
