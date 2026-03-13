@@ -3,7 +3,7 @@ defmodule MarblesDiscordbot.Consumers.Message do
   alias Marbles.Schema.Channel
   alias Nostrum.Struct.Message
   alias Nostrum.Api
-  alias Marbles.{Guilds, Gacha, Catalog, Analytics}
+  alias Marbles.{Gacha, Catalog, Guilds}
   alias MarblesDiscordbot.{PendingSpawns, Embeds}
   require Logger
 
@@ -46,10 +46,6 @@ defmodule MarblesDiscordbot.Consumers.Message do
                 emoji,
                 expires
               )
-
-              Analytics.record_spawn(guild_id_str, channel_id_str, nil, %{
-                "marble_id" => to_string(marble.id)
-              })
 
             {:error, err} ->
               Logger.error("Discord API Error: #{inspect(err, pretty: true)}")

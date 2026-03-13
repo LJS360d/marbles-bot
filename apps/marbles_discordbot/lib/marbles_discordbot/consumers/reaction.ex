@@ -31,7 +31,7 @@ defmodule MarblesDiscordbot.Consumers.Reaction do
         |> Embed.put_footer("Collected by #{event.member.nick}", "")
 
       case Api.Message.edit(event.channel_id, event.message_id, %{
-             content: "",
+             content: "<@#{user_id}>",
              embeds: [embed]
            }) do
         {:ok, _} ->
@@ -51,7 +51,8 @@ defmodule MarblesDiscordbot.Consumers.Reaction do
 
   defp get_username(user_id) do
     case Nostrum.Cache.UserCache.get(user_id) do
-      {:ok, u} -> u.username || "Invalid Username"
+      {:ok, %{username: ""}} -> "Invalid Username"
+      {:ok, %{username: username}} -> username
       _ -> "Unknown Username"
     end
   end

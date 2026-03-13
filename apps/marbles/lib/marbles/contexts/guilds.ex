@@ -3,24 +3,32 @@ defmodule Marbles.Guilds do
   alias Marbles.Schema.{Guild, Channel}
   import Ecto.Query
 
-  def get_or_create_guild(guild_id, name, platform \\ "discord", image_url \\ nil) do
+  @spec sync_guild(String.t(), String.t(), String.t(), String.t() | nil) ::
+          {:ok, %Guild{}} | {:error, Ecto.Changeset.t()}
+
+  def sync_guild(guild_id, name, platform \\ "discord", image_url \\ nil) do
+    attrs = %{id: guild_id, name: name, platform: platform, image_url: image_url}
+
     case Repo.get(Guild, guild_id) do
       nil ->
-        attrs = %{id: guild_id, name: name, platform: platform}
-        attrs = if image_url, do: Map.put(attrs, :image_url, image_url), else: attrs
-        %Guild{}
-        |> Guild.changeset(attrs)
-        |> Repo.insert()
+        create_guild(attrs)
 
       guild ->
-        if image_url && guild.image_url != image_url do
-          guild
-          |> Guild.changeset(%{image_url: image_url})
-          |> Repo.update()
-        else
-          {:ok, guild}
-        end
+        # This only updates if the attributes actually changed
+        update_guild(guild, attrs)
     end
+  end
+
+  def create_guild(attrs) do
+    %Guild{}
+    |> Guild.changeset(attrs)
+    |> Repo.insert()
+  end
+
+  defp update_guild(guild, attrs) do
+    guild
+    |> Guild.changeset(attrs)
+    |> Repo.update()
   end
 
   def get_channel(channel_id) do
@@ -28,9 +36,16 @@ defmodule Marbles.Guilds do
     Repo.get(Channel, channel_id)
   end
 
-  def upsert_channel_spawn_rate(channel_id, guild_id, guild_name, channel_name, spawn_rate, opts \\ []) do
+  def upsert_channel_spawn_rate(
+        channel_id,
+        guild_id,
+        guild_name,
+        channel_name,
+        spawn_rate,
+        opts \\ []
+      ) do
     image_url = Keyword.get(opts, :image_url)
-    _ = get_or_create_guild(guild_id, guild_name, "discord", image_url)
+    _ = sync_guild(guild_id, guild_name, "discord", image_url)
 
     case Repo.get(Channel, channel_id) do
       nil ->

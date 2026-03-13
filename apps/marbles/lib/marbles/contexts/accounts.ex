@@ -28,7 +28,8 @@ defmodule Marbles.Accounts do
     case get_identity_by_platform(attrs.platform_id, attrs.platform) do
       nil ->
         role = if attrs.platform_id in owner_platform_ids(), do: :owner, else: :regular
-        user_attrs = %{display_name: attrs.display_name, role: role}
+        user_attrs = %{display_name: Map.get(attrs, :display_name, attrs.username), role: role}
+
         identity_attrs = %{
           platform: attrs.platform,
           platform_id: attrs.platform_id,
@@ -84,6 +85,7 @@ defmodule Marbles.Accounts do
 
   def identity_username(%User{} = user, platform) do
     user = Repo.preload(user, :identities)
+
     case Enum.find(user.identities || [], &(&1.platform == platform)) do
       %{username: u} -> u
       _ -> primary_display_name(user)

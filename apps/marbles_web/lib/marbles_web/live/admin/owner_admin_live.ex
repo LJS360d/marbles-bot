@@ -10,6 +10,7 @@ defmodule MarblesWeb.Admin.OwnerAdminLive do
   @impl true
   def mount(params, _session, socket) do
     Phoenix.PubSub.subscribe(Marbles.PubSub, "admin_dashboard")
+
     socket =
       socket
       |> assign(:page_title, "Owner admin")
@@ -26,7 +27,14 @@ defmodule MarblesWeb.Admin.OwnerAdminLive do
   @impl true
   def handle_params(params, _uri, socket) do
     sort = params["guilds_sort"] || socket.assigns[:guilds_insights_sort] || "channels_desc"
-    page = parse_page(params["guilds_page"]) || socket.assigns[:guilds_insights_page] || 1
+
+    page =
+      if params["guilds_page"] do
+        parse_page(params["guilds_page"])
+      else
+        socket.assigns[:guilds_insights_page] || 1
+      end
+
     {:noreply,
      socket
      |> assign(:guilds_insights_sort, sort)
@@ -34,14 +42,16 @@ defmodule MarblesWeb.Admin.OwnerAdminLive do
      |> load_dashboard()}
   end
 
-  defp parse_page(nil), do: 1
-  defp parse_page(s) when is_binary(s) do
-    case Integer.parse(s) do
-      {n, _} when n >= 1 -> n
-      _ -> 1
+  @spec parse_page(String.t() | nil) :: pos_integer() | nil
+
+  defp parse_page(nil), do: nil
+
+  defp parse_page(param) do
+    case Integer.parse(param) do
+      {page, ""} when page > 0 -> page
+      _ -> nil
     end
   end
-  defp parse_page(_), do: 1
 
   @impl true
   def handle_info(:tick_memory, socket) do
@@ -52,6 +62,7 @@ defmodule MarblesWeb.Admin.OwnerAdminLive do
     memory = :erlang.memory()
     total_mem = memory[:total] || 0
     beam_total_mb = div(total_mem, 1024 * 1024)
+
     memory_breakdown = %{
       beam_total_mb: beam_total_mb,
       process_mb: div(memory[:processes] || 0, 1024 * 1024),
@@ -70,6 +81,7 @@ defmodule MarblesWeb.Admin.OwnerAdminLive do
     pulls_today = Analytics.pulls_today()
     spawns_today = Analytics.spawns_today()
     max_events = max(pulls_today + spawns_today, 1)
+
     {:noreply,
      socket
      |> assign(:pulls_today, pulls_today)
@@ -80,11 +92,14 @@ defmodule MarblesWeb.Admin.OwnerAdminLive do
   @impl true
   def handle_event("toggle_memory_insights", _params, socket) do
     enabled = !socket.assigns[:memory_insights_enabled]
+
     socket =
       socket
       |> assign(:memory_insights_enabled, enabled)
       |> then(fn s ->
-        if enabled, do: push_event(s, "persist_memory_insights", %{enabled: true}), else: push_event(s, "persist_memory_insights", %{enabled: false})
+        if enabled,
+          do: push_event(s, "persist_memory_insights", %{enabled: true}),
+          else: push_event(s, "persist_memory_insights", %{enabled: false})
       end)
 
     if enabled, do: send(self(), :tick_memory)
@@ -94,7 +109,12 @@ defmodule MarblesWeb.Admin.OwnerAdminLive do
   @impl true
   def handle_event("memory_insights_init", %{"enabled" => enabled}, socket) do
     socket = assign(socket, :memory_insights_enabled, enabled)
-    socket = if enabled, do: push_event(socket, "persist_memory_insights", %{enabled: true}), else: push_event(socket, "persist_memory_insights", %{enabled: false})
+
+    socket =
+      if enabled,
+        do: push_event(socket, "persist_memory_insights", %{enabled: true}),
+        else: push_event(socket, "persist_memory_insights", %{enabled: false})
+
     if enabled, do: send(self(), :tick_memory)
     {:noreply, socket}
   end
@@ -115,6 +135,7 @@ defmodule MarblesWeb.Admin.OwnerAdminLive do
     packs_count = Catalog.list_all_packs() |> length()
     teams_count = Catalog.list_teams() |> length()
     max_events = max(pulls_today + spawns_today, 1)
+
     memory_breakdown = %{
       beam_total_mb: div(total_mem, 1024 * 1024),
       process_mb: div(memory[:processes] || 0, 1024 * 1024),
@@ -126,7 +147,11 @@ defmodule MarblesWeb.Admin.OwnerAdminLive do
     }
 
     {guilds_insights, guilds_insights_total} =
-      Guilds.list_guilds_insights(socket.assigns[:guilds_insights_sort] || "channels_desc", socket.assigns[:guilds_insights_page] || 1, 8)
+      Guilds.list_guilds_insights(
+        socket.assigns[:guilds_insights_sort] || "channels_desc",
+        socket.assigns[:guilds_insights_page] || 1,
+        8
+      )
 
     socket
     |> assign(:memory_breakdown, memory_breakdown)
@@ -158,15 +183,24 @@ defmodule MarblesWeb.Admin.OwnerAdminLive do
         <h1 class="text-2xl font-semibold text-base-content">Owner admin</h1>
 
         <section class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-          <.link navigate={~p"/admin/owner/guilds"} class="rounded-xl border border-base-300 bg-base-200 p-4 shadow-sm transition-colors hover:bg-base-300">
+          <.link
+            navigate={~p"/admin/owner/guilds"}
+            class="rounded-xl border border-base-300 bg-base-200 p-4 shadow-sm transition-colors hover:bg-base-300"
+          >
             <p class="text-sm font-medium text-base-content/70">Guilds</p>
             <p class="mt-1 text-2xl font-semibold">{@guilds_count}</p>
           </.link>
-          <.link navigate={~p"/admin/owner/users"} class="rounded-xl border border-base-300 bg-base-200 p-4 shadow-sm transition-colors hover:bg-base-300">
+          <.link
+            navigate={~p"/admin/owner/users"}
+            class="rounded-xl border border-base-300 bg-base-200 p-4 shadow-sm transition-colors hover:bg-base-300"
+          >
             <p class="text-sm font-medium text-base-content/70">Users</p>
             <p class="mt-1 text-2xl font-semibold">{@users_count}</p>
           </.link>
-          <.link navigate={~p"/admin/owner/marbles"} class="rounded-xl border border-base-300 bg-base-200 p-4 shadow-sm transition-colors hover:bg-base-300">
+          <.link
+            navigate={~p"/admin/owner/marbles"}
+            class="rounded-xl border border-base-300 bg-base-200 p-4 shadow-sm transition-colors hover:bg-base-300"
+          >
             <p class="text-sm font-medium text-base-content/70">Marbles</p>
             <p class="mt-1 text-2xl font-semibold">{@marbles_count}</p>
           </.link>
@@ -180,15 +214,26 @@ defmodule MarblesWeb.Admin.OwnerAdminLive do
                 New pack
               </.link>
             </div>
-            <.link navigate={~p"/admin/owner/packs"} class="mt-2 block text-sm text-primary hover:underline">View packs</.link>
+            <.link
+              navigate={~p"/admin/owner/packs"}
+              class="mt-2 block text-sm text-primary hover:underline"
+            >
+              View packs
+            </.link>
           </div>
-          <.link navigate={~p"/admin/owner/teams"} class="rounded-xl border border-base-300 bg-base-200 p-4 shadow-sm transition-colors hover:bg-base-300">
+          <.link
+            navigate={~p"/admin/owner/teams"}
+            class="rounded-xl border border-base-300 bg-base-200 p-4 shadow-sm transition-colors hover:bg-base-300"
+          >
             <p class="text-sm font-medium text-base-content/70">Teams</p>
             <p class="mt-1 text-2xl font-semibold">{@teams_count}</p>
           </.link>
         </section>
 
-        <section :if={@memory_insights_enabled} class="rounded-xl border border-base-300 bg-base-200 p-4 shadow-sm sm:p-6">
+        <section
+          :if={@memory_insights_enabled}
+          class="rounded-xl border border-base-300 bg-base-200 p-4 shadow-sm sm:p-6"
+        >
           <div class="flex items-center justify-between gap-2">
             <h2 class="text-lg font-semibold text-base-content">Memory</h2>
             <label class="flex cursor-pointer items-center gap-2 text-sm">
@@ -209,7 +254,10 @@ defmodule MarblesWeb.Admin.OwnerAdminLive do
           </p>
         </section>
 
-        <section :if={!@memory_insights_enabled} class="rounded-xl border border-base-300 bg-base-200 p-4 shadow-sm sm:p-6">
+        <section
+          :if={!@memory_insights_enabled}
+          class="rounded-xl border border-base-300 bg-base-200 p-4 shadow-sm sm:p-6"
+        >
           <div class="flex items-center justify-between gap-2">
             <h2 class="text-lg font-semibold text-base-content">Memory</h2>
             <label class="flex cursor-pointer items-center gap-2 text-sm">
@@ -217,33 +265,51 @@ defmodule MarblesWeb.Admin.OwnerAdminLive do
               <span>Gathering</span>
             </label>
           </div>
-          <p class="mt-2 text-sm text-base-content/60">Memory insights are paused. Enable to resume.</p>
+          <p class="mt-2 text-sm text-base-content/60">
+            Memory insights are paused. Enable to resume.
+          </p>
         </section>
 
         <section class="rounded-xl border border-base-300 bg-base-200 p-4 shadow-sm sm:p-6">
           <div class="flex items-center gap-2">
             <h2 class="text-lg font-semibold text-base-content">Today&apos;s activity</h2>
-            <span class="rounded-full bg-success/20 px-2 py-0.5 text-xs font-medium text-success">Live</span>
+            <span class="rounded-full bg-success/20 px-2 py-0.5 text-xs font-medium text-success">
+              Live
+            </span>
           </div>
           <div class="mt-3 flex gap-6 text-sm">
-            <div><span class="text-base-content/70">Pulls</span> <span class="font-semibold">{@pulls_today}</span></div>
-            <div><span class="text-base-content/70">Spawns</span> <span class="font-semibold">{@spawns_today}</span></div>
+            <div>
+              <span class="text-base-content/70">Pulls</span>
+              <span class="font-semibold">{@pulls_today}</span>
+            </div>
+            <div>
+              <span class="text-base-content/70">Spawns</span>
+              <span class="font-semibold">{@spawns_today}</span>
+            </div>
           </div>
         </section>
 
         <section class="rounded-xl border border-base-300 bg-base-200 p-4 shadow-sm sm:p-6">
           <div class="flex flex-wrap items-center justify-between gap-2">
             <h2 class="text-lg font-semibold text-base-content">Guilds Insights</h2>
-            <.link navigate={~p"/admin/owner/guilds"} class="text-sm text-primary hover:underline">View all</.link>
+            <.link navigate={~p"/admin/owner/guilds"} class="text-sm text-primary hover:underline">
+              View all
+            </.link>
           </div>
           <div class="mt-3 flex flex-wrap items-center gap-2">
             <span class="text-sm text-base-content/70">Sort:</span>
             <.form for={%{}} phx-change="guilds_insights_sort" id="guilds-insights-sort-form">
               <select name="sort" class="select select-bordered select-sm max-w-xs">
-                <option value="channels_desc" selected={@guilds_insights_sort == "channels_desc"}>Channels (most first)</option>
-                <option value="channels" selected={@guilds_insights_sort == "channels"}>Channels (least first)</option>
+                <option value="channels_desc" selected={@guilds_insights_sort == "channels_desc"}>
+                  Channels (most first)
+                </option>
+                <option value="channels" selected={@guilds_insights_sort == "channels"}>
+                  Channels (least first)
+                </option>
                 <option value="name" selected={@guilds_insights_sort == "name"}>Name A–Z</option>
-                <option value="name_desc" selected={@guilds_insights_sort == "name_desc"}>Name Z–A</option>
+                <option value="name_desc" selected={@guilds_insights_sort == "name_desc"}>
+                  Name Z–A
+                </option>
               </select>
             </.form>
           </div>
@@ -258,19 +324,28 @@ defmodule MarblesWeb.Admin.OwnerAdminLive do
             </li>
           </ul>
           <p :if={@guilds_insights == []} class="py-4 text-sm text-base-content/60">No guilds yet.</p>
-          <div :if={@guilds_insights_total > 8} class="mt-3 flex items-center justify-between border-t border-base-300 pt-3">
-            <span class="text-xs text-base-content/60">Page {@guilds_insights_page} of {max(1, ceil(@guilds_insights_total / 8))}</span>
+          <div
+            :if={@guilds_insights_total > 8}
+            class="mt-3 flex items-center justify-between border-t border-base-300 pt-3"
+          >
+            <span class="text-xs text-base-content/60">
+              Page {@guilds_insights_page} of {max(1, ceil(@guilds_insights_total / 8))}
+            </span>
             <div class="flex gap-1">
               <.link
                 :if={@guilds_insights_page > 1}
-                patch={~p"/admin/owner?guilds_sort=#{@guilds_insights_sort}&guilds_page=#{@guilds_insights_page - 1}"}
+                patch={
+                  ~p"/admin/owner?guilds_sort=#{@guilds_insights_sort}&guilds_page=#{@guilds_insights_page - 1}"
+                }
                 class="btn btn-ghost btn-sm"
               >
                 Previous
               </.link>
               <.link
                 :if={@guilds_insights_page < max(1, ceil(@guilds_insights_total / 8))}
-                patch={~p"/admin/owner?guilds_sort=#{@guilds_insights_sort}&guilds_page=#{@guilds_insights_page + 1}"}
+                patch={
+                  ~p"/admin/owner?guilds_sort=#{@guilds_insights_sort}&guilds_page=#{@guilds_insights_page + 1}"
+                }
                 class="btn btn-ghost btn-sm"
               >
                 Next
@@ -284,9 +359,11 @@ defmodule MarblesWeb.Admin.OwnerAdminLive do
   end
 
   attr :breakdown, :map, required: true
+
   def memory_stacked_bar(assigns) do
     b = assigns.breakdown
     beam_mb = max(b.beam_total_mb, 1)
+
     segments = [
       {"Processes", b.process_mb, "bg-primary"},
       {"Atom", b.atom_mb, "bg-secondary"},
@@ -295,8 +372,10 @@ defmodule MarblesWeb.Admin.OwnerAdminLive do
       {"ETS", b.ets_mb, "bg-warning"},
       {"System", b.system_mb, "bg-base-content/30"}
     ]
+
     assigns = assign(assigns, :segments, segments)
     assigns = assign(assigns, :beam_mb, beam_mb)
+
     ~H"""
     <div class="flex items-center gap-3">
       <div class="h-6 min-w-0 flex-1 overflow-hidden rounded bg-base-300 flex">

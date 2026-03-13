@@ -6,7 +6,7 @@ defmodule MarblesDiscordbot.Application do
     children = [
       MarblesDiscordbot.PendingSpawns,
       MarblesDiscordbot.CommandsResyncSubscriber,
-      MarblesDiscordbot.Consumers.Ready,
+      MarblesDiscordbot.Consumers.Events,
       MarblesDiscordbot.Consumers.Message,
       MarblesDiscordbot.Consumers.Reaction,
       MarblesDiscordbot.Consumers.Interaction,

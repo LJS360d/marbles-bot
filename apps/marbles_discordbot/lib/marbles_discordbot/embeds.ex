@@ -39,10 +39,15 @@ defmodule MarblesDiscordbot.Embeds do
     description =
       "#{pack.description || "No description."}\n\n**#{count}** marbles · #{pack.cost} coins · #{expires}"
 
-    embed = %Embed{} |> Embed.put_title(pack.name) |> Embed.put_description(description)
     banner_url = Marbles.Assets.url_for_path(pack.banner_path)
-    embed = if banner_url, do: Embed.put_image(embed, %{url: banner_url}), else: embed
-    embed = Embed.put_footer(embed, "Pack #{page}/#{total}")
+
+    embed =
+      %Embed{}
+      |> Embed.put_title(pack.name)
+      |> Embed.put_description(description)
+      |> Embed.put_image(banner_url)
+      |> Embed.put_footer("Pack #{page}/#{total}")
+
     embed
   end
 

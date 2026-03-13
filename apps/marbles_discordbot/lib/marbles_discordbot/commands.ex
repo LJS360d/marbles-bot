@@ -39,23 +39,38 @@ defmodule MarblesDiscordbot.Commands do
       },
       %{
         name: "spawnrate",
-        description: "View or set the spawn rate in this channel",
+        description: "Manage marble spawn rates",
         dm_permission: false,
         options: [
+          # Subcommand 1: View all
           %{
-            type: ApplicationCommandOptionType.number(),
-            name: "rate",
-            description: "the rate in % ",
-            required: false,
-            max_value: 100.0,
-            min_value: 0.0
+            type: ApplicationCommandOptionType.sub_command(),
+            name: "list",
+            description: "List spawn rates for all visible channels"
+          },
+          # Subcommand 2: Set rates
+          %{
+            type: ApplicationCommandOptionType.sub_command(),
+            name: "set",
+            description: "Set the spawn rate for specific channels",
+            options: [
+              %{
+                type: ApplicationCommandOptionType.number(),
+                name: "rate",
+                description: "The rate in % (0-100)",
+                required: true,
+                min_value: 0.0,
+                max_value: 100.0
+              },
+              %{
+                type: ApplicationCommandOptionType.channel(),
+                name: "channel",
+                description: "Optional: Specific channel to update (defaults to current)",
+                required: false
+              }
+            ]
           }
         ]
-      },
-      %{
-        name: "channels",
-        description: "View access and spawnrate of available channels",
-        dm_permission: false
       },
       %{
         name: "collection",
@@ -99,8 +114,11 @@ defmodule MarblesDiscordbot.Commands do
           Logger.info("Syncing slash command interactions...")
 
           case sync_force() do
-            {:ok, _} -> Logger.info("Commands synced successfully.")
-            {:error, reason} -> Logger.error("Failed to sync commands: #{inspect(reason)}")
+            {:ok, _} ->
+              Logger.info("Commands synced successfully.")
+
+            {:error, reason} ->
+              Logger.error("Failed to sync commands: #{inspect(reason)}")
           end
         else
           Logger.info("Slash commands are up to date. Skipping sync.")

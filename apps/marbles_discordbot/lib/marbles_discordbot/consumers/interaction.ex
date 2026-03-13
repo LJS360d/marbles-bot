@@ -21,6 +21,7 @@ defmodule MarblesDiscordbot.Consumers.Interaction do
       end
 
     user = i.user || i.member.user
+
     Logger.info("From user '#{user.username}' in #{location}: /#{i.data.name}")
 
     response = handle_command(i.data.name, i)
@@ -48,89 +49,35 @@ defmodule MarblesDiscordbot.Consumers.Interaction do
     end
   end
 
-  def handle_command("spawnrate", %Interaction{} = i) do
-    channel_id = i.channel_id && to_string(i.channel_id)
-    guild_id = i.guild_id && to_string(i.guild_id)
-    rate_opt = get_option(i, "rate")
+  def handle_command("spawnrate", %Interaction{data: %{options: options}} = i) do
+    # Find the subcommand in the list
+    case Enum.find(options || [], fn opt -> opt.name in ["list", "set"] end) do
+      %{name: "list"} ->
+        handle_channels_list(i)
 
-    guild_name =
-      if i.guild_id do
-        case Nostrum.Cache.GuildCache.get(i.guild_id) do
-          {:ok, g} -> g.name
-          _ -> "Unknown"
-        end
-      else
-        "DM"
-      end
+      %{name: "set", options: sub_opts} ->
+        # sub_opts might be nil if the user didn't provide any arguments,
+        # so we use || [] to prevent crashes in our helpers
+        process_spawnrate_set(i, sub_opts || [])
 
-    if rate_opt == nil do
-      current =
-        if channel_id do
-          case Guilds.get_channel(channel_id) do
-            nil -> 0
-            ch -> ch.spawn_rate
-          end
-        else
-          0
-        end
-
-      content = "Current spawn rate in this channel: **#{current}%**"
-      %{type: 4, data: %{content: content}}
-    else
-      rate = min(100, max(0, rate_opt * 1.0))
-
-      channel_name =
-        channel_id &&
-          case Nostrum.Cache.GuildCache.get(i.guild_id) do
-            {:ok, guild} when is_map(guild.channels) ->
-              id = String.to_integer(channel_id)
-              case Map.get(guild.channels, id) do
-                %{name: name} when is_binary(name) -> name
-                _ -> "Unknown"
-              end
-
-            _ ->
-              "Unknown"
-          end
-
-      if channel_id && guild_id do
-        image_url =
-          case Nostrum.Cache.GuildCache.get(i.guild_id) do
-            {:ok, g} -> Nostrum.Struct.Guild.icon_url(g)
-            _ -> nil
-          end
-
-        case Guilds.upsert_channel_spawn_rate(
-               channel_id,
-               guild_id,
-               guild_name,
-               channel_name,
-               rate,
-               image_url: image_url
-             ) do
-          {:ok, ch} ->
-            %{
-              type: 4,
-              data: %{content: "Spawn rate set to **#{ch.spawn_rate}%** in this channel."}
-            }
-
-          {:error, _} ->
-            %{type: 4, data: %{content: "Failed to set spawn rate."}}
-        end
-      else
-        %{type: 4, data: %{content: "This command can only be used in a server channel."}}
-      end
+      _ ->
+        %{type: 4, data: %{content: "Unknown subcommand."}, ephemeral: true}
     end
   end
 
-  def handle_command("pull", i) do
-    user = i.user || i.member.user
+  def handle_command("pull", %Interaction{} = i) do
+    username =
+      case Nostrum.Cache.UserCache.get(i.user.id) do
+        {:ok, %{username: ""}} -> "Invalid Username"
+        {:ok, %{username: username}} -> username
+        _ -> "Unknown Username"
+      end
 
     {:ok, user_record} =
       Accounts.ensure_user(%{
-        platform_id: to_string(user.id),
+        platform_id: to_string(i.user.id),
         platform: "discord",
-        username: user.username
+        username: username
       })
 
     pack_id_str = get_option(i, "pack")
@@ -190,43 +137,6 @@ defmodule MarblesDiscordbot.Consumers.Interaction do
 
         :error ->
           %{type: 4, data: %{content: "Invalid pack."}}
-      end
-    end
-  end
-
-  def handle_command("channels", i) do
-    guild_id = i.guild_id && to_string(i.guild_id)
-
-    if guild_id == nil do
-      %{type: 4, data: %{content: "This command can only be used in a server."}}
-    else
-      case Nostrum.Api.Guild.channels(i.guild_id) do
-        {:ok, channels} ->
-          text_channels = Enum.filter(channels, fn c -> c.type == 0 or c.type == 5 end)
-
-          channel_rates =
-            Guilds.list_channels_by_guild(guild_id) |> Map.new(fn c -> {c.id, c.spawn_rate} end)
-
-          lines =
-            Enum.map(text_channels, fn c ->
-              cid = to_string(c.id)
-              rate = Map.get(channel_rates, cid, 0)
-              icon = if rate > 0, do: ":green_circle:", else: ":red_circle:"
-              "#{icon} <##{c.id}> **#{rate}%**"
-            end)
-
-          embed =
-            %Embed{}
-            |> Embed.put_title("Channels")
-            |> Embed.put_description(
-              Enum.join(lines, "\n")
-              |> then(fn d -> if d == "", do: "No text channels.", else: d end)
-            )
-
-          %{type: 4, data: %{embeds: [embed]}}
-
-        {:error, _} ->
-          %{type: 4, data: %{content: "Could not list channels."}}
       end
     end
   end
@@ -306,4 +216,93 @@ defmodule MarblesDiscordbot.Consumers.Interaction do
   end
 
   def handle_command(_, _), do: nil
+
+  def handle_channels_list(%Interaction{guild_id: guild_id} = _i) do
+    if is_nil(guild_id) do
+      %{
+        type: 4,
+        data: %{content: "This command can only be used in text channel.", ephemeral: true}
+      }
+    else
+      case Api.Guild.channels(guild_id) do
+        {:ok, channels} ->
+          # Pre-fetch rates into a map for O(1) lookup during enumeration
+          channel_rates =
+            guild_id
+            |> to_string()
+            |> Guilds.list_channels_by_guild()
+            |> Map.new(&{to_string(&1.id), &1.spawn_rate})
+
+          description =
+            channels
+            |> Enum.filter(&(&1.type in [0, 5]))
+            |> Enum.map_join("\n", fn c ->
+              rate = Map.get(channel_rates, to_string(c.id), 0)
+              icon = if rate > 0, do: ":green_circle:", else: ":red_circle:"
+              "#{icon} <##{c.id}> **#{rate}%**"
+            end)
+            |> then(&if &1 == "", do: "No text channels.", else: &1)
+
+          embed = %Embed{} |> Embed.put_title("Channels") |> Embed.put_description(description)
+          %{type: 4, data: %{embeds: [embed]}}
+
+        {:error, _} ->
+          %{type: 4, data: %{content: "Could not list channels."}}
+      end
+    end
+  end
+
+  def process_spawnrate_set(%Interaction{} = i, opts) do
+    channel_id = (get_option(opts, "channel") || i.channel_id) |> to_string()
+    rate_opt = get_option(opts, "rate")
+
+    cond do
+      is_nil(i.guild_id) ->
+        %{
+          type: 4,
+          data: %{content: "This command can only be used in a text channel.", ephemeral: true}
+        }
+
+      is_nil(rate_opt) ->
+        current = (Guilds.get_channel(channel_id) || %{spawn_rate: 0}).spawn_rate
+        %{type: 4, data: %{content: "Current spawn rate in <##{channel_id}>: **#{current}%**"}}
+
+      true ->
+        # Calculate derived data for the upsert
+        rate = (rate_opt * 1.0) |> max(0.0) |> min(100.0)
+
+        {guild_name, icon_url} =
+          case Nostrum.Cache.GuildCache.get(i.guild_id) do
+            {:ok, g} -> {g.name, Nostrum.Struct.Guild.icon_url(g)}
+            _ -> {"Unknown", nil}
+          end
+
+        channel_name =
+          with {:ok, guild} <- Nostrum.Cache.GuildCache.get(i.guild_id),
+               id_int <- String.to_integer(channel_id),
+               %{name: name} <- Map.get(guild.channels || %{}, id_int) do
+            name
+          else
+            _ -> "Unknown"
+          end
+
+        case Guilds.upsert_channel_spawn_rate(
+               channel_id,
+               to_string(i.guild_id),
+               guild_name,
+               channel_name,
+               rate,
+               image_url: icon_url
+             ) do
+          {:ok, ch} ->
+            %{
+              type: 4,
+              data: %{content: "Spawn rate set to **#{ch.spawn_rate}%** in <##{channel_id}>."}
+            }
+
+          {:error, _} ->
+            %{type: 4, data: %{content: "Failed to set spawn rate."}}
+        end
+    end
+  end
 end
