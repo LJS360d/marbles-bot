@@ -75,12 +75,8 @@ Start with `./_build/prod/rel/marbles_umbrella/bin/marbles_umbrella start`. For 
 
 ## Project layout
 
-```
-apps/
-  marbles/          # Core: DB, gacha, contexts (see apps/marbles/README.md)
-  marbles_web/       # Phoenix: admin + future game (see apps/marbles_web/README.md)
-  marbles_discordbot/ # Discord bot (see apps/marbles_discordbot/README.md)
-config/             # Umbrella + runtime config
+```sh
+tree -I  '_build|.elixir_ls|deps|node_modules|dist'
 ```
 
 ## Checks

@@ -1,64 +1,63 @@
 defmodule MarblesDiscordbot.PendingSpawns do
-  use GenServer
+  use GenServer, restart: :temporary
 
-  @table :marbles_discordbot_pending_spawns
-
-  def start_link(opts \\ []) do
-    GenServer.start_link(__MODULE__, opts, name: __MODULE__)
-  end
+  alias MarblesDiscordbot.{HordeRegistry, HordeSupervisor}
 
   def create(message_id, channel_id, marble_id, emoji, expires_at) do
-    GenServer.cast(
-      __MODULE__,
-      {:put, message_id,
-       %{channel_id: channel_id, marble_id: marble_id, emoji: emoji, expires_at: expires_at}}
-    )
+    data = %{
+      channel_id: channel_id,
+      marble_id: marble_id,
+      emoji: emoji,
+      expires_at: expires_at
+    }
+
+    # Start a process on the cluster and name it via the Horde Registry
+    Horde.DynamicSupervisor.start_child(HordeSupervisor, %{
+      id: {:spawn, message_id},
+      start: {__MODULE__, :start_link, [message_id, data]},
+      restart: :temporary
+    })
   end
 
   def get_by_message(message_id) do
-    GenServer.call(__MODULE__, {:get, message_id})
+    case Horde.Registry.lookup(HordeRegistry, message_id) do
+      [{pid, _}] -> GenServer.call(pid, :get_data)
+      [] -> nil
+    end
   end
 
   def delete_by_message(message_id) do
-    GenServer.cast(__MODULE__, {:delete, message_id})
+    case Horde.Registry.lookup(HordeRegistry, message_id) do
+      [{pid, _}] -> GenServer.stop(pid)
+      [] -> :ok
+    end
   end
 
-  @impl true
-  def init(_opts) do
-    tid = :ets.new(@table, [:set, :named_table, :public, read_concurrency: true])
-    {:ok, %{tid: tid}}
+  # Server Callbacks
+
+  def start_link(message_id, data) do
+    # Register the process in the cluster-wide registry
+    GenServer.start_link(__MODULE__, data,
+      name: {:via, Horde.Registry, {HordeRegistry, message_id}}
+    )
   end
 
-  @impl true
-  def handle_call({:get, message_id}, _from, state) do
-    now = DateTime.utc_now()
-
-    result =
-      case :ets.lookup(state.tid, message_id) do
-        [{^message_id, %{expires_at: expires_at} = entry}] ->
-          if DateTime.compare(expires_at, now) == :gt do
-            entry
-          else
-            :ets.delete(state.tid, message_id)
-            nil
-          end
-
-        [] ->
-          nil
-      end
-
-    {:reply, result, state}
+  def init(data) do
+    # Automatically kill the process when the spawn expires
+    schedule_expiry(data.expires_at)
+    {:ok, data}
   end
 
-  @impl true
-  def handle_cast({:put, message_id, entry}, state) do
-    :ets.insert(state.tid, {message_id, entry})
-    {:noreply, state}
+  def handle_call(:get_data, _from, data) do
+    {:reply, data, data}
   end
 
-  @impl true
-  def handle_cast({:delete, message_id}, state) do
-    :ets.delete(state.tid, message_id)
-    {:noreply, state}
+  def handle_info(:expire, data) do
+    {:stop, :normal, data}
+  end
+
+  defp schedule_expiry(expires_at) do
+    ms_remaining = DateTime.diff(expires_at, DateTime.utc_now(), :millisecond)
+    Process.send_after(self(), :expire, max(0, ms_remaining))
   end
 end
