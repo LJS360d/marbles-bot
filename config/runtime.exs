@@ -33,6 +33,34 @@ config :marbles, :owner_platform_ids, owner_platform_ids
 
 assets_base_url = System.get_env("ASSETS_BASE_URL")
 
+if config_env() == :prod do
+  # In Prod, we use SeaweedFS/S3
+  if is_nil(assets_base_url) or assets_base_url == "" do
+    raise "environment variable ASSETS_BASE_URL is required in production."
+  end
+
+  config :marbles, :storage_adapter, Marbles.Storage.S3
+
+  # ExAws Configuration for SeaweedFS
+  config :ex_aws,
+    # Seaweed ignores these 3 but library needs it
+    access_key_id: System.get_env("S3_ACCESS_KEY", "any"),
+    secret_access_key: System.get_env("S3_SECRET_KEY", "any"),
+    region: "us-east-1",
+    s3: [
+      scheme: "http://",
+      host: System.get_env("S3_HOST", "bucket"),
+      port: 8333,
+      # Requirement for SeaweedFS
+      path_style: true
+    ]
+else
+  # In Dev/Test, we stay local and simple
+  config :marbles, :storage_adapter, Marbles.Storage.Local
+end
+
+config :marbles, :assets_base_url, assets_base_url
+
 if config_env() == :prod and (is_nil(assets_base_url) or assets_base_url == "") do
   raise """
   environment variable ASSETS_BASE_URL is required in production.

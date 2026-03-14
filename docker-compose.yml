@@ -1,5 +1,5 @@
 services:
-  postgres:
+  database:
     image: postgres:16-alpine
     restart: always
     environment:
@@ -7,7 +7,7 @@ services:
       POSTGRES_PASSWORD: ${DB_PASSWORD}
       POSTGRES_DB: ${DB_NAME:-marbles_prod}
     volumes:
-      - postgres_data:/var/lib/postgresql/data
+      - db_data:/var/lib/postgresql/data
     healthcheck:
       test:
         [
@@ -37,16 +37,17 @@ services:
       sh -c "/app/bin/marbles_umbrella eval 'Marbles.Release.migrate()' &&
              exec /app/bin/marbles_umbrella start"
 
-  media_server:
-    image: nginx:alpine
+  bucket:
+    image: chrislusf/seaweedfs
     restart: always
     ports:
-      - "4001:80"
+      - "9333:9333" # Master
+      - "8080:8080" # Filer (HTTP/Browse)
+      - "8333:8333" # S3 API
     volumes:
-      - asset_uploads:/usr/share/nginx/html/uploads:ro
-    # Simple Nginx config to serve the volume
-    entrypoint: /bin/sh -c "echo 'server { listen 80; location /uploads/ { root /usr/share/nginx/html; autoindex off; } }' > /etc/nginx/conf.d/default.conf && exec nginx -g 'daemon off;'"
+      - bucket_data:/data
+    command: "server -dir=/data -s3 -filer"
 
 volumes:
-  postgres_data:
-  asset_uploads:
+  db_data:
+  bucket_data:

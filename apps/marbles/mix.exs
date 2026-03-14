@@ -37,6 +37,9 @@ defmodule Marbles.MixProject do
   defp deps do
     [
       {:dns_cluster, "~> 0.2.0"},
+      {:ex_aws, "~> 2.1"},
+      {:ex_aws_s3, "~> 2.0"},
+      {:sweet_xml, "~> 0.6"},
       {:phoenix_pubsub, "~> 2.1"},
       {:ecto_sql, "~> 3.13"},
       {:ecto_sqlite3, ">= 0.0.0"},
