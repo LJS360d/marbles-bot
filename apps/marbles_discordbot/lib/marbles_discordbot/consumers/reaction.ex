@@ -4,7 +4,7 @@ defmodule MarblesDiscordbot.Consumers.Reaction do
   alias Nostrum.Struct.Event.MessageReactionAdd
   alias Nostrum.Api
   alias Marbles.{Accounts, Collection, Catalog}
-  alias MarblesDiscordbot.{PendingSpawns}
+  alias MarblesDiscordbot.{PendingSpawns, Embeds}
   require Logger
 
   def handle_event({:MESSAGE_REACTION_ADD, %MessageReactionAdd{} = event, _ws_state}) do
@@ -25,7 +25,7 @@ defmodule MarblesDiscordbot.Consumers.Reaction do
       Collection.add_marble_to_collection(user_record.id, marble.id)
 
       embed =
-        %Embed{}
+        Embeds.marble_embed(marble)
         |> Embed.put_title("You got a #{marble.name}!")
         |> Embed.put_description("it's been added to your `/collection`")
         |> Embed.put_footer("Collected by #{event.member.nick}", "")
