@@ -2,7 +2,6 @@ defmodule MarblesWeb.Admin.OwnerPackBuilderLive do
   use MarblesWeb, :live_view
   alias Marbles.Packs
   alias Marbles.Catalog
-  alias Marbles.Repo
   alias Marbles.Schema.Pack
 
   @impl true
@@ -11,7 +10,11 @@ defmodule MarblesWeb.Admin.OwnerPackBuilderLive do
      socket
      |> assign(:page_title, "Pack")
      |> assign(:current_scope, :owner_admin)
-     |> assign(:breadcrumbs, [{"Owner", ~p"/admin/owner"}, {"Packs", ~p"/admin/owner/packs"}, {"Pack", nil}])
+     |> assign(:breadcrumbs, [
+       {"Owner", ~p"/admin/owner"},
+       {"Packs", ~p"/admin/owner/packs"},
+       {"Pack", nil}
+     ])
      |> assign(:wide, true)}
   end
 
@@ -64,8 +67,7 @@ defmodule MarblesWeb.Admin.OwnerPackBuilderLive do
     result =
       if socket.assigns.pack do
         socket.assigns.pack
-        |> Pack.changeset(params)
-        |> Repo.update()
+        |> Packs.update_pack(params)
         |> case do
           {:ok, pack} -> Packs.set_pack_marbles(pack, marble_ids)
           err -> err

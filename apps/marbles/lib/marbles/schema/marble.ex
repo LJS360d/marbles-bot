@@ -8,7 +8,7 @@ defmodule Marbles.Schema.Marble do
   schema "marbles" do
     field :name, :string
     field :edition, :string, default: "standard"
-    field :role, Ecto.Enum, values: [:athlete, :coach, :support, :manager]
+    field :role, Ecto.Enum, values: [:athlete, :coach, :support, :manager, :rally]
     field :rarity, :integer
 
     # Stats like %{"speed" => 50, "weight" => 70, "stamina" => 40}

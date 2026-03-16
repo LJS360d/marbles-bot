@@ -109,7 +109,8 @@ defmodule MarblesDiscordbot.Embeds do
   # Helper to build the description string
   defp build_description(marble) do
     team_line = if marble.team, do: "\n**Team:** #{marble.team.name}", else: ""
-    base = "**Rarity:** #{marble.rarity}#{team_line}\n\n#{marble.name} — #{marble.edition}"
+    stars = String.duplicate("⭐", marble.rarity) <> String.duplicate("☆", 3 - marble.rarity)
+    base = "**Rarity:** #{stars}#{team_line}\n\n#{marble.name} — #{marble.edition}"
 
     if is_map(marble.base_stats) and marble.base_stats != %{} do
       stats =

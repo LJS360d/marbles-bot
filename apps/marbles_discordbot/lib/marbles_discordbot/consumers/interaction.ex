@@ -37,8 +37,8 @@ defmodule MarblesDiscordbot.Consumers.Interaction do
     end
   end
 
-  defp get_option(i, name) do
-    case i.data.options do
+  defp get_option(options, name) do
+    case options do
       nil ->
         nil
 
@@ -80,7 +80,7 @@ defmodule MarblesDiscordbot.Consumers.Interaction do
         username: username
       })
 
-    pack_id_str = get_option(i, "pack")
+    pack_id_str = get_option(i.data.options, "pack")
 
     if pack_id_str == nil or pack_id_str == "" do
       # should never happen
@@ -110,6 +110,18 @@ defmodule MarblesDiscordbot.Consumers.Interaction do
                   spoiler_wrap = fn t -> "|| " <> t <> " ||" end
 
                   Collection.add_marble_to_collection(user_record.id, marble.id)
+
+                  # TODO: turn this embed into a banner (so just Pack name + Image) that has 2 button components:
+                  # Pull x1 - 100 :currency_icon:
+                  # Pull x10 - ~1000~ 900 :currency_icon:
+                  # the discount should be configurable on a per-pack basis
+                  # for example on pack A the discount should be 10% only once per day
+                  # on pack B 25% only once per month (should show a day/hour/minute counter in the button for how long left in case its time based)
+                  # on pack C 5% ALWAYS on 10 pull
+                  # on pack D 100% discount every 10 10x pulls (so a free 11th 10x pull)
+                  # then clicking on the 1x pull button should create this embed with the spoiler wrap
+                  # while clicking on the 10x pull should create an embed that uses Fields, 5 fields per row
+                  # 2 rows, with the name and rarity of each pulled marble, each of them spoiler wrapped
 
                   embed = Embeds.marble_embed(marble)
 

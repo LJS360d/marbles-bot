@@ -1,15 +1,1672 @@
 [
   {
     "name": "Standard",
-    "description": "",
+    "description": "contains all standard edition marbles",
     "cost": 100,
     "start_date": null,
     "end_date": null,
     "active": true,
     "marbles": [
-      { "name": "Hazy", "edition": "standard" },
-      { "name": "Red Eye", "edition": "standard" },
-      { "name": "Fairy", "edition": "standard" }
+      {
+        "name": "Ace",
+        "edition": "standard"
+      },
+      {
+        "name": "Club",
+        "edition": "standard"
+      },
+      {
+        "name": "Diamond",
+        "edition": "standard"
+      },
+      {
+        "name": "Heart",
+        "edition": "standard"
+      },
+      {
+        "name": "Jack",
+        "edition": "standard"
+      },
+      {
+        "name": "Spade",
+        "edition": "standard"
+      },
+      {
+        "name": "Akela",
+        "edition": "standard"
+      },
+      {
+        "name": "Balto",
+        "edition": "standard"
+      },
+      {
+        "name": "Fenrir",
+        "edition": "standard"
+      },
+      {
+        "name": "Nova",
+        "edition": "standard"
+      },
+      {
+        "name": "Remus",
+        "edition": "standard"
+      },
+      {
+        "name": "Sheep",
+        "edition": "standard"
+      },
+      {
+        "name": "Sirius",
+        "edition": "standard"
+      },
+      {
+        "name": "Alpine",
+        "edition": "standard"
+      },
+      {
+        "name": "Frost",
+        "edition": "standard"
+      },
+      {
+        "name": "Glace",
+        "edition": "standard"
+      },
+      {
+        "name": "Glacie",
+        "edition": "standard"
+      },
+      {
+        "name": "Glacier",
+        "edition": "standard"
+      },
+      {
+        "name": "Glide",
+        "edition": "standard"
+      },
+      {
+        "name": "Glidy",
+        "edition": "standard"
+      },
+      {
+        "name": "Iceberg",
+        "edition": "standard"
+      },
+      {
+        "name": "Polar",
+        "edition": "standard"
+      },
+      {
+        "name": "Sheet",
+        "edition": "standard"
+      },
+      {
+        "name": "Alvin",
+        "edition": "standard"
+      },
+      {
+        "name": "Amethyst",
+        "edition": "standard"
+      },
+      {
+        "name": "Atlas",
+        "edition": "standard"
+      },
+      {
+        "name": "Audi Sport ABT Schaeffler",
+        "edition": "standard"
+      },
+      {
+        "name": "Big Pearl",
+        "edition": "standard"
+      },
+      {
+        "name": "Black Knight",
+        "edition": "standard"
+      },
+      {
+        "name": "Blazey",
+        "edition": "standard"
+      },
+      {
+        "name": "Blazing Fireball",
+        "edition": "standard"
+      },
+      {
+        "name": "Blizzard Blaster",
+        "edition": "standard"
+      },
+      {
+        "name": "Blue Moon",
+        "edition": "standard"
+      },
+      {
+        "name": "Blue Smoke",
+        "edition": "standard"
+      },
+      {
+        "name": "Bluebell",
+        "edition": "standard"
+      },
+      {
+        "name": "Cobra",
+        "edition": "standard"
+      },
+      {
+        "name": "Comet",
+        "edition": "standard"
+      },
+      {
+        "name": "Cool Moody",
+        "edition": "standard"
+      },
+      {
+        "name": "DS Techeetah",
+        "edition": "standard"
+      },
+      {
+        "name": "Deep Ocean",
+        "edition": "standard"
+      },
+      {
+        "name": "Dion Bakker",
+        "edition": "standard"
+      },
+      {
+        "name": "Dragon's Egg",
+        "edition": "standard"
+      },
+      {
+        "name": "Duchess and Duke of Craven",
+        "edition": "standard"
+      },
+      {
+        "name": "Ducktape",
+        "edition": "standard"
+      },
+      {
+        "name": "Eevee",
+        "edition": "standard"
+      },
+      {
+        "name": "El Capitan",
+        "edition": "standard"
+      },
+      {
+        "name": "Envision Virgin Racing",
+        "edition": "standard"
+      },
+      {
+        "name": "GEOX Dragon",
+        "edition": "standard"
+      },
+      {
+        "name": "Ghost Marble",
+        "edition": "standard"
+      },
+      {
+        "name": "Ghost Plasma",
+        "edition": "standard"
+      },
+      {
+        "name": "Glassy",
+        "edition": "standard"
+      },
+      {
+        "name": "Grasshopper",
+        "edition": "standard"
+      },
+      {
+        "name": "Green Turtle",
+        "edition": "standard"
+      },
+      {
+        "name": "H2 Blue",
+        "edition": "standard"
+      },
+      {
+        "name": "John Rolliver",
+        "edition": "standard"
+      },
+      {
+        "name": "Lollipop",
+        "edition": "standard"
+      },
+      {
+        "name": "Lucky Clover",
+        "edition": "standard"
+      },
+      {
+        "name": "Mahindra Racing",
+        "edition": "standard"
+      },
+      {
+        "name": "Marbly McMarbleface",
+        "edition": "standard"
+      },
+      {
+        "name": "Mellacus",
+        "edition": "standard"
+      },
+      {
+        "name": "Michael",
+        "edition": "standard"
+      },
+      {
+        "name": "Michelle",
+        "edition": "standard"
+      },
+      {
+        "name": "Mike",
+        "edition": "standard"
+      },
+      {
+        "name": "Mocha Madness",
+        "edition": "standard"
+      },
+      {
+        "name": "Nemo",
+        "edition": "standard"
+      },
+      {
+        "name": "Nissan e.dams",
+        "edition": "standard"
+      },
+      {
+        "name": "Oddball",
+        "edition": "standard"
+      },
+      {
+        "name": "Olympia",
+        "edition": "standard"
+      },
+      {
+        "name": "Panasonic Jaguar Racing",
+        "edition": "standard"
+      },
+      {
+        "name": "Phoenix",
+        "edition": "standard"
+      },
+      {
+        "name": "Pollo Loco",
+        "edition": "standard"
+      },
+      {
+        "name": "Quicksilver",
+        "edition": "standard"
+      },
+      {
+        "name": "ROKiT Venturi Racing",
+        "edition": "standard"
+      },
+      {
+        "name": "Rastafarian",
+        "edition": "standard"
+      },
+      {
+        "name": "Rattler",
+        "edition": "standard"
+      },
+      {
+        "name": "Red Number 3",
+        "edition": "standard"
+      },
+      {
+        "name": "Red Tarantula",
+        "edition": "standard"
+      },
+      {
+        "name": "Reflektor",
+        "edition": "standard"
+      },
+      {
+        "name": "Safety Marble",
+        "edition": "standard"
+      },
+      {
+        "name": "Seal",
+        "edition": "standard"
+      },
+      {
+        "name": "Security Guards",
+        "edition": "standard"
+      },
+      {
+        "name": "Silver Bolt",
+        "edition": "standard"
+      },
+      {
+        "name": "Slimer",
+        "edition": "standard"
+      },
+      {
+        "name": "Snake's Tub",
+        "edition": "standard"
+      },
+      {
+        "name": "Souless Wonder",
+        "edition": "standard"
+      },
+      {
+        "name": "Spearmint",
+        "edition": "standard"
+      },
+      {
+        "name": "Stardust",
+        "edition": "standard"
+      },
+      {
+        "name": "Starfish",
+        "edition": "standard"
+      },
+      {
+        "name": "Starman",
+        "edition": "standard"
+      },
+      {
+        "name": "Summer Sky",
+        "edition": "standard"
+      },
+      {
+        "name": "Supernova",
+        "edition": "standard"
+      },
+      {
+        "name": "TAG Heuer Porsche",
+        "edition": "standard"
+      },
+      {
+        "name": "Tarantula",
+        "edition": "standard"
+      },
+      {
+        "name": "The Flash",
+        "edition": "standard"
+      },
+      {
+        "name": "White Widow",
+        "edition": "standard"
+      },
+      {
+        "name": "Willamette",
+        "edition": "standard"
+      },
+      {
+        "name": "Wisp of Darkness",
+        "edition": "standard"
+      },
+      {
+        "name": "Amaya",
+        "edition": "standard"
+      },
+      {
+        "name": "Eve",
+        "edition": "standard"
+      },
+      {
+        "name": "List of Marbles",
+        "edition": "standard"
+      },
+      {
+        "name": "Mercedes-Benz EQ",
+        "edition": "standard"
+      },
+      {
+        "name": "Twila",
+        "edition": "standard"
+      },
+      {
+        "name": "Waspy",
+        "edition": "standard"
+      },
+      {
+        "name": "Wespy",
+        "edition": "standard"
+      },
+      {
+        "name": "Willow",
+        "edition": "standard"
+      },
+      {
+        "name": "Wispy",
+        "edition": "standard"
+      },
+      {
+        "name": "Wospy",
+        "edition": "standard"
+      },
+      {
+        "name": "Wuspy",
+        "edition": "standard"
+      },
+      {
+        "name": "Wyspy",
+        "edition": "standard"
+      },
+      {
+        "name": "Yvaine",
+        "edition": "standard"
+      },
+      {
+        "name": "Ana",
+        "edition": "standard"
+      },
+      {
+        "name": "Boa",
+        "edition": "standard"
+      },
+      {
+        "name": "Charmer",
+        "edition": "standard"
+      },
+      {
+        "name": "Conda",
+        "edition": "standard"
+      },
+      {
+        "name": "Eryx",
+        "edition": "standard"
+      },
+      {
+        "name": "Python",
+        "edition": "standard"
+      },
+      {
+        "name": "Anarchy",
+        "edition": "standard"
+      },
+      {
+        "name": "Angry Amber",
+        "edition": "standard"
+      },
+      {
+        "name": "Clutter",
+        "edition": "standard"
+      },
+      {
+        "name": "Disarray",
+        "edition": "standard"
+      },
+      {
+        "name": "Entropy",
+        "edition": "standard"
+      },
+      {
+        "name": "Harmony",
+        "edition": "standard"
+      },
+      {
+        "name": "Snarl",
+        "edition": "standard"
+      },
+      {
+        "name": "Tumult",
+        "edition": "standard"
+      },
+      {
+        "name": "Yuan Rong",
+        "edition": "standard"
+      },
+      {
+        "name": "Aqua",
+        "edition": "standard"
+      },
+      {
+        "name": "BMW i Andretti Motorsport",
+        "edition": "standard"
+      },
+      {
+        "name": "Bay",
+        "edition": "standard"
+      },
+      {
+        "name": "Lagoon",
+        "edition": "standard"
+      },
+      {
+        "name": "Marina",
+        "edition": "standard"
+      },
+      {
+        "name": "Neptune",
+        "edition": "standard"
+      },
+      {
+        "name": "Nereid",
+        "edition": "standard"
+      },
+      {
+        "name": "Ocean",
+        "edition": "standard"
+      },
+      {
+        "name": "Ounce",
+        "edition": "standard"
+      },
+      {
+        "name": "Reef",
+        "edition": "standard"
+      },
+      {
+        "name": "Rick O'Shea",
+        "edition": "standard"
+      },
+      {
+        "name": "Sea",
+        "edition": "standard"
+      },
+      {
+        "name": "Shore",
+        "edition": "standard"
+      },
+      {
+        "name": "Siren",
+        "edition": "standard"
+      },
+      {
+        "name": "Tide",
+        "edition": "standard"
+      },
+      {
+        "name": "Triton",
+        "edition": "standard"
+      },
+      {
+        "name": "Argent",
+        "edition": "standard"
+      },
+      {
+        "name": "Gallum",
+        "edition": "standard"
+      },
+      {
+        "name": "Mercurial",
+        "edition": "standard"
+      },
+      {
+        "name": "Quix",
+        "edition": "standard"
+      },
+      {
+        "name": "Silvery",
+        "edition": "standard"
+      },
+      {
+        "name": "Aryp",
+        "edition": "standard"
+      },
+      {
+        "name": "Fantasy",
+        "edition": "standard"
+      },
+      {
+        "name": "Imar",
+        "edition": "standard"
+      },
+      {
+        "name": "Jelle",
+        "edition": "standard"
+      },
+      {
+        "name": "Mary",
+        "edition": "standard"
+      },
+      {
+        "name": "Prim",
+        "edition": "standard"
+      },
+      {
+        "name": "Prima",
+        "edition": "standard"
+      },
+      {
+        "name": "Rima",
+        "edition": "standard"
+      },
+      {
+        "name": "Rypr",
+        "edition": "standard"
+      },
+      {
+        "name": "Secondary",
+        "edition": "standard"
+      },
+      {
+        "name": "Yawn",
+        "edition": "standard"
+      },
+      {
+        "name": "Yell",
+        "edition": "standard"
+      },
+      {
+        "name": "Yelp",
+        "edition": "standard"
+      },
+      {
+        "name": "Yodel",
+        "edition": "standard"
+      },
+      {
+        "name": "Astron",
+        "edition": "standard"
+      },
+      {
+        "name": "Black Hole",
+        "edition": "standard"
+      },
+      {
+        "name": "Celeste",
+        "edition": "standard"
+      },
+      {
+        "name": "Cosmo",
+        "edition": "standard"
+      },
+      {
+        "name": "Pulsar",
+        "edition": "standard"
+      },
+      {
+        "name": "Quasar",
+        "edition": "standard"
+      },
+      {
+        "name": "Starry",
+        "edition": "standard"
+      },
+      {
+        "name": "Azure",
+        "edition": "standard"
+      },
+      {
+        "name": "Cerulean",
+        "edition": "standard"
+      },
+      {
+        "name": "Dodger",
+        "edition": "standard"
+      },
+      {
+        "name": "Gnome",
+        "edition": "standard"
+      },
+      {
+        "name": "Lapis",
+        "edition": "standard"
+      },
+      {
+        "name": "Meepo",
+        "edition": "standard"
+      },
+      {
+        "name": "NIO 333",
+        "edition": "standard"
+      },
+      {
+        "name": "Royal",
+        "edition": "standard"
+      },
+      {
+        "name": "Sapphire",
+        "edition": "standard"
+      },
+      {
+        "name": "Baldie",
+        "edition": "standard"
+      },
+      {
+        "name": "Parole",
+        "edition": "standard"
+      },
+      {
+        "name": "Baloo",
+        "edition": "standard"
+      },
+      {
+        "name": "Dory",
+        "edition": "standard"
+      },
+      {
+        "name": "Gonzo",
+        "edition": "standard"
+      },
+      {
+        "name": "Mako",
+        "edition": "standard"
+      },
+      {
+        "name": "Barn",
+        "edition": "standard"
+      },
+      {
+        "name": "Pygmy",
+        "edition": "standard"
+      },
+      {
+        "name": "Scops",
+        "edition": "standard"
+      },
+      {
+        "name": "Screech",
+        "edition": "standard"
+      },
+      {
+        "name": "Specs",
+        "edition": "standard"
+      },
+      {
+        "name": "Tawny",
+        "edition": "standard"
+      },
+      {
+        "name": "Barry",
+        "edition": "standard"
+      },
+      {
+        "name": "Berry",
+        "edition": "standard"
+      },
+      {
+        "name": "Pi",
+        "edition": "standard"
+      },
+      {
+        "name": "Razzy",
+        "edition": "standard"
+      },
+      {
+        "name": "Rezzy",
+        "edition": "standard"
+      },
+      {
+        "name": "Rizzy",
+        "edition": "standard"
+      },
+      {
+        "name": "Rozzy",
+        "edition": "standard"
+      },
+      {
+        "name": "Ruzzy",
+        "edition": "standard"
+      },
+      {
+        "name": "Bea",
+        "edition": "standard"
+      },
+      {
+        "name": "Bomble",
+        "edition": "standard"
+      },
+      {
+        "name": "Bumble",
+        "edition": "standard"
+      },
+      {
+        "name": "Honey",
+        "edition": "standard"
+      },
+      {
+        "name": "Nectar",
+        "edition": "standard"
+      },
+      {
+        "name": "Queen",
+        "edition": "standard"
+      },
+      {
+        "name": "Swax",
+        "edition": "standard"
+      },
+      {
+        "name": "Billy",
+        "edition": "standard"
+      },
+      {
+        "name": "Bombay",
+        "edition": "standard"
+      },
+      {
+        "name": "Ducky",
+        "edition": "standard"
+      },
+      {
+        "name": "Goose",
+        "edition": "standard"
+      },
+      {
+        "name": "Honk",
+        "edition": "standard"
+      },
+      {
+        "name": "Mallard",
+        "edition": "standard"
+      },
+      {
+        "name": "Quacky",
+        "edition": "standard"
+      },
+      {
+        "name": "Bingo",
+        "edition": "standard"
+      },
+      {
+        "name": "Diego",
+        "edition": "standard"
+      },
+      {
+        "name": "Gogo",
+        "edition": "standard"
+      },
+      {
+        "name": "Indie",
+        "edition": "standard"
+      },
+      {
+        "name": "Mango",
+        "edition": "standard"
+      },
+      {
+        "name": "Montoya",
+        "edition": "standard"
+      },
+      {
+        "name": "Ringo",
+        "edition": "standard"
+      },
+      {
+        "name": "Blade",
+        "edition": "standard"
+      },
+      {
+        "name": "Meadow",
+        "edition": "standard"
+      },
+      {
+        "name": "Blast",
+        "edition": "standard"
+      },
+      {
+        "name": "Dwarf",
+        "edition": "standard"
+      },
+      {
+        "name": "Orbit",
+        "edition": "standard"
+      },
+      {
+        "name": "Rocket",
+        "edition": "standard"
+      },
+      {
+        "name": "Saucer",
+        "edition": "standard"
+      },
+      {
+        "name": "Shuttle",
+        "edition": "standard"
+      },
+      {
+        "name": "Sulfur",
+        "edition": "standard"
+      },
+      {
+        "name": "Blaze",
+        "edition": "standard"
+      },
+      {
+        "name": "Eclipse",
+        "edition": "standard"
+      },
+      {
+        "name": "Ember",
+        "edition": "standard"
+      },
+      {
+        "name": "Flare",
+        "edition": "standard"
+      },
+      {
+        "name": "Helios",
+        "edition": "standard"
+      },
+      {
+        "name": "Radiance",
+        "edition": "standard"
+      },
+      {
+        "name": "Scorch",
+        "edition": "standard"
+      },
+      {
+        "name": "Blimey",
+        "edition": "standard"
+      },
+      {
+        "name": "Goolime",
+        "edition": "standard"
+      },
+      {
+        "name": "Greg Woods",
+        "edition": "standard"
+      },
+      {
+        "name": "Jellime",
+        "edition": "standard"
+      },
+      {
+        "name": "Keylime",
+        "edition": "standard"
+      },
+      {
+        "name": "Lemonlime",
+        "edition": "standard"
+      },
+      {
+        "name": "Limelight",
+        "edition": "standard"
+      },
+      {
+        "name": "Limelime",
+        "edition": "standard"
+      },
+      {
+        "name": "Slimelime",
+        "edition": "standard"
+      },
+      {
+        "name": "Sublime",
+        "edition": "standard"
+      },
+      {
+        "name": "Superball",
+        "edition": "standard"
+      },
+      {
+        "name": "Blizzard",
+        "edition": "standard"
+      },
+      {
+        "name": "Snow",
+        "edition": "standard"
+      },
+      {
+        "name": "Snowblast",
+        "edition": "standard"
+      },
+      {
+        "name": "Snowdrift",
+        "edition": "standard"
+      },
+      {
+        "name": "Snowfall",
+        "edition": "standard"
+      },
+      {
+        "name": "Snowflake",
+        "edition": "standard"
+      },
+      {
+        "name": "Snowstorm",
+        "edition": "standard"
+      },
+      {
+        "name": "Snowy",
+        "edition": "standard"
+      },
+      {
+        "name": "Blue Eye",
+        "edition": "standard"
+      },
+      {
+        "name": "Bullseye",
+        "edition": "standard"
+      },
+      {
+        "name": "Cleocatra",
+        "edition": "standard"
+      },
+      {
+        "name": "Crazy Cat's Eye",
+        "edition": "standard"
+      },
+      {
+        "name": "Cyan Eye",
+        "edition": "standard"
+      },
+      {
+        "name": "Green Eye",
+        "edition": "standard"
+      },
+      {
+        "name": "Jelle Bakker",
+        "edition": "standard"
+      },
+      {
+        "name": "Red Eye",
+        "edition": "standard"
+      },
+      {
+        "name": "White Eye",
+        "edition": "standard"
+      },
+      {
+        "name": "Yellow Eye",
+        "edition": "standard"
+      },
+      {
+        "name": "Bolt",
+        "edition": "standard"
+      },
+      {
+        "name": "Bolta",
+        "edition": "standard"
+      },
+      {
+        "name": "Boltew",
+        "edition": "standard"
+      },
+      {
+        "name": "Bolto",
+        "edition": "standard"
+      },
+      {
+        "name": "Boltu",
+        "edition": "standard"
+      },
+      {
+        "name": "Bolty",
+        "edition": "standard"
+      },
+      {
+        "name": "Lightning",
+        "edition": "standard"
+      },
+      {
+        "name": "Shock",
+        "edition": "standard"
+      },
+      {
+        "name": "Static",
+        "edition": "standard"
+      },
+      {
+        "name": "Thunder",
+        "edition": "standard"
+      },
+      {
+        "name": "Thunderstorm",
+        "edition": "standard"
+      },
+      {
+        "name": "Wrath",
+        "edition": "standard"
+      },
+      {
+        "name": "Zap",
+        "edition": "standard"
+      },
+      {
+        "name": "Bonbon",
+        "edition": "standard"
+      },
+      {
+        "name": "Caramel",
+        "edition": "standard"
+      },
+      {
+        "name": "Choc",
+        "edition": "standard"
+      },
+      {
+        "name": "Cocoa",
+        "edition": "standard"
+      },
+      {
+        "name": "Fudge",
+        "edition": "standard"
+      },
+      {
+        "name": "Mocha",
+        "edition": "standard"
+      },
+      {
+        "name": "Truffle",
+        "edition": "standard"
+      },
+      {
+        "name": "Bounce",
+        "edition": "standard"
+      },
+      {
+        "name": "Hop",
+        "edition": "standard"
+      },
+      {
+        "name": "Jump",
+        "edition": "standard"
+      },
+      {
+        "name": "Leap",
+        "edition": "standard"
+      },
+      {
+        "name": "Skip",
+        "edition": "standard"
+      },
+      {
+        "name": "Tarzan",
+        "edition": "standard"
+      },
+      {
+        "name": "Candy",
+        "edition": "standard"
+      },
+      {
+        "name": "Gummy",
+        "edition": "standard"
+      },
+      {
+        "name": "Mouthful",
+        "edition": "standard"
+      },
+      {
+        "name": "Sugar",
+        "edition": "standard"
+      },
+      {
+        "name": "Sweet",
+        "edition": "standard"
+      },
+      {
+        "name": "Taffy",
+        "edition": "standard"
+      },
+      {
+        "name": "Tidbit",
+        "edition": "standard"
+      },
+      {
+        "name": "Tongue Twister",
+        "edition": "standard"
+      },
+      {
+        "name": "Cell",
+        "edition": "standard"
+      },
+      {
+        "name": "Ecto",
+        "edition": "standard"
+      },
+      {
+        "name": "Fearo",
+        "edition": "standard"
+      },
+      {
+        "name": "Ghosto",
+        "edition": "standard"
+      },
+      {
+        "name": "Gloomo",
+        "edition": "standard"
+      },
+      {
+        "name": "Phanto",
+        "edition": "standard"
+      },
+      {
+        "name": "Clementin",
+        "edition": "standard"
+      },
+      {
+        "name": "Kinnowin",
+        "edition": "standard"
+      },
+      {
+        "name": "Mandarin",
+        "edition": "standard"
+      },
+      {
+        "name": "Orangin",
+        "edition": "standard"
+      },
+      {
+        "name": "Rango",
+        "edition": "standard"
+      },
+      {
+        "name": "Tangerin",
+        "edition": "standard"
+      },
+      {
+        "name": "Tarocco",
+        "edition": "standard"
+      },
+      {
+        "name": "Cloudy",
+        "edition": "standard"
+      },
+      {
+        "name": "Foggy",
+        "edition": "standard"
+      },
+      {
+        "name": "Hazy",
+        "edition": "standard"
+      },
+      {
+        "name": "Misty",
+        "edition": "standard"
+      },
+      {
+        "name": "Murky",
+        "edition": "standard"
+      },
+      {
+        "name": "Shade",
+        "edition": "standard"
+      },
+      {
+        "name": "Smoggy",
+        "edition": "standard"
+      },
+      {
+        "name": "Smokey",
+        "edition": "standard"
+      },
+      {
+        "name": "Yap",
+        "edition": "standard"
+      },
+      {
+        "name": "Crush",
+        "edition": "standard"
+      },
+      {
+        "name": "Dash",
+        "edition": "standard"
+      },
+      {
+        "name": "Frank",
+        "edition": "standard"
+      },
+      {
+        "name": "Shelly",
+        "edition": "standard"
+      },
+      {
+        "name": "Splint",
+        "edition": "standard"
+      },
+      {
+        "name": "Squirt",
+        "edition": "standard"
+      },
+      {
+        "name": "Fairy",
+        "edition": "standard"
+      },
+      {
+        "name": "Glorby",
+        "edition": "standard"
+      },
+      {
+        "name": "Glordby",
+        "edition": "standard"
+      },
+      {
+        "name": "Goldby",
+        "edition": "standard"
+      },
+      {
+        "name": "Gorby",
+        "edition": "standard"
+      },
+      {
+        "name": "Orby",
+        "edition": "standard"
+      },
+      {
+        "name": "Pixie",
+        "edition": "standard"
+      },
+      {
+        "name": "Spirit",
+        "edition": "standard"
+      },
+      {
+        "name": "Willo",
+        "edition": "standard"
+      },
+      {
+        "name": "Frankie",
+        "edition": "standard"
+      },
+      {
+        "name": "Henrietta",
+        "edition": "standard"
+      },
+      {
+        "name": "Giallo",
+        "edition": "standard"
+      },
+      {
+        "name": "Mellow",
+        "edition": "standard"
+      },
+      {
+        "name": "Yellah",
+        "edition": "standard"
+      },
+      {
+        "name": "Yeller",
+        "edition": "standard"
+      },
+      {
+        "name": "Yelley",
+        "edition": "standard"
+      },
+      {
+        "name": "Yellim",
+        "edition": "standard"
+      },
+      {
+        "name": "Yellow",
+        "edition": "standard"
+      },
+      {
+        "name": "Yellup",
+        "edition": "standard"
+      },
+      {
+        "name": "Gleam",
+        "edition": "standard"
+      },
+      {
+        "name": "Glimmer",
+        "edition": "standard"
+      },
+      {
+        "name": "Sheen",
+        "edition": "standard"
+      },
+      {
+        "name": "Shimmer",
+        "edition": "standard"
+      },
+      {
+        "name": "Shiny",
+        "edition": "standard"
+      },
+      {
+        "name": "Sparkle",
+        "edition": "standard"
+      },
+      {
+        "name": "Sterling",
+        "edition": "standard"
+      },
+      {
+        "name": "Hive",
+        "edition": "standard"
+      },
+      {
+        "name": "Stinger",
+        "edition": "standard"
+      },
+      {
+        "name": "Swarm",
+        "edition": "standard"
+      },
+      {
+        "name": "Vespa",
+        "edition": "standard"
+      },
+      {
+        "name": "Wasp",
+        "edition": "standard"
+      },
+      {
+        "name": "Yellowjacket",
+        "edition": "standard"
+      },
+      {
+        "name": "Ivy",
+        "edition": "standard"
+      },
+      {
+        "name": "Leaf",
+        "edition": "standard"
+      },
+      {
+        "name": "Stem",
+        "edition": "standard"
+      },
+      {
+        "name": "Trunk",
+        "edition": "standard"
+      },
+      {
+        "name": "Vine",
+        "edition": "standard"
+      },
+      {
+        "name": "Lantana",
+        "edition": "standard"
+      },
+      {
+        "name": "Madeira",
+        "edition": "standard"
+      },
+      {
+        "name": "Salvia",
+        "edition": "standard"
+      },
+      {
+        "name": "Vivid",
+        "edition": "standard"
+      },
+      {
+        "name": "M-Shakes",
+        "edition": "standard"
+      },
+      {
+        "name": "Memo",
+        "edition": "standard"
+      },
+      {
+        "name": "Mimo",
+        "edition": "standard"
+      },
+      {
+        "name": "Mo",
+        "edition": "standard"
+      },
+      {
+        "name": "Momo",
+        "edition": "standard"
+      },
+      {
+        "name": "Momomo",
+        "edition": "standard"
+      },
+      {
+        "name": "Momomomo",
+        "edition": "standard"
+      },
+      {
+        "name": "Momomomomo",
+        "edition": "standard"
+      },
+      {
+        "name": "Micky",
+        "edition": "standard"
+      },
+      {
+        "name": "Mikey",
+        "edition": "standard"
+      },
+      {
+        "name": "Minty Drizzel",
+        "edition": "standard"
+      },
+      {
+        "name": "Minty Flav",
+        "edition": "standard"
+      },
+      {
+        "name": "Minty Fresh",
+        "edition": "standard"
+      },
+      {
+        "name": "Minty Hint",
+        "edition": "standard"
+      },
+      {
+        "name": "Minty Mint",
+        "edition": "standard"
+      },
+      {
+        "name": "Minty Swirl",
+        "edition": "standard"
+      },
+      {
+        "name": "Nix",
+        "edition": "standard"
+      },
+      {
+        "name": "Nixy",
+        "edition": "standard"
+      },
+      {
+        "name": "Phoeny",
+        "edition": "standard"
+      },
+      {
+        "name": "Palette",
+        "edition": "standard"
+      },
+      {
+        "name": "Phee",
+        "edition": "standard"
+      },
+      {
+        "name": "Pierce",
+        "edition": "standard"
+      },
+      {
+        "name": "Pinky Panther",
+        "edition": "standard"
+      },
+      {
+        "name": "Pinky Promise",
+        "edition": "standard"
+      },
+      {
+        "name": "Pinky Ring",
+        "edition": "standard"
+      },
+      {
+        "name": "Pinky Rosa",
+        "edition": "standard"
+      },
+      {
+        "name": "Pinky Toe",
+        "edition": "standard"
+      },
+      {
+        "name": "Pinky Winky",
+        "edition": "standard"
+      },
+      {
+        "name": "Pinkydink",
+        "edition": "standard"
+      },
+      {
+        "name": "Roldo",
+        "edition": "standard"
+      },
+      {
+        "name": "Quickly",
+        "edition": "standard"
+      },
+      {
+        "name": "Rapidly",
+        "edition": "standard"
+      },
+      {
+        "name": "Savvy",
+        "edition": "standard"
+      },
+      {
+        "name": "Speedy",
+        "edition": "standard"
+      },
+      {
+        "name": "Swifty",
+        "edition": "standard"
+      },
+      {
+        "name": "Velocity",
+        "edition": "standard"
+      },
+      {
+        "name": "Whizzy",
+        "edition": "standard"
+      },
+      {
+        "name": "Rojo Cero",
+        "edition": "standard"
+      },
+      {
+        "name": "Rojo Cinco",
+        "edition": "standard"
+      },
+      {
+        "name": "Rojo Cuatro",
+        "edition": "standard"
+      },
+      {
+        "name": "Rojo Dos",
+        "edition": "standard"
+      },
+      {
+        "name": "Rojo Macho",
+        "edition": "standard"
+      },
+      {
+        "name": "Rojo Oro",
+        "edition": "standard"
+      },
+      {
+        "name": "Rojo Tres",
+        "edition": "standard"
+      },
+      {
+        "name": "Rojo Uno",
+        "edition": "standard"
+      },
+      {
+        "name": "Rolla",
+        "edition": "standard"
+      },
+      {
+        "name": "Rollew",
+        "edition": "standard"
+      },
+      {
+        "name": "Rollo",
+        "edition": "standard"
+      },
+      {
+        "name": "Rolly",
+        "edition": "standard"
+      },
+      {
+        "name": "Shimmy",
+        "edition": "standard"
+      }
     ]
   }
 ]
