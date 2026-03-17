@@ -77,7 +77,6 @@ defmodule Marbles.Repo.Migrations.CreateTables do
       add :cost, :integer, default: 0
       add :start_date, :date, null: true
       add :end_date, :date, null: true
-      add :active, :boolean, default: true, null: false
       add :banner_path, :string
 
       timestamps()

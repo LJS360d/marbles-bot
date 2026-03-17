@@ -2,6 +2,16 @@ defmodule MarblesWeb.Admin.OwnerPacksLive do
   use MarblesWeb, :live_view
   alias Marbles.Packs
 
+  defp pack_status(pack) do
+    today = Date.utc_today()
+
+    cond do
+      pack.end_date && Date.compare(pack.end_date, today) == :lt -> "Ended"
+      pack.start_date && Date.compare(pack.start_date, today) == :gt -> "Scheduled"
+      true -> "Active"
+    end
+  end
+
   @impl true
   def mount(_params, _session, socket) do
     packs = Packs.list_all_packs()
@@ -38,7 +48,7 @@ defmodule MarblesWeb.Admin.OwnerPacksLive do
               <tr>
                 <th>Name</th>
                 <th>Cost</th>
-                <th>Active</th>
+                <th>Status</th>
                 <th>Marbles</th>
                 <th class="w-0">Edit</th>
               </tr>
@@ -47,7 +57,7 @@ defmodule MarblesWeb.Admin.OwnerPacksLive do
               <tr :for={pack <- @packs}>
                 <td>{pack.name}</td>
                 <td>{pack.cost}</td>
-                <td>{pack.active}</td>
+                <td>{pack_status(pack)}</td>
                 <td>{length(pack.marbles || [])}</td>
                 <td>
                   <.link

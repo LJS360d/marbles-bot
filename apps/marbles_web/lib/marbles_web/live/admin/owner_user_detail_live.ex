@@ -9,7 +9,11 @@ defmodule MarblesWeb.Admin.OwnerUserDetailLive do
      socket
      |> assign(:page_title, "User")
      |> assign(:current_scope, :owner_admin)
-     |> assign(:breadcrumbs, [{"Owner", ~p"/admin/owner"}, {"Users", ~p"/admin/owner/users"}, {"User", nil}])
+     |> assign(:breadcrumbs, [
+       {"Owner", ~p"/admin/owner"},
+       {"Users", ~p"/admin/owner/users"},
+       {"User", nil}
+     ])
      |> assign(:wide, true)}
   end
 
@@ -42,7 +46,9 @@ defmodule MarblesWeb.Admin.OwnerUserDetailLive do
           <div class="flex items-center justify-between gap-2">
             <div>
               <h1 class="text-xl font-semibold">{Accounts.primary_display_name(@user)}</h1>
-              <p :if={@user.display_name} class="text-sm text-base-content/70">{@user.display_name}</p>
+              <p :if={@user.display_name} class="text-sm text-base-content/70">
+                {@user.display_name}
+              </p>
               <p class="mt-2 text-sm">
                 Role: {@user.role} · Currency: {@user.currency}
               </p>
@@ -52,7 +58,8 @@ defmodule MarblesWeb.Admin.OwnerUserDetailLive do
             </.link>
           </div>
           <p :if={@user.identities != []} class="mt-1 text-xs text-base-content/60">
-            Identities: <%= Enum.map(@user.identities || [], fn i -> "#{i.platform}: #{i.username}" end) |> Enum.join(", ") %>
+            Identities: {Enum.map(@user.identities || [], fn i -> "#{i.platform}: #{i.username}" end)
+            |> Enum.join(", ")}
           </p>
         </div>
         <section>

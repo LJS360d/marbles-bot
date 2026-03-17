@@ -67,7 +67,8 @@ defmodule MarblesWeb.Admin.OwnerUsersLive do
               <tr :for={user <- @users}>
                 <td>{Accounts.primary_display_name(user)}</td>
                 <td>
-                  <%= Enum.map(user.identities || [], fn i -> "#{i.platform}: #{i.username}" end) |> Enum.join(", ") %>
+                  {Enum.map(user.identities || [], fn i -> "#{i.platform}: #{i.username}" end)
+                  |> Enum.join(", ")}
                 </td>
                 <td>{user.role}</td>
                 <td>{user.currency}</td>
@@ -76,7 +77,10 @@ defmodule MarblesWeb.Admin.OwnerUsersLive do
                     <.link navigate={~p"/admin/owner/users/#{user.id}"} class="btn btn-ghost btn-xs">
                       View
                     </.link>
-                    <.link navigate={~p"/admin/owner/users/#{user.id}/edit"} class="btn btn-ghost btn-xs">
+                    <.link
+                      navigate={~p"/admin/owner/users/#{user.id}/edit"}
+                      class="btn btn-ghost btn-xs"
+                    >
                       Edit
                     </.link>
                   </span>

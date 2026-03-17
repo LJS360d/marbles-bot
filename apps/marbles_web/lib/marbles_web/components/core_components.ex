@@ -447,13 +447,17 @@ defmodule MarblesWeb.CoreComponents do
 
   attr :guild, :map, required: true
   attr :class, :any, default: nil
+
   def guild_avatar(assigns) do
     ~H"""
     <div class={["shrink-0 overflow-hidden rounded-full bg-base-300", @class]}>
       <%= if @guild.image_url do %>
         <img src={@guild.image_url} alt="" class="h-full w-full object-cover" />
       <% else %>
-        <span class="flex h-full w-full items-center justify-center text-base-content/50" aria-hidden="true">
+        <span
+          class="flex h-full w-full items-center justify-center text-base-content/50"
+          aria-hidden="true"
+        >
           <.icon name="hero-server-stack" class="h-1/2 w-1/2" />
         </span>
       <% end %>

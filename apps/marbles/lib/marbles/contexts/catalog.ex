@@ -23,7 +23,6 @@ defmodule Marbles.Catalog do
   def list_active_packs(as_of \\ Date.utc_today(), order \\ :name) do
     base =
       from(p in Pack,
-        where: p.active == true,
         where: is_nil(p.start_date) or p.start_date <= ^as_of,
         where: is_nil(p.end_date) or p.end_date >= ^as_of,
         preload: [:marbles]

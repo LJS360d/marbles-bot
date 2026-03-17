@@ -10,7 +10,11 @@ defmodule MarblesWeb.Admin.OwnerUserEditLive do
      |> assign(:page_title, "Edit user")
      |> assign(:current_scope, :owner_admin)
      |> assign(:wide, true)
-     |> assign(:breadcrumbs, [{"Owner", ~p"/admin/owner"}, {"Users", ~p"/admin/owner/users"}, {"Edit", nil}])}
+     |> assign(:breadcrumbs, [
+       {"Owner", ~p"/admin/owner"},
+       {"Users", ~p"/admin/owner/users"},
+       {"Edit", nil}
+     ])}
   end
 
   @impl true
@@ -67,7 +71,13 @@ defmodule MarblesWeb.Admin.OwnerUserEditLive do
       <div class="space-y-6">
         <h1 class="text-2xl font-semibold">Edit {Accounts.primary_display_name(@user)}</h1>
 
-        <.form for={@form} id="user-edit-form" phx-change="validate" phx-submit="save" class="space-y-4">
+        <.form
+          for={@form}
+          id="user-edit-form"
+          phx-change="validate"
+          phx-submit="save"
+          class="space-y-4"
+        >
           <.input field={@form[:display_name]} type="text" label="Display name" />
           <.input field={@form[:currency]} type="number" label="Currency" />
           <.input

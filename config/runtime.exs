@@ -44,6 +44,7 @@ if config_env() == :prod do
   # ExAws Configuration for SeaweedFS
   config :ex_aws,
     # Seaweed ignores these 3 but library needs it
+    http_client: ExAws.Request.Req,
     access_key_id: System.get_env("S3_ACCESS_KEY", "any"),
     secret_access_key: System.get_env("S3_SECRET_KEY", "any"),
     region: "us-east-1",
@@ -55,8 +56,22 @@ if config_env() == :prod do
       path_style: true
     ]
 else
-  # In Dev/Test, we stay local and simple
-  config :marbles, :storage_adapter, Marbles.Storage.Local
+  # In Dev, we use cloudflare r2
+  config :marbles, :storage_adapter, Marbles.Storage.S3
+
+  # ExAws Configuration for Cloudflare R2
+  config :ex_aws,
+    http_client: ExAws.Request.Req,
+    access_key_id: System.get_env("S3_ACCESS_KEY", "any"),
+    secret_access_key: System.get_env("S3_SECRET_KEY", "any"),
+    region: System.get_env("S3_REGION", "auto"),
+    s3: [
+      scheme: System.get_env("S3_SCHEME", "https://"),
+      host: System.get_env("S3_HOST", "bucket"),
+      port: 443,
+      # Requirement for R2
+      path_style: System.get("S3_PATH_STYLE", "true") == "true"
+    ]
 end
 
 config :marbles, :assets_base_url, assets_base_url

@@ -41,46 +41,95 @@ defmodule MarblesWeb.Layouts do
 
     ~H"""
     <header class="sticky top-0 z-40 flex items-center justify-between gap-4 border-b border-base-300 bg-base-100/95 backdrop-blur px-4 py-3 sm:px-6 lg:px-8">
-      <a href={~p"/"} class="flex h-10 w-10 items-center justify-center rounded-full hover:bg-base-200 transition-colors" aria-label="Home">
+      <a
+        href={~p"/"}
+        class="flex h-10 w-10 items-center justify-center rounded-full hover:bg-base-200 transition-colors"
+        aria-label="Home"
+      >
         <.icon name="hero-home" class="size-6 text-base-content/80" />
       </a>
       <div class="flex items-center gap-2">
         <.theme_toggle />
         <input type="checkbox" id="nav-drawer" class="peer sr-only" />
-        <label for="nav-drawer" class="flex h-10 w-10 cursor-pointer items-center justify-center rounded-full hover:bg-base-200 transition-colors md:hidden" aria-label="Menu">
+        <label
+          for="nav-drawer"
+          class="flex h-10 w-10 cursor-pointer items-center justify-center rounded-full hover:bg-base-200 transition-colors md:hidden"
+          aria-label="Menu"
+        >
           <.icon name="hero-bars-3" class="size-6" />
         </label>
-        <div class="fixed inset-0 z-40 bg-black/50 opacity-0 pointer-events-none peer-checked:opacity-100 peer-checked:pointer-events-auto transition-opacity md:hidden" aria-hidden="true">
+        <div
+          class="fixed inset-0 z-40 bg-black/50 opacity-0 pointer-events-none peer-checked:opacity-100 peer-checked:pointer-events-auto transition-opacity md:hidden"
+          aria-hidden="true"
+        >
           <label for="nav-drawer" class="absolute inset-0" />
         </div>
         <nav class="fixed top-0 right-0 z-50 h-full w-72 max-w-[85vw] bg-base-100 border-l border-base-300 shadow-xl translate-x-full peer-checked:translate-x-0 transition-transform duration-200 ease-out md:relative md:translate-x-0 md:w-auto md:border-0 md:shadow-none md:bg-transparent">
           <div class="flex items-center justify-between p-4 border-b border-base-300 md:hidden">
             <span class="font-medium">Menu</span>
-            <label for="nav-drawer" class="flex h-10 w-10 cursor-pointer items-center justify-center rounded-full hover:bg-base-200">
+            <label
+              for="nav-drawer"
+              class="flex h-10 w-10 cursor-pointer items-center justify-center rounded-full hover:bg-base-200"
+            >
               <.icon name="hero-x-mark" class="size-5" />
             </label>
           </div>
           <ul class="flex flex-col gap-1 p-4 md:flex-row md:items-center md:gap-3 md:p-0">
             <%= if @current_user do %>
               <li class="md:hidden">
-                <span class="block px-3 py-2 text-sm text-base-content/70">{Marbles.Accounts.primary_display_name(@current_user)}</span>
+                <span class="block px-3 py-2 text-sm text-base-content/70">
+                  {Marbles.Accounts.primary_display_name(@current_user)}
+                </span>
               </li>
               <%= if admin_or_owner?(@current_user) do %>
-                <li><a href={~p"/admin"} class="block rounded-lg px-3 py-2 hover:bg-base-200 md:inline-block md:px-2 md:py-1 md:text-sm">Admin</a></li>
+                <li>
+                  <a
+                    href={~p"/admin"}
+                    class="block rounded-lg px-3 py-2 hover:bg-base-200 md:inline-block md:px-2 md:py-1 md:text-sm"
+                  >
+                    Admin
+                  </a>
+                </li>
               <% end %>
               <%= if owner?(@current_user) do %>
-                <li><a href={~p"/admin/owner"} class="block rounded-lg px-3 py-2 hover:bg-base-200 md:inline-block md:px-2 md:py-1 md:text-sm">Owner</a></li>
-                <li><a href={~p"/broadcast"} class="block rounded-lg px-3 py-2 hover:bg-base-200 md:inline-block md:px-2 md:py-1 md:text-sm">Broadcast</a></li>
+                <li>
+                  <a
+                    href={~p"/admin/owner"}
+                    class="block rounded-lg px-3 py-2 hover:bg-base-200 md:inline-block md:px-2 md:py-1 md:text-sm"
+                  >
+                    Owner
+                  </a>
+                </li>
+                <li>
+                  <a
+                    href={~p"/broadcast"}
+                    class="block rounded-lg px-3 py-2 hover:bg-base-200 md:inline-block md:px-2 md:py-1 md:text-sm"
+                  >
+                    Broadcast
+                  </a>
+                </li>
               <% end %>
               <li>
                 <form action={~p"/logout"} method="post" class="block md:inline">
                   <input type="hidden" name="_csrf_token" value={get_csrf_token()} />
                   <input type="hidden" name="_method" value="delete" />
-                  <button type="submit" class="w-full text-left rounded-lg px-3 py-2 hover:bg-base-200 md:w-auto md:px-2 md:py-1 md:text-sm">Logout</button>
+                  <button
+                    type="submit"
+                    class="w-full text-left rounded-lg px-3 py-2 hover:bg-base-200 md:w-auto md:px-2 md:py-1 md:text-sm"
+                  >
+                    Logout
+                  </button>
                 </form>
               </li>
             <% else %>
-              <li><a href={~p"/login"} class="block rounded-lg px-3 py-2 hover:bg-base-200 md:inline-block md:px-2 md:py-1 md:text-sm">Login</a></li>
+              <li>
+                <a
+                  href={~p"/login"}
+                  class="block rounded-lg px-3 py-2 hover:bg-base-200 md:inline-block md:px-2 md:py-1 md:text-sm"
+                >
+                  Login
+                </a>
+              </li>
             <% end %>
           </ul>
         </nav>
@@ -99,6 +148,7 @@ defmodule MarblesWeb.Layouts do
   end
 
   attr :items, :list, required: true
+
   def breadcrumbs(assigns) do
     ~H"""
     <nav :if={@items != []} class="mb-4 text-sm text-base-content/70" aria-label="Breadcrumb">

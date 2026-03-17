@@ -21,9 +21,29 @@ defmodule MarblesWeb.Admin.OwnerMarblesLive do
     page = socket.assigns[:page] || 1
     {marbles, total} = Catalog.list_marbles(page: page, per_page: @per_page)
     total_pages = max(1, div(total + @per_page - 1, @per_page))
+    base_url = Application.get_env(:marbles, :assets_base_url) || ""
+
+    thumbnail_urls =
+      Map.new(marbles, fn m ->
+        url =
+          case m.assets do
+            [] ->
+              nil
+
+            assets ->
+              with %{filename: filename} <- Enum.find(assets, fn a -> a.type == :thumbnail end) do
+                Path.join(base_url, filename)
+              else
+                _ -> nil
+              end
+          end
+
+        {m.id, url}
+      end)
 
     socket
     |> assign(:marbles, marbles)
+    |> assign(:marble_thumbnail_urls, thumbnail_urls)
     |> assign(:total_marbles, total)
     |> assign(:total_pages, total_pages)
   end
@@ -40,22 +60,6 @@ defmodule MarblesWeb.Admin.OwnerMarblesLive do
 
   @impl true
   def render(assigns) do
-    assets_base_url = Application.get_env(:marbles, :assets_base_url)
-
-    marble_thumbnail_url = fn m ->
-      case m.assets do
-        [] ->
-          nil
-
-        assets ->
-          with %{filename: filename} <- Enum.find(assets, fn a -> a.type == :thumbnail end) do
-            Path.join(assets_base_url, filename)
-          else
-            _ -> nil
-          end
-      end
-    end
-
     ~H"""
     <Layouts.app
       flash={@flash}
@@ -84,7 +88,7 @@ defmodule MarblesWeb.Admin.OwnerMarblesLive do
               <tr :for={m <- @marbles}>
                 <td>{m.name}</td>
                 <td>
-                  <%= if th_url = marble_thumbnail_url.(m) do %>
+                  <%= if th_url = @marble_thumbnail_urls[m.id] do %>
                     <img
                       src={th_url}
                       alt={m.name}
