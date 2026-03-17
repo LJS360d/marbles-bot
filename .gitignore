@@ -23,6 +23,7 @@ erl_crash.dump
 /tmp/
 .elixir_ls
 
+/mnt-r2/
 .rclone
 
 # Database files

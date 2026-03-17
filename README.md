@@ -88,3 +88,39 @@ mix precommit
 ```
 
 Runs compile with warnings-as-errors, dependency cleanup, format, and tests across the umbrella.
+
+## Assets
+
+Use [rclone](https://github.com/rclone/rclone) and an S3 Compatible bucket (e.g. Cloudflare R2) to store assets, 
+with a confiuration like this:
+
+```conf
+[r2]
+type = s3
+provider = Cloudflare
+access_key_id = <access_key_id>
+secret_access_key = <secret_access_key>
+region = auto
+endpoint = <s3_endpoint>
+```
+
+To mount the bucket locally:
+```bash
+RCLONE_CONF_NAME=r2
+R2_BUCKET_NAME=marbles-umbrella
+MOUNT_DIR=./mnt-r2
+mkdir -p "$MOUNT_DIR"
+rclone mount "$RCLONE_CONF_NAME:$R2_BUCKET_NAME" "$MOUNT_DIR" \
+  --vfs-cache-mode full \
+  --vfs-cache-max-size 10G
+```
+When terminating the process the mount will be automatically unmounted (unless busy),
+add the `--daemon` flag to run in the background.
+
+To unmount it:
+```bash
+MOUNT_DIR=./mnt-r2
+fusermount -u "$MOUNT_DIR"
+```
+
+NEVER RUN `sudo rm -rf $MOUNT_DIR` as it would delete the files in the cloud storage.
