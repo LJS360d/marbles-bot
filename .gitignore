@@ -22,6 +22,8 @@ erl_crash.dump
 # Temporary files, for example, from tests.
 /tmp/
 .elixir_ls
+.expert
+.elixir-tools
 
 /mnt-r2/
 .rclone

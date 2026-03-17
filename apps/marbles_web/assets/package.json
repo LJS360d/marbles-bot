@@ -1,0 +1,6 @@
+{
+  "name": "marbles_web_assets",
+  "dependencies": {
+    "tailwindcss": "^4.2.1"
+  }
+}
