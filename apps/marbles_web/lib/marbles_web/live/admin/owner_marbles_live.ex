@@ -40,6 +40,22 @@ defmodule MarblesWeb.Admin.OwnerMarblesLive do
 
   @impl true
   def render(assigns) do
+    assets_base_url = Application.get_env(:marbles, :assets_base_url)
+
+    marble_thumbnail_url = fn m ->
+      case m.assets do
+        [] ->
+          nil
+
+        assets ->
+          with %{filename: filename} <- Enum.find(assets, fn a -> a.type == :thumbnail end) do
+            Path.join(assets_base_url, filename)
+          else
+            _ -> nil
+          end
+      end
+    end
+
     ~H"""
     <Layouts.app
       flash={@flash}
@@ -56,6 +72,7 @@ defmodule MarblesWeb.Admin.OwnerMarblesLive do
             <thead>
               <tr>
                 <th>Name</th>
+                <th>Thumbnail</th>
                 <th>Edition</th>
                 <th>Role</th>
                 <th>Rarity</th>
@@ -66,6 +83,17 @@ defmodule MarblesWeb.Admin.OwnerMarblesLive do
             <tbody>
               <tr :for={m <- @marbles}>
                 <td>{m.name}</td>
+                <td>
+                  <%= if th_url = marble_thumbnail_url.(m) do %>
+                    <img
+                      src={th_url}
+                      alt={m.name}
+                      class="w-8 h-8 object-cover rounded"
+                    />
+                  <% else %>
+                    <span>—</span>
+                  <% end %>
+                </td>
                 <td>{m.edition}</td>
                 <td>{m.role}</td>
                 <td>{m.rarity}</td>

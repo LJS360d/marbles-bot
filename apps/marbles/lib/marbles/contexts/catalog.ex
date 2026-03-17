@@ -71,7 +71,7 @@ defmodule Marbles.Catalog do
     page = Keyword.get(opts, :page, 1)
     per = Keyword.get(opts, :per_page, 25)
     offset = (max(1, page) - 1) * per
-    base = from(m in Marble, preload: [:team], order_by: [asc: m.name])
+    base = from(m in Marble, preload: [:team, :assets], order_by: [asc: m.name])
     total = Repo.aggregate(base, :count, :id)
     marbles = base |> offset(^offset) |> limit(^per) |> Repo.all()
     {marbles, total}
