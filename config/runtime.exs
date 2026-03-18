@@ -69,8 +69,7 @@ else
       scheme: System.get_env("S3_SCHEME", "https://"),
       host: System.get_env("S3_HOST", "bucket"),
       port: 443,
-      # Requirement for R2
-      path_style: System.get("S3_PATH_STYLE", "true") == "true"
+      path_style: System.get_env("S3_PATH_STYLE", "true") == "true"
     ]
 end
 

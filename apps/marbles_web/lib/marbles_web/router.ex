@@ -58,10 +58,10 @@ defmodule MarblesWeb.Router do
   end
 
   scope "/admin/owner", MarblesWeb.Admin do
-    pipe_through [:browser, :auth, :require_user, :require_owner]
+    pipe_through [:browser, :auth, :require_owner]
 
     live_session :owner_admin,
-      on_mount: [{MarblesWeb.Live.AuthHooks, :assign_current_user}] do
+      on_mount: [{MarblesWeb.Live.AuthHooks, :require_owner}] do
       live "/", OwnerAdminLive, :index
       live "/users", OwnerUsersLive, :index
       live "/users/:id", OwnerUserDetailLive, :show
@@ -78,10 +78,10 @@ defmodule MarblesWeb.Router do
   end
 
   scope "/broadcast", MarblesWeb do
-    pipe_through [:browser, :auth, :require_user, :require_owner]
+    pipe_through [:browser, :auth, :require_owner]
 
     live_session :broadcast,
-      on_mount: [{MarblesWeb.Live.AuthHooks, :assign_current_user}] do
+      on_mount: [{MarblesWeb.Live.AuthHooks, :require_owner}] do
       live "/", BroadcastLive, :index
     end
   end

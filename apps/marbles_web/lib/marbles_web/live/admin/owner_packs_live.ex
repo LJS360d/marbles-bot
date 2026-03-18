@@ -1,6 +1,9 @@
 defmodule MarblesWeb.Admin.OwnerPacksLive do
   use MarblesWeb, :live_view
   alias Marbles.Packs
+  alias Marbles.Assets
+
+  @per_page 25
 
   defp pack_status(pack) do
     today = Date.utc_today()
@@ -14,14 +17,42 @@ defmodule MarblesWeb.Admin.OwnerPacksLive do
 
   @impl true
   def mount(_params, _session, socket) do
-    packs = Packs.list_all_packs()
+    socket =
+      socket
+      |> assign(:page_title, "Packs")
+      |> assign(:current_scope, :owner_admin)
+      |> assign(:breadcrumbs, [{"Owner", ~p"/admin/owner"}, {"Packs", nil}])
+      |> assign(:page, 1)
+      |> load_packs()
 
-    {:ok,
+    {:ok, socket}
+  end
+
+  defp load_packs(socket) do
+    page = socket.assigns[:page] || 1
+    {packs, total} = Packs.list_packs(page: page, per_page: @per_page)
+    total_pages = max(1, div(total + @per_page - 1, @per_page))
+
+    banner_urls =
+      Map.new(packs, fn p ->
+        {p.id, Assets.url_for_path(p.banner_path)}
+      end)
+
+    socket
+    |> assign(:packs, packs)
+    |> assign(:pack_banner_urls, banner_urls)
+    |> assign(:total_packs, total)
+    |> assign(:total_pages, total_pages)
+  end
+
+  @impl true
+  def handle_params(params, _uri, socket) do
+    page = String.to_integer(params["page"] || "1")
+
+    {:noreply,
      socket
-     |> assign(:page_title, "Packs")
-     |> assign(:current_scope, :owner_admin)
-     |> assign(:breadcrumbs, [{"Owner", ~p"/admin/owner"}, {"Packs", nil}])
-     |> assign(:packs, packs)}
+     |> assign(:page, page)
+     |> load_packs()}
   end
 
   @impl true
@@ -47,6 +78,7 @@ defmodule MarblesWeb.Admin.OwnerPacksLive do
             <thead>
               <tr>
                 <th>Name</th>
+                <th>Banner</th>
                 <th>Cost</th>
                 <th>Status</th>
                 <th>Marbles</th>
@@ -56,6 +88,19 @@ defmodule MarblesWeb.Admin.OwnerPacksLive do
             <tbody>
               <tr :for={pack <- @packs}>
                 <td>{pack.name}</td>
+                <td>
+                  <%= if banner_url = @pack_banner_urls[pack.id] do %>
+                    <a href={banner_url} target="_blank" rel="noopener noreferrer" class="inline-block">
+                      <img
+                        src={banner_url}
+                        alt={pack.name}
+                        class="max-h-16 max-w-16 h-16 w-16 object-cover rounded"
+                      />
+                    </a>
+                  <% else %>
+                    <span>—</span>
+                  <% end %>
+                </td>
                 <td>{pack.cost}</td>
                 <td>{pack_status(pack)}</td>
                 <td>{length(pack.marbles || [])}</td>
@@ -71,9 +116,28 @@ defmodule MarblesWeb.Admin.OwnerPacksLive do
             </tbody>
           </table>
         </div>
-        <p :if={@packs == []} class="text-sm text-base-content/60">
+
+        <p :if={@total_packs == 0} class="text-sm text-base-content/60">
           No packs. Create one from the Owner admin or New pack.
         </p>
+
+        <div :if={@total_pages > 1} class="flex justify-center gap-2">
+          <.link
+            :if={@page > 1}
+            navigate={~p"/admin/owner/packs?page=#{@page - 1}"}
+            class="btn btn-sm"
+          >
+            Previous
+          </.link>
+          <span class="flex items-center px-2 text-sm">Page {@page} of {@total_pages}</span>
+          <.link
+            :if={@page < @total_pages}
+            navigate={~p"/admin/owner/packs?page=#{@page + 1}"}
+            class="btn btn-sm"
+          >
+            Next
+          </.link>
+        </div>
       </div>
     </Layouts.app>
     """

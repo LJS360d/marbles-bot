@@ -84,6 +84,16 @@ defmodule MarblesWeb.Admin.OwnerPackBuilderLive do
     end
   end
 
+  defp upload_error_message({:http_error, _status, %{body: body}}) when is_binary(body) do
+    case Regex.run(~r/<Message>(.*?)<\/Message>/s, body) do
+      [_, msg] -> String.trim(msg)
+      _ -> "Access Denied"
+    end
+  end
+
+  defp upload_error_message({:http_error, status, _}), do: "HTTP #{status}"
+  defp upload_error_message(other), do: inspect(other)
+
   defp file_picker_breadcrumbs(path) do
     bucket_name = Application.get_env(:marbles, :s3_bucket) || "root"
 
@@ -278,13 +288,29 @@ defmodule MarblesWeb.Admin.OwnerPackBuilderLive do
     path_prefix = socket.assigns.file_picker_path || ""
     dest_path = if path_prefix == "", do: "", else: path_prefix
 
-    consume_uploaded_entries(socket, :bucket_file, fn %{path: tmp_path}, _entry ->
-      filename = Path.basename(tmp_path)
-      dest = if dest_path == "", do: filename, else: Path.join(dest_path, filename)
-      {:ok, dest}
-    end)
+    result =
+      consume_uploaded_entries(socket, :bucket_file, fn %{path: tmp_path}, entry ->
+        filename = entry.client_name |> Path.basename()
+        dest = if dest_path == "", do: filename, else: Path.join(dest_path, filename)
+        binary = File.read!(tmp_path)
 
-    {:noreply, load_file_picker_entries(socket)}
+        case Storage.put_file(binary, dest) do
+          {:ok, _} -> {:ok, dest}
+          {:error, reason} -> {:ok, {:error, reason}}
+        end
+      end)
+
+    socket =
+      case Enum.find(result, &match?({:error, _}, &1)) do
+        {:error, reason} ->
+          put_flash(socket, :error, "Upload failed: #{upload_error_message(reason)}")
+
+        nil ->
+          socket
+      end
+      |> load_file_picker_entries()
+
+    {:noreply, socket}
   end
 
   @impl true

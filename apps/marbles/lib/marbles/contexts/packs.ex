@@ -48,6 +48,7 @@ defmodule Marbles.Packs do
   def get_pack!(id), do: Repo.get!(Pack, id) |> Repo.preload(:marbles)
   def list_active_packs(as_of \\ Date.utc_today()), do: Catalog.list_active_packs(as_of)
   def list_all_packs(opts \\ []), do: Catalog.list_all_packs(opts)
+  def list_packs(opts \\ []), do: Catalog.list_packs(opts)
 
   def set_pack_marbles(%Pack{} = pack, marble_ids) when is_list(marble_ids) do
     marbles = Repo.all(from(m in Marble, where: m.id in ^marble_ids))

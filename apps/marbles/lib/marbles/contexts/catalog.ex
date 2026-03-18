@@ -100,4 +100,14 @@ defmodule Marbles.Catalog do
 
     Repo.all(ordered)
   end
+
+  def list_packs(opts \\ []) do
+    page = Keyword.get(opts, :page, 1)
+    per = Keyword.get(opts, :per_page, 25)
+    offset = (max(1, page) - 1) * per
+    base = from(p in Pack, preload: [:marbles], order_by: [asc: p.name])
+    total = Repo.aggregate(base, :count, :id)
+    packs = base |> offset(^offset) |> limit(^per) |> Repo.all()
+    {packs, total}
+  end
 end

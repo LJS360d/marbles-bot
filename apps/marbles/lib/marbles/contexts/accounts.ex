@@ -5,6 +5,31 @@ defmodule Marbles.Accounts do
 
   def get_user!(id), do: Repo.get!(User, id) |> Repo.preload(:identities)
 
+  def get_user(id) when is_integer(id) do
+    case Repo.get(User, id) do
+      nil -> nil
+      u -> Repo.preload(u, :identities)
+    end
+  end
+
+  def get_user(id) when is_binary(id) and id != "" do
+    case Integer.parse(id) do
+      {int, ""} ->
+        case Repo.get(User, int) do
+          nil -> nil
+          u -> Repo.preload(u, :identities)
+        end
+
+      _ ->
+        case Repo.get(User, id) do
+          nil -> nil
+          u -> Repo.preload(u, :identities)
+        end
+    end
+  end
+
+  def get_user(_), do: nil
+
   def get_user_by_platform(platform_id, platform \\ "discord") do
     from(i in UserIdentity,
       where: i.platform_id == ^platform_id and i.platform == ^platform,
