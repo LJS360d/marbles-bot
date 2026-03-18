@@ -3,6 +3,7 @@
     "name": "Standard",
     "description": "contains all standard edition marbles",
     "cost": 100,
+    "banner_path": "/assets/banners/standard.avif",
     "start_date": null,
     "end_date": null,
     "marbles": [

@@ -1,13 +1,8 @@
 [
   {
     "pack_name": "Standard",
+    "banner_path": "",
     "rules": [
-      {
-        "effect_type": "discount",
-        "discount_percent": 5,
-        "trigger_type": "always",
-        "scope": "10x_only"
-      },
       {
         "effect_type": "discount",
         "discount_percent": 100,
@@ -20,6 +15,12 @@
         "min_rarity": 3,
         "trigger_type": "every_n_pulls",
         "every_n_pulls": 90
+      },
+      {
+        "effect_type": "pity",
+        "min_rarity": 2,
+        "trigger_type": "every_n_pulls",
+        "every_n_pulls": 10
       }
     ]
   }

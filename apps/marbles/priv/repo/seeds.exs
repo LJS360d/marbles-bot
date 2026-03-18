@@ -79,14 +79,7 @@ packs_file = data_path.("packs.json")
 if File.exists?(packs_file) do
   with {:ok, binary} <- File.read(packs_file),
        {:ok, packs_json} <- Jason.decode(binary) do
-    Enum.each(packs_json, fn pack_data ->
-      pack_attrs =
-        if pack_data["name"] == "Standard" do
-          Map.merge(pack_data, %{"start_date" => nil, "end_date" => nil})
-        else
-          pack_data
-        end
-
+    Enum.each(packs_json, fn pack_attrs ->
       pack =
         %Pack{}
         |> Pack.changeset(pack_attrs)

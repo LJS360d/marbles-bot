@@ -32,8 +32,6 @@ defmodule MarblesDiscordbot.Embeds do
   end
 
   def pack_embed(pack, page, total) do
-    count = length(pack.marbles || [])
-
     expires =
       if pack.end_date do
         today = Date.utc_today()
@@ -51,7 +49,7 @@ defmodule MarblesDiscordbot.Embeds do
     rules_text = PackPullRules.rules_summary_text(pack)
 
     description =
-      "#{pack.description || "No description."}\n\n**#{count}** marbles · #{pack.cost} 🪙 base cost · #{expires}\n\n**Pull rules**\n#{rules_text}"
+      "#{pack.description}\n\n #{pack.cost} 🪙 base cost · #{expires}\n\n#{rules_text}"
 
     banner_url = Marbles.Assets.url_for_path(pack.banner_path)
 

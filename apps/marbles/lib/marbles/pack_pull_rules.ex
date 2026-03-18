@@ -337,15 +337,15 @@ defmodule Marbles.PackPullRules do
   defp describe_rule(%{effect_type: "pity"} = r) do
     n = r.every_n_pulls || 0
     mr = r.min_rarity || 3
-    "★#{mr}+ after #{n} consecutive marbles below ★#{mr} (1× and 10× count per marble)"
+    "Guaranteed #{rarity_stars_string(mr)} every #{n} pulls"
   end
 
   defp describe_rule(r) do
     scope =
       cond do
         r.apply_1x and r.apply_10x -> "1× & 10×"
-        r.apply_1x -> "1× only"
-        r.apply_10x -> "10× only"
+        r.apply_1x -> "1× pull"
+        r.apply_10x -> "10× pull"
         true -> "—"
       end
 
@@ -354,13 +354,13 @@ defmodule Marbles.PackPullRules do
     trig =
       case r.trigger_type do
         "always" -> "always"
-        "lifetime_uses" -> "#{r.lifetime_max_uses}× per account"
-        "period_once" -> "once per #{r.period_unit}"
-        "every_n_pulls" -> "every #{r.every_n_pulls} pulls"
+        "lifetime_uses" -> "Max #{r.lifetime_max_uses} times per account"
+        "period_once" -> "Once per #{r.period_unit}"
+        "every_n_pulls" -> "Every #{r.every_n_pulls} pulls"
         _ -> r.trigger_type
       end
 
-    "#{eff} · #{trig} · #{scope}"
+    "#{trig} #{eff} #{scope}"
   end
 
   def row_attrs(pack_id, row) do
