@@ -90,7 +90,12 @@ defmodule MarblesWeb.Admin.OwnerPacksLive do
                 <td>{pack.name}</td>
                 <td>
                   <%= if banner_url = @pack_banner_urls[pack.id] do %>
-                    <a href={banner_url} target="_blank" rel="noopener noreferrer" class="inline-block">
+                    <a
+                      href={banner_url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      class="inline-block"
+                    >
                       <img
                         src={banner_url}
                         alt={pack.name}

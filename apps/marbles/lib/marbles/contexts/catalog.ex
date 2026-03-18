@@ -25,7 +25,7 @@ defmodule Marbles.Catalog do
       from(p in Pack,
         where: is_nil(p.start_date) or p.start_date <= ^as_of,
         where: is_nil(p.end_date) or p.end_date >= ^as_of,
-        preload: [:marbles]
+        preload: [:marbles, :pull_rules]
       )
 
     ordered =
@@ -90,7 +90,7 @@ defmodule Marbles.Catalog do
 
   def list_all_packs(opts \\ []) do
     order = Keyword.get(opts, :order, :name)
-    base = from(p in Pack, preload: [:marbles])
+    base = from(p in Pack, preload: [:marbles, :pull_rules])
 
     ordered =
       case order do

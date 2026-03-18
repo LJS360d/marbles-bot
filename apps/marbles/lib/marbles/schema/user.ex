@@ -7,8 +7,6 @@ defmodule Marbles.Schema.User do
     field :display_name, :string
     field :currency, :integer, default: 0
     field :role, Ecto.Enum, values: [:regular, :server_admin, :owner], default: :regular
-    field :last_free_pull_at, :date
-
     has_many :identities, Marbles.Schema.UserIdentity
     has_many :collection, Marbles.Schema.UserMarble
 
@@ -17,7 +15,7 @@ defmodule Marbles.Schema.User do
 
   def changeset(user, attrs) do
     user
-    |> cast(attrs, [:display_name, :currency, :role, :last_free_pull_at])
+    |> cast(attrs, [:display_name, :currency, :role])
     |> validate_required([])
     |> validate_number(:currency, greater_than_or_equal_to: 0)
   end

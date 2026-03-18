@@ -39,7 +39,6 @@ defmodule Marbles.Repo.Migrations.CreateTables do
       add :display_name, :string
       add :currency, :integer, default: 0
       add :role, :string, null: false, default: "regular"
-      add :last_free_pull_at, :date
       timestamps()
     end
 
@@ -92,6 +91,41 @@ defmodule Marbles.Repo.Migrations.CreateTables do
 
     # Composite index for faster lookups and to prevent duplicate entries
     create unique_index(:pack_contents, [:pack_id, :marble_id])
+
+    create table(:pack_pull_rules, primary_key: false) do
+      add :id, :binary_id, primary_key: true
+      add :pack_id, references(:packs, type: :binary_id, on_delete: :delete_all), null: false
+      add :effect_type, :string, null: false
+      add :discount_percent, :integer, null: false, default: 0
+      add :min_rarity, :integer
+      add :apply_1x, :boolean, null: false, default: true
+      add :apply_10x, :boolean, null: false, default: true
+      add :trigger_type, :string, null: false
+      add :lifetime_max_uses, :integer
+      add :period_unit, :string
+      add :every_n_pulls, :integer
+      add :starts_at, :utc_datetime_usec
+      add :ends_at, :utc_datetime_usec
+      timestamps()
+    end
+
+    create index(:pack_pull_rules, [:pack_id])
+
+    create table(:user_pack_pull_rule_states, primary_key: false) do
+      add :id, :binary_id, primary_key: true
+      add :user_id, references(:users, type: :binary_id, on_delete: :delete_all), null: false
+
+      add :rule_id, references(:pack_pull_rules, type: :binary_id, on_delete: :delete_all),
+        null: false
+
+      add :uses_consumed, :integer, null: false, default: 0
+      add :period_bucket, :string
+      add :pulls_accumulated, :integer, null: false, default: 0
+      timestamps()
+    end
+
+    create unique_index(:user_pack_pull_rule_states, [:user_id, :rule_id])
+    create index(:user_pack_pull_rule_states, [:rule_id])
 
     # Marble Assets
     create table(:marble_assets, primary_key: false) do

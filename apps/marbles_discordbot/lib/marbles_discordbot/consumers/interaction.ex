@@ -3,9 +3,8 @@ defmodule MarblesDiscordbot.Consumers.Interaction do
   alias Nostrum.Struct.Embed
   alias Nostrum.Struct.Interaction
   alias Nostrum.Api
-  alias Marbles.{Catalog, Guilds, Analytics, Accounts, Collection, Gacha}
-  alias MarblesDiscordbot.Embeds
-  alias MarblesDiscordbot.Components
+  alias Marbles.{Catalog, Guilds, Analytics, Accounts, Collection}
+  alias MarblesDiscordbot.{Embeds, Components, PullSession}
   require Logger
 
   def handle_event({:INTERACTION_CREATE, %Interaction{} = i, _ws_state})
@@ -93,58 +92,16 @@ defmodule MarblesDiscordbot.Consumers.Interaction do
           if pack == nil do
             %{type: 4, data: %{content: "That pack is not available."}}
           else
-            free = Accounts.can_free_pull?(user_record)
-            cost = pack.cost || 0
+            owner_id = i.user.id
 
-            if free or user_record.currency >= cost do
-              guild_id_str = i.guild_id && to_string(i.guild_id)
-
-              case Gacha.pull_from_pack(pack_id, user_record.id, guild_id_str) do
-                {:ok, marble} ->
-                  if not free do
-                    Accounts.update_currency(user_record, -cost)
-                  else
-                    Accounts.set_last_free_pull_at(user_record)
-                  end
-
-                  spoiler_wrap = fn t -> "|| " <> t <> " ||" end
-
-                  Collection.add_marble_to_collection(user_record.id, marble.id)
-
-                  # TODO: turn this embed into a banner (so just Pack name + Image) that has 2 button components:
-                  # Pull x1 - 100 :currency_icon:
-                  # Pull x10 - ~1000~ 900 :currency_icon:
-                  # the discount should be configurable on a per-pack basis
-                  # for example on pack A the discount should be 10% only once per day
-                  # on pack B 25% only once per month (should show a day/hour/minute counter in the button for how long left in case its time based)
-                  # on pack C 5% ALWAYS on 10 pull
-                  # on pack D 100% discount every 10 10x pulls (so a free 11th 10x pull)
-                  # then clicking on the 1x pull button should create this embed with the spoiler wrap
-                  # while clicking on the 10x pull should create an embed that uses Fields, 5 fields per row
-                  # 2 rows, with the name and rarity of each pulled marble, each of them spoiler wrapped
-
-                  embed = Embeds.marble_embed(marble)
-
-                  embed =
-                    embed
-                    |> Embed.put_description(spoiler_wrap.(embed.description || ""))
-                    |> Embed.put_title(spoiler_wrap.(embed.title || ""))
-                    |> Embed.put_footer("Has been added to your collection")
-
-                  %{type: 4, data: %{embeds: [embed]}}
-
-                {:error, _} ->
-                  %{type: 4, data: %{content: "Could not pull from this pack. Try again later."}}
-              end
-            else
-              %{
-                type: 4,
-                data: %{
-                  content:
-                    "You need **#{cost}** coins to pull from **#{pack.name}**. You have #{user_record.currency}."
-                }
+            %{
+              type: 4,
+              data: %{
+                content: Embeds.pull_session_message_content(user_record, pack),
+                embeds: [Embeds.pull_banner_embed(pack)],
+                components: PullSession.action_row(user_record, pack, owner_id)
               }
-            end
+            }
           end
 
         :error ->
@@ -153,8 +110,9 @@ defmodule MarblesDiscordbot.Consumers.Interaction do
     end
   end
 
-  def handle_command("packs", _i) do
+  def handle_command("packs", %Interaction{} = i) do
     packs = Catalog.list_active_packs(Date.utc_today(), :newest)
+    uid = (i.user || i.member.user).id
 
     if packs == [] do
       %{type: 4, data: %{content: "No packs are currently available."}}
@@ -162,7 +120,7 @@ defmodule MarblesDiscordbot.Consumers.Interaction do
       page = 0
       pack = Enum.at(packs, page)
       embed = Embeds.pack_embed(pack, page + 1, length(packs))
-      components = Components.packs_nav_components(packs, page)
+      components = MarblesDiscordbot.Components.packs_nav_components(packs, page, uid)
       %{type: 4, data: %{embeds: [embed], components: components}}
     end
   end

@@ -15,6 +15,8 @@ defmodule Marbles.Schema.Pack do
       join_through: "pack_contents",
       on_replace: :delete
 
+    has_many :pull_rules, Marbles.Schema.PackPullRule
+
     timestamps()
   end
 

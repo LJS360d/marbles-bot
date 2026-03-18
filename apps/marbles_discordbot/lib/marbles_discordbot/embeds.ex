@@ -1,5 +1,6 @@
 defmodule MarblesDiscordbot.Embeds do
   alias Nostrum.Struct.Embed
+  alias Marbles.PackPullRules
   require Logger
 
   @collection_per_page Marbles.Collection.per_page()
@@ -19,6 +20,17 @@ defmodule MarblesDiscordbot.Embeds do
     |> maybe_put_footer(footer_text)
   end
 
+  def currency_line(coins), do: "**#{coins}** 🪙"
+
+  def pull_session_message_content(%{id: user_id, currency: coins} = _user, pack) do
+    line1 = currency_line(coins)
+
+    case PackPullRules.pity_guarantee_line(pack, user_id) do
+      nil -> line1
+      pity -> line1 <> "\n" <> pity
+    end
+  end
+
   def pack_embed(pack, page, total) do
     count = length(pack.marbles || [])
 
@@ -30,14 +42,16 @@ defmodule MarblesDiscordbot.Embeds do
           "Expired"
         else
           days = Date.diff(pack.end_date, today)
-          "Expires in #{days} days"
+          "Ends in #{days} days"
         end
       else
-        "No expiry"
+        "Permanent banner"
       end
 
+    rules_text = PackPullRules.rules_summary_text(pack)
+
     description =
-      "#{pack.description || "No description."}\n\n**#{count}** marbles · #{pack.cost} coins · #{expires}"
+      "#{pack.description || "No description."}\n\n**#{count}** marbles · #{pack.cost} 🪙 base cost · #{expires}\n\n**Pull rules**\n#{rules_text}"
 
     banner_url = Marbles.Assets.url_for_path(pack.banner_path)
 
@@ -57,7 +71,7 @@ defmodule MarblesDiscordbot.Embeds do
     lines =
       Enum.map(items, fn um ->
         m = um.marble
-        stars = String.duplicate("⭐", m.rarity) <> String.duplicate("☆", 3 - m.rarity)
+        stars = rarity_stars_string(m.rarity)
         "**#{m.name}** #{stars} Lv.#{um.level}"
       end)
 
@@ -135,6 +149,51 @@ defmodule MarblesDiscordbot.Embeds do
 
   defp maybe_put_footer(embed, nil), do: embed
   defp maybe_put_footer(embed, text), do: Embed.put_footer(embed, text, nil)
+
+  def pull_banner_embed(pack) do
+    desc =
+      if pack.description && String.trim(pack.description) != "",
+        do: pack.description,
+        else: "*No description.*"
+
+    banner_url =
+      if pack.banner_path && pack.banner_path != "",
+        do: Marbles.Assets.url_for_path(pack.banner_path),
+        else: nil
+
+    embed =
+      %Embed{}
+      |> Embed.put_title(pack.name)
+      |> Embed.put_description(desc)
+
+    if banner_url, do: Embed.put_image(embed, banner_url), else: embed
+  end
+
+  def ten_pull_result_embed(pack, marbles, discord_user)
+      when is_list(marbles) and is_integer(discord_user.id) do
+    rarities = Enum.map(marbles, &(&1.rarity || 1))
+    max_r = if rarities == [], do: 1, else: Enum.max(rarities)
+
+    base =
+      %Embed{}
+      |> Embed.put_title("10× pull — #{pack.name}")
+      |> Embed.put_color(rarity_color(max_r))
+
+    emb =
+      Enum.with_index(marbles, 1)
+      |> Enum.reduce(base, fn {m, idx}, acc ->
+        stars = rarity_stars_string(m.rarity || 1)
+        v = "|| #{m.name} · #{stars} ||"
+        Embed.put_field(acc, "##{idx}", v, true)
+      end)
+
+    Embed.put_footer(emb, "#{discord_user.global_name} · 10 marbles added to your collection")
+  end
+
+  def rarity_stars_string(rarity) do
+    r = min(3, max(1, rarity || 1))
+    String.duplicate("⭐", r) <> String.duplicate("☆", 3 - r)
+  end
 
   def rarity_color(1), do: 0x808080
   def rarity_color(2), do: 0x00FF00

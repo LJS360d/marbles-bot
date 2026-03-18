@@ -1,6 +1,8 @@
 alias Marbles.Schema.Pack
 alias Marbles.Repo
-alias Marbles.Schema.{Team, Marble, MarbleAsset}
+alias Marbles.Schema.{Team, Marble, MarbleAsset, PackPullRule}
+alias Marbles.PackPullRules
+import Ecto.Query
 require Logger
 
 Application.ensure_all_started(:marbles)
@@ -132,4 +134,52 @@ if File.exists?(packs_file) do
   end
 else
   raise "#{packs_file} not found, cannot proceed with seeding"
+end
+
+# --- Pack pull rules (pack_rules.json: pack_name + rules[]) ---
+rules_file = data_path.("pack_rules.json")
+
+if File.exists?(rules_file) do
+  with {:ok, binary} <- File.read(rules_file),
+       {:ok, groups} <- Jason.decode(binary) do
+    Enum.each(groups, fn group ->
+      pname = group["pack_name"]
+      rules = group["rules"] || []
+
+      case pname do
+        nil ->
+          Logger.warning("pack_rules.json entry missing pack_name, skipped")
+
+        name when is_binary(name) ->
+          pack = Repo.get_by(Pack, name: name)
+
+          if pack do
+            Repo.delete_all(from(r in PackPullRule, where: r.pack_id == ^pack.id))
+
+            Enum.each(rules, fn row ->
+              attrs = PackPullRules.row_attrs(pack.id, row)
+
+              case %PackPullRule{}
+                   |> PackPullRule.changeset(attrs)
+                   |> Repo.insert() do
+                {:ok, _} ->
+                  :ok
+
+                {:error, cs} ->
+                  Logger.error("Pack rule for #{name}: #{inspect(row)} — #{inspect(cs.errors)}")
+              end
+            end)
+
+            Logger.info("Pack pull rules seeded for '#{name}' (#{length(rules)} rules).")
+          else
+            Logger.warning("pack_rules.json: pack '#{name}' not found, skipped")
+          end
+      end
+    end)
+  else
+    {:error, reason} ->
+      Logger.error("Failed to read pack_rules.json: #{inspect(reason)}")
+  end
+else
+  Logger.info("pack_rules.json not found, skipping pull rules seed.")
 end

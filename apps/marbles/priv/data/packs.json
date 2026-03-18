@@ -5,7 +5,6 @@
     "cost": 100,
     "start_date": null,
     "end_date": null,
-    "active": true,
     "marbles": [
       {
         "name": "Ace",

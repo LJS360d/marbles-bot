@@ -1,0 +1,26 @@
+[
+  {
+    "pack_name": "Standard",
+    "rules": [
+      {
+        "effect_type": "discount",
+        "discount_percent": 5,
+        "trigger_type": "always",
+        "scope": "10x_only"
+      },
+      {
+        "effect_type": "discount",
+        "discount_percent": 100,
+        "trigger_type": "period_once",
+        "period_unit": "day",
+        "scope": "1x_only"
+      },
+      {
+        "effect_type": "pity",
+        "min_rarity": 3,
+        "trigger_type": "every_n_pulls",
+        "every_n_pulls": 90
+      }
+    ]
+  }
+]
