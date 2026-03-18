@@ -1,5 +1,6 @@
 defmodule MarblesDiscordbot.Consumers.Interaction do
   use Nostrum.Consumer
+  alias Nostrum.Struct.Embed.Field
   alias Nostrum.Struct.Embed
   alias Nostrum.Struct.Interaction
   alias Nostrum.Api
@@ -127,34 +128,45 @@ defmodule MarblesDiscordbot.Consumers.Interaction do
 
   def handle_command("analytics", i) do
     guild_id = i.guild_id && to_string(i.guild_id)
-    servers = Analytics.guilds_count()
     pulls_global = Analytics.pulls_today(nil)
     spawns_global = Analytics.spawns_today(nil)
     pulls_guild = if guild_id, do: Analytics.pulls_today(guild_id), else: 0
     spawns_guild = if guild_id, do: Analytics.spawns_today(guild_id), else: 0
+    bot_version = Application.spec(:marbles_discordbot, :vsn)
+    core_version = Application.spec(:marbles, :vsn)
 
     fields = [
-      %{name: "Servers", value: to_string(servers), inline: true},
-      %{name: "Pulls today (global)", value: to_string(pulls_global), inline: true},
-      %{name: "Spawns today (global)", value: to_string(spawns_global), inline: true}
+      %Field{name: "Pulls today (global)", value: to_string(pulls_global), inline: true},
+      %Field{name: "Spawns today (global)", value: to_string(spawns_global), inline: true},
+      %Field{name: "\t", value: "\t"}
     ]
 
     fields =
       if guild_id do
         fields ++
           [
-            %{name: "Pulls today (this server)", value: to_string(pulls_guild), inline: true},
-            %{name: "Spawns today (this server)", value: to_string(spawns_guild), inline: true}
+            %Field{
+              name: "Pulls today (this server)",
+              value: to_string(pulls_guild),
+              inline: true
+            },
+            %Field{
+              name: "Spawns today (this server)",
+              value: to_string(spawns_guild),
+              inline: true
+            }
           ]
       else
         fields
       end
 
-    embed = %Embed{
-      title: "Analytics",
-      description: "Bot statistics",
-      fields: fields
-    }
+    embed =
+      %Embed{
+        fields: fields
+      }
+      |> Embed.put_title("Analytics")
+      |> Embed.put_description("Bot statistics")
+      |> Embed.put_footer("bot v#{bot_version} | core v#{core_version}")
 
     %{type: 4, data: %{embeds: [embed]}}
   end

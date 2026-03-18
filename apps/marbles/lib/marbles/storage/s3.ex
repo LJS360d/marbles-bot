@@ -66,11 +66,10 @@ defmodule Marbles.Storage.S3 do
             {_, a}, {_, b} -> a <= b
           end)
 
-        Logger.info("#{inspect(entries)}")
         {:ok, entries}
 
       {:error, _} = err ->
-        Logger.error("S3 list_objects 2: #{inspect(err)}")
+        Logger.error("S3 list_objects: #{inspect(err)}")
         err
     end
   end
