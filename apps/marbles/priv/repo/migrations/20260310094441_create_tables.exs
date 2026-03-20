@@ -160,6 +160,33 @@ defmodule Marbles.Repo.Migrations.CreateTables do
     create index(:user_marbles, [:user_id])
     create index(:user_marbles, [:marble_id])
 
+    # Daily streaks
+    create table(:user_daily_streaks, primary_key: false) do
+      add :id, :binary_id, primary_key: true
+      add :user_id, references(:users, type: :binary_id, on_delete: :delete_all), null: false
+      add :last_claimed_at, :utc_datetime_usec
+      add :current_streak, :integer, default: 0
+      add :longest_streak, :integer, default: 0
+      timestamps()
+    end
+
+    create unique_index(:user_daily_streaks, [:user_id])
+    create index(:user_daily_streaks, [:last_claimed_at])
+
+    # User inventory for generic items (boosts, skins, etc.)
+    create table(:user_inventory, primary_key: false) do
+      add :id, :binary_id, primary_key: true
+      add :user_id, references(:users, type: :binary_id, on_delete: :delete_all), null: false
+      add :item_type, :string, null: false
+      add :item_id, :string, null: false
+      add :quantity, :integer, default: 1
+      add :meta, :map, default: %{}
+      timestamps()
+    end
+
+    create index(:user_inventory, [:user_id])
+    create index(:user_inventory, [:user_id, :item_type])
+
     # Analytics (dev adapter): pulls and spawns; prod can use a different adapter
     # guild_id/channel_id as string for Discord snowflakes
     create table(:analytics_events, primary_key: false) do

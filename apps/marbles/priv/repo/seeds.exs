@@ -101,7 +101,7 @@ if File.exists?(packs_file) do
 
       if pack do
         marbles_to_link =
-          (pack_attrs["marbles"] || pack_data["marbles"] || [])
+          (pack_attrs["marbles"] || pack["marbles"] || [])
           |> Enum.map(fn m_query ->
             Repo.get_by(Marble, name: m_query["name"], edition: m_query["edition"])
           end)

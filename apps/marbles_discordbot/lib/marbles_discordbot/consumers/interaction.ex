@@ -4,7 +4,7 @@ defmodule MarblesDiscordbot.Consumers.Interaction do
   alias Nostrum.Struct.Embed
   alias Nostrum.Struct.Interaction
   alias Nostrum.Api
-  alias Marbles.{Catalog, Guilds, Analytics, Accounts, Collection}
+  alias Marbles.{Catalog, Guilds, Analytics, Accounts, Collection, Daily}
   alias MarblesDiscordbot.{Embeds, Components, PullSession}
   require Logger
 
@@ -190,6 +190,35 @@ defmodule MarblesDiscordbot.Consumers.Interaction do
       embed = Embeds.collection_embed(items, 1, total, :rarity_level_name, user)
       components = Components.collection_components(1, total, :rarity_level_name)
       %{type: 4, data: %{embeds: [embed], components: components}}
+    end
+  end
+
+  def handle_command("daily", i) do
+    user = i.user || i.member.user
+
+    {:ok, user_record} =
+      Accounts.ensure_user(%{
+        platform_id: to_string(user.id),
+        platform: "discord",
+        username: user.username
+      })
+
+    case Daily.claim_daily(user_record.id) do
+      {:ok, %{coins: coins, streak: streak, items: items}} ->
+        items_text =
+          if Enum.empty?(items) do
+            ""
+          else
+            "You also received: " <> Enum.map_join(items, ", ", & &1.name)
+          end
+
+        content =
+          "You claimed your daily reward! You received **#{coins}** coins. Your current streak is **#{streak}**. #{items_text}"
+
+        %{type: 4, data: %{content: content}}
+
+      {:error, reason} ->
+        %{type: 4, data: %{content: "Could not claim daily reward: #{reason}"}}
     end
   end
 

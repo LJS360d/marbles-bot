@@ -86,6 +86,11 @@ defmodule MarblesDiscordbot.Commands do
         name: "analytics",
         description: "Show analytics about the bot",
         type: 1
+      },
+      %{
+        name: "daily",
+        description: "Claim your daily reward and build your streak",
+        type: 1
       }
     ]
   end
