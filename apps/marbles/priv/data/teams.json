@@ -19,11 +19,9 @@
           }
         ],
         "base_stats": {
-          "speed": 10,
-          "weight": 25,
-          "power": 14,
-          "stability": 10,
-          "smoothness": 10
+          "mass": 25,
+          "friction": 10,
+          "bounce": 12
         }
       },
       {
@@ -41,11 +39,9 @@
           }
         ],
         "base_stats": {
-          "speed": 27,
-          "weight": 43,
-          "power": 35,
-          "stability": 37,
-          "smoothness": 35
+          "mass": 43,
+          "friction": 32,
+          "bounce": 35
         }
       },
       {
@@ -63,11 +59,9 @@
           }
         ],
         "base_stats": {
-          "speed": 22,
-          "weight": 43,
-          "power": 47,
-          "stability": 53,
-          "smoothness": 47
+          "mass": 43,
+          "friction": 37,
+          "bounce": 47
         }
       },
       {
@@ -85,11 +79,9 @@
           }
         ],
         "base_stats": {
-          "speed": 26,
-          "weight": 43,
-          "power": 34,
-          "stability": 38,
-          "smoothness": 34
+          "mass": 43,
+          "friction": 32,
+          "bounce": 34
         }
       },
       {
@@ -107,11 +99,9 @@
           }
         ],
         "base_stats": {
-          "speed": 40,
-          "weight": 71,
-          "power": 63,
-          "stability": 100,
-          "smoothness": 76
+          "mass": 71,
+          "friction": 70,
+          "bounce": 69
         }
       },
       {
@@ -129,11 +119,9 @@
           }
         ],
         "base_stats": {
-          "speed": 24,
-          "weight": 43,
-          "power": 31,
-          "stability": 37,
-          "smoothness": 32
+          "mass": 43,
+          "friction": 30,
+          "bounce": 31
         }
       }
     ]
@@ -158,11 +146,9 @@
           }
         ],
         "base_stats": {
-          "speed": 20,
-          "weight": 43,
-          "power": 35,
-          "stability": 65,
-          "smoothness": 43
+          "mass": 43,
+          "friction": 42,
+          "bounce": 39
         }
       },
       {
@@ -180,11 +166,9 @@
           }
         ],
         "base_stats": {
-          "speed": 25,
-          "weight": 43,
-          "power": 36,
-          "stability": 49,
-          "smoothness": 32
+          "mass": 43,
+          "friction": 37,
+          "bounce": 34
         }
       },
       {
@@ -202,11 +186,9 @@
           }
         ],
         "base_stats": {
-          "speed": 28,
-          "weight": 43,
-          "power": 36,
-          "stability": 39,
-          "smoothness": 31
+          "mass": 43,
+          "friction": 33,
+          "bounce": 33
         }
       },
       {
@@ -224,11 +206,9 @@
           }
         ],
         "base_stats": {
-          "speed": 10,
-          "weight": 25,
-          "power": 13,
-          "stability": 10,
-          "smoothness": 10
+          "mass": 25,
+          "friction": 10,
+          "bounce": 11
         }
       },
       {
@@ -246,11 +226,9 @@
           }
         ],
         "base_stats": {
-          "speed": 26,
-          "weight": 43,
-          "power": 34,
-          "stability": 39,
-          "smoothness": 31
+          "mass": 43,
+          "friction": 32,
+          "bounce": 32
         }
       },
       {
@@ -268,11 +246,9 @@
           }
         ],
         "base_stats": {
-          "speed": 28,
-          "weight": 43,
-          "power": 36,
-          "stability": 46,
-          "smoothness": 36
+          "mass": 43,
+          "friction": 37,
+          "bounce": 36
         }
       },
       {
@@ -290,11 +266,9 @@
           }
         ],
         "base_stats": {
-          "speed": 27,
-          "weight": 43,
-          "power": 35,
-          "stability": 43,
-          "smoothness": 32
+          "mass": 43,
+          "friction": 35,
+          "bounce": 33
         }
       }
     ]
@@ -319,11 +293,9 @@
           }
         ],
         "base_stats": {
-          "speed": 27,
-          "weight": 43,
-          "power": 36,
-          "stability": 44,
-          "smoothness": 33
+          "mass": 43,
+          "friction": 35,
+          "bounce": 34
         }
       },
       {
@@ -341,11 +313,9 @@
           }
         ],
         "base_stats": {
-          "speed": 26,
-          "weight": 43,
-          "power": 35,
-          "stability": 45,
-          "smoothness": 32
+          "mass": 43,
+          "friction": 35,
+          "bounce": 33
         }
       },
       {
@@ -363,11 +333,9 @@
           }
         ],
         "base_stats": {
-          "speed": 10,
-          "weight": 25,
-          "power": 13,
-          "stability": 10,
-          "smoothness": 10
+          "mass": 25,
+          "friction": 10,
+          "bounce": 11
         }
       },
       {
@@ -385,11 +353,9 @@
           }
         ],
         "base_stats": {
-          "speed": 10,
-          "weight": 25,
-          "power": 13,
-          "stability": 10,
-          "smoothness": 10
+          "mass": 25,
+          "friction": 10,
+          "bounce": 11
         }
       },
       {
@@ -407,11 +373,9 @@
           }
         ],
         "base_stats": {
-          "speed": 10,
-          "weight": 25,
-          "power": 13,
-          "stability": 10,
-          "smoothness": 10
+          "mass": 25,
+          "friction": 10,
+          "bounce": 11
         }
       },
       {
@@ -429,11 +393,9 @@
           }
         ],
         "base_stats": {
-          "speed": 51,
-          "weight": 71,
-          "power": 66,
-          "stability": 47,
-          "smoothness": 51
+          "mass": 71,
+          "friction": 49,
+          "bounce": 58
         }
       },
       {
@@ -451,11 +413,9 @@
           }
         ],
         "base_stats": {
-          "speed": 10,
-          "weight": 25,
-          "power": 13,
-          "stability": 10,
-          "smoothness": 10
+          "mass": 25,
+          "friction": 10,
+          "bounce": 11
         }
       },
       {
@@ -473,11 +433,9 @@
           }
         ],
         "base_stats": {
-          "speed": 28,
-          "weight": 43,
-          "power": 36,
-          "stability": 48,
-          "smoothness": 36
+          "mass": 43,
+          "friction": 38,
+          "bounce": 36
         }
       },
       {
@@ -495,11 +453,9 @@
           }
         ],
         "base_stats": {
-          "speed": 26,
-          "weight": 43,
-          "power": 34,
-          "stability": 43,
-          "smoothness": 30
+          "mass": 43,
+          "friction": 34,
+          "bounce": 32
         }
       },
       {
@@ -517,11 +473,9 @@
           }
         ],
         "base_stats": {
-          "speed": 51,
-          "weight": 71,
-          "power": 70,
-          "stability": 85,
-          "smoothness": 70
+          "mass": 71,
+          "friction": 68,
+          "bounce": 70
         }
       }
     ]
@@ -546,11 +500,9 @@
           }
         ],
         "base_stats": {
-          "speed": 10,
-          "weight": 25,
-          "power": 13,
-          "stability": 10,
-          "smoothness": 10
+          "mass": 25,
+          "friction": 10,
+          "bounce": 11
         }
       },
       {
@@ -568,11 +520,9 @@
           }
         ],
         "base_stats": {
-          "speed": 14,
-          "weight": 25,
-          "power": 19,
-          "stability": 20,
-          "smoothness": 10
+          "mass": 25,
+          "friction": 17,
+          "bounce": 14
         }
       },
       {
@@ -590,11 +540,9 @@
           }
         ],
         "base_stats": {
-          "speed": 10,
-          "weight": 25,
-          "power": 13,
-          "stability": 10,
-          "smoothness": 10
+          "mass": 25,
+          "friction": 10,
+          "bounce": 11
         }
       },
       {
@@ -612,11 +560,9 @@
           }
         ],
         "base_stats": {
-          "speed": 11,
-          "weight": 25,
-          "power": 14,
-          "stability": 10,
-          "smoothness": 11
+          "mass": 25,
+          "friction": 10,
+          "bounce": 12
         }
       },
       {
@@ -634,11 +580,9 @@
           }
         ],
         "base_stats": {
-          "speed": 27,
-          "weight": 43,
-          "power": 37,
-          "stability": 45,
-          "smoothness": 21
+          "mass": 43,
+          "friction": 36,
+          "bounce": 29
         }
       },
       {
@@ -656,11 +600,9 @@
           }
         ],
         "base_stats": {
-          "speed": 14,
-          "weight": 25,
-          "power": 19,
-          "stability": 20,
-          "smoothness": 10
+          "mass": 25,
+          "friction": 17,
+          "bounce": 14
         }
       },
       {
@@ -678,11 +620,9 @@
           }
         ],
         "base_stats": {
-          "speed": 10,
-          "weight": 25,
-          "power": 13,
-          "stability": 10,
-          "smoothness": 10
+          "mass": 25,
+          "friction": 10,
+          "bounce": 11
         }
       },
       {
@@ -700,11 +640,9 @@
           }
         ],
         "base_stats": {
-          "speed": 14,
-          "weight": 25,
-          "power": 19,
-          "stability": 17,
-          "smoothness": 10
+          "mass": 25,
+          "friction": 15,
+          "bounce": 14
         }
       },
       {
@@ -722,11 +660,9 @@
           }
         ],
         "base_stats": {
-          "speed": 14,
-          "weight": 25,
-          "power": 19,
-          "stability": 19,
-          "smoothness": 10
+          "mass": 25,
+          "friction": 16,
+          "bounce": 14
         }
       },
       {
@@ -744,11 +680,9 @@
           }
         ],
         "base_stats": {
-          "speed": 30,
-          "weight": 43,
-          "power": 43,
-          "stability": 46,
-          "smoothness": 24
+          "mass": 43,
+          "friction": 38,
+          "bounce": 33
         }
       },
       {
@@ -766,11 +700,9 @@
           }
         ],
         "base_stats": {
-          "speed": 13,
-          "weight": 25,
-          "power": 18,
-          "stability": 18,
-          "smoothness": 10
+          "mass": 25,
+          "friction": 15,
+          "bounce": 14
         }
       },
       {
@@ -788,11 +720,9 @@
           }
         ],
         "base_stats": {
-          "speed": 10,
-          "weight": 25,
-          "power": 13,
-          "stability": 10,
-          "smoothness": 10
+          "mass": 25,
+          "friction": 10,
+          "bounce": 11
         }
       },
       {
@@ -810,11 +740,9 @@
           }
         ],
         "base_stats": {
-          "speed": 14,
-          "weight": 25,
-          "power": 19,
-          "stability": 19,
-          "smoothness": 10
+          "mass": 25,
+          "friction": 16,
+          "bounce": 14
         }
       },
       {
@@ -832,11 +760,9 @@
           }
         ],
         "base_stats": {
-          "speed": 14,
-          "weight": 25,
-          "power": 19,
-          "stability": 18,
-          "smoothness": 10
+          "mass": 25,
+          "friction": 16,
+          "bounce": 14
         }
       },
       {
@@ -854,11 +780,9 @@
           }
         ],
         "base_stats": {
-          "speed": 27,
-          "weight": 43,
-          "power": 37,
-          "stability": 44,
-          "smoothness": 20
+          "mass": 43,
+          "friction": 35,
+          "bounce": 28
         }
       },
       {
@@ -876,11 +800,9 @@
           }
         ],
         "base_stats": {
-          "speed": 11,
-          "weight": 25,
-          "power": 14,
-          "stability": 10,
-          "smoothness": 11
+          "mass": 25,
+          "friction": 10,
+          "bounce": 12
         }
       },
       {
@@ -898,11 +820,9 @@
           }
         ],
         "base_stats": {
-          "speed": 14,
-          "weight": 25,
-          "power": 19,
-          "stability": 18,
-          "smoothness": 10
+          "mass": 25,
+          "friction": 16,
+          "bounce": 14
         }
       },
       {
@@ -920,11 +840,9 @@
           }
         ],
         "base_stats": {
-          "speed": 10,
-          "weight": 25,
-          "power": 13,
-          "stability": 10,
-          "smoothness": 10
+          "mass": 25,
+          "friction": 10,
+          "bounce": 11
         }
       },
       {
@@ -942,11 +860,9 @@
           }
         ],
         "base_stats": {
-          "speed": 28,
-          "weight": 43,
-          "power": 43,
-          "stability": 50,
-          "smoothness": 23
+          "mass": 43,
+          "friction": 39,
+          "bounce": 33
         }
       },
       {
@@ -964,11 +880,9 @@
           }
         ],
         "base_stats": {
-          "speed": 10,
-          "weight": 25,
-          "power": 13,
-          "stability": 10,
-          "smoothness": 10
+          "mass": 25,
+          "friction": 10,
+          "bounce": 11
         }
       },
       {
@@ -986,11 +900,9 @@
           }
         ],
         "base_stats": {
-          "speed": 27,
-          "weight": 43,
-          "power": 36,
-          "stability": 43,
-          "smoothness": 20
+          "mass": 43,
+          "friction": 35,
+          "bounce": 28
         }
       },
       {
@@ -1008,11 +920,9 @@
           }
         ],
         "base_stats": {
-          "speed": 10,
-          "weight": 25,
-          "power": 13,
-          "stability": 10,
-          "smoothness": 10
+          "mass": 25,
+          "friction": 10,
+          "bounce": 11
         }
       },
       {
@@ -1030,11 +940,9 @@
           }
         ],
         "base_stats": {
-          "speed": 14,
-          "weight": 25,
-          "power": 20,
-          "stability": 22,
-          "smoothness": 10
+          "mass": 25,
+          "friction": 18,
+          "bounce": 15
         }
       },
       {
@@ -1052,11 +960,9 @@
           }
         ],
         "base_stats": {
-          "speed": 10,
-          "weight": 25,
-          "power": 13,
-          "stability": 10,
-          "smoothness": 10
+          "mass": 25,
+          "friction": 10,
+          "bounce": 11
         }
       },
       {
@@ -1074,11 +980,9 @@
           }
         ],
         "base_stats": {
-          "speed": 10,
-          "weight": 25,
-          "power": 13,
-          "stability": 10,
-          "smoothness": 10
+          "mass": 25,
+          "friction": 10,
+          "bounce": 11
         }
       },
       {
@@ -1096,11 +1000,9 @@
           }
         ],
         "base_stats": {
-          "speed": 11,
-          "weight": 25,
-          "power": 15,
-          "stability": 11,
-          "smoothness": 11
+          "mass": 25,
+          "friction": 11,
+          "bounce": 13
         }
       },
       {
@@ -1118,11 +1020,9 @@
           }
         ],
         "base_stats": {
-          "speed": 28,
-          "weight": 43,
-          "power": 40,
-          "stability": 46,
-          "smoothness": 22
+          "mass": 43,
+          "friction": 37,
+          "bounce": 31
         }
       },
       {
@@ -1140,11 +1040,9 @@
           }
         ],
         "base_stats": {
-          "speed": 14,
-          "weight": 25,
-          "power": 19,
-          "stability": 18,
-          "smoothness": 10
+          "mass": 25,
+          "friction": 16,
+          "bounce": 14
         }
       },
       {
@@ -1162,11 +1060,9 @@
           }
         ],
         "base_stats": {
-          "speed": 14,
-          "weight": 25,
-          "power": 19,
-          "stability": 19,
-          "smoothness": 10
+          "mass": 25,
+          "friction": 16,
+          "bounce": 14
         }
       },
       {
@@ -1184,11 +1080,9 @@
           }
         ],
         "base_stats": {
-          "speed": 13,
-          "weight": 25,
-          "power": 18,
-          "stability": 16,
-          "smoothness": 10
+          "mass": 25,
+          "friction": 14,
+          "bounce": 14
         }
       },
       {
@@ -1206,11 +1100,9 @@
           }
         ],
         "base_stats": {
-          "speed": 14,
-          "weight": 25,
-          "power": 19,
-          "stability": 19,
-          "smoothness": 10
+          "mass": 25,
+          "friction": 16,
+          "bounce": 14
         }
       },
       {
@@ -1228,11 +1120,9 @@
           }
         ],
         "base_stats": {
-          "speed": 10,
-          "weight": 25,
-          "power": 13,
-          "stability": 10,
-          "smoothness": 10
+          "mass": 25,
+          "friction": 10,
+          "bounce": 11
         }
       },
       {
@@ -1250,11 +1140,9 @@
           }
         ],
         "base_stats": {
-          "speed": 14,
-          "weight": 25,
-          "power": 20,
-          "stability": 21,
-          "smoothness": 10
+          "mass": 25,
+          "friction": 17,
+          "bounce": 15
         }
       },
       {
@@ -1272,11 +1160,9 @@
           }
         ],
         "base_stats": {
-          "speed": 10,
-          "weight": 25,
-          "power": 13,
-          "stability": 10,
-          "smoothness": 10
+          "mass": 25,
+          "friction": 10,
+          "bounce": 11
         }
       },
       {
@@ -1294,11 +1180,9 @@
           }
         ],
         "base_stats": {
-          "speed": 10,
-          "weight": 25,
-          "power": 14,
-          "stability": 10,
-          "smoothness": 10
+          "mass": 25,
+          "friction": 10,
+          "bounce": 12
         }
       },
       {
@@ -1316,11 +1200,9 @@
           }
         ],
         "base_stats": {
-          "speed": 14,
-          "weight": 25,
-          "power": 19,
-          "stability": 20,
-          "smoothness": 10
+          "mass": 25,
+          "friction": 17,
+          "bounce": 14
         }
       },
       {
@@ -1338,11 +1220,9 @@
           }
         ],
         "base_stats": {
-          "speed": 10,
-          "weight": 25,
-          "power": 13,
-          "stability": 10,
-          "smoothness": 10
+          "mass": 25,
+          "friction": 10,
+          "bounce": 11
         }
       },
       {
@@ -1360,11 +1240,9 @@
           }
         ],
         "base_stats": {
-          "speed": 10,
-          "weight": 25,
-          "power": 13,
-          "stability": 10,
-          "smoothness": 10
+          "mass": 25,
+          "friction": 10,
+          "bounce": 11
         }
       },
       {
@@ -1382,11 +1260,9 @@
           }
         ],
         "base_stats": {
-          "speed": 10,
-          "weight": 25,
-          "power": 13,
-          "stability": 10,
-          "smoothness": 10
+          "mass": 25,
+          "friction": 10,
+          "bounce": 11
         }
       },
       {
@@ -1404,11 +1280,9 @@
           }
         ],
         "base_stats": {
-          "speed": 10,
-          "weight": 25,
-          "power": 13,
-          "stability": 10,
-          "smoothness": 10
+          "mass": 25,
+          "friction": 10,
+          "bounce": 11
         }
       },
       {
@@ -1426,11 +1300,9 @@
           }
         ],
         "base_stats": {
-          "speed": 13,
-          "weight": 25,
-          "power": 17,
-          "stability": 16,
-          "smoothness": 10
+          "mass": 25,
+          "friction": 14,
+          "bounce": 13
         }
       },
       {
@@ -1448,11 +1320,9 @@
           }
         ],
         "base_stats": {
-          "speed": 14,
-          "weight": 25,
-          "power": 19,
-          "stability": 18,
-          "smoothness": 10
+          "mass": 25,
+          "friction": 16,
+          "bounce": 14
         }
       },
       {
@@ -1470,11 +1340,9 @@
           }
         ],
         "base_stats": {
-          "speed": 10,
-          "weight": 25,
-          "power": 13,
-          "stability": 10,
-          "smoothness": 10
+          "mass": 25,
+          "friction": 10,
+          "bounce": 11
         }
       },
       {
@@ -1492,11 +1360,9 @@
           }
         ],
         "base_stats": {
-          "speed": 13,
-          "weight": 25,
-          "power": 17,
-          "stability": 16,
-          "smoothness": 10
+          "mass": 25,
+          "friction": 14,
+          "bounce": 13
         }
       },
       {
@@ -1514,11 +1380,9 @@
           }
         ],
         "base_stats": {
-          "speed": 13,
-          "weight": 25,
-          "power": 17,
-          "stability": 16,
-          "smoothness": 10
+          "mass": 25,
+          "friction": 14,
+          "bounce": 13
         }
       },
       {
@@ -1536,11 +1400,9 @@
           }
         ],
         "base_stats": {
-          "speed": 11,
-          "weight": 25,
-          "power": 14,
-          "stability": 10,
-          "smoothness": 11
+          "mass": 25,
+          "friction": 10,
+          "bounce": 12
         }
       },
       {
@@ -1558,11 +1420,9 @@
           }
         ],
         "base_stats": {
-          "speed": 27,
-          "weight": 43,
-          "power": 37,
-          "stability": 44,
-          "smoothness": 20
+          "mass": 43,
+          "friction": 35,
+          "bounce": 28
         }
       },
       {
@@ -1580,11 +1440,9 @@
           }
         ],
         "base_stats": {
-          "speed": 14,
-          "weight": 25,
-          "power": 20,
-          "stability": 24,
-          "smoothness": 10
+          "mass": 25,
+          "friction": 19,
+          "bounce": 15
         }
       },
       {
@@ -1602,11 +1460,9 @@
           }
         ],
         "base_stats": {
-          "speed": 14,
-          "weight": 25,
-          "power": 20,
-          "stability": 22,
-          "smoothness": 10
+          "mass": 25,
+          "friction": 18,
+          "bounce": 15
         }
       },
       {
@@ -1624,11 +1480,9 @@
           }
         ],
         "base_stats": {
-          "speed": 10,
-          "weight": 25,
-          "power": 14,
-          "stability": 10,
-          "smoothness": 10
+          "mass": 25,
+          "friction": 10,
+          "bounce": 12
         }
       },
       {
@@ -1646,11 +1500,9 @@
           }
         ],
         "base_stats": {
-          "speed": 14,
-          "weight": 25,
-          "power": 19,
-          "stability": 18,
-          "smoothness": 10
+          "mass": 25,
+          "friction": 16,
+          "bounce": 14
         }
       },
       {
@@ -1668,11 +1520,9 @@
           }
         ],
         "base_stats": {
-          "speed": 11,
-          "weight": 25,
-          "power": 15,
-          "stability": 11,
-          "smoothness": 11
+          "mass": 25,
+          "friction": 11,
+          "bounce": 13
         }
       },
       {
@@ -1690,11 +1540,9 @@
           }
         ],
         "base_stats": {
-          "speed": 52,
-          "weight": 71,
-          "power": 74,
-          "stability": 84,
-          "smoothness": 46
+          "mass": 71,
+          "friction": 68,
+          "bounce": 60
         }
       },
       {
@@ -1712,11 +1560,9 @@
           }
         ],
         "base_stats": {
-          "speed": 10,
-          "weight": 25,
-          "power": 13,
-          "stability": 10,
-          "smoothness": 10
+          "mass": 25,
+          "friction": 10,
+          "bounce": 11
         }
       },
       {
@@ -1734,11 +1580,9 @@
           }
         ],
         "base_stats": {
-          "speed": 14,
-          "weight": 25,
-          "power": 19,
-          "stability": 21,
-          "smoothness": 10
+          "mass": 25,
+          "friction": 17,
+          "bounce": 14
         }
       },
       {
@@ -1756,11 +1600,9 @@
           }
         ],
         "base_stats": {
-          "speed": 10,
-          "weight": 25,
-          "power": 13,
-          "stability": 10,
-          "smoothness": 10
+          "mass": 25,
+          "friction": 10,
+          "bounce": 11
         }
       },
       {
@@ -1778,11 +1620,9 @@
           }
         ],
         "base_stats": {
-          "speed": 10,
-          "weight": 25,
-          "power": 13,
-          "stability": 10,
-          "smoothness": 10
+          "mass": 25,
+          "friction": 10,
+          "bounce": 11
         }
       },
       {
@@ -1800,11 +1640,9 @@
           }
         ],
         "base_stats": {
-          "speed": 10,
-          "weight": 25,
-          "power": 13,
-          "stability": 10,
-          "smoothness": 10
+          "mass": 25,
+          "friction": 10,
+          "bounce": 11
         }
       },
       {
@@ -1822,11 +1660,9 @@
           }
         ],
         "base_stats": {
-          "speed": 14,
-          "weight": 25,
-          "power": 19,
-          "stability": 20,
-          "smoothness": 10
+          "mass": 25,
+          "friction": 17,
+          "bounce": 14
         }
       },
       {
@@ -1844,11 +1680,9 @@
           }
         ],
         "base_stats": {
-          "speed": 28,
-          "weight": 43,
-          "power": 43,
-          "stability": 52,
-          "smoothness": 23
+          "mass": 43,
+          "friction": 40,
+          "bounce": 33
         }
       },
       {
@@ -1866,11 +1700,9 @@
           }
         ],
         "base_stats": {
-          "speed": 13,
-          "weight": 25,
-          "power": 17,
-          "stability": 16,
-          "smoothness": 10
+          "mass": 25,
+          "friction": 14,
+          "bounce": 13
         }
       },
       {
@@ -1888,11 +1720,9 @@
           }
         ],
         "base_stats": {
-          "speed": 10,
-          "weight": 25,
-          "power": 13,
-          "stability": 10,
-          "smoothness": 10
+          "mass": 25,
+          "friction": 10,
+          "bounce": 11
         }
       },
       {
@@ -1910,11 +1740,9 @@
           }
         ],
         "base_stats": {
-          "speed": 10,
-          "weight": 25,
-          "power": 13,
-          "stability": 10,
-          "smoothness": 10
+          "mass": 25,
+          "friction": 10,
+          "bounce": 11
         }
       },
       {
@@ -1932,11 +1760,9 @@
           }
         ],
         "base_stats": {
-          "speed": 10,
-          "weight": 25,
-          "power": 13,
-          "stability": 10,
-          "smoothness": 10
+          "mass": 25,
+          "friction": 10,
+          "bounce": 11
         }
       },
       {
@@ -1954,11 +1780,9 @@
           }
         ],
         "base_stats": {
-          "speed": 10,
-          "weight": 25,
-          "power": 13,
-          "stability": 10,
-          "smoothness": 10
+          "mass": 25,
+          "friction": 10,
+          "bounce": 11
         }
       },
       {
@@ -1976,11 +1800,9 @@
           }
         ],
         "base_stats": {
-          "speed": 13,
-          "weight": 25,
-          "power": 18,
-          "stability": 18,
-          "smoothness": 10
+          "mass": 25,
+          "friction": 15,
+          "bounce": 14
         }
       },
       {
@@ -1998,11 +1820,9 @@
           }
         ],
         "base_stats": {
-          "speed": 14,
-          "weight": 25,
-          "power": 20,
-          "stability": 19,
-          "smoothness": 10
+          "mass": 25,
+          "friction": 16,
+          "bounce": 15
         }
       },
       {
@@ -2020,11 +1840,9 @@
           }
         ],
         "base_stats": {
-          "speed": 10,
-          "weight": 25,
-          "power": 13,
-          "stability": 10,
-          "smoothness": 10
+          "mass": 25,
+          "friction": 10,
+          "bounce": 11
         }
       },
       {
@@ -2042,11 +1860,9 @@
           }
         ],
         "base_stats": {
-          "speed": 11,
-          "weight": 25,
-          "power": 15,
-          "stability": 11,
-          "smoothness": 11
+          "mass": 25,
+          "friction": 11,
+          "bounce": 13
         }
       },
       {
@@ -2064,11 +1880,9 @@
           }
         ],
         "base_stats": {
-          "speed": 13,
-          "weight": 25,
-          "power": 18,
-          "stability": 20,
-          "smoothness": 10
+          "mass": 25,
+          "friction": 16,
+          "bounce": 14
         }
       },
       {
@@ -2086,11 +1900,9 @@
           }
         ],
         "base_stats": {
-          "speed": 13,
-          "weight": 25,
-          "power": 18,
-          "stability": 20,
-          "smoothness": 10
+          "mass": 25,
+          "friction": 16,
+          "bounce": 14
         }
       },
       {
@@ -2108,11 +1920,9 @@
           }
         ],
         "base_stats": {
-          "speed": 13,
-          "weight": 25,
-          "power": 18,
-          "stability": 17,
-          "smoothness": 10
+          "mass": 25,
+          "friction": 15,
+          "bounce": 14
         }
       },
       {
@@ -2130,11 +1940,9 @@
           }
         ],
         "base_stats": {
-          "speed": 10,
-          "weight": 25,
-          "power": 13,
-          "stability": 10,
-          "smoothness": 10
+          "mass": 25,
+          "friction": 10,
+          "bounce": 11
         }
       },
       {
@@ -2152,11 +1960,9 @@
           }
         ],
         "base_stats": {
-          "speed": 14,
-          "weight": 25,
-          "power": 19,
-          "stability": 19,
-          "smoothness": 10
+          "mass": 25,
+          "friction": 16,
+          "bounce": 14
         }
       }
     ]
@@ -2181,11 +1987,9 @@
           }
         ],
         "base_stats": {
-          "speed": 12,
-          "weight": 15,
-          "power": 10,
-          "stability": 10,
-          "smoothness": 18
+          "mass": 15,
+          "friction": 11,
+          "bounce": 14
         }
       },
       {
@@ -2203,11 +2007,9 @@
           }
         ],
         "base_stats": {
-          "speed": 12,
-          "weight": 15,
-          "power": 10,
-          "stability": 10,
-          "smoothness": 18
+          "mass": 15,
+          "friction": 11,
+          "bounce": 14
         }
       },
       {
@@ -2225,11 +2027,9 @@
           }
         ],
         "base_stats": {
-          "speed": 12,
-          "weight": 15,
-          "power": 10,
-          "stability": 10,
-          "smoothness": 18
+          "mass": 15,
+          "friction": 11,
+          "bounce": 14
         }
       },
       {
@@ -2247,11 +2047,9 @@
           }
         ],
         "base_stats": {
-          "speed": 13,
-          "weight": 15,
-          "power": 10,
-          "stability": 10,
-          "smoothness": 19
+          "mass": 15,
+          "friction": 11,
+          "bounce": 14
         }
       },
       {
@@ -2269,11 +2067,9 @@
           }
         ],
         "base_stats": {
-          "speed": 12,
-          "weight": 15,
-          "power": 10,
-          "stability": 10,
-          "smoothness": 18
+          "mass": 15,
+          "friction": 11,
+          "bounce": 14
         }
       },
       {
@@ -2291,11 +2087,9 @@
           }
         ],
         "base_stats": {
-          "speed": 15,
-          "weight": 15,
-          "power": 10,
-          "stability": 12,
-          "smoothness": 21
+          "mass": 15,
+          "friction": 13,
+          "bounce": 15
         }
       },
       {
@@ -2313,11 +2107,9 @@
           }
         ],
         "base_stats": {
-          "speed": 32,
-          "weight": 28,
-          "power": 25,
-          "stability": 42,
-          "smoothness": 49
+          "mass": 28,
+          "friction": 37,
+          "bounce": 37
         }
       },
       {
@@ -2335,11 +2127,9 @@
           }
         ],
         "base_stats": {
-          "speed": 12,
-          "weight": 15,
-          "power": 10,
-          "stability": 10,
-          "smoothness": 18
+          "mass": 15,
+          "friction": 11,
+          "bounce": 14
         }
       },
       {
@@ -2357,11 +2147,9 @@
           }
         ],
         "base_stats": {
-          "speed": 36,
-          "weight": 28,
-          "power": 26,
-          "stability": 40,
-          "smoothness": 50
+          "mass": 28,
+          "friction": 38,
+          "bounce": 38
         }
       },
       {
@@ -2379,11 +2167,9 @@
           }
         ],
         "base_stats": {
-          "speed": 36,
-          "weight": 28,
-          "power": 28,
-          "stability": 48,
-          "smoothness": 56
+          "mass": 28,
+          "friction": 42,
+          "bounce": 42
         }
       },
       {
@@ -2401,11 +2187,9 @@
           }
         ],
         "base_stats": {
-          "speed": 33,
-          "weight": 28,
-          "power": 26,
-          "stability": 42,
-          "smoothness": 50
+          "mass": 28,
+          "friction": 37,
+          "bounce": 38
         }
       },
       {
@@ -2423,11 +2207,9 @@
           }
         ],
         "base_stats": {
-          "speed": 20,
-          "weight": 28,
-          "power": 20,
-          "stability": 58,
-          "smoothness": 54
+          "mass": 28,
+          "friction": 39,
+          "bounce": 37
         }
       },
       {
@@ -2445,11 +2227,9 @@
           }
         ],
         "base_stats": {
-          "speed": 12,
-          "weight": 15,
-          "power": 10,
-          "stability": 10,
-          "smoothness": 18
+          "mass": 15,
+          "friction": 11,
+          "bounce": 14
         }
       }
     ]
@@ -2474,11 +2254,9 @@
           }
         ],
         "base_stats": {
-          "speed": 10,
-          "weight": 25,
-          "power": 14,
-          "stability": 10,
-          "smoothness": 10
+          "mass": 25,
+          "friction": 10,
+          "bounce": 12
         }
       },
       {
@@ -2496,11 +2274,9 @@
           }
         ],
         "base_stats": {
-          "speed": 10,
-          "weight": 25,
-          "power": 14,
-          "stability": 10,
-          "smoothness": 10
+          "mass": 25,
+          "friction": 10,
+          "bounce": 12
         }
       },
       {
@@ -2518,11 +2294,9 @@
           }
         ],
         "base_stats": {
-          "speed": 10,
-          "weight": 25,
-          "power": 12,
-          "stability": 33,
-          "smoothness": 23
+          "mass": 25,
+          "friction": 21,
+          "bounce": 17
         }
       },
       {
@@ -2540,11 +2314,9 @@
           }
         ],
         "base_stats": {
-          "speed": 10,
-          "weight": 25,
-          "power": 14,
-          "stability": 10,
-          "smoothness": 10
+          "mass": 25,
+          "friction": 10,
+          "bounce": 12
         }
       },
       {
@@ -2562,11 +2334,9 @@
           }
         ],
         "base_stats": {
-          "speed": 10,
-          "weight": 25,
-          "power": 13,
-          "stability": 10,
-          "smoothness": 10
+          "mass": 25,
+          "friction": 10,
+          "bounce": 11
         }
       },
       {
@@ -2584,11 +2354,9 @@
           }
         ],
         "base_stats": {
-          "speed": 10,
-          "weight": 25,
-          "power": 14,
-          "stability": 10,
-          "smoothness": 10
+          "mass": 25,
+          "friction": 10,
+          "bounce": 12
         }
       }
     ]
@@ -2613,11 +2381,9 @@
           }
         ],
         "base_stats": {
-          "speed": 23,
-          "weight": 59,
-          "power": 53,
-          "stability": 45,
-          "smoothness": 22
+          "mass": 59,
+          "friction": 34,
+          "bounce": 37
         }
       },
       {
@@ -2635,11 +2401,9 @@
           }
         ],
         "base_stats": {
-          "speed": 10,
-          "weight": 36,
-          "power": 25,
-          "stability": 12,
-          "smoothness": 10
+          "mass": 36,
+          "friction": 11,
+          "bounce": 17
         }
       },
       {
@@ -2657,11 +2421,9 @@
           }
         ],
         "base_stats": {
-          "speed": 30,
-          "weight": 59,
-          "power": 56,
-          "stability": 50,
-          "smoothness": 28
+          "mass": 59,
+          "friction": 40,
+          "bounce": 42
         }
       },
       {
@@ -2679,11 +2441,9 @@
           }
         ],
         "base_stats": {
-          "speed": 23,
-          "weight": 59,
-          "power": 52,
-          "stability": 41,
-          "smoothness": 23
+          "mass": 59,
+          "friction": 32,
+          "bounce": 37
         }
       },
       {
@@ -2701,11 +2461,9 @@
           }
         ],
         "base_stats": {
-          "speed": 10,
-          "weight": 25,
-          "power": 13,
-          "stability": 10,
-          "smoothness": 10
+          "mass": 25,
+          "friction": 10,
+          "bounce": 11
         }
       },
       {
@@ -2723,11 +2481,9 @@
           }
         ],
         "base_stats": {
-          "speed": 20,
-          "weight": 43,
-          "power": 32,
-          "stability": 52,
-          "smoothness": 35
+          "mass": 43,
+          "friction": 36,
+          "bounce": 33
         }
       },
       {
@@ -2745,11 +2501,9 @@
           }
         ],
         "base_stats": {
-          "speed": 21,
-          "weight": 59,
-          "power": 50,
-          "stability": 39,
-          "smoothness": 20
+          "mass": 59,
+          "friction": 30,
+          "bounce": 35
         }
       },
       {
@@ -2767,11 +2521,9 @@
           }
         ],
         "base_stats": {
-          "speed": 25,
-          "weight": 59,
-          "power": 52,
-          "stability": 47,
-          "smoothness": 25
+          "mass": 59,
+          "friction": 36,
+          "bounce": 38
         }
       },
       {
@@ -2789,11 +2541,9 @@
           }
         ],
         "base_stats": {
-          "speed": 20,
-          "weight": 43,
-          "power": 32,
-          "stability": 65,
-          "smoothness": 43
+          "mass": 43,
+          "friction": 42,
+          "bounce": 37
         }
       }
     ]
@@ -2818,11 +2568,9 @@
           }
         ],
         "base_stats": {
-          "speed": 31,
-          "weight": 41,
-          "power": 32,
-          "stability": 40,
-          "smoothness": 40
+          "mass": 41,
+          "friction": 35,
+          "bounce": 36
         }
       },
       {
@@ -2840,11 +2588,9 @@
           }
         ],
         "base_stats": {
-          "speed": 12,
-          "weight": 24,
-          "power": 11,
-          "stability": 10,
-          "smoothness": 16
+          "mass": 24,
+          "friction": 11,
+          "bounce": 13
         }
       },
       {
@@ -2862,11 +2608,9 @@
           }
         ],
         "base_stats": {
-          "speed": 14,
-          "weight": 24,
-          "power": 14,
-          "stability": 17,
-          "smoothness": 20
+          "mass": 24,
+          "friction": 15,
+          "bounce": 17
         }
       },
       {
@@ -2884,11 +2628,9 @@
           }
         ],
         "base_stats": {
-          "speed": 20,
-          "weight": 43,
-          "power": 31,
-          "stability": 54,
-          "smoothness": 43
+          "mass": 43,
+          "friction": 37,
+          "bounce": 37
         }
       },
       {
@@ -2906,11 +2648,9 @@
           }
         ],
         "base_stats": {
-          "speed": 12,
-          "weight": 24,
-          "power": 10,
-          "stability": 10,
-          "smoothness": 15
+          "mass": 24,
+          "friction": 11,
+          "bounce": 12
         }
       },
       {
@@ -2928,11 +2668,9 @@
           }
         ],
         "base_stats": {
-          "speed": 40,
-          "weight": 72,
-          "power": 66,
-          "stability": 100,
-          "smoothness": 78
+          "mass": 72,
+          "friction": 70,
+          "bounce": 72
         }
       },
       {
@@ -2950,11 +2688,9 @@
           }
         ],
         "base_stats": {
-          "speed": 31,
-          "weight": 41,
-          "power": 30,
-          "stability": 36,
-          "smoothness": 37
+          "mass": 41,
+          "friction": 33,
+          "bounce": 33
         }
       },
       {
@@ -2972,11 +2708,9 @@
           }
         ],
         "base_stats": {
-          "speed": 31,
-          "weight": 41,
-          "power": 31,
-          "stability": 43,
-          "smoothness": 44
+          "mass": 41,
+          "friction": 37,
+          "bounce": 37
         }
       },
       {
@@ -2994,11 +2728,9 @@
           }
         ],
         "base_stats": {
-          "speed": 31,
-          "weight": 41,
-          "power": 31,
-          "stability": 39,
-          "smoothness": 44
+          "mass": 41,
+          "friction": 35,
+          "bounce": 37
         }
       },
       {
@@ -3016,11 +2748,9 @@
           }
         ],
         "base_stats": {
-          "speed": 12,
-          "weight": 24,
-          "power": 10,
-          "stability": 10,
-          "smoothness": 15
+          "mass": 24,
+          "friction": 11,
+          "bounce": 12
         }
       },
       {
@@ -3038,11 +2768,9 @@
           }
         ],
         "base_stats": {
-          "speed": 12,
-          "weight": 24,
-          "power": 10,
-          "stability": 10,
-          "smoothness": 15
+          "mass": 24,
+          "friction": 11,
+          "bounce": 12
         }
       },
       {
@@ -3060,11 +2788,9 @@
           }
         ],
         "base_stats": {
-          "speed": 32,
-          "weight": 41,
-          "power": 33,
-          "stability": 40,
-          "smoothness": 42
+          "mass": 41,
+          "friction": 36,
+          "bounce": 37
         }
       },
       {
@@ -3082,11 +2808,9 @@
           }
         ],
         "base_stats": {
-          "speed": 29,
-          "weight": 41,
-          "power": 33,
-          "stability": 49,
-          "smoothness": 40
+          "mass": 41,
+          "friction": 39,
+          "bounce": 36
         }
       },
       {
@@ -3104,11 +2828,9 @@
           }
         ],
         "base_stats": {
-          "speed": 32,
-          "weight": 41,
-          "power": 32,
-          "stability": 37,
-          "smoothness": 39
+          "mass": 41,
+          "friction": 34,
+          "bounce": 35
         }
       },
       {
@@ -3126,11 +2848,9 @@
           }
         ],
         "base_stats": {
-          "speed": 12,
-          "weight": 24,
-          "power": 11,
-          "stability": 10,
-          "smoothness": 16
+          "mass": 24,
+          "friction": 11,
+          "bounce": 13
         }
       },
       {
@@ -3148,11 +2868,9 @@
           }
         ],
         "base_stats": {
-          "speed": 12,
-          "weight": 24,
-          "power": 10,
-          "stability": 10,
-          "smoothness": 15
+          "mass": 24,
+          "friction": 11,
+          "bounce": 12
         }
       }
     ]
@@ -3177,11 +2895,9 @@
           }
         ],
         "base_stats": {
-          "speed": 11,
-          "weight": 25,
-          "power": 16,
-          "stability": 27,
-          "smoothness": 14
+          "mass": 25,
+          "friction": 19,
+          "bounce": 15
         }
       },
       {
@@ -3199,11 +2915,9 @@
           }
         ],
         "base_stats": {
-          "speed": 10,
-          "weight": 25,
-          "power": 13,
-          "stability": 10,
-          "smoothness": 10
+          "mass": 25,
+          "friction": 10,
+          "bounce": 11
         }
       },
       {
@@ -3221,11 +2935,9 @@
           }
         ],
         "base_stats": {
-          "speed": 10,
-          "weight": 25,
-          "power": 14,
-          "stability": 10,
-          "smoothness": 10
+          "mass": 25,
+          "friction": 10,
+          "bounce": 12
         }
       },
       {
@@ -3243,11 +2955,9 @@
           }
         ],
         "base_stats": {
-          "speed": 11,
-          "weight": 25,
-          "power": 14,
-          "stability": 10,
-          "smoothness": 11
+          "mass": 25,
+          "friction": 10,
+          "bounce": 12
         }
       },
       {
@@ -3265,11 +2975,9 @@
           }
         ],
         "base_stats": {
-          "speed": 11,
-          "weight": 25,
-          "power": 14,
-          "stability": 10,
-          "smoothness": 11
+          "mass": 25,
+          "friction": 10,
+          "bounce": 12
         }
       }
     ]
@@ -3294,11 +3002,9 @@
           }
         ],
         "base_stats": {
-          "speed": 32,
-          "weight": 47,
-          "power": 46,
-          "stability": 58,
-          "smoothness": 48
+          "mass": 47,
+          "friction": 45,
+          "bounce": 47
         }
       },
       {
@@ -3316,11 +3022,9 @@
           }
         ],
         "base_stats": {
-          "speed": 11,
-          "weight": 28,
-          "power": 21,
-          "stability": 24,
-          "smoothness": 10
+          "mass": 28,
+          "friction": 17,
+          "bounce": 15
         }
       },
       {
@@ -3338,11 +3042,9 @@
           }
         ],
         "base_stats": {
-          "speed": 21,
-          "weight": 47,
-          "power": 38,
-          "stability": 49,
-          "smoothness": 32
+          "mass": 47,
+          "friction": 35,
+          "bounce": 35
         }
       },
       {
@@ -3360,11 +3062,9 @@
           }
         ],
         "base_stats": {
-          "speed": 10,
-          "weight": 27,
-          "power": 15,
-          "stability": 15,
-          "smoothness": 10
+          "mass": 27,
+          "friction": 12,
+          "bounce": 12
         }
       },
       {
@@ -3382,11 +3082,9 @@
           }
         ],
         "base_stats": {
-          "speed": 22,
-          "weight": 47,
-          "power": 41,
-          "stability": 53,
-          "smoothness": 34
+          "mass": 47,
+          "friction": 37,
+          "bounce": 37
         }
       },
       {
@@ -3404,11 +3102,9 @@
           }
         ],
         "base_stats": {
-          "speed": 24,
-          "weight": 47,
-          "power": 41,
-          "stability": 55,
-          "smoothness": 36
+          "mass": 47,
+          "friction": 39,
+          "bounce": 38
         }
       },
       {
@@ -3426,11 +3122,9 @@
           }
         ],
         "base_stats": {
-          "speed": 10,
-          "weight": 27,
-          "power": 15,
-          "stability": 15,
-          "smoothness": 10
+          "mass": 27,
+          "friction": 12,
+          "bounce": 12
         }
       },
       {
@@ -3448,11 +3142,9 @@
           }
         ],
         "base_stats": {
-          "speed": 24,
-          "weight": 47,
-          "power": 40,
-          "stability": 56,
-          "smoothness": 38
+          "mass": 47,
+          "friction": 40,
+          "bounce": 39
         }
       },
       {
@@ -3470,11 +3162,9 @@
           }
         ],
         "base_stats": {
-          "speed": 10,
-          "weight": 25,
-          "power": 13,
-          "stability": 10,
-          "smoothness": 10
+          "mass": 25,
+          "friction": 10,
+          "bounce": 11
         }
       },
       {
@@ -3492,11 +3182,9 @@
           }
         ],
         "base_stats": {
-          "speed": 40,
-          "weight": 72,
-          "power": 65,
-          "stability": 100,
-          "smoothness": 77
+          "mass": 72,
+          "friction": 70,
+          "bounce": 71
         }
       },
       {
@@ -3514,11 +3202,9 @@
           }
         ],
         "base_stats": {
-          "speed": 10,
-          "weight": 27,
-          "power": 15,
-          "stability": 15,
-          "smoothness": 10
+          "mass": 27,
+          "friction": 12,
+          "bounce": 12
         }
       },
       {
@@ -3536,11 +3222,9 @@
           }
         ],
         "base_stats": {
-          "speed": 10,
-          "weight": 27,
-          "power": 15,
-          "stability": 15,
-          "smoothness": 10
+          "mass": 27,
+          "friction": 12,
+          "bounce": 12
         }
       },
       {
@@ -3558,11 +3242,9 @@
           }
         ],
         "base_stats": {
-          "speed": 10,
-          "weight": 27,
-          "power": 15,
-          "stability": 15,
-          "smoothness": 10
+          "mass": 27,
+          "friction": 12,
+          "bounce": 12
         }
       },
       {
@@ -3580,11 +3262,9 @@
           }
         ],
         "base_stats": {
-          "speed": 10,
-          "weight": 27,
-          "power": 15,
-          "stability": 15,
-          "smoothness": 10
+          "mass": 27,
+          "friction": 12,
+          "bounce": 12
         }
       }
     ]
@@ -3609,11 +3289,9 @@
           }
         ],
         "base_stats": {
-          "speed": 27,
-          "weight": 43,
-          "power": 35,
-          "stability": 43,
-          "smoothness": 31
+          "mass": 43,
+          "friction": 35,
+          "bounce": 33
         }
       },
       {
@@ -3631,11 +3309,9 @@
           }
         ],
         "base_stats": {
-          "speed": 40,
-          "weight": 71,
-          "power": 63,
-          "stability": 100,
-          "smoothness": 76
+          "mass": 71,
+          "friction": 70,
+          "bounce": 69
         }
       },
       {
@@ -3653,11 +3329,9 @@
           }
         ],
         "base_stats": {
-          "speed": 10,
-          "weight": 25,
-          "power": 15,
-          "stability": 34,
-          "smoothness": 16
+          "mass": 25,
+          "friction": 22,
+          "bounce": 15
         }
       },
       {
@@ -3675,11 +3349,9 @@
           }
         ],
         "base_stats": {
-          "speed": 27,
-          "weight": 43,
-          "power": 35,
-          "stability": 39,
-          "smoothness": 30
+          "mass": 43,
+          "friction": 33,
+          "bounce": 32
         }
       },
       {
@@ -3697,11 +3369,9 @@
           }
         ],
         "base_stats": {
-          "speed": 31,
-          "weight": 43,
-          "power": 39,
-          "stability": 43,
-          "smoothness": 35
+          "mass": 43,
+          "friction": 37,
+          "bounce": 37
         }
       },
       {
@@ -3719,11 +3389,9 @@
           }
         ],
         "base_stats": {
-          "speed": 15,
-          "weight": 25,
-          "power": 17,
-          "stability": 16,
-          "smoothness": 16
+          "mass": 25,
+          "friction": 15,
+          "bounce": 16
         }
       },
       {
@@ -3741,11 +3409,9 @@
           }
         ],
         "base_stats": {
-          "speed": 37,
-          "weight": 43,
-          "power": 41,
-          "stability": 48,
-          "smoothness": 40
+          "mass": 43,
+          "friction": 42,
+          "bounce": 40
         }
       }
     ]
@@ -3770,11 +3436,9 @@
           }
         ],
         "base_stats": {
-          "speed": 20,
-          "weight": 60,
-          "power": 45,
-          "stability": 45,
-          "smoothness": 31
+          "mass": 60,
+          "friction": 32,
+          "bounce": 38
         }
       },
       {
@@ -3792,11 +3456,9 @@
           }
         ],
         "base_stats": {
-          "speed": 27,
-          "weight": 60,
-          "power": 48,
-          "stability": 49,
-          "smoothness": 36
+          "mass": 60,
+          "friction": 38,
+          "bounce": 42
         }
       },
       {
@@ -3814,11 +3476,9 @@
           }
         ],
         "base_stats": {
-          "speed": 10,
-          "weight": 37,
-          "power": 23,
-          "stability": 32,
-          "smoothness": 13
+          "mass": 37,
+          "friction": 21,
+          "bounce": 18
         }
       },
       {
@@ -3836,11 +3496,9 @@
           }
         ],
         "base_stats": {
-          "speed": 20,
-          "weight": 60,
-          "power": 47,
-          "stability": 46,
-          "smoothness": 30
+          "mass": 60,
+          "friction": 33,
+          "bounce": 38
         }
       },
       {
@@ -3858,11 +3516,9 @@
           }
         ],
         "base_stats": {
-          "speed": 10,
-          "weight": 36,
-          "power": 21,
-          "stability": 15,
-          "smoothness": 10
+          "mass": 36,
+          "friction": 12,
+          "bounce": 15
         }
       },
       {
@@ -3880,11 +3536,9 @@
           }
         ],
         "base_stats": {
-          "speed": 21,
-          "weight": 60,
-          "power": 46,
-          "stability": 41,
-          "smoothness": 30
+          "mass": 60,
+          "friction": 31,
+          "bounce": 38
         }
       },
       {
@@ -3902,11 +3556,9 @@
           }
         ],
         "base_stats": {
-          "speed": 10,
-          "weight": 36,
-          "power": 22,
-          "stability": 16,
-          "smoothness": 10
+          "mass": 36,
+          "friction": 13,
+          "bounce": 16
         }
       },
       {
@@ -3924,11 +3576,9 @@
           }
         ],
         "base_stats": {
-          "speed": 30,
-          "weight": 60,
-          "power": 57,
-          "stability": 58,
-          "smoothness": 41
+          "mass": 60,
+          "friction": 44,
+          "bounce": 49
         }
       },
       {
@@ -3946,11 +3596,9 @@
           }
         ],
         "base_stats": {
-          "speed": 40,
-          "weight": 71,
-          "power": 63,
-          "stability": 100,
-          "smoothness": 76
+          "mass": 71,
+          "friction": 70,
+          "bounce": 69
         }
       }
     ]
@@ -3975,11 +3623,9 @@
           }
         ],
         "base_stats": {
-          "speed": 11,
-          "weight": 25,
-          "power": 15,
-          "stability": 11,
-          "smoothness": 11
+          "mass": 25,
+          "friction": 11,
+          "bounce": 13
         }
       },
       {
@@ -3997,11 +3643,9 @@
           }
         ],
         "base_stats": {
-          "speed": 11,
-          "weight": 25,
-          "power": 15,
-          "stability": 11,
-          "smoothness": 11
+          "mass": 25,
+          "friction": 11,
+          "bounce": 13
         }
       }
     ]
@@ -4026,11 +3670,9 @@
           }
         ],
         "base_stats": {
-          "speed": 11,
-          "weight": 25,
-          "power": 15,
-          "stability": 11,
-          "smoothness": 11
+          "mass": 25,
+          "friction": 11,
+          "bounce": 13
         }
       },
       {
@@ -4048,11 +3690,9 @@
           }
         ],
         "base_stats": {
-          "speed": 11,
-          "weight": 25,
-          "power": 15,
-          "stability": 11,
-          "smoothness": 11
+          "mass": 25,
+          "friction": 11,
+          "bounce": 13
         }
       },
       {
@@ -4070,11 +3710,9 @@
           }
         ],
         "base_stats": {
-          "speed": 11,
-          "weight": 25,
-          "power": 15,
-          "stability": 11,
-          "smoothness": 11
+          "mass": 25,
+          "friction": 11,
+          "bounce": 13
         }
       },
       {
@@ -4092,11 +3730,9 @@
           }
         ],
         "base_stats": {
-          "speed": 11,
-          "weight": 25,
-          "power": 15,
-          "stability": 11,
-          "smoothness": 11
+          "mass": 25,
+          "friction": 11,
+          "bounce": 13
         }
       }
     ]
@@ -4121,11 +3757,9 @@
           }
         ],
         "base_stats": {
-          "speed": 10,
-          "weight": 25,
-          "power": 13,
-          "stability": 10,
-          "smoothness": 10
+          "mass": 25,
+          "friction": 10,
+          "bounce": 11
         }
       },
       {
@@ -4143,11 +3777,9 @@
           }
         ],
         "base_stats": {
-          "speed": 10,
-          "weight": 25,
-          "power": 13,
-          "stability": 10,
-          "smoothness": 10
+          "mass": 25,
+          "friction": 10,
+          "bounce": 11
         }
       },
       {
@@ -4165,11 +3797,9 @@
           }
         ],
         "base_stats": {
-          "speed": 10,
-          "weight": 25,
-          "power": 13,
-          "stability": 40,
-          "smoothness": 23
+          "mass": 25,
+          "friction": 25,
+          "bounce": 18
         }
       },
       {
@@ -4187,11 +3817,9 @@
           }
         ],
         "base_stats": {
-          "speed": 10,
-          "weight": 25,
-          "power": 13,
-          "stability": 10,
-          "smoothness": 10
+          "mass": 25,
+          "friction": 10,
+          "bounce": 11
         }
       },
       {
@@ -4209,11 +3837,9 @@
           }
         ],
         "base_stats": {
-          "speed": 10,
-          "weight": 25,
-          "power": 13,
-          "stability": 36,
-          "smoothness": 21
+          "mass": 25,
+          "friction": 23,
+          "bounce": 17
         }
       },
       {
@@ -4231,11 +3857,9 @@
           }
         ],
         "base_stats": {
-          "speed": 10,
-          "weight": 25,
-          "power": 14,
-          "stability": 10,
-          "smoothness": 10
+          "mass": 25,
+          "friction": 10,
+          "bounce": 12
         }
       }
     ]
@@ -4260,11 +3884,9 @@
           }
         ],
         "base_stats": {
-          "speed": 16,
-          "weight": 25,
-          "power": 13,
-          "stability": 10,
-          "smoothness": 10
+          "mass": 25,
+          "friction": 13,
+          "bounce": 11
         }
       },
       {
@@ -4282,11 +3904,9 @@
           }
         ],
         "base_stats": {
-          "speed": 40,
-          "weight": 71,
-          "power": 64,
-          "stability": 100,
-          "smoothness": 76
+          "mass": 71,
+          "friction": 70,
+          "bounce": 70
         }
       },
       {
@@ -4304,11 +3924,9 @@
           }
         ],
         "base_stats": {
-          "speed": 16,
-          "weight": 25,
-          "power": 13,
-          "stability": 10,
-          "smoothness": 10
+          "mass": 25,
+          "friction": 13,
+          "bounce": 11
         }
       },
       {
@@ -4326,11 +3944,9 @@
           }
         ],
         "base_stats": {
-          "speed": 42,
-          "weight": 43,
-          "power": 39,
-          "stability": 44,
-          "smoothness": 40
+          "mass": 43,
+          "friction": 43,
+          "bounce": 39
         }
       },
       {
@@ -4348,11 +3964,9 @@
           }
         ],
         "base_stats": {
-          "speed": 38,
-          "weight": 43,
-          "power": 39,
-          "stability": 45,
-          "smoothness": 37
+          "mass": 43,
+          "friction": 41,
+          "bounce": 38
         }
       },
       {
@@ -4370,11 +3984,9 @@
           }
         ],
         "base_stats": {
-          "speed": 37,
-          "weight": 43,
-          "power": 37,
-          "stability": 44,
-          "smoothness": 35
+          "mass": 43,
+          "friction": 40,
+          "bounce": 36
         }
       },
       {
@@ -4392,11 +4004,9 @@
           }
         ],
         "base_stats": {
-          "speed": 36,
-          "weight": 43,
-          "power": 38,
-          "stability": 47,
-          "smoothness": 36
+          "mass": 43,
+          "friction": 41,
+          "bounce": 37
         }
       },
       {
@@ -4414,11 +4024,9 @@
           }
         ],
         "base_stats": {
-          "speed": 42,
-          "weight": 43,
-          "power": 38,
-          "stability": 37,
-          "smoothness": 35
+          "mass": 43,
+          "friction": 39,
+          "bounce": 36
         }
       }
     ]
@@ -4443,11 +4051,9 @@
           }
         ],
         "base_stats": {
-          "speed": 23,
-          "weight": 43,
-          "power": 31,
-          "stability": 39,
-          "smoothness": 29
+          "mass": 43,
+          "friction": 31,
+          "bounce": 30
         }
       },
       {
@@ -4465,11 +4071,9 @@
           }
         ],
         "base_stats": {
-          "speed": 10,
-          "weight": 25,
-          "power": 14,
-          "stability": 10,
-          "smoothness": 10
+          "mass": 25,
+          "friction": 10,
+          "bounce": 12
         }
       },
       {
@@ -4487,11 +4091,9 @@
           }
         ],
         "base_stats": {
-          "speed": 32,
-          "weight": 43,
-          "power": 37,
-          "stability": 45,
-          "smoothness": 37
+          "mass": 43,
+          "friction": 38,
+          "bounce": 37
         }
       },
       {
@@ -4509,11 +4111,9 @@
           }
         ],
         "base_stats": {
-          "speed": 27,
-          "weight": 43,
-          "power": 37,
-          "stability": 44,
-          "smoothness": 36
+          "mass": 43,
+          "friction": 35,
+          "bounce": 36
         }
       },
       {
@@ -4531,11 +4131,9 @@
           }
         ],
         "base_stats": {
-          "speed": 10,
-          "weight": 25,
-          "power": 13,
-          "stability": 10,
-          "smoothness": 10
+          "mass": 25,
+          "friction": 10,
+          "bounce": 11
         }
       },
       {
@@ -4553,11 +4151,9 @@
           }
         ],
         "base_stats": {
-          "speed": 40,
-          "weight": 71,
-          "power": 64,
-          "stability": 99,
-          "smoothness": 76
+          "mass": 71,
+          "friction": 69,
+          "bounce": 70
         }
       },
       {
@@ -4575,11 +4171,9 @@
           }
         ],
         "base_stats": {
-          "speed": 13,
-          "weight": 25,
-          "power": 17,
-          "stability": 19,
-          "smoothness": 15
+          "mass": 25,
+          "friction": 16,
+          "bounce": 16
         }
       }
     ]
@@ -4604,11 +4198,9 @@
           }
         ],
         "base_stats": {
-          "speed": 40,
-          "weight": 43,
-          "power": 45,
-          "stability": 49,
-          "smoothness": 43
+          "mass": 43,
+          "friction": 44,
+          "bounce": 44
         }
       },
       {
@@ -4626,11 +4218,9 @@
           }
         ],
         "base_stats": {
-          "speed": 40,
-          "weight": 71,
-          "power": 64,
-          "stability": 100,
-          "smoothness": 76
+          "mass": 71,
+          "friction": 70,
+          "bounce": 70
         }
       },
       {
@@ -4648,11 +4238,9 @@
           }
         ],
         "base_stats": {
-          "speed": 28,
-          "weight": 43,
-          "power": 39,
-          "stability": 47,
-          "smoothness": 36
+          "mass": 43,
+          "friction": 37,
+          "bounce": 37
         }
       },
       {
@@ -4670,11 +4258,9 @@
           }
         ],
         "base_stats": {
-          "speed": 11,
-          "weight": 25,
-          "power": 15,
-          "stability": 14,
-          "smoothness": 14
+          "mass": 25,
+          "friction": 12,
+          "bounce": 14
         }
       },
       {
@@ -4692,11 +4278,9 @@
           }
         ],
         "base_stats": {
-          "speed": 10,
-          "weight": 25,
-          "power": 13,
-          "stability": 10,
-          "smoothness": 10
+          "mass": 25,
+          "friction": 10,
+          "bounce": 11
         }
       },
       {
@@ -4714,11 +4298,9 @@
           }
         ],
         "base_stats": {
-          "speed": 34,
-          "weight": 43,
-          "power": 39,
-          "stability": 48,
-          "smoothness": 42
+          "mass": 43,
+          "friction": 41,
+          "bounce": 40
         }
       },
       {
@@ -4736,11 +4318,9 @@
           }
         ],
         "base_stats": {
-          "speed": 29,
-          "weight": 43,
-          "power": 41,
-          "stability": 48,
-          "smoothness": 37
+          "mass": 43,
+          "friction": 38,
+          "bounce": 39
         }
       }
     ]
@@ -4765,11 +4345,9 @@
           }
         ],
         "base_stats": {
-          "speed": 25,
-          "weight": 43,
-          "power": 33,
-          "stability": 37,
-          "smoothness": 28
+          "mass": 43,
+          "friction": 31,
+          "bounce": 30
         }
       },
       {
@@ -4787,11 +4365,9 @@
           }
         ],
         "base_stats": {
-          "speed": 25,
-          "weight": 43,
-          "power": 33,
-          "stability": 37,
-          "smoothness": 29
+          "mass": 43,
+          "friction": 31,
+          "bounce": 31
         }
       },
       {
@@ -4809,11 +4385,9 @@
           }
         ],
         "base_stats": {
-          "speed": 25,
-          "weight": 43,
-          "power": 33,
-          "stability": 34,
-          "smoothness": 28
+          "mass": 43,
+          "friction": 29,
+          "bounce": 30
         }
       },
       {
@@ -4831,11 +4405,9 @@
           }
         ],
         "base_stats": {
-          "speed": 27,
-          "weight": 43,
-          "power": 35,
-          "stability": 38,
-          "smoothness": 29
+          "mass": 43,
+          "friction": 32,
+          "bounce": 32
         }
       },
       {
@@ -4853,11 +4425,9 @@
           }
         ],
         "base_stats": {
-          "speed": 10,
-          "weight": 25,
-          "power": 13,
-          "stability": 10,
-          "smoothness": 10
+          "mass": 25,
+          "friction": 10,
+          "bounce": 11
         }
       },
       {
@@ -4875,11 +4445,9 @@
           }
         ],
         "base_stats": {
-          "speed": 11,
-          "weight": 25,
-          "power": 15,
-          "stability": 17,
-          "smoothness": 15
+          "mass": 25,
+          "friction": 14,
+          "bounce": 15
         }
       },
       {
@@ -4897,11 +4465,9 @@
           }
         ],
         "base_stats": {
-          "speed": 40,
-          "weight": 71,
-          "power": 62,
-          "stability": 95,
-          "smoothness": 75
+          "mass": 71,
+          "friction": 67,
+          "bounce": 68
         }
       }
     ]
@@ -4926,11 +4492,9 @@
           }
         ],
         "base_stats": {
-          "speed": 10,
-          "weight": 25,
-          "power": 13,
-          "stability": 10,
-          "smoothness": 10
+          "mass": 25,
+          "friction": 10,
+          "bounce": 11
         }
       },
       {
@@ -4948,11 +4512,9 @@
           }
         ],
         "base_stats": {
-          "speed": 10,
-          "weight": 25,
-          "power": 13,
-          "stability": 10,
-          "smoothness": 10
+          "mass": 25,
+          "friction": 10,
+          "bounce": 11
         }
       }
     ]
@@ -4977,11 +4539,9 @@
           }
         ],
         "base_stats": {
-          "speed": 10,
-          "weight": 25,
-          "power": 14,
-          "stability": 10,
-          "smoothness": 10
+          "mass": 25,
+          "friction": 10,
+          "bounce": 12
         }
       },
       {
@@ -4999,11 +4559,9 @@
           }
         ],
         "base_stats": {
-          "speed": 27,
-          "weight": 43,
-          "power": 35,
-          "stability": 30,
-          "smoothness": 28
+          "mass": 43,
+          "friction": 28,
+          "bounce": 31
         }
       },
       {
@@ -5021,11 +4579,9 @@
           }
         ],
         "base_stats": {
-          "speed": 25,
-          "weight": 43,
-          "power": 33,
-          "stability": 33,
-          "smoothness": 27
+          "mass": 43,
+          "friction": 29,
+          "bounce": 30
         }
       },
       {
@@ -5043,11 +4599,9 @@
           }
         ],
         "base_stats": {
-          "speed": 40,
-          "weight": 71,
-          "power": 64,
-          "stability": 100,
-          "smoothness": 76
+          "mass": 71,
+          "friction": 70,
+          "bounce": 70
         }
       },
       {
@@ -5065,11 +4619,9 @@
           }
         ],
         "base_stats": {
-          "speed": 29,
-          "weight": 43,
-          "power": 39,
-          "stability": 44,
-          "smoothness": 34
+          "mass": 43,
+          "friction": 36,
+          "bounce": 36
         }
       },
       {
@@ -5087,11 +4639,9 @@
           }
         ],
         "base_stats": {
-          "speed": 40,
-          "weight": 71,
-          "power": 63,
-          "stability": 100,
-          "smoothness": 76
+          "mass": 71,
+          "friction": 70,
+          "bounce": 69
         }
       },
       {
@@ -5109,11 +4659,9 @@
           }
         ],
         "base_stats": {
-          "speed": 13,
-          "weight": 25,
-          "power": 17,
-          "stability": 17,
-          "smoothness": 14
+          "mass": 25,
+          "friction": 15,
+          "bounce": 15
         }
       }
     ]
@@ -5138,11 +4686,9 @@
           }
         ],
         "base_stats": {
-          "speed": 11,
-          "weight": 25,
-          "power": 15,
-          "stability": 19,
-          "smoothness": 16
+          "mass": 25,
+          "friction": 15,
+          "bounce": 15
         }
       },
       {
@@ -5160,11 +4706,9 @@
           }
         ],
         "base_stats": {
-          "speed": 20,
-          "weight": 43,
-          "power": 33,
-          "stability": 65,
-          "smoothness": 44
+          "mass": 43,
+          "friction": 42,
+          "bounce": 38
         }
       },
       {
@@ -5182,11 +4726,9 @@
           }
         ],
         "base_stats": {
-          "speed": 26,
-          "weight": 43,
-          "power": 36,
-          "stability": 46,
-          "smoothness": 35
+          "mass": 43,
+          "friction": 36,
+          "bounce": 35
         }
       },
       {
@@ -5204,11 +4746,9 @@
           }
         ],
         "base_stats": {
-          "speed": 12,
-          "weight": 25,
-          "power": 17,
-          "stability": 22,
-          "smoothness": 16
+          "mass": 25,
+          "friction": 17,
+          "bounce": 16
         }
       },
       {
@@ -5226,11 +4766,9 @@
           }
         ],
         "base_stats": {
-          "speed": 10,
-          "weight": 25,
-          "power": 13,
-          "stability": 10,
-          "smoothness": 10
+          "mass": 25,
+          "friction": 10,
+          "bounce": 11
         }
       },
       {
@@ -5248,11 +4786,9 @@
           }
         ],
         "base_stats": {
-          "speed": 27,
-          "weight": 43,
-          "power": 35,
-          "stability": 38,
-          "smoothness": 34
+          "mass": 43,
+          "friction": 32,
+          "bounce": 34
         }
       },
       {
@@ -5270,11 +4806,9 @@
           }
         ],
         "base_stats": {
-          "speed": 23,
-          "weight": 43,
-          "power": 31,
-          "stability": 38,
-          "smoothness": 30
+          "mass": 43,
+          "friction": 30,
+          "bounce": 30
         }
       }
     ]
@@ -5299,11 +4833,9 @@
           }
         ],
         "base_stats": {
-          "speed": 17,
-          "weight": 17,
-          "power": 10,
-          "stability": 10,
-          "smoothness": 13
+          "mass": 17,
+          "friction": 13,
+          "bounce": 11
         }
       },
       {
@@ -5321,11 +4853,9 @@
           }
         ],
         "base_stats": {
-          "speed": 36,
-          "weight": 30,
-          "power": 28,
-          "stability": 32,
-          "smoothness": 34
+          "mass": 30,
+          "friction": 34,
+          "bounce": 31
         }
       },
       {
@@ -5343,11 +4873,9 @@
           }
         ],
         "base_stats": {
-          "speed": 17,
-          "weight": 17,
-          "power": 10,
-          "stability": 10,
-          "smoothness": 13
+          "mass": 17,
+          "friction": 13,
+          "bounce": 11
         }
       },
       {
@@ -5365,11 +4893,9 @@
           }
         ],
         "base_stats": {
-          "speed": 18,
-          "weight": 17,
-          "power": 11,
-          "stability": 23,
-          "smoothness": 17
+          "mass": 17,
+          "friction": 20,
+          "bounce": 14
         }
       },
       {
@@ -5387,11 +4913,9 @@
           }
         ],
         "base_stats": {
-          "speed": 10,
-          "weight": 25,
-          "power": 13,
-          "stability": 15,
-          "smoothness": 11
+          "mass": 25,
+          "friction": 12,
+          "bounce": 12
         }
       },
       {
@@ -5409,11 +4933,9 @@
           }
         ],
         "base_stats": {
-          "speed": 36,
-          "weight": 30,
-          "power": 27,
-          "stability": 31,
-          "smoothness": 34
+          "mass": 30,
+          "friction": 33,
+          "bounce": 30
         }
       },
       {
@@ -5431,11 +4953,9 @@
           }
         ],
         "base_stats": {
-          "speed": 40,
-          "weight": 71,
-          "power": 64,
-          "stability": 100,
-          "smoothness": 76
+          "mass": 71,
+          "friction": 70,
+          "bounce": 70
         }
       },
       {
@@ -5453,11 +4973,9 @@
           }
         ],
         "base_stats": {
-          "speed": 40,
-          "weight": 30,
-          "power": 29,
-          "stability": 33,
-          "smoothness": 39
+          "mass": 30,
+          "friction": 36,
+          "bounce": 34
         }
       },
       {
@@ -5475,11 +4993,9 @@
           }
         ],
         "base_stats": {
-          "speed": 19,
-          "weight": 17,
-          "power": 12,
-          "stability": 13,
-          "smoothness": 18
+          "mass": 17,
+          "friction": 16,
+          "bounce": 15
         }
       },
       {
@@ -5497,11 +5013,9 @@
           }
         ],
         "base_stats": {
-          "speed": 35,
-          "weight": 30,
-          "power": 27,
-          "stability": 32,
-          "smoothness": 35
+          "mass": 30,
+          "friction": 33,
+          "bounce": 31
         }
       },
       {
@@ -5519,11 +5033,9 @@
           }
         ],
         "base_stats": {
-          "speed": 65,
-          "weight": 54,
-          "power": 64,
-          "stability": 84,
-          "smoothness": 52
+          "mass": 54,
+          "friction": 74,
+          "bounce": 58
         }
       }
     ]
@@ -5548,11 +5060,9 @@
           }
         ],
         "base_stats": {
-          "speed": 40,
-          "weight": 72,
-          "power": 65,
-          "stability": 100,
-          "smoothness": 77
+          "mass": 72,
+          "friction": 70,
+          "bounce": 71
         }
       },
       {
@@ -5570,11 +5080,9 @@
           }
         ],
         "base_stats": {
-          "speed": 24,
-          "weight": 47,
-          "power": 41,
-          "stability": 45,
-          "smoothness": 31
+          "mass": 47,
+          "friction": 34,
+          "bounce": 36
         }
       },
       {
@@ -5592,11 +5100,9 @@
           }
         ],
         "base_stats": {
-          "speed": 11,
-          "weight": 28,
-          "power": 20,
-          "stability": 24,
-          "smoothness": 17
+          "mass": 28,
+          "friction": 17,
+          "bounce": 18
         }
       },
       {
@@ -5614,11 +5120,9 @@
           }
         ],
         "base_stats": {
-          "speed": 20,
-          "weight": 47,
-          "power": 37,
-          "stability": 57,
-          "smoothness": 32
+          "mass": 47,
+          "friction": 38,
+          "bounce": 34
         }
       },
       {
@@ -5636,11 +5140,9 @@
           }
         ],
         "base_stats": {
-          "speed": 20,
-          "weight": 47,
-          "power": 38,
-          "stability": 57,
-          "smoothness": 32
+          "mass": 47,
+          "friction": 38,
+          "bounce": 35
         }
       },
       {
@@ -5658,11 +5160,9 @@
           }
         ],
         "base_stats": {
-          "speed": 24,
-          "weight": 47,
-          "power": 40,
-          "stability": 44,
-          "smoothness": 32
+          "mass": 47,
+          "friction": 34,
+          "bounce": 36
         }
       },
       {
@@ -5680,11 +5180,9 @@
           }
         ],
         "base_stats": {
-          "speed": 27,
-          "weight": 47,
-          "power": 43,
-          "stability": 49,
-          "smoothness": 35
+          "mass": 47,
+          "friction": 38,
+          "bounce": 39
         }
       },
       {
@@ -5702,11 +5200,9 @@
           }
         ],
         "base_stats": {
-          "speed": 31,
-          "weight": 47,
-          "power": 45,
-          "stability": 57,
-          "smoothness": 47
+          "mass": 47,
+          "friction": 44,
+          "bounce": 46
         }
       }
     ]
@@ -5731,11 +5227,9 @@
           }
         ],
         "base_stats": {
-          "speed": 60,
-          "weight": 51,
-          "power": 53,
-          "stability": 77,
-          "smoothness": 83
+          "mass": 51,
+          "friction": 68,
+          "bounce": 68
         }
       },
       {
@@ -5753,11 +5247,9 @@
           }
         ],
         "base_stats": {
-          "speed": 10,
-          "weight": 25,
-          "power": 13,
-          "stability": 10,
-          "smoothness": 10
+          "mass": 25,
+          "friction": 10,
+          "bounce": 11
         }
       },
       {
@@ -5775,11 +5267,9 @@
           }
         ],
         "base_stats": {
-          "speed": 12,
-          "weight": 15,
-          "power": 10,
-          "stability": 10,
-          "smoothness": 18
+          "mass": 15,
+          "friction": 11,
+          "bounce": 14
         }
       },
       {
@@ -5797,11 +5287,9 @@
           }
         ],
         "base_stats": {
-          "speed": 17,
-          "weight": 15,
-          "power": 13,
-          "stability": 19,
-          "smoothness": 18
+          "mass": 15,
+          "friction": 18,
+          "bounce": 15
         }
       },
       {
@@ -5819,11 +5307,9 @@
           }
         ],
         "base_stats": {
-          "speed": 14,
-          "weight": 15,
-          "power": 10,
-          "stability": 12,
-          "smoothness": 22
+          "mass": 15,
+          "friction": 13,
+          "bounce": 16
         }
       },
       {
@@ -5841,11 +5327,9 @@
           }
         ],
         "base_stats": {
-          "speed": 32,
-          "weight": 28,
-          "power": 28,
-          "stability": 49,
-          "smoothness": 50
+          "mass": 28,
+          "friction": 40,
+          "bounce": 39
         }
       },
       {
@@ -5863,11 +5347,9 @@
           }
         ],
         "base_stats": {
-          "speed": 13,
-          "weight": 15,
-          "power": 10,
-          "stability": 10,
-          "smoothness": 18
+          "mass": 15,
+          "friction": 11,
+          "bounce": 14
         }
       },
       {
@@ -5885,11 +5367,9 @@
           }
         ],
         "base_stats": {
-          "speed": 79,
-          "weight": 52,
-          "power": 65,
-          "stability": 94,
-          "smoothness": 100
+          "mass": 52,
+          "friction": 86,
+          "bounce": 82
         }
       },
       {
@@ -5907,11 +5387,9 @@
           }
         ],
         "base_stats": {
-          "speed": 40,
-          "weight": 71,
-          "power": 64,
-          "stability": 100,
-          "smoothness": 76
+          "mass": 71,
+          "friction": 70,
+          "bounce": 70
         }
       },
       {
@@ -5929,11 +5407,9 @@
           }
         ],
         "base_stats": {
-          "speed": 40,
-          "weight": 29,
-          "power": 28,
-          "stability": 54,
-          "smoothness": 59
+          "mass": 29,
+          "friction": 47,
+          "bounce": 43
         }
       }
     ]
@@ -5958,11 +5434,9 @@
           }
         ],
         "base_stats": {
-          "speed": 28,
-          "weight": 59,
-          "power": 52,
-          "stability": 45,
-          "smoothness": 26
+          "mass": 59,
+          "friction": 36,
+          "bounce": 39
         }
       },
       {
@@ -5980,11 +5454,9 @@
           }
         ],
         "base_stats": {
-          "speed": 22,
-          "weight": 59,
-          "power": 58,
-          "stability": 55,
-          "smoothness": 30
+          "mass": 59,
+          "friction": 38,
+          "bounce": 44
         }
       },
       {
@@ -6002,11 +5474,9 @@
           }
         ],
         "base_stats": {
-          "speed": 10,
-          "weight": 36,
-          "power": 25,
-          "stability": 12,
-          "smoothness": 10
+          "mass": 36,
+          "friction": 11,
+          "bounce": 17
         }
       },
       {
@@ -6024,11 +5494,9 @@
           }
         ],
         "base_stats": {
-          "speed": 23,
-          "weight": 59,
-          "power": 58,
-          "stability": 55,
-          "smoothness": 29
+          "mass": 59,
+          "friction": 39,
+          "bounce": 43
         }
       },
       {
@@ -6046,11 +5514,9 @@
           }
         ],
         "base_stats": {
-          "speed": 23,
-          "weight": 59,
-          "power": 58,
-          "stability": 54,
-          "smoothness": 28
+          "mass": 59,
+          "friction": 38,
+          "bounce": 43
         }
       },
       {
@@ -6068,11 +5534,9 @@
           }
         ],
         "base_stats": {
-          "speed": 23,
-          "weight": 59,
-          "power": 58,
-          "stability": 54,
-          "smoothness": 28
+          "mass": 59,
+          "friction": 38,
+          "bounce": 43
         }
       },
       {
@@ -6090,11 +5554,9 @@
           }
         ],
         "base_stats": {
-          "speed": 20,
-          "weight": 59,
-          "power": 49,
-          "stability": 43,
-          "smoothness": 20
+          "mass": 59,
+          "friction": 31,
+          "bounce": 34
         }
       },
       {
@@ -6112,11 +5574,9 @@
           }
         ],
         "base_stats": {
-          "speed": 23,
-          "weight": 59,
-          "power": 49,
-          "stability": 42,
-          "smoothness": 21
+          "mass": 59,
+          "friction": 32,
+          "bounce": 35
         }
       },
       {
@@ -6134,11 +5594,9 @@
           }
         ],
         "base_stats": {
-          "speed": 10,
-          "weight": 36,
-          "power": 25,
-          "stability": 12,
-          "smoothness": 10
+          "mass": 36,
+          "friction": 11,
+          "bounce": 17
         }
       },
       {
@@ -6156,11 +5614,9 @@
           }
         ],
         "base_stats": {
-          "speed": 24,
-          "weight": 59,
-          "power": 53,
-          "stability": 47,
-          "smoothness": 25
+          "mass": 59,
+          "friction": 35,
+          "bounce": 39
         }
       },
       {
@@ -6178,11 +5634,9 @@
           }
         ],
         "base_stats": {
-          "speed": 40,
-          "weight": 71,
-          "power": 62,
-          "stability": 100,
-          "smoothness": 71
+          "mass": 71,
+          "friction": 70,
+          "bounce": 66
         }
       },
       {
@@ -6200,11 +5654,9 @@
           }
         ],
         "base_stats": {
-          "speed": 10,
-          "weight": 25,
-          "power": 12,
-          "stability": 15,
-          "smoothness": 10
+          "mass": 25,
+          "friction": 12,
+          "bounce": 11
         }
       },
       {
@@ -6222,11 +5674,9 @@
           }
         ],
         "base_stats": {
-          "speed": 10,
-          "weight": 36,
-          "power": 27,
-          "stability": 19,
-          "smoothness": 11
+          "mass": 36,
+          "friction": 14,
+          "bounce": 19
         }
       }
     ]
@@ -6251,11 +5701,9 @@
           }
         ],
         "base_stats": {
-          "speed": 28,
-          "weight": 43,
-          "power": 39,
-          "stability": 48,
-          "smoothness": 36
+          "mass": 43,
+          "friction": 38,
+          "bounce": 37
         }
       },
       {
@@ -6273,11 +5721,9 @@
           }
         ],
         "base_stats": {
-          "speed": 10,
-          "weight": 25,
-          "power": 13,
-          "stability": 10,
-          "smoothness": 10
+          "mass": 25,
+          "friction": 10,
+          "bounce": 11
         }
       },
       {
@@ -6295,11 +5741,9 @@
           }
         ],
         "base_stats": {
-          "speed": 26,
-          "weight": 43,
-          "power": 34,
-          "stability": 43,
-          "smoothness": 30
+          "mass": 43,
+          "friction": 34,
+          "bounce": 32
         }
       },
       {
@@ -6317,11 +5761,9 @@
           }
         ],
         "base_stats": {
-          "speed": 26,
-          "weight": 43,
-          "power": 34,
-          "stability": 40,
-          "smoothness": 29
+          "mass": 43,
+          "friction": 33,
+          "bounce": 31
         }
       },
       {
@@ -6339,11 +5781,9 @@
           }
         ],
         "base_stats": {
-          "speed": 25,
-          "weight": 43,
-          "power": 33,
-          "stability": 33,
-          "smoothness": 32
+          "mass": 43,
+          "friction": 29,
+          "bounce": 32
         }
       },
       {
@@ -6361,11 +5801,9 @@
           }
         ],
         "base_stats": {
-          "speed": 28,
-          "weight": 43,
-          "power": 35,
-          "stability": 39,
-          "smoothness": 29
+          "mass": 43,
+          "friction": 33,
+          "bounce": 32
         }
       },
       {
@@ -6383,11 +5821,9 @@
           }
         ],
         "base_stats": {
-          "speed": 40,
-          "weight": 71,
-          "power": 63,
-          "stability": 100,
-          "smoothness": 76
+          "mass": 71,
+          "friction": 70,
+          "bounce": 69
         }
       }
     ]
@@ -6412,11 +5848,9 @@
           }
         ],
         "base_stats": {
-          "speed": 13,
-          "weight": 25,
-          "power": 16,
-          "stability": 14,
-          "smoothness": 13
+          "mass": 25,
+          "friction": 13,
+          "bounce": 14
         }
       },
       {
@@ -6434,11 +5868,9 @@
           }
         ],
         "base_stats": {
-          "speed": 28,
-          "weight": 43,
-          "power": 36,
-          "stability": 39,
-          "smoothness": 34
+          "mass": 43,
+          "friction": 33,
+          "bounce": 35
         }
       },
       {
@@ -6456,11 +5888,9 @@
           }
         ],
         "base_stats": {
-          "speed": 27,
-          "weight": 43,
-          "power": 35,
-          "stability": 39,
-          "smoothness": 31
+          "mass": 43,
+          "friction": 33,
+          "bounce": 33
         }
       },
       {
@@ -6478,11 +5908,9 @@
           }
         ],
         "base_stats": {
-          "speed": 27,
-          "weight": 43,
-          "power": 35,
-          "stability": 39,
-          "smoothness": 30
+          "mass": 43,
+          "friction": 33,
+          "bounce": 32
         }
       },
       {
@@ -6500,11 +5928,9 @@
           }
         ],
         "base_stats": {
-          "speed": 27,
-          "weight": 43,
-          "power": 35,
-          "stability": 36,
-          "smoothness": 30
+          "mass": 43,
+          "friction": 31,
+          "bounce": 32
         }
       },
       {
@@ -6522,11 +5948,9 @@
           }
         ],
         "base_stats": {
-          "speed": 40,
-          "weight": 71,
-          "power": 63,
-          "stability": 100,
-          "smoothness": 76
+          "mass": 71,
+          "friction": 70,
+          "bounce": 69
         }
       }
     ]
@@ -6551,11 +5975,9 @@
           }
         ],
         "base_stats": {
-          "speed": 25,
-          "weight": 43,
-          "power": 32,
-          "stability": 33,
-          "smoothness": 27
+          "mass": 43,
+          "friction": 29,
+          "bounce": 29
         }
       },
       {
@@ -6573,11 +5995,9 @@
           }
         ],
         "base_stats": {
-          "speed": 10,
-          "weight": 25,
-          "power": 13,
-          "stability": 21,
-          "smoothness": 13
+          "mass": 25,
+          "friction": 15,
+          "bounce": 13
         }
       },
       {
@@ -6595,11 +6015,9 @@
           }
         ],
         "base_stats": {
-          "speed": 10,
-          "weight": 25,
-          "power": 15,
-          "stability": 28,
-          "smoothness": 17
+          "mass": 25,
+          "friction": 19,
+          "bounce": 16
         }
       },
       {
@@ -6617,11 +6035,9 @@
           }
         ],
         "base_stats": {
-          "speed": 13,
-          "weight": 25,
-          "power": 17,
-          "stability": 17,
-          "smoothness": 13
+          "mass": 25,
+          "friction": 15,
+          "bounce": 15
         }
       },
       {
@@ -6639,11 +6055,9 @@
           }
         ],
         "base_stats": {
-          "speed": 11,
-          "weight": 25,
-          "power": 15,
-          "stability": 11,
-          "smoothness": 11
+          "mass": 25,
+          "friction": 11,
+          "bounce": 13
         }
       },
       {
@@ -6661,11 +6075,9 @@
           }
         ],
         "base_stats": {
-          "speed": 11,
-          "weight": 25,
-          "power": 15,
-          "stability": 11,
-          "smoothness": 11
+          "mass": 25,
+          "friction": 11,
+          "bounce": 13
         }
       },
       {
@@ -6683,11 +6095,9 @@
           }
         ],
         "base_stats": {
-          "speed": 11,
-          "weight": 25,
-          "power": 15,
-          "stability": 18,
-          "smoothness": 16
+          "mass": 25,
+          "friction": 14,
+          "bounce": 15
         }
       },
       {
@@ -6705,11 +6115,9 @@
           }
         ],
         "base_stats": {
-          "speed": 10,
-          "weight": 25,
-          "power": 15,
-          "stability": 29,
-          "smoothness": 18
+          "mass": 25,
+          "friction": 19,
+          "bounce": 16
         }
       }
     ]
@@ -6734,11 +6142,9 @@
           }
         ],
         "base_stats": {
-          "speed": 40,
-          "weight": 71,
-          "power": 64,
-          "stability": 100,
-          "smoothness": 76
+          "mass": 71,
+          "friction": 70,
+          "bounce": 70
         }
       },
       {
@@ -6756,11 +6162,9 @@
           }
         ],
         "base_stats": {
-          "speed": 32,
-          "weight": 43,
-          "power": 39,
-          "stability": 41,
-          "smoothness": 39
+          "mass": 43,
+          "friction": 36,
+          "bounce": 39
         }
       },
       {
@@ -6778,11 +6182,9 @@
           }
         ],
         "base_stats": {
-          "speed": 32,
-          "weight": 43,
-          "power": 40,
-          "stability": 41,
-          "smoothness": 36
+          "mass": 43,
+          "friction": 36,
+          "bounce": 38
         }
       },
       {
@@ -6800,11 +6202,9 @@
           }
         ],
         "base_stats": {
-          "speed": 11,
-          "weight": 25,
-          "power": 15,
-          "stability": 23,
-          "smoothness": 16
+          "mass": 25,
+          "friction": 17,
+          "bounce": 15
         }
       },
       {
@@ -6822,11 +6222,9 @@
           }
         ],
         "base_stats": {
-          "speed": 31,
-          "weight": 43,
-          "power": 41,
-          "stability": 44,
-          "smoothness": 40
+          "mass": 43,
+          "friction": 37,
+          "bounce": 40
         }
       },
       {
@@ -6844,11 +6242,9 @@
           }
         ],
         "base_stats": {
-          "speed": 30,
-          "weight": 43,
-          "power": 40,
-          "stability": 41,
-          "smoothness": 36
+          "mass": 43,
+          "friction": 35,
+          "bounce": 38
         }
       }
     ]
@@ -6873,11 +6269,9 @@
           }
         ],
         "base_stats": {
-          "speed": 37,
-          "weight": 43,
-          "power": 40,
-          "stability": 49,
-          "smoothness": 43
+          "mass": 43,
+          "friction": 43,
+          "bounce": 41
         }
       },
       {
@@ -6895,11 +6289,9 @@
           }
         ],
         "base_stats": {
-          "speed": 28,
-          "weight": 43,
-          "power": 39,
-          "stability": 48,
-          "smoothness": 36
+          "mass": 43,
+          "friction": 38,
+          "bounce": 37
         }
       },
       {
@@ -6917,11 +6309,9 @@
           }
         ],
         "base_stats": {
-          "speed": 28,
-          "weight": 43,
-          "power": 39,
-          "stability": 46,
-          "smoothness": 35
+          "mass": 43,
+          "friction": 37,
+          "bounce": 37
         }
       },
       {
@@ -6939,11 +6329,9 @@
           }
         ],
         "base_stats": {
-          "speed": 38,
-          "weight": 43,
-          "power": 41,
-          "stability": 48,
-          "smoothness": 44
+          "mass": 43,
+          "friction": 43,
+          "bounce": 42
         }
       },
       {
@@ -6961,11 +6349,9 @@
           }
         ],
         "base_stats": {
-          "speed": 40,
-          "weight": 71,
-          "power": 63,
-          "stability": 100,
-          "smoothness": 76
+          "mass": 71,
+          "friction": 70,
+          "bounce": 69
         }
       },
       {
@@ -6983,11 +6369,9 @@
           }
         ],
         "base_stats": {
-          "speed": 28,
-          "weight": 43,
-          "power": 37,
-          "stability": 40,
-          "smoothness": 32
+          "mass": 43,
+          "friction": 34,
+          "bounce": 34
         }
       },
       {
@@ -7005,11 +6389,9 @@
           }
         ],
         "base_stats": {
-          "speed": 10,
-          "weight": 25,
-          "power": 13,
-          "stability": 10,
-          "smoothness": 10
+          "mass": 25,
+          "friction": 10,
+          "bounce": 11
         }
       }
     ]
@@ -7034,11 +6416,9 @@
           }
         ],
         "base_stats": {
-          "speed": 46,
-          "weight": 31,
-          "power": 35,
-          "stability": 46,
-          "smoothness": 53
+          "mass": 31,
+          "friction": 46,
+          "bounce": 44
         }
       },
       {
@@ -7056,11 +6436,9 @@
           }
         ],
         "base_stats": {
-          "speed": 39,
-          "weight": 31,
-          "power": 32,
-          "stability": 37,
-          "smoothness": 40
+          "mass": 31,
+          "friction": 38,
+          "bounce": 36
         }
       },
       {
@@ -7078,11 +6456,9 @@
           }
         ],
         "base_stats": {
-          "speed": 78,
-          "weight": 55,
-          "power": 63,
-          "stability": 76,
-          "smoothness": 85
+          "mass": 55,
+          "friction": 77,
+          "bounce": 74
         }
       },
       {
@@ -7100,11 +6476,9 @@
           }
         ],
         "base_stats": {
-          "speed": 44,
-          "weight": 31,
-          "power": 33,
-          "stability": 43,
-          "smoothness": 45
+          "mass": 31,
+          "friction": 43,
+          "bounce": 39
         }
       },
       {
@@ -7122,11 +6496,9 @@
           }
         ],
         "base_stats": {
-          "speed": 18,
-          "weight": 17,
-          "power": 11,
-          "stability": 12,
-          "smoothness": 18
+          "mass": 17,
+          "friction": 15,
+          "bounce": 14
         }
       },
       {
@@ -7144,11 +6516,9 @@
           }
         ],
         "base_stats": {
-          "speed": 10,
-          "weight": 25,
-          "power": 13,
-          "stability": 10,
-          "smoothness": 10
+          "mass": 25,
+          "friction": 10,
+          "bounce": 11
         }
       },
       {
@@ -7166,11 +6536,9 @@
           }
         ],
         "base_stats": {
-          "speed": 49,
-          "weight": 31,
-          "power": 35,
-          "stability": 41,
-          "smoothness": 48
+          "mass": 31,
+          "friction": 45,
+          "bounce": 41
         }
       },
       {
@@ -7188,11 +6556,9 @@
           }
         ],
         "base_stats": {
-          "speed": 49,
-          "weight": 55,
-          "power": 53,
-          "stability": 99,
-          "smoothness": 82
+          "mass": 55,
+          "friction": 74,
+          "bounce": 67
         }
       },
       {
@@ -7210,11 +6576,9 @@
           }
         ],
         "base_stats": {
-          "speed": 17,
-          "weight": 17,
-          "power": 10,
-          "stability": 10,
-          "smoothness": 13
+          "mass": 17,
+          "friction": 13,
+          "bounce": 11
         }
       }
     ]
@@ -7239,11 +6603,9 @@
           }
         ],
         "base_stats": {
-          "speed": 27,
-          "weight": 43,
-          "power": 34,
-          "stability": 33,
-          "smoothness": 30
+          "mass": 43,
+          "friction": 30,
+          "bounce": 32
         }
       },
       {
@@ -7261,11 +6623,9 @@
           }
         ],
         "base_stats": {
-          "speed": 30,
-          "weight": 43,
-          "power": 38,
-          "stability": 39,
-          "smoothness": 36
+          "mass": 43,
+          "friction": 34,
+          "bounce": 37
         }
       },
       {
@@ -7283,11 +6643,9 @@
           }
         ],
         "base_stats": {
-          "speed": 11,
-          "weight": 25,
-          "power": 15,
-          "stability": 18,
-          "smoothness": 15
+          "mass": 25,
+          "friction": 14,
+          "bounce": 15
         }
       },
       {
@@ -7305,11 +6663,9 @@
           }
         ],
         "base_stats": {
-          "speed": 27,
-          "weight": 43,
-          "power": 35,
-          "stability": 37,
-          "smoothness": 32
+          "mass": 43,
+          "friction": 32,
+          "bounce": 33
         }
       },
       {
@@ -7327,11 +6683,9 @@
           }
         ],
         "base_stats": {
-          "speed": 20,
-          "weight": 43,
-          "power": 31,
-          "stability": 47,
-          "smoothness": 32
+          "mass": 43,
+          "friction": 33,
+          "bounce": 31
         }
       },
       {
@@ -7349,11 +6703,9 @@
           }
         ],
         "base_stats": {
-          "speed": 27,
-          "weight": 43,
-          "power": 35,
-          "stability": 37,
-          "smoothness": 32
+          "mass": 43,
+          "friction": 32,
+          "bounce": 33
         }
       }
     ]
@@ -7378,11 +6730,9 @@
           }
         ],
         "base_stats": {
-          "speed": 11,
-          "weight": 25,
-          "power": 15,
-          "stability": 11,
-          "smoothness": 11
+          "mass": 25,
+          "friction": 11,
+          "bounce": 13
         }
       },
       {
@@ -7400,11 +6750,9 @@
           }
         ],
         "base_stats": {
-          "speed": 10,
-          "weight": 25,
-          "power": 14,
-          "stability": 29,
-          "smoothness": 19
+          "mass": 25,
+          "friction": 19,
+          "bounce": 16
         }
       },
       {
@@ -7422,11 +6770,9 @@
           }
         ],
         "base_stats": {
-          "speed": 10,
-          "weight": 25,
-          "power": 13,
-          "stability": 10,
-          "smoothness": 10
+          "mass": 25,
+          "friction": 10,
+          "bounce": 11
         }
       },
       {
@@ -7444,11 +6790,9 @@
           }
         ],
         "base_stats": {
-          "speed": 10,
-          "weight": 25,
-          "power": 13,
-          "stability": 10,
-          "smoothness": 10
+          "mass": 25,
+          "friction": 10,
+          "bounce": 11
         }
       },
       {
@@ -7466,11 +6810,9 @@
           }
         ],
         "base_stats": {
-          "speed": 10,
-          "weight": 25,
-          "power": 13,
-          "stability": 10,
-          "smoothness": 10
+          "mass": 25,
+          "friction": 10,
+          "bounce": 11
         }
       },
       {
@@ -7488,11 +6830,9 @@
           }
         ],
         "base_stats": {
-          "speed": 10,
-          "weight": 25,
-          "power": 13,
-          "stability": 10,
-          "smoothness": 10
+          "mass": 25,
+          "friction": 10,
+          "bounce": 11
         }
       },
       {
@@ -7510,11 +6850,9 @@
           }
         ],
         "base_stats": {
-          "speed": 11,
-          "weight": 25,
-          "power": 15,
-          "stability": 11,
-          "smoothness": 11
+          "mass": 25,
+          "friction": 11,
+          "bounce": 13
         }
       },
       {
@@ -7532,11 +6870,9 @@
           }
         ],
         "base_stats": {
-          "speed": 11,
-          "weight": 25,
-          "power": 15,
-          "stability": 11,
-          "smoothness": 11
+          "mass": 25,
+          "friction": 11,
+          "bounce": 13
         }
       },
       {
@@ -7554,11 +6890,9 @@
           }
         ],
         "base_stats": {
-          "speed": 11,
-          "weight": 25,
-          "power": 15,
-          "stability": 11,
-          "smoothness": 11
+          "mass": 25,
+          "friction": 11,
+          "bounce": 13
         }
       }
     ]
@@ -7583,11 +6917,9 @@
           }
         ],
         "base_stats": {
-          "speed": 10,
-          "weight": 25,
-          "power": 13,
-          "stability": 10,
-          "smoothness": 10
+          "mass": 25,
+          "friction": 10,
+          "bounce": 11
         }
       },
       {
@@ -7605,11 +6937,9 @@
           }
         ],
         "base_stats": {
-          "speed": 10,
-          "weight": 25,
-          "power": 13,
-          "stability": 10,
-          "smoothness": 10
+          "mass": 25,
+          "friction": 10,
+          "bounce": 11
         }
       }
     ]
@@ -7634,11 +6964,9 @@
           }
         ],
         "base_stats": {
-          "speed": 10,
-          "weight": 25,
-          "power": 13,
-          "stability": 10,
-          "smoothness": 10
+          "mass": 25,
+          "friction": 10,
+          "bounce": 11
         }
       },
       {
@@ -7656,11 +6984,9 @@
           }
         ],
         "base_stats": {
-          "speed": 40,
-          "weight": 71,
-          "power": 64,
-          "stability": 100,
-          "smoothness": 76
+          "mass": 71,
+          "friction": 70,
+          "bounce": 70
         }
       },
       {
@@ -7678,11 +7004,9 @@
           }
         ],
         "base_stats": {
-          "speed": 26,
-          "weight": 43,
-          "power": 38,
-          "stability": 48,
-          "smoothness": 35
+          "mass": 43,
+          "friction": 37,
+          "bounce": 36
         }
       },
       {
@@ -7700,11 +7024,9 @@
           }
         ],
         "base_stats": {
-          "speed": 13,
-          "weight": 25,
-          "power": 18,
-          "stability": 20,
-          "smoothness": 15
+          "mass": 25,
+          "friction": 16,
+          "bounce": 16
         }
       },
       {
@@ -7722,11 +7044,9 @@
           }
         ],
         "base_stats": {
-          "speed": 26,
-          "weight": 43,
-          "power": 39,
-          "stability": 51,
-          "smoothness": 36
+          "mass": 43,
+          "friction": 38,
+          "bounce": 37
         }
       },
       {
@@ -7744,11 +7064,9 @@
           }
         ],
         "base_stats": {
-          "speed": 25,
-          "weight": 43,
-          "power": 33,
-          "stability": 39,
-          "smoothness": 31
+          "mass": 43,
+          "friction": 32,
+          "bounce": 32
         }
       },
       {
@@ -7766,11 +7084,9 @@
           }
         ],
         "base_stats": {
-          "speed": 32,
-          "weight": 43,
-          "power": 39,
-          "stability": 46,
-          "smoothness": 37
+          "mass": 43,
+          "friction": 39,
+          "bounce": 38
         }
       },
       {
@@ -7788,11 +7104,9 @@
           }
         ],
         "base_stats": {
-          "speed": 30,
-          "weight": 43,
-          "power": 37,
-          "stability": 45,
-          "smoothness": 36
+          "mass": 43,
+          "friction": 37,
+          "bounce": 36
         }
       }
     ]
@@ -7817,11 +7131,9 @@
           }
         ],
         "base_stats": {
-          "speed": 40,
-          "weight": 72,
-          "power": 65,
-          "stability": 100,
-          "smoothness": 77
+          "mass": 72,
+          "friction": 70,
+          "bounce": 71
         }
       },
       {
@@ -7839,11 +7151,9 @@
           }
         ],
         "base_stats": {
-          "speed": 31,
-          "weight": 43,
-          "power": 35,
-          "stability": 42,
-          "smoothness": 39
+          "mass": 43,
+          "friction": 36,
+          "bounce": 37
         }
       },
       {
@@ -7861,11 +7171,9 @@
           }
         ],
         "base_stats": {
-          "speed": 10,
-          "weight": 25,
-          "power": 13,
-          "stability": 10,
-          "smoothness": 10
+          "mass": 25,
+          "friction": 10,
+          "bounce": 11
         }
       },
       {
@@ -7883,11 +7191,9 @@
           }
         ],
         "base_stats": {
-          "speed": 30,
-          "weight": 43,
-          "power": 37,
-          "stability": 44,
-          "smoothness": 38
+          "mass": 43,
+          "friction": 37,
+          "bounce": 37
         }
       },
       {
@@ -7905,11 +7211,9 @@
           }
         ],
         "base_stats": {
-          "speed": 27,
-          "weight": 43,
-          "power": 35,
-          "stability": 41,
-          "smoothness": 32
+          "mass": 43,
+          "friction": 34,
+          "bounce": 33
         }
       },
       {
@@ -7927,11 +7231,9 @@
           }
         ],
         "base_stats": {
-          "speed": 27,
-          "weight": 43,
-          "power": 36,
-          "stability": 45,
-          "smoothness": 33
+          "mass": 43,
+          "friction": 36,
+          "bounce": 34
         }
       },
       {
@@ -7949,11 +7251,9 @@
           }
         ],
         "base_stats": {
-          "speed": 28,
-          "weight": 43,
-          "power": 37,
-          "stability": 42,
-          "smoothness": 34
+          "mass": 43,
+          "friction": 35,
+          "bounce": 35
         }
       }
     ]
@@ -7978,11 +7278,9 @@
           }
         ],
         "base_stats": {
-          "speed": 24,
-          "weight": 45,
-          "power": 45,
-          "stability": 46,
-          "smoothness": 29
+          "mass": 45,
+          "friction": 35,
+          "bounce": 37
         }
       },
       {
@@ -8000,11 +7298,9 @@
           }
         ],
         "base_stats": {
-          "speed": 26,
-          "weight": 45,
-          "power": 45,
-          "stability": 42,
-          "smoothness": 28
+          "mass": 45,
+          "friction": 34,
+          "bounce": 36
         }
       },
       {
@@ -8022,11 +7318,9 @@
           }
         ],
         "base_stats": {
-          "speed": 10,
-          "weight": 25,
-          "power": 14,
-          "stability": 25,
-          "smoothness": 17
+          "mass": 25,
+          "friction": 17,
+          "bounce": 15
         }
       },
       {
@@ -8044,11 +7338,9 @@
           }
         ],
         "base_stats": {
-          "speed": 10,
-          "weight": 27,
-          "power": 21,
-          "stability": 18,
-          "smoothness": 13
+          "mass": 27,
+          "friction": 14,
+          "bounce": 17
         }
       },
       {
@@ -8066,11 +7358,9 @@
           }
         ],
         "base_stats": {
-          "speed": 10,
-          "weight": 27,
-          "power": 21,
-          "stability": 21,
-          "smoothness": 11
+          "mass": 27,
+          "friction": 15,
+          "bounce": 16
         }
       },
       {
@@ -8088,11 +7378,9 @@
           }
         ],
         "base_stats": {
-          "speed": 10,
-          "weight": 27,
-          "power": 19,
-          "stability": 23,
-          "smoothness": 15
+          "mass": 27,
+          "friction": 16,
+          "bounce": 17
         }
       }
     ]
@@ -8117,11 +7405,9 @@
           }
         ],
         "base_stats": {
-          "speed": 10,
-          "weight": 25,
-          "power": 13,
-          "stability": 10,
-          "smoothness": 10
+          "mass": 25,
+          "friction": 10,
+          "bounce": 11
         }
       },
       {
@@ -8139,11 +7425,9 @@
           }
         ],
         "base_stats": {
-          "speed": 10,
-          "weight": 25,
-          "power": 14,
-          "stability": 10,
-          "smoothness": 10
+          "mass": 25,
+          "friction": 10,
+          "bounce": 12
         }
       },
       {
@@ -8161,11 +7445,9 @@
           }
         ],
         "base_stats": {
-          "speed": 10,
-          "weight": 25,
-          "power": 13,
-          "stability": 10,
-          "smoothness": 10
+          "mass": 25,
+          "friction": 10,
+          "bounce": 11
         }
       },
       {
@@ -8183,11 +7465,9 @@
           }
         ],
         "base_stats": {
-          "speed": 10,
-          "weight": 25,
-          "power": 13,
-          "stability": 10,
-          "smoothness": 10
+          "mass": 25,
+          "friction": 10,
+          "bounce": 11
         }
       },
       {
@@ -8205,11 +7485,9 @@
           }
         ],
         "base_stats": {
-          "speed": 10,
-          "weight": 25,
-          "power": 14,
-          "stability": 10,
-          "smoothness": 10
+          "mass": 25,
+          "friction": 10,
+          "bounce": 12
         }
       }
     ]
@@ -8234,11 +7512,9 @@
           }
         ],
         "base_stats": {
-          "speed": 11,
-          "weight": 25,
-          "power": 14,
-          "stability": 10,
-          "smoothness": 11
+          "mass": 25,
+          "friction": 10,
+          "bounce": 12
         }
       },
       {
@@ -8256,11 +7532,9 @@
           }
         ],
         "base_stats": {
-          "speed": 11,
-          "weight": 25,
-          "power": 14,
-          "stability": 10,
-          "smoothness": 11
+          "mass": 25,
+          "friction": 10,
+          "bounce": 12
         }
       },
       {
@@ -8278,11 +7552,9 @@
           }
         ],
         "base_stats": {
-          "speed": 11,
-          "weight": 25,
-          "power": 14,
-          "stability": 10,
-          "smoothness": 11
+          "mass": 25,
+          "friction": 10,
+          "bounce": 12
         }
       },
       {
@@ -8300,11 +7572,9 @@
           }
         ],
         "base_stats": {
-          "speed": 11,
-          "weight": 25,
-          "power": 14,
-          "stability": 10,
-          "smoothness": 11
+          "mass": 25,
+          "friction": 10,
+          "bounce": 12
         }
       }
     ]
@@ -8329,11 +7599,9 @@
           }
         ],
         "base_stats": {
-          "speed": 10,
-          "weight": 25,
-          "power": 13,
-          "stability": 10,
-          "smoothness": 10
+          "mass": 25,
+          "friction": 10,
+          "bounce": 11
         }
       }
     ]
@@ -8358,11 +7626,9 @@
           }
         ],
         "base_stats": {
-          "speed": 10,
-          "weight": 25,
-          "power": 13,
-          "stability": 10,
-          "smoothness": 10
+          "mass": 25,
+          "friction": 10,
+          "bounce": 11
         }
       },
       {
@@ -8380,11 +7646,9 @@
           }
         ],
         "base_stats": {
-          "speed": 34,
-          "weight": 43,
-          "power": 37,
-          "stability": 40,
-          "smoothness": 39
+          "mass": 43,
+          "friction": 37,
+          "bounce": 38
         }
       },
       {
@@ -8402,11 +7666,9 @@
           }
         ],
         "base_stats": {
-          "speed": 27,
-          "weight": 43,
-          "power": 38,
-          "stability": 48,
-          "smoothness": 35
+          "mass": 43,
+          "friction": 37,
+          "bounce": 36
         }
       },
       {
@@ -8424,11 +7686,9 @@
           }
         ],
         "base_stats": {
-          "speed": 34,
-          "weight": 43,
-          "power": 39,
-          "stability": 48,
-          "smoothness": 42
+          "mass": 43,
+          "friction": 41,
+          "bounce": 40
         }
       },
       {
@@ -8446,11 +7706,9 @@
           }
         ],
         "base_stats": {
-          "speed": 27,
-          "weight": 43,
-          "power": 38,
-          "stability": 46,
-          "smoothness": 36
+          "mass": 43,
+          "friction": 36,
+          "bounce": 37
         }
       },
       {
@@ -8468,11 +7726,9 @@
           }
         ],
         "base_stats": {
-          "speed": 27,
-          "weight": 43,
-          "power": 36,
-          "stability": 42,
-          "smoothness": 33
+          "mass": 43,
+          "friction": 34,
+          "bounce": 34
         }
       },
       {
@@ -8490,11 +7746,9 @@
           }
         ],
         "base_stats": {
-          "speed": 40,
-          "weight": 71,
-          "power": 63,
-          "stability": 100,
-          "smoothness": 76
+          "mass": 71,
+          "friction": 70,
+          "bounce": 69
         }
       }
     ]
@@ -8519,11 +7773,9 @@
           }
         ],
         "base_stats": {
-          "speed": 10,
-          "weight": 25,
-          "power": 13,
-          "stability": 10,
-          "smoothness": 10
+          "mass": 25,
+          "friction": 10,
+          "bounce": 11
         }
       },
       {
@@ -8541,11 +7793,9 @@
           }
         ],
         "base_stats": {
-          "speed": 10,
-          "weight": 25,
-          "power": 13,
-          "stability": 10,
-          "smoothness": 10
+          "mass": 25,
+          "friction": 10,
+          "bounce": 11
         }
       }
     ]
@@ -8570,11 +7820,9 @@
           }
         ],
         "base_stats": {
-          "speed": 26,
-          "weight": 43,
-          "power": 34,
-          "stability": 38,
-          "smoothness": 31
+          "mass": 43,
+          "friction": 32,
+          "bounce": 32
         }
       },
       {
@@ -8592,11 +7840,9 @@
           }
         ],
         "base_stats": {
-          "speed": 27,
-          "weight": 43,
-          "power": 33,
-          "stability": 41,
-          "smoothness": 35
+          "mass": 43,
+          "friction": 34,
+          "bounce": 34
         }
       },
       {
@@ -8614,11 +7860,9 @@
           }
         ],
         "base_stats": {
-          "speed": 29,
-          "weight": 43,
-          "power": 37,
-          "stability": 36,
-          "smoothness": 33
+          "mass": 43,
+          "friction": 32,
+          "bounce": 35
         }
       },
       {
@@ -8636,11 +7880,9 @@
           }
         ],
         "base_stats": {
-          "speed": 20,
-          "weight": 43,
-          "power": 36,
-          "stability": 65,
-          "smoothness": 46
+          "mass": 43,
+          "friction": 42,
+          "bounce": 41
         }
       },
       {
@@ -8658,11 +7900,9 @@
           }
         ],
         "base_stats": {
-          "speed": 12,
-          "weight": 25,
-          "power": 17,
-          "stability": 18,
-          "smoothness": 16
+          "mass": 25,
+          "friction": 15,
+          "bounce": 16
         }
       },
       {
@@ -8680,11 +7920,9 @@
           }
         ],
         "base_stats": {
-          "speed": 25,
-          "weight": 43,
-          "power": 34,
-          "stability": 43,
-          "smoothness": 31
+          "mass": 43,
+          "friction": 34,
+          "bounce": 32
         }
       }
     ]
@@ -8709,11 +7947,9 @@
           }
         ],
         "base_stats": {
-          "speed": 11,
-          "weight": 25,
-          "power": 14,
-          "stability": 10,
-          "smoothness": 11
+          "mass": 25,
+          "friction": 10,
+          "bounce": 12
         }
       },
       {
@@ -8731,11 +7967,9 @@
           }
         ],
         "base_stats": {
-          "speed": 11,
-          "weight": 25,
-          "power": 14,
-          "stability": 10,
-          "smoothness": 11
+          "mass": 25,
+          "friction": 10,
+          "bounce": 12
         }
       },
       {
@@ -8753,11 +7987,9 @@
           }
         ],
         "base_stats": {
-          "speed": 11,
-          "weight": 25,
-          "power": 14,
-          "stability": 10,
-          "smoothness": 11
+          "mass": 25,
+          "friction": 10,
+          "bounce": 12
         }
       }
     ]
@@ -8782,11 +8014,9 @@
           }
         ],
         "base_stats": {
-          "speed": 20,
-          "weight": 43,
-          "power": 29,
-          "stability": 65,
-          "smoothness": 40
+          "mass": 43,
+          "friction": 42,
+          "bounce": 34
         }
       }
     ]
@@ -8811,11 +8041,9 @@
           }
         ],
         "base_stats": {
-          "speed": 11,
-          "weight": 25,
-          "power": 14,
-          "stability": 10,
-          "smoothness": 11
+          "mass": 25,
+          "friction": 10,
+          "bounce": 12
         }
       }
     ]
@@ -8840,11 +8068,9 @@
           }
         ],
         "base_stats": {
-          "speed": 10,
-          "weight": 25,
-          "power": 13,
-          "stability": 10,
-          "smoothness": 10
+          "mass": 25,
+          "friction": 10,
+          "bounce": 11
         }
       }
     ]
@@ -8869,11 +8095,9 @@
           }
         ],
         "base_stats": {
-          "speed": 34,
-          "weight": 28,
-          "power": 23,
-          "stability": 39,
-          "smoothness": 51
+          "mass": 28,
+          "friction": 36,
+          "bounce": 37
         }
       },
       {
@@ -8891,11 +8115,9 @@
           }
         ],
         "base_stats": {
-          "speed": 57,
-          "weight": 52,
-          "power": 54,
-          "stability": 44,
-          "smoothness": 69
+          "mass": 52,
+          "friction": 50,
+          "bounce": 61
         }
       },
       {
@@ -8913,11 +8135,9 @@
           }
         ],
         "base_stats": {
-          "speed": 10,
-          "weight": 25,
-          "power": 13,
-          "stability": 10,
-          "smoothness": 10
+          "mass": 25,
+          "friction": 10,
+          "bounce": 11
         }
       },
       {
@@ -8935,11 +8155,9 @@
           }
         ],
         "base_stats": {
-          "speed": 30,
-          "weight": 28,
-          "power": 22,
-          "stability": 48,
-          "smoothness": 57
+          "mass": 28,
+          "friction": 39,
+          "bounce": 39
         }
       },
       {
@@ -8957,11 +8175,9 @@
           }
         ],
         "base_stats": {
-          "speed": 32,
-          "weight": 28,
-          "power": 24,
-          "stability": 39,
-          "smoothness": 47
+          "mass": 28,
+          "friction": 35,
+          "bounce": 35
         }
       },
       {
@@ -8979,11 +8195,9 @@
           }
         ],
         "base_stats": {
-          "speed": 32,
-          "weight": 28,
-          "power": 25,
-          "stability": 38,
-          "smoothness": 46
+          "mass": 28,
+          "friction": 35,
+          "bounce": 35
         }
       },
       {
@@ -9001,11 +8215,9 @@
           }
         ],
         "base_stats": {
-          "speed": 29,
-          "weight": 28,
-          "power": 22,
-          "stability": 38,
-          "smoothness": 43
+          "mass": 28,
+          "friction": 33,
+          "bounce": 32
         }
       },
       {
@@ -9023,11 +8235,9 @@
           }
         ],
         "base_stats": {
-          "speed": 12,
-          "weight": 15,
-          "power": 10,
-          "stability": 10,
-          "smoothness": 18
+          "mass": 15,
+          "friction": 11,
+          "bounce": 14
         }
       }
     ]
@@ -9052,11 +8262,9 @@
           }
         ],
         "base_stats": {
-          "speed": 40,
-          "weight": 71,
-          "power": 63,
-          "stability": 100,
-          "smoothness": 76
+          "mass": 71,
+          "friction": 70,
+          "bounce": 69
         }
       },
       {
@@ -9074,11 +8282,9 @@
           }
         ],
         "base_stats": {
-          "speed": 72,
-          "weight": 71,
-          "power": 69,
-          "stability": 82,
-          "smoothness": 80
+          "mass": 71,
+          "friction": 77,
+          "bounce": 74
         }
       },
       {
@@ -9096,11 +8302,9 @@
           }
         ],
         "base_stats": {
-          "speed": 10,
-          "weight": 25,
-          "power": 13,
-          "stability": 10,
-          "smoothness": 10
+          "mass": 25,
+          "friction": 10,
+          "bounce": 11
         }
       },
       {
@@ -9118,11 +8322,9 @@
           }
         ],
         "base_stats": {
-          "speed": 80,
-          "weight": 71,
-          "power": 69,
-          "stability": 82,
-          "smoothness": 83
+          "mass": 71,
+          "friction": 81,
+          "bounce": 76
         }
       },
       {
@@ -9140,11 +8342,9 @@
           }
         ],
         "base_stats": {
-          "speed": 71,
-          "weight": 71,
-          "power": 73,
-          "stability": 80,
-          "smoothness": 74
+          "mass": 71,
+          "friction": 75,
+          "bounce": 73
         }
       },
       {
@@ -9162,11 +8362,9 @@
           }
         ],
         "base_stats": {
-          "speed": 38,
-          "weight": 43,
-          "power": 42,
-          "stability": 50,
-          "smoothness": 42
+          "mass": 43,
+          "friction": 44,
+          "bounce": 42
         }
       },
       {
@@ -9184,11 +8382,9 @@
           }
         ],
         "base_stats": {
-          "speed": 37,
-          "weight": 43,
-          "power": 39,
-          "stability": 46,
-          "smoothness": 39
+          "mass": 43,
+          "friction": 41,
+          "bounce": 39
         }
       }
     ]
@@ -9213,11 +8409,9 @@
           }
         ],
         "base_stats": {
-          "speed": 10,
-          "weight": 25,
-          "power": 15,
-          "stability": 31,
-          "smoothness": 17
+          "mass": 25,
+          "friction": 20,
+          "bounce": 16
         }
       },
       {
@@ -9235,11 +8429,9 @@
           }
         ],
         "base_stats": {
-          "speed": 13,
-          "weight": 25,
-          "power": 17,
-          "stability": 18,
-          "smoothness": 17
+          "mass": 25,
+          "friction": 15,
+          "bounce": 17
         }
       },
       {
@@ -9257,11 +8449,9 @@
           }
         ],
         "base_stats": {
-          "speed": 26,
-          "weight": 43,
-          "power": 36,
-          "stability": 47,
-          "smoothness": 33
+          "mass": 43,
+          "friction": 36,
+          "bounce": 34
         }
       },
       {
@@ -9279,11 +8469,9 @@
           }
         ],
         "base_stats": {
-          "speed": 27,
-          "weight": 43,
-          "power": 37,
-          "stability": 45,
-          "smoothness": 34
+          "mass": 43,
+          "friction": 36,
+          "bounce": 35
         }
       },
       {
@@ -9301,11 +8489,9 @@
           }
         ],
         "base_stats": {
-          "speed": 10,
-          "weight": 25,
-          "power": 13,
-          "stability": 10,
-          "smoothness": 10
+          "mass": 25,
+          "friction": 10,
+          "bounce": 11
         }
       },
       {
@@ -9323,11 +8509,9 @@
           }
         ],
         "base_stats": {
-          "speed": 40,
-          "weight": 72,
-          "power": 65,
-          "stability": 100,
-          "smoothness": 77
+          "mass": 72,
+          "friction": 70,
+          "bounce": 71
         }
       },
       {
@@ -9345,11 +8529,9 @@
           }
         ],
         "base_stats": {
-          "speed": 26,
-          "weight": 43,
-          "power": 36,
-          "stability": 47,
-          "smoothness": 34
+          "mass": 43,
+          "friction": 36,
+          "bounce": 35
         }
       },
       {
@@ -9367,11 +8549,9 @@
           }
         ],
         "base_stats": {
-          "speed": 28,
-          "weight": 43,
-          "power": 39,
-          "stability": 47,
-          "smoothness": 36
+          "mass": 43,
+          "friction": 37,
+          "bounce": 37
         }
       }
     ]
@@ -9396,11 +8576,9 @@
           }
         ],
         "base_stats": {
-          "speed": 11,
-          "weight": 25,
-          "power": 15,
-          "stability": 11,
-          "smoothness": 11
+          "mass": 25,
+          "friction": 11,
+          "bounce": 13
         }
       },
       {
@@ -9418,11 +8596,9 @@
           }
         ],
         "base_stats": {
-          "speed": 11,
-          "weight": 25,
-          "power": 15,
-          "stability": 11,
-          "smoothness": 11
+          "mass": 25,
+          "friction": 11,
+          "bounce": 13
         }
       },
       {
@@ -9440,11 +8616,9 @@
           }
         ],
         "base_stats": {
-          "speed": 11,
-          "weight": 25,
-          "power": 15,
-          "stability": 11,
-          "smoothness": 11
+          "mass": 25,
+          "friction": 11,
+          "bounce": 13
         }
       },
       {
@@ -9462,11 +8636,9 @@
           }
         ],
         "base_stats": {
-          "speed": 11,
-          "weight": 25,
-          "power": 15,
-          "stability": 11,
-          "smoothness": 11
+          "mass": 25,
+          "friction": 11,
+          "bounce": 13
         }
       }
     ]
@@ -9491,11 +8663,9 @@
           }
         ],
         "base_stats": {
-          "speed": 10,
-          "weight": 25,
-          "power": 13,
-          "stability": 10,
-          "smoothness": 10
+          "mass": 25,
+          "friction": 10,
+          "bounce": 11
         }
       }
     ]
