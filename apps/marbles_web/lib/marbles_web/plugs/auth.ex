@@ -8,7 +8,7 @@ defmodule MarblesWeb.Plugs.Auth do
 
   def call(conn, _opts) do
     user_id = get_session(conn, :user_id)
-    user = if user_id, do: Accounts.get_user!(user_id), else: nil
+    user = if user_id, do: Accounts.get_user(user_id), else: nil
     assign(conn, :current_user, user)
   end
 
