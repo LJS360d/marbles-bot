@@ -85,6 +85,56 @@ custom classes must fully style the input
 - Elixir's builtin OTP primitives like `DynamicSupervisor` and `Registry`, require names in the child spec, such as `{DynamicSupervisor, name: MyApp.MyDynamicSup}`, then you can use `DynamicSupervisor.start_child(MyApp.MyDynamicSup, child_spec)`
 - Use `Task.async_stream(collection, callback, options)` for concurrent enumeration with back-pressure. The majority of times you will want to pass `timeout: :infinity` as option
 
+## Code Quality Enforcement
+
+### Mandatory @spec Declarations
+
+- **NO public function shall be committed without a `@spec`**. This is non-negotiable. Dialyzer is the gatekeeper; you will not bypass it.
+- Every public function requires a type specification, including:
+  - Parameter types with precise constraints
+  - Return types—no exceptions for "simple" functions
+  - Typedoc (`@spec` with documentation) for all functions in domain contexts
+- Run `mix dialyzer` before committing. Zero warnings. Zero excuses.
+
+### StronglyTyped Patterns
+
+- **Leverage custom types to eliminate ambiguity**. Define domain-specific types for recurring data structures:
+  ```elixir
+  @type marble_id :: non_neg_integer()
+  @type pack_id :: non_neg_integer()
+  @type result(::ok, marble()) | {:error, reason()}
+  ```
+- Prefer opaque types to encapsulate internal representation.
+- Reject `any()` or untyped maps at boundaries. If you must accept dynamic data, validate and coerce at the edge—then transform into a typed structure.
+
+### Function Headers: Precision or Nothing
+
+- **Vague headers are forbidden**. A docstring like "Process something" or "Handle data" is unacceptable.
+- Function documentation must answer: *What does it do? What does it return? When does it fail?*
+- Example of acceptable:
+  ```elixir
+  @doc """
+  Retrieves a pack by ID.
+  Returns {:ok, pack} if found, {:error, :not_found} otherwise.
+  """
+  @spec get_pack(pack_id()) :: {:ok, pack()} | {:error__not_found}
+  def get_pack(id), do: ...
+  ```
+- Example of unacceptable:
+  ```elixir
+  # Gets a pack
+  def get_pack(id), do: ...
+  ```
+
+### Comments: Earn Them
+
+- **Code should be self-documenting**. If you reach for a comment to explain *what* the code does, rewrite the code.
+- Comments are permitted only for:
+  - Explaining *why* a non-obvious approach was taken
+  - Noting technical debt with a `TODO:` or `FIXME:` and a tracking ticket
+  - External API quirks that cannot be encoded in types
+- Never comment out code. Delete it. Version control remembers; dead code does not.
+
 ## Mix guidelines
 
 - Read the docs and options before using tasks (by using `mix help task_name`)
