@@ -3,7 +3,8 @@ defmodule MarblesDiscordbot.Consumers.Reaction do
   alias Nostrum.Struct.Embed
   alias Nostrum.Struct.Event.MessageReactionAdd
   alias Nostrum.Api
-  alias Marbles.{Accounts, Collection, Catalog}
+  alias Marbles.{Accounts, Catalog, Guilds, SpawnCatch}
+  alias Marbles.Economy.Currency
   alias MarblesDiscordbot.{PendingSpawns, Embeds}
   require Logger
 
@@ -22,26 +23,59 @@ defmodule MarblesDiscordbot.Consumers.Reaction do
           username: username
         })
 
-      Collection.add_marble_to_collection(user_record.id, marble.id)
+      channel = Guilds.get_channel(pending.channel_id)
+      spawn_rate = if channel, do: channel.spawn_rate * 1.0, else: 0.0
 
-      embed =
-        Embeds.marble_embed(marble)
-        |> Embed.put_title("You got a #{marble.name}!")
-        |> Embed.put_description("it's been added to your `/collection`")
-        |> Embed.put_footer("Collected by #{event.member.nick}", "")
-
-      case Api.Message.edit(event.channel_id, event.message_id, %{
-             content: "<@#{user_id}>",
-             embeds: [embed]
-           }) do
-        {:ok, _} ->
+      case SpawnCatch.collect(to_string(event.message_id), user_record.id, marble, spawn_rate) do
+        {:error, :already_claimed} ->
           :ok
 
-        err ->
-          Logger.error("Failed to edit message: #{inspect(err)}")
-      end
+        {:ok, %{coins: coins, template: tpl}} ->
+          collection_line =
+            case tpl do
+              {:new, _} ->
+                "Added to your `/collection`."
 
-      PendingSpawns.delete_by_message(to_string(event.message_id))
+              {:duplicate, d, _} ->
+                "Already owned — **+#{d}** #{Currency.dust_emoji()} dust."
+            end
+
+          coin_line =
+            if coins > 0 do
+              "**+#{coins}** #{Currency.coin_emoji()} catch bonus.\n"
+            else
+              ""
+            end
+
+          description = coin_line <> collection_line
+
+          collected_by =
+            cond do
+              match?(%{nick: _}, event.member) and is_binary(event.member.nick) and
+                  event.member.nick != "" ->
+                event.member.nick
+
+              true ->
+                username
+            end
+
+          embed =
+            Embeds.marble_embed(marble)
+            |> Embed.put_title("You got a #{marble.name}!")
+            |> Embed.put_description(description)
+            |> Embed.put_footer("Collected by #{collected_by}", "")
+
+          case Api.Message.edit(event.channel_id, event.message_id, %{
+                 content: "<@#{user_id}>",
+                 embeds: [embed]
+               }) do
+            {:ok, _} ->
+              PendingSpawns.delete_by_message(to_string(event.message_id))
+
+            err ->
+              Logger.error("Failed to edit message: #{inspect(err)}")
+          end
+      end
     end
 
     :ok

@@ -4,7 +4,8 @@ defmodule MarblesDiscordbot.Consumers.Interaction do
   alias Nostrum.Struct.Embed
   alias Nostrum.Struct.Interaction
   alias Nostrum.Api
-  alias Marbles.{Catalog, Guilds, Analytics, Accounts, Collection, Daily}
+  alias Marbles.{Catalog, Guilds, Analytics, Accounts, Collection, Daily, Leaderboards}
+  alias Marbles.Economy.{Currency, MineRoster, Upgrades, Shop, Effects}
   alias MarblesDiscordbot.{Embeds, Components, PullSession}
   require Logger
 
@@ -24,7 +25,12 @@ defmodule MarblesDiscordbot.Consumers.Interaction do
 
     Logger.info("From user '#{user.username}' in #{location}: /#{i.data.name}")
 
-    response = handle_command(i.data.name, i)
+    response =
+      if i.type == 4 do
+        handle_autocomplete(i.data.name, i)
+      else
+        handle_command(i.data.name, i)
+      end
 
     if response do
       case Api.create_interaction_response(i, response) do
@@ -37,6 +43,16 @@ defmodule MarblesDiscordbot.Consumers.Interaction do
     end
   end
 
+  defp first_subcommand(%{data: %{options: opts}}) when is_list(opts) do
+    case List.first(opts) do
+      %{name: n, options: o} -> {n, o || []}
+      %{name: n} -> {n, []}
+      _ -> {nil, []}
+    end
+  end
+
+  defp first_subcommand(_), do: {nil, []}
+
   defp get_option(options, name) do
     case options do
       nil ->
@@ -46,6 +62,167 @@ defmodule MarblesDiscordbot.Consumers.Interaction do
         opts
         |> Enum.find(fn o -> o.name == name or (is_map(o) and Map.get(o, :name) == name) end)
         |> then(fn o -> o && o.value end)
+    end
+  end
+
+  defp focused_option(options) when is_list(options) do
+    Enum.find_value(options, fn opt ->
+      cond do
+        Map.get(opt, :focused) == true -> opt
+        is_list(Map.get(opt, :options)) -> focused_option(opt.options)
+        true -> nil
+      end
+    end)
+  end
+
+  defp focused_option(_), do: nil
+
+  defp resolve_target(i, option_name) do
+    invoker = i.user || i.member.user
+    target_id = get_option(i.data.options, option_name)
+    explicit_target? = not is_nil(target_id)
+
+    sid =
+      case target_id do
+        nil -> to_string(invoker.id)
+        id when is_integer(id) -> to_string(id)
+        id when is_binary(id) -> id
+        _ -> to_string(invoker.id)
+      end
+
+    invoker_sid = to_string(invoker.id)
+    self_target? = sid == invoker_sid
+
+    target_discord =
+      cond do
+        self_target? ->
+          invoker
+
+        true ->
+          case Integer.parse(sid) do
+            {uid, ""} ->
+              case Nostrum.Cache.UserCache.get(uid) do
+                {:ok, u} ->
+                  u
+
+                _ ->
+                  case Nostrum.Api.User.get(uid) do
+                    {:ok, u} -> u
+                    _ -> nil
+                  end
+              end
+
+            _ ->
+              nil
+          end
+      end
+
+    target_user = Accounts.get_user_by_platform(sid, "discord")
+    target_identity = Accounts.get_identity_by_platform(sid, "discord")
+
+    %{
+      discord_id: sid,
+      discord_user: target_discord,
+      internal_user: target_user,
+      identity_username: target_identity && target_identity.username,
+      invoker_discord_user: invoker,
+      explicit_target?: explicit_target?
+    }
+  end
+
+  defp user_name(%{discord_user: %{username: u}}) when is_binary(u), do: u
+
+  defp user_name(%{internal_user: u}) when not is_nil(u) do
+    case u.display_name do
+      n when is_binary(n) and n != "" -> n
+      _ -> "User"
+    end
+  end
+
+  defp user_name(%{identity_username: u}) when is_binary(u) and u != "", do: u
+  defp user_name(_), do: "User"
+
+  defp display_name(tgt = %{discord_user: du}, internal_user) do
+    identity_name =
+      if internal_user do
+        Accounts.identity_username(internal_user, "discord")
+      else
+        nil
+      end
+
+    cond do
+      not is_nil(internal_user) and is_binary(internal_user.display_name) and
+          String.trim(internal_user.display_name) != "" ->
+        internal_user.display_name
+
+      is_binary(identity_name) and String.trim(identity_name) != "" ->
+        identity_name
+
+      not is_nil(du) and is_binary(du.global_name) and du.global_name != "" ->
+        du.global_name
+
+      not is_nil(du) and is_binary(du.username) and du.username != "" ->
+        du.username
+
+      is_binary(Map.get(tgt, :identity_username)) and Map.get(tgt, :identity_username) != "" ->
+        Map.get(tgt, :identity_username)
+
+      true ->
+        user_name(tgt)
+    end
+  end
+
+  defp maybe_put_thumbnail(embed, nil), do: embed
+  defp maybe_put_thumbnail(embed, ""), do: embed
+  defp maybe_put_thumbnail(embed, url), do: Embed.put_thumbnail(embed, url)
+
+  defp format_duration(sec) when is_integer(sec) and sec > 0 do
+    if rem(sec, 3600) == 0 do
+      "#{div(sec, 3600)}h"
+    else
+      "#{div(sec, 60)}m"
+    end
+  end
+
+  defp format_duration(_), do: "0m"
+
+  defp handle_autocomplete("mines", i) do
+    user = i.user || i.member.user
+
+    {:ok, ur} =
+      Accounts.ensure_user(%{
+        platform_id: to_string(user.id),
+        platform: "discord",
+        username: user.username
+      })
+
+    {sub, _opts} = first_subcommand(i)
+    focused = focused_option(i.data.options || [])
+    query = if focused, do: to_string(focused.value || ""), else: ""
+
+    names =
+      case sub do
+        "add" -> MineRoster.autocomplete_owned(ur.id, query)
+        "remove" -> MineRoster.autocomplete_roster(ur.id, query)
+        _ -> []
+      end
+
+    choices = Enum.map(names, fn n -> %{name: String.slice(n, 0, 100), value: n} end)
+    %{type: 8, data: %{choices: choices}}
+  end
+
+  defp handle_autocomplete(_, _), do: nil
+
+  defp price_line(%{coin: c, dust: d}) do
+    cond do
+      c > 0 and d > 0 ->
+        "**#{c}** #{Currency.coin_emoji()} + **#{d}** #{Currency.dust_emoji()}"
+
+      c > 0 ->
+        "**#{c}** #{Currency.coin_emoji()}"
+
+      true ->
+        "**#{d}** #{Currency.dust_emoji()}"
     end
   end
 
@@ -165,31 +342,53 @@ defmodule MarblesDiscordbot.Consumers.Interaction do
         fields: fields
       }
       |> Embed.put_title("Analytics")
-      |> Embed.put_description("Bot statistics")
       |> Embed.put_footer("bot v#{bot_version} | core v#{core_version}")
 
     %{type: 4, data: %{embeds: [embed]}}
   end
 
   def handle_command("collection", i) do
-    user = i.user || i.member.user
+    tgt = resolve_target(i, "user")
 
-    {:ok, user_record} =
-      Accounts.ensure_user(%{
-        platform_id: to_string(user.id),
-        platform: "discord",
-        username: user.username
-      })
+    cond do
+      is_nil(tgt.internal_user) and get_option(i.data.options, "user") != nil ->
+        %{type: 4, data: %{content: "That user has no profile in this system yet."}}
 
-    {items, total} =
-      Collection.list_user_inventory(user_record.id, page: 1, sort: :rarity_level_name)
+      true ->
+        user = i.user || i.member.user
 
-    if total == 0 do
-      %{type: 4, data: %{content: "Your collection is empty. Pull marbles or catch spawns!"}}
-    else
-      embed = Embeds.collection_embed(items, 1, total, :rarity_level_name, user)
-      components = Components.collection_components(1, total, :rarity_level_name)
-      %{type: 4, data: %{embeds: [embed], components: components}}
+        user_record =
+          if tgt.internal_user do
+            tgt.internal_user
+          else
+            {:ok, me} =
+              Accounts.ensure_user(%{
+                platform_id: to_string(user.id),
+                platform: "discord",
+                username: user.username
+              })
+
+            me
+          end
+
+        {items, total} =
+          Collection.list_user_inventory(user_record.id, page: 1, sort: :rarity_level_name)
+
+        targeting_other? = get_option(i.data.options, "user") != nil
+
+        if total == 0 do
+          %{type: 4, data: %{content: "#{user_name(tgt)}'s collection is empty."}}
+        else
+          embed =
+            Embeds.collection_embed(items, 1, total, :rarity_level_name, tgt.discord_user || user)
+
+          if targeting_other? do
+            %{type: 4, data: %{embeds: [embed]}}
+          else
+            components = Components.collection_components(1, total, :rarity_level_name)
+            %{type: 4, data: %{embeds: [embed], components: components}}
+          end
+        end
     end
   end
 
@@ -204,21 +403,480 @@ defmodule MarblesDiscordbot.Consumers.Interaction do
       })
 
     case Daily.claim_daily(user_record.id) do
-      {:ok, %{coins: coins, streak: streak, items: items}} ->
+      {:ok, m} ->
         items_text =
-          if Enum.empty?(items) do
+          if Enum.empty?(m.items) do
             ""
           else
-            "You also received: " <> Enum.map_join(items, ", ", & &1.name)
+            " You also received: " <> Enum.map_join(m.items, ", ", & &1.name)
+          end
+
+        hours =
+          if m.mining_seconds > 0,
+            do: Float.round(m.mining_seconds / 3600.0, 2) |> to_string(),
+            else: "0"
+
+        cap_h = Float.round(m.mining_cap_seconds / 3600.0, 1) |> to_string()
+
+        mining_line =
+          cond do
+            m.mining_roster_size == 0 ->
+              "Mining: **#{m.mining_coins}** #{Currency.coin_emoji()} (no roster — use `/mines add`)."
+
+            m.mining_coins > 0 ->
+              "Mining: **#{m.mining_coins}** #{Currency.coin_emoji()} (~#{hours}h toward **#{cap_h}h** cap)."
+
+            true ->
+              "Mining: **0** #{Currency.coin_emoji()} (roster set; accrual window was empty or capped)."
           end
 
         content =
-          "You claimed your daily reward! You received **#{coins}** coins. Your current streak is **#{streak}**. #{items_text}"
+          "You claimed your daily reward!\n" <>
+            "Streak bonus: **#{m.streak_coins}** #{Currency.coin_emoji()} · Streak **#{m.streak}** days.\n" <>
+            mining_line <>
+            "\n**Total today: #{m.coins}** #{Currency.coin_emoji()}" <>
+            items_text
 
         %{type: 4, data: %{content: content}}
 
       {:error, reason} ->
         %{type: 4, data: %{content: "Could not claim daily reward: #{reason}"}}
+    end
+  end
+
+  def handle_command("balance", i) do
+    user = i.user || i.member.user
+
+    {:ok, ur} =
+      Accounts.ensure_user(%{
+        platform_id: to_string(user.id),
+        platform: "discord",
+        username: user.username
+      })
+
+    dust = ur.dust || 0
+
+    roster_lines =
+      case MineRoster.view(ur.id) do
+        {:ok, names} ->
+          if names == [] do
+            "_Empty — add marbles with `/mines add`._"
+          else
+            names |> Enum.with_index(1) |> Enum.map_join("\n", fn {n, idx} -> "#{idx}. #{n}" end)
+          end
+
+        _ ->
+          "_Unknown_"
+      end
+
+    content =
+      "**Wallet**\n#{Embeds.currency_line(ur.currency)} · **#{dust}** #{Currency.dust_emoji()}\n\n" <>
+        "**Mine roster** (max 5)\n#{roster_lines}"
+
+    %{type: 4, data: %{content: content}}
+  end
+
+  def handle_command("profile", i) do
+    tgt = resolve_target(i, "user")
+
+    cond do
+      is_nil(tgt.internal_user) and get_option(i.data.options, "user") != nil ->
+        %{type: 4, data: %{content: "That user does not have a profile."}}
+
+      true ->
+        user = i.user || i.member.user
+
+        internal =
+          if tgt.internal_user do
+            tgt.internal_user
+          else
+            {:ok, me} =
+              Accounts.ensure_user(%{
+                platform_id: to_string(user.id),
+                platform: "discord",
+                username: user.username
+              })
+
+            me
+          end
+
+        {_items, total_collection} =
+          Collection.list_user_inventory(internal.id, page: 1, per_page: 1)
+
+        {:ok, roster_names} = MineRoster.view(internal.id)
+        active_effects = Effects.list_active(internal.id)
+
+        streak =
+          case Marbles.Repo.get_by(Marbles.Schema.UserDailyStreak, user_id: internal.id) do
+            nil -> %{current_streak: 0, longest_streak: 0}
+            row -> row
+          end
+
+        effects_text =
+          if active_effects == [] do
+            "None"
+          else
+            Enum.map_join(active_effects, "\n", fn e ->
+              "• #{e.effect_key} (until #{Calendar.strftime(e.expires_at, "%Y-%m-%d %H:%M UTC")})"
+            end)
+          end
+
+        roster_text =
+          if roster_names == [] do
+            "Empty"
+          else
+            Enum.join(roster_names, ", ")
+          end
+
+        title = display_name(tgt, internal)
+        thumbnail_user = tgt.discord_user || tgt.invoker_discord_user
+        thumbnail_url = thumbnail_user && Nostrum.Struct.User.avatar_url(thumbnail_user)
+
+        embed =
+          %Embed{}
+          |> Embed.put_title(title)
+          |> Embed.put_description(
+            "Coins: **#{internal.currency}** #{Currency.coin_emoji()}\n" <>
+              "Dust: **#{internal.dust}** #{Currency.dust_emoji()}\n" <>
+              "Owned marbles: **#{total_collection}**\n" <>
+              "Streak: **#{streak.current_streak}** (longest #{streak.longest_streak})\n" <>
+              "Mine roster: #{roster_text}\n\n" <>
+              "Active boosts/effects:\n#{effects_text}"
+          )
+          |> maybe_put_thumbnail(thumbnail_url)
+
+        %{type: 4, data: %{embeds: [embed]}}
+    end
+  end
+
+  def handle_command("boosts", i) do
+    tgt = resolve_target(i, "user")
+
+    if is_nil(tgt.internal_user) and get_option(i.data.options, "user") != nil do
+      %{type: 4, data: %{content: "That user is not in the system yet."}}
+    else
+      user = i.user || i.member.user
+
+      internal =
+        if tgt.internal_user do
+          tgt.internal_user
+        else
+          {:ok, me} =
+            Accounts.ensure_user(%{
+              platform_id: to_string(user.id),
+              platform: "discord",
+              username: user.username
+            })
+
+          me
+        end
+
+      active_effects = Effects.list_active(internal.id)
+
+      text =
+        if active_effects == [] do
+          "No active boosts."
+        else
+          Enum.map_join(active_effects, "\n", fn e ->
+            "• **#{e.effect_key}** · expires #{Calendar.strftime(e.expires_at, "%Y-%m-%d %H:%M UTC")}"
+          end)
+        end
+
+      %{type: 4, data: %{content: "**#{user_name(tgt)} active boosts**\n#{text}", flags: 64}}
+    end
+  end
+
+  def handle_command("leaderboard", i) do
+    kind = get_option(i.data.options, "kind") || "coins"
+
+    rows =
+      case kind do
+        "collection" -> Leaderboards.top_collection_count(10)
+        "strongest" -> Leaderboards.top_strongest_marble(10)
+        _ -> Leaderboards.top_coins(10)
+      end
+
+    title =
+      case kind do
+        "collection" -> "Top collections"
+        "strongest" -> "Strongest marble (level score)"
+        _ -> "Richest players"
+      end
+
+    body =
+      if rows == [] do
+        "No entries yet."
+      else
+        Enum.map_join(rows, "\n", fn r ->
+          "#{r.rank}. **#{r.label}** — #{r.score}"
+        end)
+      end
+
+    embed =
+      %Embed{}
+      |> Embed.put_title(title)
+      |> Embed.put_description(body)
+
+    %{type: 4, data: %{embeds: [embed]}}
+  end
+
+  def handle_command("mines", i) do
+    user = i.user || i.member.user
+
+    {:ok, ur} =
+      Accounts.ensure_user(%{
+        platform_id: to_string(user.id),
+        platform: "discord",
+        username: user.username
+      })
+
+    {sub, opts} = first_subcommand(i)
+
+    case sub do
+      "view" ->
+        case MineRoster.view(ur.id) do
+          {:ok, names} ->
+            lines =
+              if names == [] do
+                "Roster is empty. Add up to 5 marbles with `/mines add`."
+              else
+                names
+                |> Enum.with_index(1)
+                |> Enum.map_join("\n", fn {n, idx} -> "#{idx}. #{n}" end)
+              end
+
+            %{type: 4, data: %{content: "**Mine roster**\n#{lines}", flags: 64}}
+
+          _ ->
+            %{type: 4, data: %{content: "Could not load roster.", flags: 64}}
+        end
+
+      "add" ->
+        marble = get_option(opts, "marble") || ""
+
+        case MineRoster.add_by_marble_name(ur.id, marble) do
+          {:ok, %{slots: n}} ->
+            %{
+              type: 4,
+              data: %{content: "**#{marble}** Added to roster (**#{n}/5**).", flags: 64}
+            }
+
+          {:error, :roster_full} ->
+            %{
+              type: 4,
+              data: %{content: "Roster is full (5). Remove one with `/mines remove`.", flags: 64}
+            }
+
+          {:error, :already_in_roster} ->
+            %{type: 4, data: %{content: "**#{marble}** is already in your roster.", flags: 64}}
+
+          {:error, :not_found} ->
+            %{
+              type: 4,
+              data: %{content: "No owned marble matched the name **#{marble}**.", flags: 64}
+            }
+
+          {:error, :invalid_name} ->
+            %{type: 4, data: %{content: "Provide a marble name.", flags: 64}}
+        end
+
+      "remove" ->
+        marble = get_option(opts, "marble") || ""
+
+        case MineRoster.remove_by_marble_name(ur.id, marble) do
+          {:ok, %{slots: n}} ->
+            %{
+              type: 4,
+              data: %{content: "**#{marble}** removed from roster (**#{n}/5**).", flags: 64}
+            }
+
+          {:error, :not_found} ->
+            %{
+              type: 4,
+              data: %{content: "No roster entry matched the name **#{marble}**.", flags: 64}
+            }
+
+          {:error, :invalid_name} ->
+            %{type: 4, data: %{content: "Provide a marble name.", flags: 64}}
+        end
+
+      "clear" ->
+        {:ok, _} = MineRoster.clear(ur.id)
+        %{type: 4, data: %{content: "Mine roster cleared.", flags: 64}}
+
+      _ ->
+        %{
+          type: 4,
+          data: %{
+            content: "Use `/mines view`, `/mines add`, `/mines remove`, or `/mines clear`.",
+            flags: 64
+          }
+        }
+    end
+  end
+
+  def handle_command("upgrades", i) do
+    user = i.user || i.member.user
+
+    {:ok, ur} =
+      Accounts.ensure_user(%{
+        platform_id: to_string(user.id),
+        platform: "discord",
+        username: user.username
+      })
+
+    {sub, opts} = first_subcommand(i)
+
+    case sub do
+      "view" ->
+        lines =
+          Upgrades.definitions()
+          |> Enum.map_join("\n", fn {k, v} ->
+            lv = Upgrades.level(ur.id, k)
+
+            next =
+              if lv >= v.max_level,
+                do: "MAX",
+                else: "#{Enum.at(v.costs, lv)} #{Currency.dust_emoji()}"
+
+            "• **#{v.title}** — Lv.#{lv}/#{v.max_level} — next: #{next}"
+          end)
+
+        %{type: 4, data: %{content: "**Upgrades**\n#{lines}", flags: 64}}
+
+      "buy" ->
+        key = get_option(opts, "upgrade") || ""
+        defs = Upgrades.definitions()
+        lv = Upgrades.level(ur.id, key)
+        defn = defs[key]
+        need = if defn && lv < defn.max_level, do: Enum.at(defn.costs, lv), else: nil
+
+        case Upgrades.buy(ur.id, key) do
+          {:ok, %{new_level: nl}} ->
+            title = get_in(defs, [key, :title]) || key
+            fresh = Accounts.get_user!(ur.id)
+
+            %{
+              type: 4,
+              data: %{
+                content:
+                  "Upgraded **#{title}** to level **#{nl}**.\nRemaining dust: **#{fresh.dust}** #{Currency.dust_emoji()}",
+                flags: 64
+              }
+            }
+
+          {:error, :invalid_key} ->
+            %{type: 4, data: %{content: "Unknown upgrade key.", flags: 64}}
+
+          {:error, :maxed} ->
+            %{type: 4, data: %{content: "That upgrade is already maxed.", flags: 64}}
+
+          {:error, :insufficient_dust} ->
+            need_text = if is_integer(need), do: to_string(need), else: "?"
+
+            %{
+              type: 4,
+              data: %{
+                content:
+                  "Not enough dust. Needed **#{need_text}** #{Currency.dust_emoji()}, you have **#{ur.dust}** #{Currency.dust_emoji()}.",
+                flags: 64
+              }
+            }
+        end
+
+      _ ->
+        %{type: 4, data: %{content: "Use `/upgrades view` or `/upgrades buy`.", flags: 64}}
+    end
+  end
+
+  def handle_command("shop", i) do
+    user = i.user || i.member.user
+
+    {:ok, ur} =
+      Accounts.ensure_user(%{
+        platform_id: to_string(user.id),
+        platform: "discord",
+        username: user.username
+      })
+
+    {sub, opts} = first_subcommand(i)
+
+    case sub do
+      "list" ->
+        lines =
+          Shop.products()
+          |> Enum.map_join("\n", fn p ->
+            used = Shop.purchases_in_period(ur.id, p)
+            max_count = p.limit_count || 3
+            period = Shop.period_label(p.limit_period_unit || "week")
+            price = price_line(p)
+            "• **#{p.name}** — #{price} — bought this #{period}: **#{used}/#{max_count}**"
+          end)
+
+        %{type: 4, data: %{content: "**Shop**\n#{lines}", flags: 64}}
+
+      "buy" ->
+        pid = get_option(opts, "product") || ""
+        product = Enum.find(Shop.products(), &(&1.id == pid))
+
+        case Shop.buy(ur.id, pid) do
+          {:ok, _effect} ->
+            fresh = Accounts.get_user!(ur.id)
+
+            product =
+              Shop.products()
+              |> Enum.find(&(&1.id == pid))
+
+            title = if product, do: product.name, else: pid
+            duration = if product, do: format_duration(product.duration_sec), else: "?"
+
+            %{
+              type: 4,
+              data: %{
+                content:
+                  "Purchased **#{title}**. Effect lasts **#{duration}**.\nWallet now: **#{fresh.currency}** #{Currency.coin_emoji()} · **#{fresh.dust}** #{Currency.dust_emoji()}",
+                flags: 64
+              }
+            }
+
+          {:error, :invalid_product} ->
+            %{type: 4, data: %{content: "Unknown product.", flags: 64}}
+
+          {:error, :period_limit} ->
+            %{
+              type: 4,
+              data: %{content: "Purchase limit reached for the current period.", flags: 64}
+            }
+
+          {:error, :insufficient_coins} ->
+            need = if product, do: product.coin, else: nil
+            need_text = if is_integer(need), do: to_string(need), else: "?"
+
+            %{
+              type: 4,
+              data: %{
+                content:
+                  "Not enough coins. Needed **#{need_text}** #{Currency.coin_emoji()}, you have **#{ur.currency}** #{Currency.coin_emoji()}.",
+                flags: 64
+              }
+            }
+
+          {:error, :insufficient_dust} ->
+            need = if product, do: product.dust, else: nil
+            need_text = if is_integer(need), do: to_string(need), else: "?"
+
+            %{
+              type: 4,
+              data: %{
+                content:
+                  "Not enough dust. Needed **#{need_text}** #{Currency.dust_emoji()}, you have **#{ur.dust}** #{Currency.dust_emoji()}.",
+                flags: 64
+              }
+            }
+        end
+
+      _ ->
+        %{type: 4, data: %{content: "Use `/shop list` or `/shop buy`.", flags: 64}}
     end
   end
 

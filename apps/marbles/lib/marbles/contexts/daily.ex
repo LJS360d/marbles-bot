@@ -5,6 +5,7 @@ defmodule Marbles.Daily do
 
   alias Marbles.Repo
   alias Marbles.Schema.{UserDailyStreak, User}
+  alias Marbles.Economy.Mining
 
   @base_coins 100
   @streak_multiplier 10
@@ -13,9 +14,10 @@ defmodule Marbles.Daily do
   @doc """
   Claims the daily reward for the given user.
 
-  Returns `{:ok, %{coins: integer, streak: integer, items: list}}` on success.
+  Returns `{:ok, map}` on success with at least `coins`, `streak`, `items`, plus mining breakdown keys.
   Returns `{:error, reason}` if the user has already claimed today or on failure.
   """
+  @spec claim_daily(Ecto.UUID.t()) :: {:ok, map()} | {:error, String.t()}
   def claim_daily(user_id) do
     now = DateTime.utc_now()
     today = DateTime.to_date(now)
@@ -60,14 +62,15 @@ defmodule Marbles.Daily do
       # Update longest streak if needed
       new_longest_streak = max(new_streak, streak_record.longest_streak)
 
-      # Calculate coin reward
-      coin_reward = calculate_coins(new_streak)
+      streak_coins = streak_bonus_coins(new_streak)
+      prev_claim_at = streak_record.last_claimed_at
+      accrual_seconds = Mining.accrual_seconds(prev_claim_at, now, user_id)
+      mining = Mining.compute_coins(user_id, accrual_seconds)
+      total_coins = streak_coins + mining.coins
 
-      # Update user's currency
       user = Repo.get!(User, user_id)
-      {:ok, _} = Marbles.Accounts.update_currency(user, coin_reward)
+      {:ok, _} = Marbles.Accounts.update_currency(user, total_coins)
 
-      # Update streak record
       _updated_streak =
         streak_record
         |> UserDailyStreak.changeset(%{
@@ -77,14 +80,22 @@ defmodule Marbles.Daily do
         })
         |> Repo.update!()
 
-      # Give random items (for now, we'll just return an empty list)
       items = give_random_items(user_id)
 
-      %{coins: coin_reward, streak: new_streak, items: items}
+      %{
+        coins: total_coins,
+        streak_coins: streak_coins,
+        mining_coins: mining.coins,
+        mining_seconds: mining.seconds,
+        mining_cap_seconds: mining.cap_seconds,
+        mining_roster_size: mining.roster_size,
+        streak: new_streak,
+        items: items
+      }
     end)
   end
 
-  defp calculate_coins(streak) do
+  defp streak_bonus_coins(streak) do
     raw = @base_coins + streak * @streak_multiplier
     min(raw, @max_coins)
   end

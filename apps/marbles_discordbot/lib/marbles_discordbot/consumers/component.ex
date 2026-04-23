@@ -282,7 +282,7 @@ defmodule MarblesDiscordbot.Consumers.Component do
       :ok
     else
       case gacha_pull_one(pack_id, user_record, q, guild_id_str) do
-        {:ok, marble} ->
+        {:ok, marble, pull_dust} ->
           internal = reload_user!(user_record.id)
           comps = PullSession.action_row(internal, pack, owner_int)
           PullSession.clear_components_on_message(i.message)
@@ -293,7 +293,7 @@ defmodule MarblesDiscordbot.Consumers.Component do
             PullSession.followup_with_pull_row(
               aid,
               token,
-              Embeds.pull_session_message_content(internal, pack),
+              Embeds.pull_session_message_content(internal, pack, dust_last_pull: pull_dust),
               [emb],
               owner_int,
               comps
@@ -362,7 +362,7 @@ defmodule MarblesDiscordbot.Consumers.Component do
       :ok
     else
       case gacha_pull_ten(pack_id, user_record, q, guild_id_str) do
-        {:ok, marbles} ->
+        {:ok, marbles, pull_dust} ->
           internal = reload_user!(user_record.id)
           comps = PullSession.action_row(internal, pack, owner_int)
           PullSession.clear_components_on_message(i.message)
@@ -373,7 +373,7 @@ defmodule MarblesDiscordbot.Consumers.Component do
             PullSession.followup_with_pull_row(
               aid,
               token,
-              Embeds.pull_session_message_content(internal, pack),
+              Embeds.pull_session_message_content(internal, pack, dust_last_pull: pull_dust),
               [emb],
               owner_int,
               comps
@@ -420,8 +420,15 @@ defmodule MarblesDiscordbot.Consumers.Component do
 
         PackPullRules.commit_after_one_pull!(user_record.id, pack_id, q)
 
-        Collection.add_marble_to_collection(user_record.id, marble.id)
-        {:ok, marble}
+        pull_dust =
+          case Collection.acquire_marble_template(user_record.id, marble.id,
+                 meta: %{source: "discord_pull"}
+               ) do
+            {:new, _} -> 0
+            {:duplicate, d, _} -> d
+          end
+
+        {:ok, marble, pull_dust}
 
       {:error, _} = e ->
         e
@@ -459,11 +466,20 @@ defmodule MarblesDiscordbot.Consumers.Component do
 
         PackPullRules.commit_after_ten_pull!(user_record.id, pack_id, q)
 
-        Enum.each(marbles, fn m ->
-          Collection.add_marble_to_collection(user_record.id, m.id)
-        end)
+        pull_dust =
+          Enum.reduce(marbles, 0, fn m, acc ->
+            extra =
+              case Collection.acquire_marble_template(user_record.id, m.id,
+                     meta: %{source: "discord_pull"}
+                   ) do
+                {:new, _} -> 0
+                {:duplicate, d, _} -> d
+              end
 
-        {:ok, marbles}
+            acc + extra
+          end)
+
+        {:ok, marbles, pull_dust}
     end
   end
 
@@ -474,7 +490,7 @@ defmodule MarblesDiscordbot.Consumers.Component do
     base
     |> Embed.put_description(spoiler.(base.description || ""))
     |> Embed.put_title(spoiler.(base.title || ""))
-    |> Embed.put_footer("#{discord_user.global_name} · added to your collection")
+    |> Embed.put_footer("Belongs to #{discord_user.global_name}")
   end
 
   defp sort_atom("rarity"), do: :rarity_level_name

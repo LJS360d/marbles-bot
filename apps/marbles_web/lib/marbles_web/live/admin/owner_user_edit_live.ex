@@ -80,6 +80,7 @@ defmodule MarblesWeb.Admin.OwnerUserEditLive do
         >
           <.input field={@form[:display_name]} type="text" label="Display name" />
           <.input field={@form[:currency]} type="number" label="Currency" />
+          <.input field={@form[:dust]} type="number" label="Dust" />
           <.input
             field={@form[:role]}
             type="select"

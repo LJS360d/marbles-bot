@@ -38,6 +38,8 @@ defmodule Marbles.Repo.Migrations.CreateTables do
       add :id, :binary_id, primary_key: true
       add :display_name, :string
       add :currency, :integer, default: 0
+      add :dust, :integer, default: 0, null: false
+      add :mine_roster, :map, default: %{}, null: false
       add :role, :string, null: false, default: "regular"
       timestamps()
     end
@@ -159,6 +161,62 @@ defmodule Marbles.Repo.Migrations.CreateTables do
 
     create index(:user_marbles, [:user_id])
     create index(:user_marbles, [:marble_id])
+
+    execute """
+    DELETE FROM user_marbles
+    WHERE rowid NOT IN (
+      SELECT MIN(rowid) FROM user_marbles GROUP BY user_id, marble_id
+    )
+    """
+
+    create unique_index(:user_marbles, [:user_id, :marble_id])
+    create index(:user_marbles, [:user_id, :level, :experience])
+
+    create table(:user_upgrades, primary_key: false) do
+      add :id, :binary_id, primary_key: true
+      add :user_id, references(:users, type: :binary_id, on_delete: :delete_all), null: false
+      add :upgrade_key, :string, null: false
+      add :level, :integer, null: false, default: 0
+      timestamps()
+    end
+
+    create unique_index(:user_upgrades, [:user_id, :upgrade_key])
+    create index(:user_upgrades, [:upgrade_key])
+
+    create table(:user_effects, primary_key: false) do
+      add :id, :binary_id, primary_key: true
+      add :user_id, references(:users, type: :binary_id, on_delete: :delete_all), null: false
+      add :effect_key, :string, null: false
+      add :scope, :string, null: false, default: "account"
+      add :guild_id, :string
+      add :expires_at, :utc_datetime_usec, null: false
+      add :meta, :map, default: %{}, null: false
+      timestamps()
+    end
+
+    create index(:user_effects, [:user_id])
+    create index(:user_effects, [:user_id, :effect_key])
+    create index(:user_effects, [:expires_at])
+
+    create table(:shop_items, primary_key: false) do
+      add :id, :string, primary_key: true
+      add :enabled, :boolean, null: false, default: true
+      add :coin_price, :integer
+      add :dust_price, :integer
+      add :duration_sec, :integer
+      add :limit_count, :integer
+      add :limit_period_unit, :string
+      add :label_override, :string
+      timestamps()
+    end
+
+    create table(:caught_spawns, primary_key: false) do
+      add :message_id, :string, primary_key: true
+      add :user_id, references(:users, type: :binary_id, on_delete: :delete_all), null: false
+      timestamps(updated_at: false)
+    end
+
+    create index(:caught_spawns, [:user_id])
 
     # Daily streaks
     create table(:user_daily_streaks, primary_key: false) do

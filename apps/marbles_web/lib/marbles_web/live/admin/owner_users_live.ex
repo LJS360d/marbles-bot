@@ -60,6 +60,7 @@ defmodule MarblesWeb.Admin.OwnerUsersLive do
                 <th>Identities</th>
                 <th>Role</th>
                 <th>Currency</th>
+                <th>Dust</th>
                 <th class="w-0">Collection</th>
               </tr>
             </thead>
@@ -72,6 +73,7 @@ defmodule MarblesWeb.Admin.OwnerUsersLive do
                 </td>
                 <td>{user.role}</td>
                 <td>{user.currency}</td>
+                <td>{user.dust || 0}</td>
                 <td>
                   <span class="flex gap-1">
                     <.link navigate={~p"/admin/owner/users/#{user.id}"} class="btn btn-ghost btn-xs">

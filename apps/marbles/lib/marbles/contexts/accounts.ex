@@ -129,6 +129,14 @@ defmodule Marbles.Accounts do
     |> Repo.update()
   end
 
+  @spec update_dust(Marbles.Schema.User.t(), integer()) ::
+          {:ok, Marbles.Schema.User.t()} | {:error, Ecto.Changeset.t()}
+  def update_dust(user, amount) do
+    user
+    |> User.changeset(%{dust: user.dust + amount})
+    |> Repo.update()
+  end
+
   def set_role(user, role) when role in [:regular, :server_admin, :owner] do
     user
     |> User.changeset(%{role: role})

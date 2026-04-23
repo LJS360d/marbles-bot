@@ -2,6 +2,7 @@ defmodule MarblesDiscordbot.Commands do
   alias Nostrum.Api.ApplicationCommand
   alias Nostrum.Constants.ApplicationCommandOptionType
   alias Marbles.Catalog
+  alias Marbles.Economy.{Shop, Upgrades}
   require Logger
 
   def commands do
@@ -75,7 +76,15 @@ defmodule MarblesDiscordbot.Commands do
       %{
         name: "collection",
         description: "See your marbles collection",
-        type: 1
+        type: 1,
+        options: [
+          %{
+            type: ApplicationCommandOptionType.user(),
+            name: "user",
+            description: "Optional target user",
+            required: false
+          }
+        ]
       },
       %{
         name: "packs",
@@ -91,6 +100,156 @@ defmodule MarblesDiscordbot.Commands do
         name: "daily",
         description: "Claim your daily reward and build your streak",
         type: 1
+      },
+      %{
+        name: "balance",
+        description: "Show your coins, dust, and mine roster",
+        type: 1
+      },
+      %{
+        name: "profile",
+        description: "Show a user profile (wallet, collection, boosts, mines)",
+        type: 1,
+        options: [
+          %{
+            type: ApplicationCommandOptionType.user(),
+            name: "user",
+            description: "Optional target user",
+            required: false
+          }
+        ]
+      },
+      %{
+        name: "boosts",
+        description: "Show active boosts/effects",
+        type: 1,
+        options: [
+          %{
+            type: ApplicationCommandOptionType.user(),
+            name: "user",
+            description: "Optional target user",
+            required: false
+          }
+        ]
+      },
+      %{
+        name: "leaderboard",
+        description: "Show top players",
+        options: [
+          %{
+            type: ApplicationCommandOptionType.string(),
+            name: "kind",
+            description: "Leaderboard to show",
+            required: false,
+            choices: [
+              %{name: "Coins", value: "coins"},
+              %{name: "Collection size", value: "collection"},
+              %{name: "Strongest marble", value: "strongest"}
+            ]
+          }
+        ]
+      },
+      %{
+        name: "mines",
+        description: "Manage marbles assigned to passive coin mining",
+        options: [
+          %{
+            type: ApplicationCommandOptionType.sub_command(),
+            name: "view",
+            description: "Show roster"
+          },
+          %{
+            type: ApplicationCommandOptionType.sub_command(),
+            name: "add",
+            description: "Add a marble you own (exact name, case-insensitive)",
+            options: [
+              %{
+                type: ApplicationCommandOptionType.string(),
+                name: "marble",
+                description: "Marble name",
+                required: true,
+                autocomplete: true
+              }
+            ]
+          },
+          %{
+            type: ApplicationCommandOptionType.sub_command(),
+            name: "remove",
+            description: "Remove a roster marble by name",
+            options: [
+              %{
+                type: ApplicationCommandOptionType.string(),
+                name: "marble",
+                description: "Marble name",
+                required: true,
+                autocomplete: true
+              }
+            ]
+          },
+          %{
+            type: ApplicationCommandOptionType.sub_command(),
+            name: "clear",
+            description: "Clear roster"
+          }
+        ]
+      },
+      %{
+        name: "upgrades",
+        description: "Spend dust on permanent account upgrades",
+        options: [
+          %{
+            type: ApplicationCommandOptionType.sub_command(),
+            name: "view",
+            description: "List upgrades"
+          },
+          %{
+            type: ApplicationCommandOptionType.sub_command(),
+            name: "buy",
+            description: "Buy the next level of an upgrade (costs dust)",
+            options: [
+              %{
+                type: ApplicationCommandOptionType.string(),
+                name: "upgrade",
+                description: "Upgrade to buy",
+                required: true,
+                choices:
+                  Upgrades.definitions()
+                  |> Enum.map(fn {k, v} ->
+                    %{name: String.slice(v.title, 0, 100), value: k}
+                  end)
+              }
+            ]
+          }
+        ]
+      },
+      %{
+        name: "shop",
+        description: "Buy items and temporary boosts",
+        options: [
+          %{
+            type: ApplicationCommandOptionType.sub_command(),
+            name: "list",
+            description: "List offers"
+          },
+          %{
+            type: ApplicationCommandOptionType.sub_command(),
+            name: "buy",
+            description: "Buy an item or boost",
+            options: [
+              %{
+                type: ApplicationCommandOptionType.string(),
+                name: "product",
+                description: "Product id",
+                required: true,
+                choices:
+                  Shop.products()
+                  |> Enum.map(fn p ->
+                    %{name: String.slice(p.name, 0, 100), value: p.id}
+                  end)
+              }
+            ]
+          }
+        ]
       }
     ]
   end

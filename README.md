@@ -6,7 +6,7 @@ A marbles collection bot and game system. Core domain and gacha engine live in `
 
 - **`apps/marbles`** — Core: Ecto repo, schemas (users, teams, marbles, packs, user_marbles, marble_assets), contexts (Catalog, Collection, Accounts), and the gacha engine. Single source of truth for data and pull logic.
 - **`apps/marbles_web`** — Phoenix app: admin panel for the core, and (planned) a client-side 3D race game (e.g. Three.js) with physics on racetracks.
-- **`apps/marbles_discordbot`** — Discord bot (Nostrum): slash commands for pull, trade, analytics; talks to the Marbles core for gacha and collection.
+- **`apps/marbles_discordbot`** — Discord bot (Nostrum): slash commands for pull, collection, profile, upgrades, shop, leaderboards, mining, and analytics; talks to the Marbles core for gacha/economy/collection.
 
 Dev: SQLite, one node, no extra services. Prod: configurable DB path and pool, optional DNS-based clustering; the core can be swapped to a sharded or beefier DB by changing Repo config and migrations.
 
@@ -57,6 +57,45 @@ Web UI: [http://localhost:4000](http://localhost:4000).
 
 Secrets and env-based config only; no credentials in the repo.
 
+## Economy system
+
+The project now includes a full in-game economy:
+
+- **Currencies**
+  - `coins` (`🪙`) — primary spend currency for pulls and shop products.
+  - `dust` (`💨`) — duplicate-conversion currency and upgrade/shop spend currency.
+- **Duplicate handling**
+  - User marble ownership is unique per marble template (`user_id + marble_id`).
+  - Duplicate pulls/spawn catches are converted to dust instead of adding another owned row.
+- **Daily + mining**
+  - `/daily` grants streak bonus + passive mining payout since last claim.
+  - Mining payout is capped by offline accrual windows and modified by upgrades/effects.
+- **Upgrades**
+  - Permanent upgrades are purchased with dust via `/upgrades`.
+- **Shop**
+  - `/shop` offers timed boosts.
+  - Prices, durations, enablement, and period limits can be overridden in DB (`shop_items`).
+- **Leaderboards**
+  - Coins, collection size, strongest marble.
+
+### Key economy tables
+
+- `users` (`currency`, `dust`, `mine_roster`)
+- `user_marbles` (unique by `user_id + marble_id`)
+- `user_upgrades`
+- `user_effects`
+- `shop_items`
+- `user_daily_streaks`
+- `caught_spawns`
+
+### Owner admin pages (Phoenix)
+
+Owner routes under `/admin/owner` include:
+
+- `/economy` — economy dashboard (cooldowns + leaderboard slices + user links)
+- `/shop-items` — manage DB-backed shop overrides
+- `/users/:id` — deep per-user economy controls (wallet, cooldowns, upgrades, effects, roster view)
+
 ## Releases
 
 A single OTP release runs all three apps:
@@ -70,7 +109,7 @@ Start with `./_build/prod/rel/marbles_umbrella/bin/marbles_umbrella start`. For 
 ## Roadmap
 
 - **Admin panel** — Manage teams, marbles, packs, and catalog from the Phoenix app.
-- **Discord** — Full handling of `/pull`, `/trade`, `/analytics` using the core gacha and collection APIs.
+- **Discord** — Continue expanding command UX and profile/economy surfaces.
 - **3D race game** — Client-side physics simulation (Three.js or similar) of marbles on a racetrack; racecourses to be extracted from Jelle’s Marble Runs–style footage (e.g. via Meshroom) as 3D models, then loaded into the viewer with physics and game logic.
 
 ## Project layout

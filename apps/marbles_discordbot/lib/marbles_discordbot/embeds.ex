@@ -1,6 +1,7 @@
 defmodule MarblesDiscordbot.Embeds do
   alias Nostrum.Struct.Embed
   alias Marbles.PackPullRules
+  alias Marbles.Economy.Currency
   require Logger
 
   @collection_per_page Marbles.Collection.per_page()
@@ -20,10 +21,26 @@ defmodule MarblesDiscordbot.Embeds do
     |> maybe_put_footer(footer_text)
   end
 
-  def currency_line(coins), do: "**#{coins}** 🪙"
+  def currency_line(coins), do: "**#{coins}** #{Currency.coin_emoji()}"
 
-  def pull_session_message_content(%{id: user_id, currency: coins} = _user, pack) do
-    line1 = currency_line(coins)
+  @spec pull_session_message_content(map(), term(), keyword()) :: String.t()
+  def pull_session_message_content(user, pack, opts \\ []) do
+    user_id = user.id
+    coins = user.currency
+    dust = Map.get(user, :dust) || 0
+    pull_dust = Keyword.get(opts, :dust_last_pull, 0)
+
+    wallet =
+      currency_line(coins) <> " · **#{dust}** " <> Currency.dust_emoji()
+
+    dup_note =
+      if pull_dust > 0 do
+        "\nDuplicate on last pull: **+#{pull_dust}** " <> Currency.dust_emoji()
+      else
+        ""
+      end
+
+    line1 = wallet <> dup_note
 
     case PackPullRules.pity_guarantee_line(pack, user_id) do
       nil -> line1
@@ -49,7 +66,7 @@ defmodule MarblesDiscordbot.Embeds do
     rules_text = PackPullRules.rules_summary_text(pack)
 
     description =
-      "#{pack.description}\n\n #{pack.cost} 🪙 base cost · #{expires}\n\n#{rules_text}"
+      "#{pack.description}\n\n #{pack.cost} #{Currency.coin_emoji()} base cost · #{expires}\n\n#{rules_text}"
 
     banner_url = Marbles.Assets.url_for_path(pack.banner_path)
 
@@ -185,7 +202,7 @@ defmodule MarblesDiscordbot.Embeds do
         Embed.put_field(acc, "##{idx}", v, true)
       end)
 
-    Embed.put_footer(emb, "#{discord_user.global_name} · 10 marbles added to your collection")
+    Embed.put_footer(emb, "Belongs to #{discord_user.global_name}")
   end
 
   def rarity_stars_string(rarity) do

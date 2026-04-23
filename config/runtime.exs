@@ -1,7 +1,9 @@
 import Config
-import Dotenvy
 
-source!([".env", System.get_env()]) |> System.put_env()
+if Code.ensure_loaded?(Dotenvy) do
+  alias Dotenvy
+  Dotenvy.source!([".env", System.get_env()]) |> System.put_env()
+end
 
 # config/runtime.exs is executed for all environments, including
 # during releases. It is executed after compilation and before the

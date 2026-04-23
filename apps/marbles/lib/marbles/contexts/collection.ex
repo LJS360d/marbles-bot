@@ -1,7 +1,8 @@
 # Collection operations
 defmodule Marbles.Collection do
   alias Marbles.Repo
-  alias Marbles.Schema.{UserMarble, Marble}
+  alias Marbles.Schema.{UserMarble, Marble, User}
+  alias Marbles.Accounts
   import Ecto.Query
 
   @per_page 10
@@ -40,14 +41,47 @@ defmodule Marbles.Collection do
     {items, total}
   end
 
+  @spec acquire_marble_template(Ecto.UUID.t(), Ecto.UUID.t(), keyword()) ::
+          {:new, UserMarble.t()} | {:duplicate, pos_integer(), UserMarble.t()}
+  def acquire_marble_template(user_id, marble_id, opts \\ []) when is_binary(user_id) and is_binary(marble_id) do
+    meta = Keyword.get(opts, :meta, %{})
+    marble = Repo.get!(Marble, marble_id)
+
+    case Repo.get_by(UserMarble, user_id: user_id, marble_id: marble_id) do
+      %UserMarble{} = existing ->
+        dust = Marbles.Economy.Dust.amount_for_duplicate(marble.rarity || 1, user_id)
+        user = Repo.get!(User, user_id)
+        {:ok, _} = Accounts.update_dust(user, dust)
+        {:duplicate, dust, existing}
+
+      nil ->
+        case %UserMarble{}
+             |> UserMarble.changeset(%{
+               user_id: user_id,
+               marble_id: marble_id,
+               meta: meta
+             })
+             |> Repo.insert() do
+          {:ok, um} ->
+            {:new, um}
+
+          {:error, _} ->
+            existing = Repo.get_by!(UserMarble, user_id: user_id, marble_id: marble_id)
+            dust = Marbles.Economy.Dust.amount_for_duplicate(marble.rarity || 1, user_id)
+            user = Repo.get!(User, user_id)
+            {:ok, _} = Accounts.update_dust(user, dust)
+            {:duplicate, dust, existing}
+        end
+    end
+  end
+
+  @spec add_marble_to_collection(Ecto.UUID.t(), Ecto.UUID.t(), map()) ::
+          {:ok, UserMarble.t()} | {:error, Ecto.Changeset.t()}
   def add_marble_to_collection(user_id, marble_id, meta \\ %{}) do
-    %UserMarble{}
-    |> UserMarble.changeset(%{
-      user_id: user_id,
-      marble_id: marble_id,
-      meta: meta
-    })
-    |> Repo.insert()
+    case acquire_marble_template(user_id, marble_id, meta: meta) do
+      {:new, um} -> {:ok, um}
+      {:duplicate, _dust, um} -> {:ok, um}
+    end
   end
 
   def get_user_marble!(user_id, user_marble_id) do

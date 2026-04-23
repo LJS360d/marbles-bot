@@ -23,5 +23,6 @@ defmodule Marbles.Schema.UserMarble do
     user_marble
     |> cast(attrs, [:level, :experience, :meta, :user_id, :marble_id])
     |> validate_required([:user_id, :marble_id])
+    |> unique_constraint([:user_id, :marble_id], name: :user_marbles_user_id_marble_id_index)
   end
 end

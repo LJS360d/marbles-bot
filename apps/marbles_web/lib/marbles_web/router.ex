@@ -74,6 +74,8 @@ defmodule MarblesWeb.Router do
       live "/teams", OwnerTeamsLive, :index
       live "/teams/:id/edit", OwnerTeamEditLive, :edit
       live "/guilds", OwnerGuildsLive, :index
+      live "/economy", OwnerEconomyLive, :index
+      live "/shop-items", OwnerShopItemsLive, :index
     end
   end
 

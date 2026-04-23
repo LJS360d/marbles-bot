@@ -228,6 +228,13 @@ defmodule MarblesWeb.Admin.OwnerAdminLive do
             <p class="text-sm font-medium text-base-content/70">Teams</p>
             <p class="mt-1 text-2xl font-semibold">{@teams_count}</p>
           </.link>
+          <.link
+            navigate={~p"/admin/owner/economy"}
+            class="rounded-xl border border-base-300 bg-base-200 p-4 shadow-sm transition-colors hover:bg-base-300"
+          >
+            <p class="text-sm font-medium text-base-content/70">Economy</p>
+            <p class="mt-1 text-base font-semibold">Cooldowns · Shop · Wallets</p>
+          </.link>
         </section>
 
         <section
@@ -383,7 +390,7 @@ defmodule MarblesWeb.Admin.OwnerAdminLive do
           <% pct = if @beam_mb > 0, do: min(100, div(mb * 100, @beam_mb)), else: 0 %>
           <div
             :if={pct > 0}
-            class={["h-full min-w-[2px] transition-all", color]}
+            class={["h-full min-w-0.5 transition-all", color]}
             style={"width: #{max(pct, 0.5)}%"}
             title={"#{label} #{mb} MB"}
           />

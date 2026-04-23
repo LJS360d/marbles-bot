@@ -2,6 +2,7 @@ defmodule Marbles.PackPullRules do
   @moduledoc false
 
   alias Marbles.Repo
+  alias Marbles.Economy.Currency
   alias Marbles.Schema.{UserPackPullRuleState, Pack}
   import Ecto.Query
 
@@ -453,7 +454,7 @@ defmodule Marbles.PackPullRules do
   def one_pull_button_label(pack, user_id) do
     q = quote_one(user_id, pack)
     cost = pack.cost || 0
-    coin = "🪙"
+    coin = Currency.coin_emoji()
     rules = active_rules(pack) |> Enum.filter(& &1.apply_1x)
 
     cond do
@@ -473,7 +474,7 @@ defmodule Marbles.PackPullRules do
   def ten_pull_button_label(pack, user_id) do
     q = quote_ten(user_id, pack)
     base_p = q.base_price
-    coin = "🪙"
+    coin = Currency.coin_emoji()
     rules = active_rules(pack) |> Enum.filter(& &1.apply_10x)
 
     cond do
