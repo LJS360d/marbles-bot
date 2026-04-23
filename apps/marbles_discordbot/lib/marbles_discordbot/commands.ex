@@ -121,7 +121,7 @@ defmodule MarblesDiscordbot.Commands do
       },
       %{
         name: "boosts",
-        description: "Show active boosts/effects",
+        description: "Show active boosts",
         type: 1,
         options: [
           %{

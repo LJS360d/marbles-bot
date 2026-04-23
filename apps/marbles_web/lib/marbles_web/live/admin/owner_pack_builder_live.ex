@@ -441,11 +441,10 @@ defmodule MarblesWeb.Admin.OwnerPackBuilderLive do
   @impl true
   def render(assigns) do
     ~H"""
+    <Layouts.header current_user={@current_user} />
     <Layouts.app
       flash={@flash}
-      current_user={@current_user}
       current_scope={@current_scope}
-      wide={true}
       breadcrumbs={@breadcrumbs}
     >
       <div class="space-y-6">
@@ -488,9 +487,7 @@ defmodule MarblesWeb.Admin.OwnerPackBuilderLive do
         <div class="fieldset border border-base-300 rounded-lg p-4 space-y-3" id="pack-pull-rules">
           <span class="label">Pull rules</span>
           <p class="text-sm text-base-content/70 max-w-3xl leading-relaxed">
-            <strong>Discount</strong>: % off with trigger (always, N uses per account, once per period, or every N <em>pull actions</em>—1× adds 1, 10× adds 10).
-            <strong>Pity</strong>
-            (max one per pack): counts <em>marbles</em>; each 1× is one marble, each 10× is ten marbles in order. After N consecutive marbles below the minimum ★ without a natural hit at/above that ★, the next marble is forced to that ★ or higher. Rules have no ordering; discounts combine in insertion order.
+            <strong>Discount</strong>: % off with trigger (always, N uses per account, once per period, or every N <em>pull actions</em>—1× adds 1, 10× adds 10). <strong>Pity</strong>: counts <em>marbles</em>; each 1× is one marble, each 10× is ten marbles in order. After N consecutive marbles below the minimum ★ without a natural hit at/above that ★, the next marble is forced to that ★ or higher. Rules have no ordering; discounts combine in insertion order.
           </p>
           <button type="button" phx-click="rule_add" class="btn btn-outline btn-sm">
             Add rule
@@ -538,9 +535,6 @@ defmodule MarblesWeb.Admin.OwnerPackBuilderLive do
                     min="1"
                     class="input input-bordered input-sm w-full"
                   />
-                  <span class="text-[11px] text-base-content/50">
-                    Forced roll after N−1 below-min marbles in a row.
-                  </span>
                 </div>
               <% else %>
                 <div class="flex flex-col gap-1">

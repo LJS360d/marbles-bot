@@ -31,6 +31,10 @@ config :ueberauth, Ueberauth.Strategy.Discord.OAuth,
 
 owner_platform_ids = System.get_env("OWNER_USER_IDS", "") |> String.split(",", trim: true)
 config :marbles_web, :owner_platform_ids, owner_platform_ids
+
+config :marbles_web, :discord_server_invite, System.get_env("DISCORD_SERVER_INVITE_URL")
+config :marbles_web, :discord_bot_invite, System.get_env("DISCORD_BOT_INVITE_URL")
+
 config :marbles, :owner_platform_ids, owner_platform_ids
 
 assets_base_url = System.get_env("ASSETS_BASE_URL")

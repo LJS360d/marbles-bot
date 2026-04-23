@@ -245,9 +245,7 @@ defmodule MarblesWeb.Admin.GuildDetailLive do
     ~H"""
     <Layouts.app
       flash={@flash}
-      current_user={@current_user}
       current_scope={@current_scope}
-      wide={true}
       breadcrumbs={@breadcrumbs}
     >
       <div class="space-y-8">

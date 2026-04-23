@@ -78,6 +78,34 @@ defmodule Marbles.Economy.Admin do
     {rows, total}
   end
 
+  @doc """
+  Clears the `/daily` same-day lock for a user by moving `last_claimed_at` to the previous UTC date.
+
+  Intended for owner tooling / testing. Does not delete the streak row; the next claim still
+  follows normal streak rules relative to that synthetic timestamp.
+  """
+  @spec reset_daily_cooldown(Ecto.UUID.t()) :: :ok | {:error, Ecto.Changeset.t()}
+  def reset_daily_cooldown(user_id) when is_binary(user_id) do
+    synthetic_prior =
+      Date.utc_today()
+      |> Date.add(-1)
+      |> DateTime.new!(~T[00:00:00], "Etc/UTC")
+
+    case Repo.get_by(UserDailyStreak, user_id: user_id) do
+      nil ->
+        :ok
+
+      row ->
+        row
+        |> UserDailyStreak.changeset(%{last_claimed_at: synthetic_prior})
+        |> Repo.update()
+        |> case do
+          {:ok, _} -> :ok
+          {:error, cs} -> {:error, cs}
+        end
+    end
+  end
+
   @spec list_user_upgrades(Ecto.UUID.t()) :: [UserUpgrade.t()]
   def list_user_upgrades(user_id) when is_binary(user_id) do
     from(u in UserUpgrade, where: u.user_id == ^user_id, order_by: [asc: u.upgrade_key])

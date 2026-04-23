@@ -2,7 +2,6 @@ defmodule Marbles.Repo.Migrations.CreateTables do
   use Ecto.Migration
 
   def change do
-    # Guilds/servers (Discord, Matrix, etc.)
     create table(:guilds, primary_key: false) do
       add :id, :string, primary_key: true
       add :name, :string, null: false
@@ -11,7 +10,6 @@ defmodule Marbles.Repo.Migrations.CreateTables do
       timestamps()
     end
 
-    # Discord channel spawn config (channel_id is Discord snowflake)
     create table(:channels, primary_key: false) do
       add :id, :string, primary_key: true
       add :name, :string, null: false
@@ -22,7 +20,6 @@ defmodule Marbles.Repo.Migrations.CreateTables do
 
     create index(:channels, [:guild_id])
 
-    # Teams
     create table(:teams, primary_key: false) do
       add :id, :binary_id, primary_key: true
       add :name, :string, null: false
@@ -33,7 +30,17 @@ defmodule Marbles.Repo.Migrations.CreateTables do
 
     create unique_index(:teams, [:name])
 
-    # Internal users (one per person; multiple platform logins link here)
+    create table(:marbles, primary_key: false) do
+      add :id, :binary_id, primary_key: true
+      add :name, :string, null: false
+      add :edition, :string, default: "Standard"
+      add :role, :string, null: false
+      add :rarity, :integer, null: false
+      add :base_stats, :map, default: %{}
+      add :team_id, references(:teams, type: :binary_id, on_delete: :nilify_all)
+      timestamps()
+    end
+
     create table(:users, primary_key: false) do
       add :id, :binary_id, primary_key: true
       add :display_name, :string
@@ -41,10 +48,19 @@ defmodule Marbles.Repo.Migrations.CreateTables do
       add :dust, :integer, default: 0, null: false
       add :mine_roster, :map, default: %{}, null: false
       add :role, :string, null: false, default: "regular"
+      add :elo, :integer, default: 1000
+      add :last_marble_id, references(:marbles, type: :binary_id, on_delete: :nilify_all)
+      add :race_wins, :integer, default: 0
+      add :race_losses, :integer, default: 0
+      add :races_entered, :integer, default: 0
+      add :total_currency_won, :integer, default: 0
+      add :total_currency_wagered, :integer, default: 0
+      add :highest_elo, :integer, default: 1000
+      add :current_streak, :integer, default: 0
+      add :best_streak, :integer, default: 0
       timestamps()
     end
 
-    # Platform identities (Discord, Google, Matrix, etc.) linking to internal user
     create table(:user_identities, primary_key: false) do
       add :id, :binary_id, primary_key: true
       add :user_id, references(:users, type: :binary_id, on_delete: :delete_all), null: false
@@ -57,20 +73,6 @@ defmodule Marbles.Repo.Migrations.CreateTables do
     create unique_index(:user_identities, [:platform, :platform_id])
     create index(:user_identities, [:user_id])
 
-    # Marbles (The Templates)
-    create table(:marbles, primary_key: false) do
-      add :id, :binary_id, primary_key: true
-      add :name, :string, null: false
-      add :edition, :string, default: "Standard"
-      # Stored as string for Ecto.Enum
-      add :role, :string, null: false
-      add :rarity, :integer, null: false
-      add :base_stats, :map, default: "{}"
-      add :team_id, references(:teams, type: :binary_id, on_delete: :nilify_all)
-      timestamps()
-    end
-
-    # Packs
     create table(:packs, primary_key: false) do
       add :id, :binary_id, primary_key: true
       add :name, :string, null: false
@@ -79,19 +81,16 @@ defmodule Marbles.Repo.Migrations.CreateTables do
       add :start_date, :date, null: true
       add :end_date, :date, null: true
       add :banner_path, :string
-
       timestamps()
     end
 
     create unique_index(:packs, [:name])
 
-    # Pack contents Join Table (many-to-many)
     create table(:pack_contents, primary_key: false) do
       add :pack_id, references(:packs, type: :binary_id, on_delete: :delete_all), null: false
       add :marble_id, references(:marbles, type: :binary_id, on_delete: :delete_all), null: false
     end
 
-    # Composite index for faster lookups and to prevent duplicate entries
     create unique_index(:pack_contents, [:pack_id, :marble_id])
 
     create table(:pack_pull_rules, primary_key: false) do
@@ -129,46 +128,30 @@ defmodule Marbles.Repo.Migrations.CreateTables do
     create unique_index(:user_pack_pull_rule_states, [:user_id, :rule_id])
     create index(:user_pack_pull_rule_states, [:rule_id])
 
-    # Marble Assets
     create table(:marble_assets, primary_key: false) do
       add :id, :binary_id, primary_key: true
-      # thumb, splash, etc.
       add :type, :string, null: false
       add :filename, :string, null: false
       add :version, :integer, default: 1
-
-      # Link to the marble
       add :marble_id, references(:marbles, type: :binary_id, on_delete: :delete_all), null: false
-
       timestamps()
     end
 
-    # Indexing marble_id is vital for performance when preloading assets
     create index(:marble_assets, [:marble_id])
-    # ensure a marble doesn't have two 'splash' images
     create unique_index(:marble_assets, [:marble_id, :type])
 
-    # User Collection (The "Owned" Marbles)
     create table(:user_marbles, primary_key: false) do
       add :id, :binary_id, primary_key: true
       add :user_id, references(:users, type: :binary_id, on_delete: :delete_all)
       add :marble_id, references(:marbles, type: :binary_id, on_delete: :delete_all)
       add :level, :integer, default: 1
       add :experience, :integer, default: 0
-      add :meta, :map, default: "{}"
+      add :meta, :map, default: %{}
       timestamps()
     end
 
     create index(:user_marbles, [:user_id])
     create index(:user_marbles, [:marble_id])
-
-    execute """
-    DELETE FROM user_marbles
-    WHERE rowid NOT IN (
-      SELECT MIN(rowid) FROM user_marbles GROUP BY user_id, marble_id
-    )
-    """
-
     create unique_index(:user_marbles, [:user_id, :marble_id])
     create index(:user_marbles, [:user_id, :level, :experience])
 
@@ -218,7 +201,6 @@ defmodule Marbles.Repo.Migrations.CreateTables do
 
     create index(:caught_spawns, [:user_id])
 
-    # Daily streaks
     create table(:user_daily_streaks, primary_key: false) do
       add :id, :binary_id, primary_key: true
       add :user_id, references(:users, type: :binary_id, on_delete: :delete_all), null: false
@@ -231,7 +213,6 @@ defmodule Marbles.Repo.Migrations.CreateTables do
     create unique_index(:user_daily_streaks, [:user_id])
     create index(:user_daily_streaks, [:last_claimed_at])
 
-    # User inventory for generic items (boosts, skins, etc.)
     create table(:user_inventory, primary_key: false) do
       add :id, :binary_id, primary_key: true
       add :user_id, references(:users, type: :binary_id, on_delete: :delete_all), null: false
@@ -245,8 +226,6 @@ defmodule Marbles.Repo.Migrations.CreateTables do
     create index(:user_inventory, [:user_id])
     create index(:user_inventory, [:user_id, :item_type])
 
-    # Analytics (dev adapter): pulls and spawns; prod can use a different adapter
-    # guild_id/channel_id as string for Discord snowflakes
     create table(:analytics_events, primary_key: false) do
       add :id, :binary_id, primary_key: true
       add :event_type, :string, null: false
@@ -259,5 +238,66 @@ defmodule Marbles.Repo.Migrations.CreateTables do
 
     create index(:analytics_events, [:event_type, :inserted_at])
     create index(:analytics_events, [:guild_id, :inserted_at])
+
+    create table(:events, primary_key: false) do
+      add :id, :binary_id, primary_key: true
+      add :name, :string, null: false
+      add :description, :text
+      add :start_time, :utc_datetime_usec, null: false
+      add :end_time, :utc_datetime_usec, null: false
+      add :banner_path, :string
+      add :event_type, :string, null: false, default: "scheduled_race"
+      add :config, :map, default: %{}
+      add :active, :boolean, default: true
+      timestamps()
+    end
+
+    create index(:events, [:start_time])
+    create index(:events, [:active])
+    create index(:events, [:event_type])
+
+    create table(:event_registrations, primary_key: false) do
+      add :id, :binary_id, primary_key: true
+      add :event_id, references(:events, type: :binary_id, on_delete: :delete_all), null: false
+      add :user_id, references(:users, type: :binary_id, on_delete: :delete_all), null: false
+      add :status, :string, default: "registered"
+      add :final_position, :integer
+      add :payout, :integer, default: 0
+      timestamps()
+    end
+
+    create unique_index(:event_registrations, [:event_id, :user_id])
+    create index(:event_registrations, [:user_id])
+    create index(:event_registrations, [:event_id])
+
+    create table(:inbox_messages, primary_key: false) do
+      add :id, :binary_id, primary_key: true
+      add :user_id, references(:users, type: :binary_id, on_delete: :delete_all), null: false
+      add :title, :string, null: false
+      add :body, :text, null: false
+      add :type, :string, default: "info"
+      add :data, :map, default: %{}
+      add :read_at, :utc_datetime_usec
+      add :expires_at, :utc_datetime_usec
+      timestamps()
+    end
+
+    create index(:inbox_messages, [:user_id])
+    create index(:inbox_messages, [:user_id, :read_at])
+
+    create table(:race_tracks, primary_key: false) do
+      add :id, :binary_id, primary_key: true
+      add :name, :string, null: false
+      add :description, :text
+      add :track_model_path, :string
+      add :thumbnail_path, :string
+      add :start_positions, :map, default: %{}
+      add :checkpoints, :map, default: %{}
+      add :finish_line, :map, default: %{}
+      add :difficulty, :integer, default: 1
+      add :max_players, :integer, default: 100
+      add :active, :boolean, default: true
+      timestamps()
+    end
   end
 end

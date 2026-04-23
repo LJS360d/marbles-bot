@@ -186,6 +186,40 @@ defmodule MarblesDiscordbot.Consumers.Interaction do
 
   defp format_duration(_), do: "0m"
 
+  defp effect_expires_in_human(%DateTime{} = expires_at) do
+    now = DateTime.utc_now()
+    sec = DateTime.diff(expires_at, now, :second)
+
+    cond do
+      sec <= 0 ->
+        "0m"
+
+      sec < 60 ->
+        "<1m"
+
+      sec < 3600 ->
+        "#{div(sec + 59, 60)}m"
+
+      sec < 86_400 ->
+        h = div(sec, 3600)
+        m = div(rem(sec, 3600) + 59, 60)
+        if m == 0, do: "#{h}h", else: "#{h}h #{m}m"
+
+      true ->
+        d = div(sec, 86_400)
+        rem_sec = rem(sec, 86_400)
+        h = div(rem_sec, 3600)
+        m = div(rem(rem_sec, 3600) + 59, 60)
+
+        cond do
+          h > 0 and m > 0 -> "#{d}d #{h}h #{m}m"
+          h > 0 -> "#{d}d #{h}h"
+          m > 0 -> "#{d}d #{m}m"
+          true -> "#{d}d"
+        end
+    end
+  end
+
   defp handle_autocomplete("mines", i) do
     user = i.user || i.member.user
 
@@ -423,6 +457,9 @@ defmodule MarblesDiscordbot.Consumers.Interaction do
             m.mining_roster_size == 0 ->
               "Mining: **#{m.mining_coins}** #{Currency.coin_emoji()} (no roster — use `/mines add`)."
 
+            m.mining_seconds == 0 ->
+              "Mining: **0** #{Currency.coin_emoji()} (Roster set — mining pays from hours since your last `/daily`; none accrued for this claim yet.)"
+
             m.mining_coins > 0 ->
               "Mining: **#{m.mining_coins}** #{Currency.coin_emoji()} (~#{hours}h toward **#{cap_h}h** cap)."
 
@@ -440,7 +477,7 @@ defmodule MarblesDiscordbot.Consumers.Interaction do
         %{type: 4, data: %{content: content}}
 
       {:error, reason} ->
-        %{type: 4, data: %{content: "Could not claim daily reward: #{reason}"}}
+        %{type: 4, data: %{content: "Could not claim daily reward: #{reason}", flags: 64}}
     end
   end
 
@@ -512,20 +549,36 @@ defmodule MarblesDiscordbot.Consumers.Interaction do
             row -> row
           end
 
+        current_st = Map.get(streak, :current_streak) || 0
+        longest_st = Map.get(streak, :longest_streak) || 0
+
+        streak_line =
+          if longest_st > 0 do
+            "Streak: **#{current_st}** (longest #{longest_st})"
+          else
+            "Streak: **#{current_st}**"
+          end
+
         effects_text =
           if active_effects == [] do
             "None"
           else
             Enum.map_join(active_effects, "\n", fn e ->
-              "• #{e.effect_key} (until #{Calendar.strftime(e.expires_at, "%Y-%m-%d %H:%M UTC")})"
+              label = Shop.effect_display_name(e)
+              left = effect_expires_in_human(e.expires_at)
+              "• **#{label}** — expires in **#{left}**"
             end)
           end
 
         roster_text =
-          if roster_names == [] do
-            "Empty"
-          else
-            Enum.join(roster_names, ", ")
+          case roster_names do
+            [] ->
+              "Empty"
+
+            names ->
+              names
+              |> Enum.with_index(1)
+              |> Enum.map_join("\n", fn {n, idx} -> "#{idx}. #{n}" end)
           end
 
         title = display_name(tgt, internal)
@@ -539,9 +592,9 @@ defmodule MarblesDiscordbot.Consumers.Interaction do
             "Coins: **#{internal.currency}** #{Currency.coin_emoji()}\n" <>
               "Dust: **#{internal.dust}** #{Currency.dust_emoji()}\n" <>
               "Owned marbles: **#{total_collection}**\n" <>
-              "Streak: **#{streak.current_streak}** (longest #{streak.longest_streak})\n" <>
-              "Mine roster: #{roster_text}\n\n" <>
-              "Active boosts/effects:\n#{effects_text}"
+              "#{streak_line}\n" <>
+              "Mine roster:\n#{roster_text}\n\n" <>
+              "Active boosts:\n#{effects_text}"
           )
           |> maybe_put_thumbnail(thumbnail_url)
 
@@ -578,7 +631,9 @@ defmodule MarblesDiscordbot.Consumers.Interaction do
           "No active boosts."
         else
           Enum.map_join(active_effects, "\n", fn e ->
-            "• **#{e.effect_key}** · expires #{Calendar.strftime(e.expires_at, "%Y-%m-%d %H:%M UTC")}"
+            label = Shop.effect_display_name(e)
+            left = effect_expires_in_human(e.expires_at)
+            "• **#{label}** — expires in **#{left}**"
           end)
         end
 

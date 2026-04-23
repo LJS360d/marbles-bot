@@ -39,14 +39,26 @@ defmodule Marbles.Economy.Mining do
     roster_ids = roster_slot_ids(user.mine_roster)
     cap = max_accrual_seconds(user_id)
 
-    if roster_ids == [] or accrual_seconds == 0 do
-      %{coins: 0, seconds: accrual_seconds, cap_seconds: cap, roster_size: 0}
-    else
-      roster = load_roster(user_id, roster_ids)
-
-      if roster == [] do
-        %{coins: 0, seconds: accrual_seconds, cap_seconds: cap, roster_size: 0}
+    roster =
+      if roster_ids == [] do
+        []
       else
+        load_roster(user_id, roster_ids)
+      end
+
+    roster_size = length(roster)
+
+    cond do
+      roster_ids == [] ->
+        %{coins: 0, seconds: accrual_seconds, cap_seconds: cap, roster_size: 0}
+
+      roster == [] ->
+        %{coins: 0, seconds: accrual_seconds, cap_seconds: cap, roster_size: 0}
+
+      accrual_seconds == 0 ->
+        %{coins: 0, seconds: 0, cap_seconds: cap, roster_size: roster_size}
+
+      true ->
         hours = accrual_seconds / 3600.0
         per_hour = roster |> Enum.map(&marble_hour_rate/1) |> Enum.sum()
 
@@ -55,8 +67,7 @@ defmodule Marbles.Economy.Mining do
             100.0
 
         coins = trunc(hours * per_hour * yield_mult) |> max(0)
-        %{coins: coins, seconds: accrual_seconds, cap_seconds: cap, roster_size: length(roster)}
-      end
+        %{coins: coins, seconds: accrual_seconds, cap_seconds: cap, roster_size: roster_size}
     end
   end
 

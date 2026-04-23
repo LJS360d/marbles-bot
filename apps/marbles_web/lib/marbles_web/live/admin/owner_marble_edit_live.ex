@@ -84,11 +84,10 @@ defmodule MarblesWeb.Admin.OwnerMarbleEditLive do
   @impl true
   def render(assigns) do
     ~H"""
+    <Layouts.header current_user={@current_user} />
     <Layouts.app
       flash={@flash}
-      current_user={@current_user}
       current_scope={@current_scope}
-      wide={true}
       breadcrumbs={@breadcrumbs}
     >
       <div class="space-y-6">

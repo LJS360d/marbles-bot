@@ -27,6 +27,34 @@ defmodule MarblesWeb.Admin.OwnerEconomyLive do
     {:noreply, socket |> assign(:page, page) |> load_data()}
   end
 
+  @impl true
+  def handle_event("reset_daily_cooldown", params, socket) do
+    raw = params["id"] || params["user_id"] || params["user-id"]
+
+    cond do
+      is_nil(raw) or raw == "" ->
+        {:noreply, put_flash(socket, :error, "Missing user id.")}
+
+      true ->
+        case raw |> to_string() |> String.trim() |> Ecto.UUID.cast() do
+          {:ok, uid} ->
+            case Admin.reset_daily_cooldown(uid) do
+              :ok ->
+                {:noreply,
+                 socket
+                 |> put_flash(:info, "Daily cooldown cleared for that user.")
+                 |> load_data()}
+
+              {:error, _} ->
+                {:noreply, put_flash(socket, :error, "Could not reset daily cooldown.")}
+            end
+
+          :error ->
+            {:noreply, put_flash(socket, :error, "Invalid user id.")}
+        end
+    end
+  end
+
   defp load_data(socket) do
     {cooldowns, total} = Admin.list_user_cooldowns(socket.assigns.page, @per_page)
     total_pages = max(1, div(total + @per_page - 1, @per_page))
@@ -40,28 +68,29 @@ defmodule MarblesWeb.Admin.OwnerEconomyLive do
     |> assign(:top_strongest, Leaderboards.top_strongest_marble(5))
   end
 
-  defp fmt_eta(0), do: "ready"
+  defp fmt_daily_cooldown(0), do: "Ready now"
 
-  defp fmt_eta(sec) when sec < 3600 do
-    "#{div(sec, 60)}m"
+  defp fmt_daily_cooldown(sec) when sec < 3600 do
+    "#{div(sec + 59, 60)}m"
   end
 
-  defp fmt_eta(sec) when sec < 86_400 do
-    "#{div(sec, 3600)}h"
+  defp fmt_daily_cooldown(sec) when sec < 86_400 do
+    h = div(sec, 3600)
+    m = div(rem(sec, 3600) + 59, 60)
+    if m == 0, do: "#{h}h", else: "#{h}h #{m}m"
   end
 
-  defp fmt_eta(sec) do
-    "#{div(sec, 86_400)}d"
+  defp fmt_daily_cooldown(sec) do
+    "#{div(sec, 86_400)}d+"
   end
 
   @impl true
   def render(assigns) do
     ~H"""
+    <Layouts.header current_user={@current_user} />
     <Layouts.app
       flash={@flash}
-      current_user={@current_user}
       current_scope={@current_scope}
-      wide={true}
       breadcrumbs={@breadcrumbs}
     >
       <div class="space-y-6">
@@ -104,17 +133,40 @@ defmodule MarblesWeb.Admin.OwnerEconomyLive do
               <thead>
                 <tr>
                   <th>User</th>
-                  <th>Daily cooldown</th>
+                  <th class="min-w-44">Next /daily (UTC)</th>
                   <th>Streak</th>
                   <th>Coins</th>
                   <th>Dust</th>
-                  <th></th>
+                  <th class="w-28"></th>
                 </tr>
               </thead>
               <tbody>
                 <tr :for={row <- @cooldowns}>
-                  <td>{row.username || "User"}</td>
-                  <td>{fmt_eta(row.seconds_until_daily)}</td>
+                  <td class="align-middle font-medium">{row.username || "User"}</td>
+                  <td class="align-middle">
+                    <div class={[
+                      "rounded-xl border border-base-300/80 bg-base-100/60 p-3",
+                      "flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between sm:gap-3"
+                    ]}>
+                      <div class="min-w-0">
+                        <p class="text-[0.65rem] font-medium uppercase tracking-wide text-base-content/50">
+                          Until next claim
+                        </p>
+                        <p class="tabular-nums text-base font-semibold tracking-tight text-base-content">
+                          {fmt_daily_cooldown(row.seconds_until_daily)}
+                        </p>
+                      </div>
+                      <button
+                        type="button"
+                        id={"economy-reset-daily-#{row.id}"}
+                        class="btn btn-outline btn-warning btn-sm shrink-0"
+                        phx-click="reset_daily_cooldown"
+                        phx-value-id={row.id}
+                      >
+                        Reset
+                      </button>
+                    </div>
+                  </td>
                   <td>{row.streak || 0}</td>
                   <td>{row.currency}</td>
                   <td>{row.dust}</td>

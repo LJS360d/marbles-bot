@@ -94,6 +94,39 @@ defmodule Marbles.Economy.Shop do
   def valid_product?(id) when is_binary(id), do: Enum.any?(products(), &(&1.id == id))
   def valid_product?(_), do: false
 
+  @doc """
+  Human-readable name for an active shop effect (matches `products/0` names and overrides).
+  """
+  @spec effect_display_name(UserEffect.t()) :: String.t()
+  def effect_display_name(%UserEffect{effect_key: key, meta: meta}) do
+    meta = meta || %{}
+    pid = Map.get(meta, "product_id")
+    list = products()
+
+    product =
+      cond do
+        is_binary(pid) and pid != "" ->
+          Enum.find(list, &(&1.id == pid))
+
+        true ->
+          Enum.find(list, fn p -> String.starts_with?(key, p.effect_key <> "_") end)
+      end
+
+    case product do
+      %{name: name} when is_binary(name) and name != "" -> name
+      _ -> effect_display_name_fallback(key)
+    end
+  end
+
+  defp effect_display_name_fallback(key) when is_binary(key) do
+    case Enum.find(default_products(), fn p -> String.starts_with?(key, p.effect_key <> "_") end) do
+      %{name: n} when is_binary(n) -> n
+      _ -> key
+    end
+  end
+
+  defp effect_display_name_fallback(_), do: "Unknown boost"
+
   @spec purchases_in_period(Ecto.UUID.t(), map()) :: non_neg_integer()
   def purchases_in_period(user_id, product) do
     start = period_start_utc(product.limit_period_unit || "week")

@@ -26,21 +26,120 @@ defmodule MarblesWeb.Layouts do
 
   """
   attr :flash, :map, required: true, doc: "the map of flash messages"
-  attr :current_user, :any, default: nil
   attr :current_scope, :any, default: nil
-  attr :wide, :boolean, default: false, doc: "use wider max-width for admin pages"
   attr :breadcrumbs, :list, default: [], doc: "list of {label, path} or {label, nil} for current"
+  attr :show_login_modal, :boolean, default: false, doc: "whether to show the login modal"
   slot :inner_block, required: true
 
   def app(assigns) do
-    wide = Map.get(assigns, :wide, false)
-    max_width = if wide, do: "max-w-6xl", else: "max-w-2xl"
     breadcrumbs = Map.get(assigns, :breadcrumbs, [])
-    assigns = assign(assigns, :main_max_width, max_width)
     assigns = assign(assigns, :breadcrumbs, breadcrumbs)
 
+    container_width =
+      if Map.get(assigns, :current_scope, nil) == nil,
+        do: [],
+        else: ["mx-auto", "max-w-2xl", "md:max-w-7xl"]
+
+    assigns = assign(assigns, :container_width, container_width)
+
     ~H"""
-    <header class="sticky top-0 z-40 flex items-center justify-between gap-4 border-b border-base-300 bg-base-100/95 backdrop-blur px-4 py-3 sm:px-6 lg:px-8">
+    <main class="min-h-svh">
+      <div class={["space-y-4", @container_width]}>
+        <.breadcrumbs items={@breadcrumbs} />
+        {render_slot(@inner_block)}
+      </div>
+    </main>
+
+    <.flash_group flash={@flash} />
+
+    <!-- Login Modal -->
+    <div id="login-modal" data-show-modal={@show_login_modal} class="relative z-50 hidden">
+      <div
+        id="login-modal-backdrop"
+        class="fixed inset-0 bg-black/50 transition-opacity"
+        aria-hidden="true"
+      />
+      <div
+        class="fixed inset-0 overflow-y-auto"
+        aria-labelledby="login-modal-title"
+        role="dialog"
+        aria-modal="true"
+      >
+        <div class="flex min-h-full items-center justify-center p-4">
+          <div class="relative w-full max-w-md transform overflow-hidden rounded-2xl bg-base-100 p-6 shadow-xl transition-all">
+            <div class="absolute right-4 top-4">
+              <button
+                id="login-modal-close"
+                type="button"
+                class="rounded-full p-1 hover:bg-base-200"
+                aria-label="Close"
+              >
+                <.icon name="hero-x-mark" class="size-5" />
+              </button>
+            </div>
+            <div class="text-center">
+              <h3
+                id="login-modal-title"
+                class="text-lg font-semibold leading-6 text-base-content mb-2"
+              >
+                Log in to Marbles
+              </h3>
+              <p class="text-sm text-base-content/70 mb-6">
+                Sign in with your Discord account to start racing and collecting marbles.
+              </p>
+              <a
+                href={~p"/auth/discord"}
+                class="inline-flex items-center justify-center gap-2 rounded-xl bg-[#5865F2] px-6 py-3 text-white font-medium hover:opacity-90 hover:scale-105 transition-all focus:ring-2 focus:ring-offset-2 focus:ring-[#5865F2]"
+              >
+                <svg class="size-5" viewBox="0 0 127.14 96.36" fill="currentColor">
+                  <path d="M107.7,8.07A105.15,105.15,0,0,0,81.47,0a72.06,72.06,0,0,0-3.36,6.83A97.68,97.68,0,0,0,49,6.83,72.37,72.37,0,0,0,45.64,0,105.89,105.89,0,0,0,19.39,8.09C2.79,32.65-1.71,56.6.54,80.21h0A105.73,105.73,0,0,0,32.71,96.36,77.7,77.7,0,0,0,39.6,85.25a68.42,68.42,0,0,1-10.85-5.18c.91-.66,1.8-1.34,2.66-2a75.57,75.57,0,0,0,64.32,0c.87.71,1.76,1.39,2.66,2a68.68,68.68,0,0,1-10.87,5.19,77,77,0,0,0,6.89,11.1A105.25,105.25,0,0,0,126.6,80.22h0C129.24,56.84,124.09,33.37,107.7,8.07ZM42.45,65.69C36.18,65.69,31,60,31,53s5-12.74,11.43-12.74S54,46,53.89,53,48.84,65.69,42.45,65.69Zm42.24,0C78.41,65.69,73.25,60,73.25,53s5-12.74,11.44-12.74S96.23,46,96.12,53,91.08,65.69,84.69,65.69Z" />
+                </svg>
+                Log in with Discord
+              </a>
+              <p class="mt-4 text-xs text-base-content/50">
+                By logging in, you agree to our Terms of Service and Privacy Policy.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    """
+  end
+
+  attr :items, :list, required: true
+
+  def breadcrumbs(assigns) do
+    ~H"""
+    <nav :if={@items != []} class="mb-4 text-sm text-base-content/70" aria-label="Breadcrumb">
+      <ol class="flex flex-wrap items-center gap-1.5">
+        <li><a href={~p"/"} class="hover:text-base-content transition-colors">Home</a></li>
+        <%= for {label, path} <- @items do %>
+          <li class="flex items-center gap-1.5">
+            <span class="text-base-content/50" aria-hidden="true">/</span>
+            <%= if path do %>
+              <a href={path} class="hover:text-base-content transition-colors">{label}</a>
+            <% else %>
+              <span class="text-base-content font-medium" aria-current="page">{label}</span>
+            <% end %>
+          </li>
+        <% end %>
+      </ol>
+    </nav>
+    """
+  end
+
+  defp owner?(nil), do: false
+  defp owner?(user), do: user.role == :owner
+
+  defp admin_or_owner?(nil), do: false
+  defp admin_or_owner?(user), do: user.role == :server_admin || owner?(user)
+
+  attr :current_user, :any, default: nil
+
+  def header(assigns) do
+    ~H"""
+    <header class="sticky top-0 z-40 flex items-center justify-between gap-4 border-b border-base-300 bg-base-100/95 backdrop-blur px-4 py-3 sm:px-6 lg:px-8 md:mb-4">
       <a
         href={~p"/"}
         class="flex h-10 w-10 items-center justify-center rounded-full hover:bg-base-200 transition-colors"
@@ -135,45 +234,8 @@ defmodule MarblesWeb.Layouts do
         </nav>
       </div>
     </header>
-
-    <main class="px-4 py-6 sm:px-6 lg:px-8 min-h-[60vh]">
-      <.breadcrumbs items={@breadcrumbs} />
-      <div class={["mx-auto space-y-4", @main_max_width]}>
-        {render_slot(@inner_block)}
-      </div>
-    </main>
-
-    <.flash_group flash={@flash} />
     """
   end
-
-  attr :items, :list, required: true
-
-  def breadcrumbs(assigns) do
-    ~H"""
-    <nav :if={@items != []} class="mb-4 text-sm text-base-content/70" aria-label="Breadcrumb">
-      <ol class="flex flex-wrap items-center gap-1.5">
-        <li><a href={~p"/"} class="hover:text-base-content transition-colors">Home</a></li>
-        <%= for {label, path} <- @items do %>
-          <li class="flex items-center gap-1.5">
-            <span class="text-base-content/50" aria-hidden="true">/</span>
-            <%= if path do %>
-              <a href={path} class="hover:text-base-content transition-colors">{label}</a>
-            <% else %>
-              <span class="text-base-content font-medium" aria-current="page">{label}</span>
-            <% end %>
-          </li>
-        <% end %>
-      </ol>
-    </nav>
-    """
-  end
-
-  defp owner?(nil), do: false
-  defp owner?(user), do: user.role == :owner
-
-  defp admin_or_owner?(nil), do: false
-  defp admin_or_owner?(user), do: user.role == :server_admin || owner?(user)
 
   @doc """
   Shows the flash group with standard titles and content.
@@ -226,7 +288,7 @@ defmodule MarblesWeb.Layouts do
   def theme_toggle(assigns) do
     ~H"""
     <div class="card relative flex flex-row items-center border-2 border-base-300 bg-base-300 rounded-full">
-      <div class="absolute w-1/3 h-full rounded-full border-1 border-base-200 bg-base-100 brightness-200 left-0 [[data-theme=light]_&]:left-1/3 [[data-theme=dark]_&]:left-2/3 transition-[left]" />
+      <div class="absolute w-1/3 h-full rounded-full border border-base-200 bg-base-100 brightness-200 left-0 in-data-[theme=light]:left-1/3 in-data-[theme=dark]:left-2/3 transition-[left]" />
 
       <button
         class="flex p-2 cursor-pointer w-1/3"

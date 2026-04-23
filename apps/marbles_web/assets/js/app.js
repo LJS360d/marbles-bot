@@ -18,34 +18,116 @@
 // To load it, simply add a second `<link>` to your `root.html.heex` file.
 
 // Include phoenix_html to handle method=PUT/DELETE in forms and buttons.
-import "phoenix_html"
+import "phoenix_html";
 // Establish Phoenix Socket and LiveView configuration.
-import {Socket} from "phoenix"
-import {LiveSocket} from "phoenix_live_view"
-import {hooks as colocatedHooks} from "phoenix-colocated/marbles_web"
-import topbar from "../vendor/topbar"
-import OwnerAdminMemoryInsights from "./owner_admin_memory_insights.js"
+import { Socket } from "phoenix";
+import { LiveSocket } from "phoenix_live_view";
+import { hooks as colocatedHooks } from "phoenix-colocated/marbles_web";
+import topbar from "../vendor/topbar";
+import OwnerAdminMemoryInsights from "./owner_admin_memory_insights.js";
 
-const csrfToken = document.querySelector("meta[name='csrf-token']").getAttribute("content")
+const csrfToken = document
+  .querySelector("meta[name='csrf-token']")
+  .getAttribute("content");
 const liveSocket = new LiveSocket("/live", Socket, {
   longPollFallbackMs: 2500,
-  params: {_csrf_token: csrfToken},
-  hooks: {OwnerAdminMemoryInsights, ...colocatedHooks},
-})
+  params: { _csrf_token: csrfToken },
+  hooks: { OwnerAdminMemoryInsights, ...colocatedHooks },
+});
 
 // Show progress bar on live navigation and form submits
-topbar.config({barColors: {0: "#29d"}, shadowColor: "rgba(0, 0, 0, .3)"})
-window.addEventListener("phx:page-loading-start", _info => topbar.show(300))
-window.addEventListener("phx:page-loading-stop", _info => topbar.hide())
+topbar.config({ barColors: { 0: "#29d" }, shadowColor: "rgba(0, 0, 0, .3)" });
+window.addEventListener("phx:page-loading-start", (_info) => topbar.show(300));
+window.addEventListener("phx:page-loading-stop", (_info) => topbar.hide());
 
 // connect if there are any LiveViews on the page
-liveSocket.connect()
+liveSocket.connect();
 
 // expose liveSocket on window for web console debug logs and latency simulation:
 // >> liveSocket.enableDebug()
 // >> liveSocket.enableLatencySim(1000)  // enabled for duration of browser session
 // >> liveSocket.disableLatencySim()
-window.liveSocket = liveSocket
+window.liveSocket = liveSocket;
+
+// Set random gradient colors for the animated background
+function getRandomColor() {
+  return (
+    "#" +
+    Math.floor(Math.random() * 16777215)
+      .toString(16)
+      .padStart(6, "0")
+  );
+}
+
+function setRandomGradient() {
+  const primary = getRandomColor();
+  const secondary = getRandomColor();
+  document.documentElement.style.setProperty("--gradient-primary", primary);
+  document.documentElement.style.setProperty("--gradient-secondary", secondary);
+}
+
+setRandomGradient();
+
+// Login modal functions
+function showLoginModal() {
+  const modal = document.getElementById("login-modal");
+  if (modal) {
+    modal.classList.remove("hidden");
+  }
+}
+
+function hideLoginModal() {
+  const modal = document.getElementById("login-modal");
+  if (modal) {
+    modal.classList.add("hidden");
+  }
+}
+
+// Set up login modal event listeners when the DOM is ready
+function setupLoginModal() {
+  const modal = document.getElementById("login-modal");
+  if (!modal) return;
+
+  const backdrop = document.getElementById("login-modal-backdrop");
+  const closeButton = document.getElementById("login-modal-close");
+
+  if (backdrop) {
+    backdrop.addEventListener("click", hideLoginModal);
+  }
+
+  if (closeButton) {
+    closeButton.addEventListener("click", hideLoginModal);
+  }
+
+  // Close modal with ESC key
+  document.addEventListener("keyup", (event) => {
+    if (event.key === "Escape") {
+      hideLoginModal();
+    }
+  });
+
+  // Check for query parameter
+  const urlParams = new URLSearchParams(window.location.search);
+  if (urlParams.get("show_login_modal") === "true") {
+    showLoginModal();
+  }
+
+  // Check for data attribute set by LiveView assign
+  if (modal && modal.dataset.showModal === "true") {
+    showLoginModal();
+  }
+}
+
+// Run setup when the DOM is loaded
+if (document.readyState === "loading") {
+  document.addEventListener("DOMContentLoaded", setupLoginModal);
+} else {
+  setupLoginModal();
+}
+
+// Expose functions globally for inline event handlers
+window.showLoginModal = showLoginModal;
+window.hideLoginModal = hideLoginModal;
 
 // The lines below enable quality of life phoenix_live_reload
 // development features:
@@ -54,31 +136,37 @@ window.liveSocket = liveSocket
 //     2. click on elements to jump to their definitions in your code editor
 //
 if (process.env.NODE_ENV === "development") {
-  window.addEventListener("phx:live_reload:attached", ({detail: reloader}) => {
-    // Enable server log streaming to client.
-    // Disable with reloader.disableServerLogs()
-    reloader.enableServerLogs()
+  window.addEventListener(
+    "phx:live_reload:attached",
+    ({ detail: reloader }) => {
+      // Enable server log streaming to client.
+      // Disable with reloader.disableServerLogs()
+      reloader.enableServerLogs();
 
-    // Open configured PLUG_EDITOR at file:line of the clicked element's HEEx component
-    //
-    //   * click with "c" key pressed to open at caller location
-    //   * click with "d" key pressed to open at function component definition location
-    let keyDown
-    window.addEventListener("keydown", e => keyDown = e.key)
-    window.addEventListener("keyup", _e => keyDown = null)
-    window.addEventListener("click", e => {
-      if(keyDown === "c"){
-        e.preventDefault()
-        e.stopImmediatePropagation()
-        reloader.openEditorAtCaller(e.target)
-      } else if(keyDown === "d"){
-        e.preventDefault()
-        e.stopImmediatePropagation()
-        reloader.openEditorAtDef(e.target)
-      }
-    }, true)
+      // Open configured PLUG_EDITOR at file:line of the clicked element's HEEx component
+      //
+      //   * click with "c" key pressed to open at caller location
+      //   * click with "d" key pressed to open at function component definition location
+      let keyDown;
+      window.addEventListener("keydown", (e) => (keyDown = e.key));
+      window.addEventListener("keyup", (_e) => (keyDown = null));
+      window.addEventListener(
+        "click",
+        (e) => {
+          if (keyDown === "c") {
+            e.preventDefault();
+            e.stopImmediatePropagation();
+            reloader.openEditorAtCaller(e.target);
+          } else if (keyDown === "d") {
+            e.preventDefault();
+            e.stopImmediatePropagation();
+            reloader.openEditorAtDef(e.target);
+          }
+        },
+        true,
+      );
 
-    window.liveReloader = reloader
-  })
+      window.liveReloader = reloader;
+    },
+  );
 }
-

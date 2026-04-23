@@ -75,11 +75,10 @@ defmodule MarblesWeb.BroadcastLive do
   @impl true
   def render(assigns) do
     ~H"""
+    <Layouts.header current_user={@current_user} />
     <Layouts.app
       flash={@flash}
-      current_user={@current_user}
       current_scope={@current_scope}
-      wide={true}
     >
       <div class="space-y-6">
         <h1 class="text-2xl font-semibold">Broadcast</h1>

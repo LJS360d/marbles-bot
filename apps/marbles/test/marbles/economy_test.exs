@@ -4,7 +4,8 @@ defmodule Marbles.EconomyTest do
   alias Marbles.Repo
   alias Marbles.Schema.{User, Marble, Team}
   alias Marbles.{Accounts, Collection}
-  alias Marbles.Economy.{SpawnRewards, Mining, Upgrades}
+  alias Marbles.Economy.{SpawnRewards, Mining, Upgrades, Admin}
+  alias Marbles.Schema.UserDailyStreak
 
   setup do
     team =
@@ -54,6 +55,37 @@ defmodule Marbles.EconomyTest do
     now = DateTime.utc_now()
     sec = Mining.accrual_seconds(past, now, user.id)
     assert sec == cap
+  end
+
+  test "mining reports roster size when accrual window is zero (e.g. first daily)", %{
+    user: user,
+    marble: marble
+  } do
+    assert {:new, um} = Collection.acquire_marble_template(user.id, marble.id)
+    {:ok, _} = Accounts.update_user(user, %{mine_roster: %{"slots" => [to_string(um.id)]}})
+
+    result = Mining.compute_coins(user.id, 0)
+    assert result.coins == 0
+    assert result.seconds == 0
+    assert result.roster_size == 1
+  end
+
+  test "reset_daily_cooldown moves last claim off today", %{user: user} do
+    now = DateTime.utc_now()
+
+    %UserDailyStreak{}
+    |> UserDailyStreak.changeset(%{
+      user_id: user.id,
+      last_claimed_at: now,
+      current_streak: 3,
+      longest_streak: 3
+    })
+    |> Repo.insert!()
+
+    assert :ok = Admin.reset_daily_cooldown(user.id)
+
+    row = Repo.get_by!(UserDailyStreak, user_id: user.id)
+    assert Date.compare(DateTime.to_date(row.last_claimed_at), Date.utc_today()) == :lt
   end
 
   test "upgrade buy deducts dust", %{user: user} do
