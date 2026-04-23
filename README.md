@@ -63,7 +63,7 @@ The project now includes a full in-game economy:
 
 - **Currencies**
   - `coins` (`🪙`) — primary spend currency for pulls and shop products.
-  - `dust` (`💨`) — duplicate-conversion currency and upgrade/shop spend currency.
+  - `dust` (`✨`) — duplicate-conversion currency and upgrade/shop spend currency.
 - **Duplicate handling**
   - User marble ownership is unique per marble template (`user_id + marble_id`).
   - Duplicate pulls/spawn catches are converted to dust instead of adding another owned row.

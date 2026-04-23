@@ -3,6 +3,17 @@ defmodule Marbles.Schema.Channel do
   import Ecto.Changeset
 
   @primary_key {:id, :string, autogenerate: false}
+
+  @type t :: %__MODULE__{
+          id: String.t() | nil,
+          name: String.t() | nil,
+          spawn_rate: float() | nil,
+          guild_id: String.t() | nil,
+          guild: Ecto.Association.NotLoaded.t() | map() | nil,
+          inserted_at: NaiveDateTime.t() | nil,
+          updated_at: NaiveDateTime.t() | nil
+        }
+
   schema "channels" do
     field :name, :string
     field :spawn_rate, :float, default: 0.0

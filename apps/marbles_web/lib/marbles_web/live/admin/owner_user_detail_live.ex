@@ -8,6 +8,8 @@ defmodule MarblesWeb.Admin.OwnerUserDetailLive do
   alias Marbles.Economy.Currency
   alias Marbles.Economy.MineRoster
 
+  @collection_preview 15
+
   @impl true
   def mount(_params, _session, socket) do
     {:ok,
@@ -83,7 +85,7 @@ defmodule MarblesWeb.Admin.OwnerUserDetailLive do
 
   defp load_user(socket, user_id) do
     user = Accounts.get_user!(user_id)
-    {items, total} = Collection.list_user_inventory(user.id, per_page: 50)
+    {items, total} = Collection.list_user_inventory(user.id, per_page: @collection_preview)
     breadcrumbs = [{"Owner", ~p"/admin/owner"}, {"Users", ~p"/admin/owner/users"}, {"User", nil}]
     upgrades = EconomyAdmin.list_user_upgrades(user.id)
     effects = EconomyAdmin.list_user_effects(user.id)
@@ -160,17 +162,21 @@ defmodule MarblesWeb.Admin.OwnerUserDetailLive do
                 {@user.display_name}
               </p>
               <p class="mt-2 text-sm">
-                Role: {@user.role} · Currency: {@user.currency} · Dust: {@user.dust || 0} {Currency.dust_emoji()}
+                Role: {@user.role} · {@user.currency} {Currency.coin_emoji()} {@user.dust || 0} {Currency.dust_emoji()}
               </p>
             </div>
             <.link navigate={~p"/admin/owner/users/#{@user.id}/edit"} class="btn btn-ghost btn-sm">
               Edit
             </.link>
           </div>
-          <p :if={@user.identities != []} class="mt-1 text-xs text-base-content/60">
-            Identities: {Enum.map(@user.identities || [], fn i -> "#{i.platform}: #{i.username}" end)
-            |> Enum.join(", ")}
-          </p>
+          <div :if={(@user.identities || []) != []} class="mt-1">
+            <p class="text-xs text-base-content/60">Identities</p>
+            <ul class="mt-0.5 list-inside list-disc space-y-0.5 text-xs text-base-content/60">
+              <li :for={i <- @user.identities || []}>
+                {i.platform}: {i.username}
+              </li>
+            </ul>
+          </div>
         </div>
 
         <section class="rounded-xl border border-base-300 bg-base-200 p-4">
@@ -179,7 +185,7 @@ defmodule MarblesWeb.Admin.OwnerUserDetailLive do
             Next daily: {fmt_eta(@next_daily_eta)} · Current streak: {@streak.current_streak} · Longest streak: {@streak.longest_streak}
           </p>
           <p class="mt-1 text-sm text-base-content/70">
-            Mine roster slots: {(@user.mine_roster["slots"] || []) |> length()} · Full-cap projected payout: {@mine_preview.coins} coins
+            Mine roster slots: {(@user.mine_roster["slots"] || []) |> length()} · Full-cap projected payout: {@mine_preview.coins} {Currency.coin_emoji()}
           </p>
           <p class="mt-1 text-xs text-base-content/60">
             <span :if={@roster_names == []}>Roster is empty.</span>
@@ -263,20 +269,39 @@ defmodule MarblesWeb.Admin.OwnerUserDetailLive do
           <p :if={@effects == []} class="mt-2 text-sm text-base-content/60">No effects.</p>
         </section>
 
-        <section>
-          <h2 class="text-lg font-semibold">Collection ({@collection_total})</h2>
-          <ul class="mt-2 space-y-2">
-            <li
-              :for={um <- @collection}
-              class="flex items-center justify-between gap-4 rounded-lg border border-base-300 bg-base-100 px-3 py-2"
-            >
-              <span>{um.marble.name}</span>
-              <span class="text-sm text-base-content/70">
-                Rarity {um.marble.rarity} · Lv.{um.level}
+        <section class="rounded-xl border border-base-300 bg-base-200 p-3">
+          <div class="flex flex-wrap items-baseline justify-between gap-2">
+            <h2 class="text-sm font-semibold uppercase tracking-wide text-base-content/70">
+              Collection
+            </h2>
+            <span class="text-xs text-base-content/50 tabular-nums">
+              {@collection_total} total<span
+                :if={@collection_total > length(@collection)}
+                class="text-base-content/40"
+              >
+                · first {length(@collection)} shown
               </span>
-            </li>
-          </ul>
-          <p :if={@collection == []} class="py-4 text-sm text-base-content/60">No marbles.</p>
+            </span>
+          </div>
+          <div
+            :if={@collection != []}
+            class="mt-2 max-h-44 overflow-y-auto rounded-lg border border-base-300/70 bg-base-100/60"
+          >
+            <ul class="divide-y divide-base-300/50">
+              <li
+                :for={um <- @collection}
+                class="flex items-center justify-between gap-2 px-2 py-1.5 text-xs leading-tight"
+              >
+                <span class="min-w-0 truncate font-medium">{um.marble.name}</span>
+                <span class="shrink-0 tabular-nums text-base-content/50">
+                  r{um.marble.rarity} · lv{um.level}
+                </span>
+              </li>
+            </ul>
+          </div>
+          <p :if={@collection == []} class="mt-2 py-2 text-center text-xs text-base-content/60">
+            No marbles.
+          </p>
         </section>
       </div>
     </Layouts.app>

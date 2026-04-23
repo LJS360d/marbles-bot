@@ -52,8 +52,12 @@ defmodule MarblesWeb.Router do
     pipe_through [:browser, :auth, :require_user, :require_server_admin_or_owner]
 
     live_session :guild_admin,
-      on_mount: [{MarblesWeb.Live.AuthHooks, :assign_current_user}] do
-      live "/", GuildAdminLive, :index
+      on_mount: [
+        {MarblesWeb.Live.AuthHooks, :assign_current_user},
+        {MarblesWeb.Live.GuildScope, :server_guilds}
+      ] do
+      live "/", GuildListLive, :index
+      live "/guilds/:guild_id", GuildDetailLive, :show
     end
   end
 
@@ -73,9 +77,17 @@ defmodule MarblesWeb.Router do
       live "/packs/:id/edit", OwnerPackBuilderLive, :edit
       live "/teams", OwnerTeamsLive, :index
       live "/teams/:id/edit", OwnerTeamEditLive, :edit
-      live "/guilds", OwnerGuildsLive, :index
       live "/economy", OwnerEconomyLive, :index
       live "/shop-items", OwnerShopItemsLive, :index
+    end
+
+    live_session :owner_guilds,
+      on_mount: [
+        {MarblesWeb.Live.AuthHooks, :require_owner},
+        {MarblesWeb.Live.GuildScope, :owner_guilds}
+      ] do
+      live "/guilds", GuildListLive, :index
+      live "/guilds/:guild_id", GuildDetailLive, :show
     end
   end
 

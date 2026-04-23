@@ -31,6 +31,14 @@ defmodule Marbles.Guilds do
     |> Repo.update()
   end
 
+  @doc """
+  Loads a guild row by platform server id (e.g. Discord snowflake string).
+  Returns nil if unknown.
+  """
+  @spec get_guild(String.t()) :: %Guild{} | nil
+  def get_guild(id) when is_binary(id), do: Repo.get(Guild, id)
+  def get_guild(_), do: nil
+
   def get_channel(channel_id) do
     # TODO try to hit a memcache first, the access is very frequent
     Repo.get(Channel, channel_id)

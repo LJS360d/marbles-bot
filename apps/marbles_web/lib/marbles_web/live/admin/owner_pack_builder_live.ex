@@ -516,7 +516,7 @@ defmodule MarblesWeb.Admin.OwnerPackBuilderLive do
               </div>
               <%= if o.effect_type == "pity" do %>
                 <input type="hidden" name="trigger_type" value="every_n_pulls" />
-                <div class="flex flex-col gap-1 min-w-[12rem]">
+                <div class="flex flex-col gap-1 min-w-48">
                   <span class="text-xs font-medium text-base-content/50">Guarantee minimum ★</span>
                   <input
                     type="number"
@@ -527,7 +527,7 @@ defmodule MarblesWeb.Admin.OwnerPackBuilderLive do
                     class="input input-bordered input-sm w-full"
                   />
                 </div>
-                <div class="flex flex-col gap-1 min-w-[14rem]">
+                <div class="flex flex-col gap-1 min-w-56">
                   <span class="text-xs font-medium text-base-content/50">
                     Streak length (N marbles)
                   </span>
@@ -737,25 +737,39 @@ defmodule MarblesWeb.Admin.OwnerPackBuilderLive do
               </ul>
             </div>
           </form>
-          <div class="max-h-64 overflow-y-auto rounded border border-base-300 p-2 space-y-1">
-            <%= for m <- @filtered_marbles do %>
-              <label
-                for={"marble-#{m.id}"}
-                class="flex items-center gap-2 cursor-pointer rounded px-2 py-1 hover:bg-base-200"
-              >
-                <input
-                  type="checkbox"
-                  id={"marble-#{m.id}"}
-                  value={m.id}
-                  checked={m.id in @marble_ids}
-                  phx-click="toggle_marble"
-                  phx-value-id={m.id}
-                />
-                <span>{m.name}</span>
-                <span class="text-xs text-base-content/60">R{m.rarity}</span>
-                <span :if={m.team} class="text-xs text-base-content/50">({m.team.name})</span>
-              </label>
-            <% end %>
+          <div class="max-h-[min(28rem,72vh)] overflow-y-auto rounded border border-base-300 p-2">
+            <div class="grid grid-cols-2 gap-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6">
+              <%= for m <- @filtered_marbles do %>
+                <label
+                  for={"marble-#{m.id}"}
+                  class={[
+                    "flex min-h-20 cursor-pointer flex-col gap-1 rounded-lg border px-2 py-2 text-left transition",
+                    "hover:border-primary/40 hover:bg-base-200/70",
+                    if(m.id in @marble_ids,
+                      do: "border-primary bg-primary/10",
+                      else: "border-base-300 bg-base-100"
+                    )
+                  ]}
+                >
+                  <div class="flex items-start gap-2">
+                    <input
+                      type="checkbox"
+                      id={"marble-#{m.id}"}
+                      value={m.id}
+                      checked={m.id in @marble_ids}
+                      phx-click="toggle_marble"
+                      phx-value-id={m.id}
+                      class="mt-0.5 shrink-0"
+                    />
+                    <span class="line-clamp-2 text-sm font-medium leading-snug">{m.name}</span>
+                  </div>
+                  <span class="pl-6 text-[11px] text-base-content/55 tabular-nums">R{m.rarity}</span>
+                  <span :if={m.team} class="pl-6 text-[11px] text-base-content/45 line-clamp-1">
+                    {m.team.name}
+                  </span>
+                </label>
+              <% end %>
+            </div>
           </div>
         </div>
       </div>

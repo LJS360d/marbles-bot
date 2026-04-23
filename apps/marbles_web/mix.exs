@@ -58,6 +58,7 @@ defmodule MarblesWeb.MixProject do
       {:telemetry_poller, "~> 1.0"},
       {:gettext, "~> 1.0"},
       {:marbles, in_umbrella: true},
+      {:req, "~> 0.5"},
       {:jason, "~> 1.2"},
       {:bandit, "~> 1.5"},
       {:ueberauth, "~> 0.10"},
