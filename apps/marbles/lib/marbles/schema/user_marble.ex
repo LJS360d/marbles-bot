@@ -4,6 +4,18 @@ defmodule Marbles.Schema.UserMarble do
 
   @primary_key {:id, :binary_id, autogenerate: true}
   @foreign_key_type :binary_id
+  @type t :: %__MODULE__{
+          id: Ecto.UUID.t() | nil,
+          level: integer(),
+          experience: integer(),
+          meta: map(),
+          user_id: Ecto.UUID.t() | nil,
+          marble_id: Ecto.UUID.t() | nil,
+          user: Ecto.Association.NotLoaded.t() | map(),
+          marble: Ecto.Association.NotLoaded.t() | map(),
+          inserted_at: NaiveDateTime.t() | nil,
+          updated_at: NaiveDateTime.t() | nil
+        }
 
   schema "user_marbles" do
     field :level, :integer, default: 1

@@ -222,7 +222,13 @@ defmodule MarblesWeb.Admin.OwnerUserDetailLive do
           <div class="flex flex-wrap items-center justify-between gap-2">
             <h2 class="text-lg font-semibold">Effects</h2>
           </div>
-          <.form for={%{}} as={:effect} phx-submit="grant_effect" id="grant-effect-form" class="mt-3 flex flex-wrap items-end gap-3 rounded-lg border border-base-300 bg-base-100 p-3">
+          <.form
+            for={%{}}
+            as={:effect}
+            phx-submit="grant_effect"
+            id="grant-effect-form"
+            class="mt-3 flex flex-wrap items-end gap-3 rounded-lg border border-base-300 bg-base-100 p-3"
+          >
             <.input
               name="effect[effect_key]"
               type="text"
@@ -244,7 +250,12 @@ defmodule MarblesWeb.Admin.OwnerUserDetailLive do
                   Scope: {e.scope} · Expires: {Calendar.strftime(e.expires_at, "%Y-%m-%d %H:%M UTC")}
                 </p>
               </div>
-              <button type="button" phx-click="delete_effect" phx-value-id={e.id} class="btn btn-error btn-xs">
+              <button
+                type="button"
+                phx-click="delete_effect"
+                phx-value-id={e.id}
+                class="btn btn-error btn-xs"
+              >
                 Remove
               </button>
             </li>

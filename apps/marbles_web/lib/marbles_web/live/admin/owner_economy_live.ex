@@ -67,7 +67,9 @@ defmodule MarblesWeb.Admin.OwnerEconomyLive do
       <div class="space-y-6">
         <div class="flex flex-wrap items-center justify-between gap-3">
           <h1 class="text-2xl font-semibold">Economy control panel</h1>
-          <.link navigate={~p"/admin/owner/shop-items"} class="btn btn-primary btn-sm">Manage shop items</.link>
+          <.link navigate={~p"/admin/owner/shop-items"} class="btn btn-primary btn-sm">
+            Manage shop items
+          </.link>
         </div>
 
         <section class="grid grid-cols-1 gap-4 lg:grid-cols-3">
@@ -132,7 +134,11 @@ defmodule MarblesWeb.Admin.OwnerEconomyLive do
               Page {@page} of {@cooldowns_total_pages} · {@cooldowns_total} users
             </span>
             <div class="flex gap-2">
-              <.link :if={@page > 1} patch={~p"/admin/owner/economy?page=#{@page - 1}"} class="btn btn-sm">
+              <.link
+                :if={@page > 1}
+                patch={~p"/admin/owner/economy?page=#{@page - 1}"}
+                class="btn btn-sm"
+              >
                 Previous
               </.link>
               <.link

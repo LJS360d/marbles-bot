@@ -19,7 +19,7 @@ defmodule Marbles.Economy.Effects do
   def mine_yield_bonus_percent(user_id) do
     user_id
     |> list_active()
-    |> Enum.filter(&(String.starts_with?(&1.effect_key, "boost_mine_yield")))
+    |> Enum.filter(&String.starts_with?(&1.effect_key, "boost_mine_yield"))
     |> Enum.reduce(0, fn e, acc -> acc + meta_int(e.meta, "pct") end)
   end
 
@@ -27,7 +27,7 @@ defmodule Marbles.Economy.Effects do
   def mine_offline_cap_bonus_hours(user_id) do
     user_id
     |> list_active()
-    |> Enum.filter(&(String.starts_with?(&1.effect_key, "boost_mine_cap")))
+    |> Enum.filter(&String.starts_with?(&1.effect_key, "boost_mine_cap"))
     |> Enum.reduce(0, fn e, acc -> acc + meta_int(e.meta, "hours") end)
   end
 
@@ -35,12 +35,13 @@ defmodule Marbles.Economy.Effects do
   def dust_gain_bonus_percent(user_id) do
     user_id
     |> list_active()
-    |> Enum.filter(&(String.starts_with?(&1.effect_key, "boost_dust_gain")))
+    |> Enum.filter(&String.starts_with?(&1.effect_key, "boost_dust_gain"))
     |> Enum.reduce(0, fn e, acc -> acc + meta_int(e.meta, "pct") end)
   end
 
   defp meta_int(meta, k) when is_map(meta) do
     v = Map.get(meta, k) || Map.get(meta, String.to_atom(k))
+
     case v do
       i when is_integer(i) and i >= 0 -> i
       _ -> 0

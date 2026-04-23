@@ -87,7 +87,7 @@ defmodule Marbles.Economy.MineRoster do
       user = Repo.get!(User, user_id)
       ids = slot_ids(user.mine_roster)
 
-        remove_id =
+      remove_id =
         from(um in UserMarble,
           join: m in Marble,
           on: m.id == um.marble_id,

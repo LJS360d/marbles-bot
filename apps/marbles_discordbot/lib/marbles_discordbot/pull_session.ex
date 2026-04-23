@@ -3,6 +3,7 @@ defmodule MarblesDiscordbot.PullSession do
 
   alias Nostrum.Api
   alias Nostrum.Api.Interaction, as: ApiInteraction
+  alias Nostrum.Constants
   alias Marbles.{Accounts, Catalog, PackPullRules}
   alias Marbles.Schema.User
   alias MarblesDiscordbot.Components
@@ -46,19 +47,24 @@ defmodule MarblesDiscordbot.PullSession do
     |> discord_id()
   end
 
-  @spec user_mentions(non_neg_integer()) :: {:users, [non_neg_integer()]}
+  @spec user_mentions(non_neg_integer()) :: %{parse: list(), users: [non_neg_integer()]}
   def user_mentions(user_id) when is_integer(user_id) and user_id >= 0 do
-    {:users, [user_id]}
+    %{parse: [], users: [user_id]}
   end
 
   def followup_with_pull_row(app_id, token, content, embeds, owner_int, components)
       when is_integer(owner_int) and owner_int >= 0 do
-    ApiInteraction.create_followup_message(app_id, token, %{
-      content: content || "",
-      embeds: embeds,
-      components: components,
-      allowed_mentions: user_mentions(owner_int)
-    })
+    Api.request(
+      :post,
+      Constants.webhook_token(app_id, token),
+      %{
+        content: content || "",
+        embeds: embeds,
+        components: components,
+        allowed_mentions: user_mentions(owner_int)
+      },
+      wait: true
+    )
   end
 
   def followup_ephemeral(app_id, token, content) do

@@ -10,7 +10,9 @@ defmodule Marbles.Economy.Mining do
 
   @spec max_accrual_seconds(Ecto.UUID.t()) :: pos_integer()
   def max_accrual_seconds(user_id) do
-    extra_h = Upgrades.mine_extra_offline_hours(user_id) + Effects.mine_offline_cap_bonus_hours(user_id)
+    extra_h =
+      Upgrades.mine_extra_offline_hours(user_id) + Effects.mine_offline_cap_bonus_hours(user_id)
+
     hours = @base_offline_hours + extra_h
     hours * 3600
   end
@@ -31,7 +33,8 @@ defmodule Marbles.Economy.Mining do
           cap_seconds: pos_integer(),
           roster_size: non_neg_integer()
         }
-  def compute_coins(user_id, accrual_seconds) when is_integer(accrual_seconds) and accrual_seconds >= 0 do
+  def compute_coins(user_id, accrual_seconds)
+      when is_integer(accrual_seconds) and accrual_seconds >= 0 do
     user = Repo.get!(User, user_id)
     roster_ids = roster_slot_ids(user.mine_roster)
     cap = max_accrual_seconds(user_id)
@@ -46,7 +49,11 @@ defmodule Marbles.Economy.Mining do
       else
         hours = accrual_seconds / 3600.0
         per_hour = roster |> Enum.map(&marble_hour_rate/1) |> Enum.sum()
-        yield_mult = (100 + Upgrades.mine_yield_percent(user_id) + Effects.mine_yield_bonus_percent(user_id)) / 100.0
+
+        yield_mult =
+          (100 + Upgrades.mine_yield_percent(user_id) + Effects.mine_yield_bonus_percent(user_id)) /
+            100.0
+
         coins = trunc(hours * per_hour * yield_mult) |> max(0)
         %{coins: coins, seconds: accrual_seconds, cap_seconds: cap, roster_size: length(roster)}
       end

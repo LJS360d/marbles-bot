@@ -43,7 +43,8 @@ defmodule Marbles.Collection do
 
   @spec acquire_marble_template(Ecto.UUID.t(), Ecto.UUID.t(), keyword()) ::
           {:new, UserMarble.t()} | {:duplicate, pos_integer(), UserMarble.t()}
-  def acquire_marble_template(user_id, marble_id, opts \\ []) when is_binary(user_id) and is_binary(marble_id) do
+  def acquire_marble_template(user_id, marble_id, opts \\ [])
+      when is_binary(user_id) and is_binary(marble_id) do
     meta = Keyword.get(opts, :meta, %{})
     marble = Repo.get!(Marble, marble_id)
 

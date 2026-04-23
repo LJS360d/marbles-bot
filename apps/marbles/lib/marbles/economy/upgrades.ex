@@ -97,7 +97,11 @@ defmodule Marbles.Economy.Upgrades do
                case Repo.get_by(UserUpgrade, user_id: user_id, upgrade_key: key) do
                  nil ->
                    %UserUpgrade{}
-                   |> UserUpgrade.changeset(%{user_id: user_id, upgrade_key: key, level: new_level})
+                   |> UserUpgrade.changeset(%{
+                     user_id: user_id,
+                     upgrade_key: key,
+                     level: new_level
+                   })
                    |> Repo.insert!()
 
                  row ->

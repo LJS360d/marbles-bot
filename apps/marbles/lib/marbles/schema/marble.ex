@@ -4,6 +4,22 @@ defmodule Marbles.Schema.Marble do
 
   @primary_key {:id, :binary_id, autogenerate: true}
   @foreign_key_type :binary_id
+  @type role :: :athlete | :coach | :support | :manager | :rally
+  @type t :: %__MODULE__{
+          id: Ecto.UUID.t() | nil,
+          name: String.t() | nil,
+          edition: String.t() | nil,
+          role: role() | nil,
+          rarity: integer() | nil,
+          base_stats: map(),
+          team_id: Ecto.UUID.t() | nil,
+          team: Ecto.Association.NotLoaded.t() | map(),
+          packs: Ecto.Association.NotLoaded.t() | [map()],
+          user_marbles: Ecto.Association.NotLoaded.t() | [map()],
+          assets: Ecto.Association.NotLoaded.t() | [map()],
+          inserted_at: NaiveDateTime.t() | nil,
+          updated_at: NaiveDateTime.t() | nil
+        }
 
   schema "marbles" do
     field :name, :string

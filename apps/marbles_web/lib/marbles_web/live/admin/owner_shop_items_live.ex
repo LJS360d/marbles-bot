@@ -55,7 +55,9 @@ defmodule MarblesWeb.Admin.OwnerShopItemsLive do
       <div class="space-y-6">
         <div class="flex flex-wrap items-center justify-between gap-3">
           <h1 class="text-2xl font-semibold">Shop items</h1>
-          <.link navigate={~p"/admin/owner/economy"} class="btn btn-ghost btn-sm">Back to economy</.link>
+          <.link navigate={~p"/admin/owner/economy"} class="btn btn-ghost btn-sm">
+            Back to economy
+          </.link>
         </div>
 
         <p class="text-sm text-base-content/70">
@@ -67,7 +69,13 @@ defmodule MarblesWeb.Admin.OwnerShopItemsLive do
             :for={item <- @items}
             class="rounded-xl border border-base-300 bg-base-200 p-4 shadow-sm"
           >
-            <.form for={%{}} as={:item} id={"shop-item-#{item.id}"} phx-submit="save_item" class="space-y-3">
+            <.form
+              for={%{}}
+              as={:item}
+              id={"shop-item-#{item.id}"}
+              phx-submit="save_item"
+              class="space-y-3"
+            >
               <input type="hidden" name="item[id]" value={item.id} />
               <div class="flex flex-wrap items-center justify-between gap-2">
                 <div>

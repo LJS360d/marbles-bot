@@ -3,6 +3,20 @@ defmodule Marbles.Schema.User do
   import Ecto.Changeset
 
   @primary_key {:id, :binary_id, autogenerate: true}
+  @type role :: :regular | :server_admin | :owner
+  @type t :: %__MODULE__{
+          id: Ecto.UUID.t() | nil,
+          display_name: String.t() | nil,
+          currency: integer(),
+          dust: integer(),
+          mine_roster: map(),
+          role: role(),
+          identities: Ecto.Association.NotLoaded.t() | [map()],
+          collection: Ecto.Association.NotLoaded.t() | [map()],
+          inserted_at: NaiveDateTime.t() | nil,
+          updated_at: NaiveDateTime.t() | nil
+        }
+
   schema "users" do
     field :display_name, :string
     field :currency, :integer, default: 0

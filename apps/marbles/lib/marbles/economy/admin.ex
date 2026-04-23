@@ -80,14 +80,17 @@ defmodule Marbles.Economy.Admin do
 
   @spec list_user_upgrades(Ecto.UUID.t()) :: [UserUpgrade.t()]
   def list_user_upgrades(user_id) when is_binary(user_id) do
-    from(u in UserUpgrade, where: u.user_id == ^user_id, order_by: [asc: u.upgrade_key]) |> Repo.all()
+    from(u in UserUpgrade, where: u.user_id == ^user_id, order_by: [asc: u.upgrade_key])
+    |> Repo.all()
   end
 
   @spec set_user_upgrade_level(Ecto.UUID.t(), String.t(), non_neg_integer()) ::
           {:ok, UserUpgrade.t()} | {:error, Ecto.Changeset.t()}
   def set_user_upgrade_level(user_id, key, level)
       when is_binary(user_id) and is_binary(key) and is_integer(level) and level >= 0 do
-    row = Repo.get_by(UserUpgrade, user_id: user_id, upgrade_key: key) || %UserUpgrade{user_id: user_id}
+    row =
+      Repo.get_by(UserUpgrade, user_id: user_id, upgrade_key: key) ||
+        %UserUpgrade{user_id: user_id}
 
     row
     |> UserUpgrade.changeset(%{user_id: user_id, upgrade_key: key, level: level})
@@ -96,7 +99,8 @@ defmodule Marbles.Economy.Admin do
 
   @spec list_user_effects(Ecto.UUID.t()) :: [UserEffect.t()]
   def list_user_effects(user_id) when is_binary(user_id) do
-    from(e in UserEffect, where: e.user_id == ^user_id, order_by: [desc: e.inserted_at]) |> Repo.all()
+    from(e in UserEffect, where: e.user_id == ^user_id, order_by: [desc: e.inserted_at])
+    |> Repo.all()
   end
 
   @spec grant_user_effect(Ecto.UUID.t(), String.t(), pos_integer()) ::

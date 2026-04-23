@@ -77,5 +77,6 @@ defmodule Marbles.Leaderboards do
     |> with_ranks()
   end
 
-  defp with_ranks(rows), do: Enum.with_index(rows, 1) |> Enum.map(fn {m, i} -> Map.put(m, :rank, i) end)
+  defp with_ranks(rows),
+    do: Enum.with_index(rows, 1) |> Enum.map(fn {m, i} -> Map.put(m, :rank, i) end)
 end

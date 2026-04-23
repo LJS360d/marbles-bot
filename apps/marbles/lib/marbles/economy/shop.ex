@@ -61,13 +61,20 @@ defmodule Marbles.Economy.Shop do
       if enabled do
         updated = %{
           product
-          | name: if(row && present?(row.label_override), do: row.label_override, else: product.name),
+          | name:
+              if(row && present?(row.label_override), do: row.label_override, else: product.name),
             coin: if(row && is_integer(row.coin_price), do: row.coin_price, else: product.coin),
             dust: if(row && is_integer(row.dust_price), do: row.dust_price, else: product.dust),
             duration_sec:
-              if(row && is_integer(row.duration_sec), do: row.duration_sec, else: product.duration_sec),
+              if(row && is_integer(row.duration_sec),
+                do: row.duration_sec,
+                else: product.duration_sec
+              ),
             limit_count:
-              if(row && is_integer(row.limit_count), do: row.limit_count, else: product.limit_count),
+              if(row && is_integer(row.limit_count),
+                do: row.limit_count,
+                else: product.limit_count
+              ),
             limit_period_unit:
               if(row && present?(row.limit_period_unit),
                 do: row.limit_period_unit,
@@ -122,8 +129,7 @@ defmodule Marbles.Economy.Shop do
 
   @spec buy(Ecto.UUID.t(), product_id()) ::
           {:ok, UserEffect.t()}
-          | {:error,
-             :invalid_product | :period_limit | :insufficient_coins | :insufficient_dust}
+          | {:error, :invalid_product | :period_limit | :insufficient_coins | :insufficient_dust}
   def buy(user_id, product_id) when is_binary(product_id) do
     product = Enum.find(products(), &(&1.id == product_id))
 
