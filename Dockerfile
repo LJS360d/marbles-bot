@@ -43,8 +43,8 @@ ENV PHX_SERVER=true
 ENV ECTO_EDITOR=
 
 # Persisted data (SQLite DB, uploads, etc.)
-RUN mkdir -p /app/data
-VOLUME /app/data
+# RUN mkdir -p /app/data
+# VOLUME /app/data
 
 EXPOSE 4000
 CMD ["/bin/sh", "-c", "/app/bin/${RELEASE_NAME} start"]
