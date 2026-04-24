@@ -21,7 +21,7 @@ dockerfilePath = "Dockerfile"
 
 [deploy]
 restartPolicyType = "ON_FAILURE"
-sleepApplication = true
-healthcheckPath = "/"
-healthcheckTimeout = 30
+sleepApplication = false
+# healthcheckPath = "/"
+# healthcheckTimeout = 30
 requiredMountPath = "/app/data"
