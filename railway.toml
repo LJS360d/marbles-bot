@@ -2,12 +2,14 @@
 #
 #   1) marbles-web  → In Railway dashboard set this service’s config file to:
 #                      `railway/marbles-web.toml`
-#      Variables: RELEASE_NAME=web, RELEASE_ROLE=web, DATABASE_PATH=/app/data/marbles_prod.db,
+#      Variables: RELEASE_NAME=web, DATABASE_PATH=/app/data/marbles_prod.db,
+#      (RELEASE_ROLE=web optional — inferred from RELEASE_NAME)
 #      SECRET_KEY_BASE, ASSETS_BASE_URL, S3_*, PHX_HOST (see .env.example).
 #
 #   2) marbles-bot  → Config file:
 #                      `railway/marbles-bot.toml`
-#      Variables: RELEASE_NAME=bot, RELEASE_ROLE=bot, same DATABASE_PATH + volume as web,
+#      Variables: RELEASE_NAME=bot, same DATABASE_PATH + volume as web,
+#      (RELEASE_ROLE=bot optional — inferred from RELEASE_NAME)
 #      DISCORD_BOT_TOKEN, ASSETS_BASE_URL, S3_*.
 #
 # This root `railway.toml` mirrors the WEB service so a default “deploy repo” still works;

@@ -5,7 +5,18 @@ if Code.ensure_loaded?(Dotenvy) do
   Dotenvy.source!([".env", System.get_env()]) |> System.put_env()
 end
 
-release_role = System.get_env("RELEASE_ROLE", "all")
+release_role =
+  case System.get_env("RELEASE_ROLE") do
+    r when is_binary(r) and String.trim(r) != "" ->
+      String.trim(r)
+
+    _ ->
+      case System.get_env("RELEASE_NAME") do
+        "bot" -> "bot"
+        "web" -> "web"
+        _ -> "all"
+      end
+  end
 
 config :marbles_web, MarblesWeb.Endpoint,
   http: [port: String.to_integer(System.get_env("PORT", "4000"))]
