@@ -5,17 +5,24 @@ if Code.ensure_loaded?(Dotenvy) do
   Dotenvy.source!([".env", System.get_env()]) |> System.put_env()
 end
 
+infer_release_role_from_name = fn ->
+  case System.get_env("RELEASE_NAME") do
+    "bot" -> "bot"
+    "web" -> "web"
+    _ -> "all"
+  end
+end
+
 release_role =
   case System.get_env("RELEASE_ROLE") do
-    r when is_binary(r) and String.trim(r) != "" ->
-      String.trim(r)
+    r when is_binary(r) ->
+      case String.trim(r) do
+        "" -> infer_release_role_from_name.()
+        trimmed -> trimmed
+      end
 
     _ ->
-      case System.get_env("RELEASE_NAME") do
-        "bot" -> "bot"
-        "web" -> "web"
-        _ -> "all"
-      end
+      infer_release_role_from_name.()
   end
 
 config :marbles_web, MarblesWeb.Endpoint,
