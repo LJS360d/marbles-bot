@@ -19,9 +19,6 @@ services:
       - marbles_sqlite:/app/data
     ports:
       - "4000:4000"
-    command: >
-      sh -c "/app/bin/web eval 'Marbles.Release.migrate()' &&
-             exec /app/bin/web start"
 
   marbles-bot:
     build:
@@ -38,7 +35,6 @@ services:
       DATABASE_PATH: /app/data/marbles_prod.db
     volumes:
       - marbles_sqlite:/app/data
-    command: ["/app/bin/bot", "start"]
 
 volumes:
   marbles_sqlite:

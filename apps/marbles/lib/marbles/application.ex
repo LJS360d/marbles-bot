@@ -20,8 +20,7 @@ defmodule Marbles.Application do
     Supervisor.start_link(children, strategy: :one_for_one, name: Marbles.Supervisor)
   end
 
-  defp skip_migrations?() do
-    # By default, sqlite migrations are run when using a release
-    System.get_env("RELEASE_NAME") == nil
+  defp skip_migrations? do
+    Code.ensure_loaded?(Mix)
   end
 end

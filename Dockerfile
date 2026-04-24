@@ -27,7 +27,7 @@ RUN mix release ${RELEASE_NAME}
 FROM ${RUNNER_IMAGE}
 ARG RELEASE_NAME=marbles_umbrella
 ENV RELEASE_NAME=${RELEASE_NAME}
-RUN apt-get update -y && apt-get install -y libssl3 libncurses6 locales ca-certificates \
+RUN apt-get update -y && apt-get install -y libssl3 libncurses6 locales ca-certificates util-linux \
   && apt-get clean && rm -f /var/lib/apt/lists/*_*
 RUN sed -i '/en_US.UTF-8/s/^# //g' /etc/locale.gen && locale-gen
 ENV LANG=en_US.UTF-8
@@ -35,16 +35,14 @@ ENV LANGUAGE=en_US:en
 ENV LC_ALL=en_US.UTF-8
 
 WORKDIR /app
-RUN chown nobody:nogroup /app
-USER nobody
 
 COPY --from=builder --chown=nobody:nogroup /app/_build/prod/rel/${RELEASE_NAME} ./
+COPY docker-entrypoint.sh /usr/local/bin/docker-entrypoint.sh
+RUN chmod +x /usr/local/bin/docker-entrypoint.sh
+
 ENV PHX_SERVER=true
 ENV ECTO_EDITOR=
 
-# Persisted data (SQLite DB, uploads, etc.)
-# RUN mkdir -p /app/data
-# VOLUME /app/data
-
 EXPOSE 4000
-CMD ["/bin/sh", "-c", "/app/bin/${RELEASE_NAME} start"]
+ENTRYPOINT ["/usr/local/bin/docker-entrypoint.sh"]
+CMD ["start"]
