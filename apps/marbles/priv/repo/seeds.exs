@@ -5,23 +5,20 @@ alias Marbles.PackPullRules
 import Ecto.Query
 require Logger
 
-Application.ensure_all_started(:marbles)
+if is_nil(Process.whereis(Marbles.Repo)) do
+  Application.ensure_all_started(:marbles)
+end
 
-# Helper to find the absolute path to our data
 data_path = fn filename ->
   Application.app_dir(:marbles, "priv/data/#{filename}")
 end
 
-# --- Seed Teams and Marbles ---
 teams_file = data_path.("teams.json")
 
 if File.exists?(teams_file) do
-  # We use 'with' to chain the read and the decode.
-  # If either fails, it drops to the 'else' block.
   with {:ok, binary} <- File.read(teams_file),
        {:ok, teams_json} <- Jason.decode(binary) do
     Enum.each(teams_json, fn team_data ->
-      # Insert the team. If it exists, we fetch the existing one to get the ID.
       team =
         %Team{}
         |> Team.changeset(team_data)
@@ -41,7 +38,6 @@ if File.exists?(teams_file) do
             nil
         end
 
-      # Only proceed with marbles if we have a valid team struct
       if team do
         Enum.each(team_data["marbles"] || [], fn marble_data ->
           full_data =
@@ -73,7 +69,6 @@ else
   raise "#{teams_file} not found, cannot proceed with seeding"
 end
 
-# --- Packs ---
 packs_file = data_path.("packs.json")
 
 if File.exists?(packs_file) do
@@ -105,7 +100,6 @@ if File.exists?(packs_file) do
           |> Enum.map(fn m_query ->
             Repo.get_by(Marble, name: m_query["name"], edition: m_query["edition"])
           end)
-          # Remove entries if a marble wasn't found in DB
           |> Enum.reject(&is_nil/1)
 
         Logger.info("found #{length(marbles_to_link)} marbles to link to pack #{pack.name}")
@@ -129,7 +123,6 @@ else
   raise "#{packs_file} not found, cannot proceed with seeding"
 end
 
-# --- Pack pull rules (pack_rules.json: pack_name + rules[]) ---
 rules_file = data_path.("pack_rules.json")
 
 if File.exists?(rules_file) do

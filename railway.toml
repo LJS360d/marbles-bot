@@ -27,3 +27,6 @@ sleepApplication = false
 # healthcheckPath = "/"
 # healthcheckTimeout = 30
 requiredMountPath = "/app/data"
+# Runs before the new deployment receives traffic. Migrates then seeds; `Marbles.Release.seed/0`
+# no-ops once any team exists (safe on every deploy). Requires RELEASE_NAME (e.g. web) on the service.
+preDeployCommand = "/bin/sh -lc 'exec /app/bin/${RELEASE_NAME} eval \"Marbles.Release.migrate(); Marbles.Release.seed()\"'"

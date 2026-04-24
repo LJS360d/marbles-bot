@@ -117,24 +117,42 @@ if config_env() == :prod do
         You can generate one by calling: mix phx.gen.secret
         """
 
+    parse_hostname = fn raw ->
+      raw = String.trim(raw)
+
+      if raw == "" do
+        nil
+      else
+        raw
+        |> String.replace_prefix("https://", "")
+        |> String.replace_prefix("http://", "")
+        |> String.split("/", parts: 2)
+        |> hd()
+        |> String.split(":", parts: 2)
+        |> hd()
+      end
+    end
+
+    public_hostname =
+      Enum.find_value(["PHX_HOST", "RAILWAY_PUBLIC_DOMAIN"], fn key ->
+        case System.get_env(key) do
+          v when is_binary(v) -> parse_hostname.(v)
+          _ -> nil
+        end
+      end)
+
     endpoint_opts = [
       http: [ip: {0, 0, 0, 0, 0, 0, 0, 0}],
       secret_key_base: secret_key_base,
-      server: true
+      server: true,
+      check_origin: :conn
     ]
 
     endpoint_opts =
-      case {System.get_env("PHX_HOST"), System.get_env("RAILWAY_PUBLIC_DOMAIN")} do
-        {h, _} when is_binary(h) and h != "" ->
+      case public_hostname do
+        h when is_binary(h) and h != "" ->
           Keyword.put(endpoint_opts, :url,
             host: h,
-            port: String.to_integer(System.get_env("PHX_URL_PORT", "443")),
-            scheme: System.get_env("PHX_SCHEME", "https")
-          )
-
-        {_, d} when is_binary(d) and d != "" ->
-          Keyword.put(endpoint_opts, :url,
-            host: d,
             port: String.to_integer(System.get_env("PHX_URL_PORT", "443")),
             scheme: System.get_env("PHX_SCHEME", "https")
           )
