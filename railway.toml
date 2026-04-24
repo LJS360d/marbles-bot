@@ -1,16 +1,19 @@
-# Railway (https://railway.app) — create two services from this repo for split deploy:
+# Railway config-as-code: one file = one service. This repo uses TWO services from the same GitHub repo:
 #
-# 1) "marbles-bot" — always at least 1 replica
-#    Build: Docker, build arg RELEASE_NAME=bot
-#    Start: default CMD (uses RELEASE_NAME from image)
-#    Env: RELEASE_ROLE=bot, DATABASE_PATH=/app/data/marbles_prod.db, DISCORD_BOT_TOKEN, …
-#    Volume: mount at /app/data (same path as web if you share one logical DB — see docs in chat)
+#   1) marbles-web  → In Railway dashboard set this service’s config file to:
+#                      `railway/marbles-web.toml`
+#      Variables: RELEASE_NAME=web, RELEASE_ROLE=web, DATABASE_PATH=/app/data/marbles_prod.db,
+#      SECRET_KEY_BASE, ASSETS_BASE_URL, S3_*, PHX_HOST (see .env.example).
 #
-# 2) "marbles-web" — optional scale-to-zero on hobby plans that support it
-#    Build: Docker, build arg RELEASE_NAME=web
-#    Env: RELEASE_ROLE=web, DATABASE_PATH=…, SECRET_KEY_BASE, ASSETS_BASE_URL, S3_*, PHX_HOST, …
+#   2) marbles-bot  → Config file:
+#                      `railway/marbles-bot.toml`
+#      Variables: RELEASE_NAME=bot, RELEASE_ROLE=bot, same DATABASE_PATH + volume as web,
+#      DISCORD_BOT_TOKEN, ASSETS_BASE_URL, S3_*.
 #
-# Single-service dev: build arg RELEASE_NAME=marbles_umbrella (default), RELEASE_ROLE=all
+# This root `railway.toml` mirrors the WEB service so a default “deploy repo” still works;
+# for split production, prefer binding each service to `railway/marbles-*.toml` as above.
+#
+# Docker must receive build-arg RELEASE_NAME (set as a Railway variable with the same name).
 
 [build]
 builder = "DOCKERFILE"
@@ -18,4 +21,7 @@ dockerfilePath = "Dockerfile"
 
 [deploy]
 restartPolicyType = "ON_FAILURE"
-# Set healthcheckPath=/ on the *web* service only. The *bot* release has no HTTP listener.
+sleepApplication = true
+healthcheckPath = "/"
+healthcheckTimeout = 30
+requiredMountPath = "/app/data"

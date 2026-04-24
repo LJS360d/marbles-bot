@@ -1,53 +1,44 @@
+# Local / optional parity with Railway: Phoenix (web) + Discord (bot), shared SQLite volume.
+# Copy .env.example → .env and set secrets (R2, Discord, SECRET_KEY_BASE, etc.).
 services:
-  database:
-    image: postgres:16-alpine
-    restart: always
-    environment:
-      POSTGRES_USER: ${DB_USER:-marbles}
-      POSTGRES_PASSWORD: ${DB_PASSWORD}
-      POSTGRES_DB: ${DB_NAME:-marbles_prod}
-    volumes:
-      - db_data:/var/lib/postgresql/data
-    healthcheck:
-      test:
-        [
-          "CMD-SHELL",
-          "pg_isready -U ${DB_USER:-marbles} -d ${DB_NAME:-marbles_prod}",
-        ]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-
-  app:
+  marbles-web:
     build:
       context: .
       dockerfile: Dockerfile
-    restart: always
+      args:
+        RELEASE_NAME: web
+    restart: unless-stopped
     env_file: .env
     environment:
       MIX_ENV: prod
-      # The app connects to the DB service by hostname
-      DATABASE_URL: ecto://${DB_USER}:${DB_PASSWORD}@postgres/${DB_NAME}
-    depends_on:
-      postgres:
-        condition: service_healthy
+      RELEASE_NAME: web
+      RELEASE_ROLE: web
+      DATABASE_PATH: /app/data/marbles_prod.db
+      PORT: "4000"
     volumes:
-      - asset_uploads:/app/uploads # Shared asset folder
-    command: >
-      sh -c "/app/bin/marbles_umbrella eval 'Marbles.Release.migrate()' &&
-             exec /app/bin/marbles_umbrella start"
-
-  bucket:
-    image: chrislusf/seaweedfs
-    restart: always
+      - marbles_sqlite:/app/data
     ports:
-      - "9333:9333" # Master
-      - "8080:8080" # Filer (HTTP/Browse)
-      - "8333:8333" # S3 API
+      - "4000:4000"
+    command: >
+      sh -c "/app/bin/web eval 'Marbles.Release.migrate()' &&
+             exec /app/bin/web start"
+
+  marbles-bot:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        RELEASE_NAME: bot
+    restart: unless-stopped
+    env_file: .env
+    environment:
+      MIX_ENV: prod
+      RELEASE_NAME: bot
+      RELEASE_ROLE: bot
+      DATABASE_PATH: /app/data/marbles_prod.db
     volumes:
-      - bucket_data:/data
-    command: "server -dir=/data -s3 -filer"
+      - marbles_sqlite:/app/data
+    command: ["/app/bin/bot", "start"]
 
 volumes:
-  db_data:
-  bucket_data:
+  marbles_sqlite:
