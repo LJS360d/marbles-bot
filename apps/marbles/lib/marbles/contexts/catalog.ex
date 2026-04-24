@@ -170,7 +170,7 @@ defmodule Marbles.Catalog do
 
   @pack_sort ~w(name cost inserted_at marble_count)a
 
-  @spec list_packs(keyword()) :: {[Pack.t()], non_neg_integer()}
+  @spec list_packs(keyword()) :: {[%Pack{}], non_neg_integer()}
   def list_packs(opts \\ []) do
     page = Keyword.get(opts, :page, 1) |> max(1)
     per = Keyword.get(opts, :per_page, 25)
