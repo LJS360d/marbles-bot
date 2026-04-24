@@ -67,7 +67,9 @@ end
       System.get_env("S3_SECRET_KEY") ||
         raise("environment variable S3_SECRET_KEY is required in production."),
       System.get_env("S3_HOST") ||
-        raise("environment variable S3_HOST is required in production (e.g. <accountid>.r2.cloudflarestorage.com).")
+        raise(
+          "environment variable S3_HOST is required in production (e.g. <accountid>.r2.cloudflarestorage.com)."
+        )
     }
   else
     {
@@ -145,9 +147,4 @@ if config_env() == :prod do
   end
 
   config :marbles, :dns_cluster_query, System.get_env("DNS_CLUSTER_QUERY")
-
-  if System.get_env("RAILWAY_ENVIRONMENT") not in [nil, ""] do
-    config :marbles_web, MarblesWeb.Endpoint,
-      force_ssl: [rewrite_on: [:x_forwarded_proto]]
-  end
 end
