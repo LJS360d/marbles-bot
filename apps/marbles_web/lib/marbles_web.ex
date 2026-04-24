@@ -89,6 +89,9 @@ defmodule MarblesWeb do
       import MarblesWeb.CoreComponents
       import MarblesWeb.AdminGuildsTable, only: [guild_servers_table: 1]
 
+      import MarblesWeb.AdminTable,
+        only: [admin_paginator: 1, admin_sort_th: 1, query_path: 2]
+
       # Common modules used in templates
       alias Phoenix.LiveView.JS
       alias MarblesWeb.Layouts

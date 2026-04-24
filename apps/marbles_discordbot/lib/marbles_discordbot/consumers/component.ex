@@ -2,7 +2,7 @@ defmodule MarblesDiscordbot.Consumers.Component do
   use Nostrum.Consumer
   alias Nostrum.Struct.{Interaction, Embed}
   alias Nostrum.Api
-  alias Marbles.{Catalog, Accounts, Collection, Gacha, PackPullRules, Repo}
+  alias Marbles.{Catalog, Accounts, Collection, Gacha, IntegerDisplay, PackPullRules, Repo}
   alias Marbles.Schema.{User, Pack}
   alias MarblesDiscordbot.Embeds
   alias MarblesDiscordbot.Components
@@ -287,7 +287,7 @@ defmodule MarblesDiscordbot.Consumers.Component do
           comps = PullSession.action_row(internal, pack, owner_int)
           PullSession.clear_components_on_message(i.message)
 
-          emb = marble_spoiler_embed(marble, discord_user)
+          emb = marble_pull_embed(marble, discord_user)
 
           _ =
             PullSession.followup_with_pull_row(
@@ -402,7 +402,7 @@ defmodule MarblesDiscordbot.Consumers.Component do
   defp reload_user!(user_id), do: Repo.get!(User, user_id)
 
   defp insufficient_followup_text(needed, have, label) do
-    "You need **#{needed}** coins for #{label}. You have #{have}."
+    "You need **#{IntegerDisplay.format(needed)}** coins for #{label}. You have #{IntegerDisplay.format(have)}."
   end
 
   defp gacha_pull_one(pack_id, %User{} = user_record, q, guild_id_str) do
@@ -483,13 +483,9 @@ defmodule MarblesDiscordbot.Consumers.Component do
     end
   end
 
-  defp marble_spoiler_embed(marble, discord_user) do
-    spoiler = fn t -> "|| " <> t <> " ||" end
-    base = Embeds.marble_embed(marble)
-
-    base
-    |> Embed.put_description(spoiler.(base.description || ""))
-    |> Embed.put_title(spoiler.(base.title || ""))
+  defp marble_pull_embed(marble, discord_user) do
+    marble
+    |> Embeds.marble_embed()
     |> Embed.put_footer("Belongs to #{discord_user.global_name}")
   end
 

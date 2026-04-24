@@ -12,6 +12,11 @@ defmodule MarblesWeb.Admin.OwnerMarblesLive do
       |> assign(:current_scope, :owner_admin)
       |> assign(:breadcrumbs, [{"Owner", ~p"/admin/owner"}, {"Marbles", nil}])
       |> assign(:page, 1)
+      |> assign(:sort, "name")
+      |> assign(:order, "asc")
+      |> assign(:q, "")
+      |> assign(:marbles_base, ~p"/admin/owner/marbles")
+      |> assign(:per_page, @per_page)
       |> load_marbles()
 
     {:ok, socket}
@@ -19,7 +24,19 @@ defmodule MarblesWeb.Admin.OwnerMarblesLive do
 
   defp load_marbles(socket) do
     page = socket.assigns[:page] || 1
-    {marbles, total} = Catalog.list_marbles(page: page, per_page: @per_page)
+    sort = socket.assigns.sort
+    order = socket.assigns.order
+    q = socket.assigns.q
+
+    {marbles, total} =
+      Catalog.list_marbles(
+        page: page,
+        per_page: @per_page,
+        sort: sort,
+        order: order,
+        q: q
+      )
+
     total_pages = max(1, div(total + @per_page - 1, @per_page))
     base_url = Application.get_env(:marbles, :assets_base_url) || ""
 
@@ -46,17 +63,69 @@ defmodule MarblesWeb.Admin.OwnerMarblesLive do
     |> assign(:marble_thumbnail_urls, thumbnail_urls)
     |> assign(:total_marbles, total)
     |> assign(:total_pages, total_pages)
+    |> assign(:search_form, to_form(%{"q" => q}))
   end
 
   @impl true
   def handle_params(params, _uri, socket) do
-    page = String.to_integer(params["page"] || "1")
+    page = parse_page(params["page"], 1)
+    sort = params["sort"] || "name"
+    order = parse_order(params["order"], "asc")
+    q = params["q"] |> to_string() |> String.trim()
+
+    socket =
+      socket
+      |> assign(:page, page)
+      |> assign(:sort, sort)
+      |> assign(:order, order)
+      |> assign(:q, q)
+      |> load_marbles()
+
+    max_p = socket.assigns.total_pages
+
+    if page > max_p and max_p >= 1 do
+      {:noreply,
+       push_patch(socket,
+         to:
+           query_path(socket.assigns.marbles_base, %{
+             page: max_p,
+             sort: sort,
+             order: order,
+             q: q
+           })
+       )}
+    else
+      {:noreply, socket}
+    end
+  end
+
+  @impl true
+  def handle_event("search", %{"q" => q}, socket) do
+    q = q |> to_string() |> String.trim()
 
     {:noreply,
-     socket
-     |> assign(:page, page)
-     |> load_marbles()}
+     push_patch(socket,
+       to:
+         query_path(socket.assigns.marbles_base, %{
+           page: 1,
+           sort: socket.assigns.sort,
+           order: socket.assigns.order,
+           q: q
+         })
+     )}
   end
+
+  defp parse_page(nil, default), do: default
+
+  defp parse_page(s, default) when is_binary(s) do
+    case Integer.parse(s) do
+      {n, _} when n > 0 -> n
+      _ -> default
+    end
+  end
+
+  defp parse_order("desc", _), do: "desc"
+  defp parse_order(_, default), do: default
 
   @impl true
   def render(assigns) do
@@ -70,16 +139,75 @@ defmodule MarblesWeb.Admin.OwnerMarblesLive do
       <div class="space-y-6">
         <h1 class="text-2xl font-semibold">Marbles</h1>
 
+        <div class="flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-end sm:justify-between">
+          <.form
+            for={@search_form}
+            id="admin-marbles-search"
+            phx-submit="search"
+            class="flex flex-wrap items-end gap-2"
+          >
+            <.input
+              field={@search_form[:q]}
+              type="search"
+              label="Search"
+              placeholder="Name or edition"
+            />
+            <button type="submit" class="btn btn-primary btn-sm">Search</button>
+          </.form>
+          <.link
+            :if={@q != ""}
+            patch={query_path(@marbles_base, %{page: 1, sort: @sort, order: @order})}
+            class="btn btn-ghost btn-sm"
+          >
+            Clear search
+          </.link>
+        </div>
+
         <div class="overflow-x-auto rounded-xl border border-base-300">
           <table class="table table-zebra w-full">
             <thead>
               <tr>
-                <th>Name</th>
+                <.admin_sort_th
+                  base_path={@marbles_base}
+                  column="name"
+                  label="Name"
+                  sort={@sort}
+                  order={@order}
+                  q={@q}
+                />
                 <th>Thumbnail</th>
-                <th>Edition</th>
-                <th>Role</th>
-                <th>Rarity</th>
-                <th>Team</th>
+                <.admin_sort_th
+                  base_path={@marbles_base}
+                  column="edition"
+                  label="Edition"
+                  sort={@sort}
+                  order={@order}
+                  q={@q}
+                />
+                <.admin_sort_th
+                  base_path={@marbles_base}
+                  column="role"
+                  label="Role"
+                  sort={@sort}
+                  order={@order}
+                  q={@q}
+                />
+                <.admin_sort_th
+                  base_path={@marbles_base}
+                  column="rarity"
+                  label="Rarity"
+                  sort={@sort}
+                  order={@order}
+                  q={@q}
+                />
+                <.admin_sort_th
+                  base_path={@marbles_base}
+                  column="team"
+                  label="Team"
+                  sort={@sort}
+                  order={@order}
+                  q={@q}
+                />
                 <th class="w-0">Edit</th>
               </tr>
             </thead>
@@ -111,23 +239,16 @@ defmodule MarblesWeb.Admin.OwnerMarblesLive do
           </table>
         </div>
 
-        <div :if={@total_pages > 1} class="flex justify-center gap-2">
-          <.link
-            :if={@page > 1}
-            navigate={~p"/admin/owner/marbles?page=#{@page - 1}"}
-            class="btn btn-sm"
-          >
-            Previous
-          </.link>
-          <span class="flex items-center px-2 text-sm">Page {@page} of {@total_pages}</span>
-          <.link
-            :if={@page < @total_pages}
-            navigate={~p"/admin/owner/marbles?page=#{@page + 1}"}
-            class="btn btn-sm"
-          >
-            Next
-          </.link>
-        </div>
+        <.admin_paginator
+          base_path={@marbles_base}
+          page={@page}
+          total_pages={@total_pages}
+          total_count={@total_marbles}
+          per_page={@per_page}
+          sort={@sort}
+          order={@order}
+          q={@q}
+        />
       </div>
     </Layouts.app>
     """

@@ -2014,26 +2014,6 @@
       {
         "assets": [
           {
-            "filename": "/assets/marbles/list-of-marbles/standard/thumbnail.avif",
-            "type": "thumbnail"
-          },
-          {
-            "filename": "/assets/marbles/list-of-marbles/standard/splash.avif",
-            "type": "splash"
-          }
-        ],
-        "base_stats": {
-          "bounce": 14,
-          "friction": 11,
-          "mass": 15
-        },
-        "name": "List of Marbles",
-        "rarity": 1,
-        "role": "athlete"
-      },
-      {
-        "assets": [
-          {
             "filename": "/assets/marbles/mercedes-benz-eq/standard/thumbnail.avif",
             "type": "thumbnail"
           },

@@ -1,6 +1,6 @@
 defmodule MarblesDiscordbot.Embeds do
   alias Nostrum.Struct.Embed
-  alias Marbles.PackPullRules
+  alias Marbles.{IntegerDisplay, MarbleLabel, PackPullRules}
   alias Marbles.Economy.Currency
   require Logger
 
@@ -11,9 +11,10 @@ defmodule MarblesDiscordbot.Embeds do
     thumbnail = if marble.team, do: Marbles.Assets.url_for_path(marble.team.logo_path), else: nil
     footer_text = Keyword.get(opts, :footer)
 
-    # Start with a base embed and chain updates
+    title = MarbleLabel.pull_line(%{name: marble.name, rarity: marble.rarity})
+
     %Embed{}
-    |> Embed.put_title(marble.name)
+    |> Embed.put_title(title)
     |> Embed.put_description(build_description(marble))
     |> Embed.put_color(rarity_color(marble.rarity || 1))
     |> maybe_put_image(image)
@@ -21,7 +22,7 @@ defmodule MarblesDiscordbot.Embeds do
     |> maybe_put_footer(footer_text)
   end
 
-  def currency_line(coins), do: "**#{coins}** #{Currency.coin_emoji()}"
+  def currency_line(coins), do: "**#{IntegerDisplay.format(coins)}** #{Currency.coin_emoji()}"
 
   @spec pull_session_message_content(map(), term(), keyword()) :: String.t()
   def pull_session_message_content(user, pack, opts \\ []) do
@@ -31,11 +32,12 @@ defmodule MarblesDiscordbot.Embeds do
     pull_dust = Keyword.get(opts, :dust_last_pull, 0)
 
     wallet =
-      currency_line(coins) <> " · **#{dust}** " <> Currency.dust_emoji()
+      currency_line(coins) <> " · **#{IntegerDisplay.format(dust)}** " <> Currency.dust_emoji()
 
     dup_note =
       if pull_dust > 0 do
-        "\nDuplicate on last pull: **+#{pull_dust}** " <> Currency.dust_emoji()
+        "\nDuplicates on last pull: **+#{IntegerDisplay.format(pull_dust)}** " <>
+          Currency.dust_emoji()
       else
         ""
       end
@@ -57,7 +59,7 @@ defmodule MarblesDiscordbot.Embeds do
           "Expired"
         else
           days = Date.diff(pack.end_date, today)
-          "Ends in #{days} days"
+          "Ends in #{IntegerDisplay.format(days)} days"
         end
       else
         "Permanent banner"
@@ -66,7 +68,7 @@ defmodule MarblesDiscordbot.Embeds do
     rules_text = PackPullRules.rules_summary_text(pack)
 
     description =
-      "#{pack.description}\n\n #{pack.cost} #{Currency.coin_emoji()} base cost · #{expires}\n\n#{rules_text}"
+      "#{pack.description}\n\n #{IntegerDisplay.format(pack.cost || 0)} #{Currency.coin_emoji()} base cost · #{expires}\n\n#{rules_text}"
 
     banner_url = Marbles.Assets.url_for_path(pack.banner_path)
 
@@ -75,7 +77,7 @@ defmodule MarblesDiscordbot.Embeds do
       |> Embed.put_title(pack.name)
       |> Embed.put_description(description)
       |> Embed.put_image(banner_url)
-      |> Embed.put_footer("Pack #{page}/#{total}")
+      |> Embed.put_footer("Pack #{IntegerDisplay.format(page)}/#{IntegerDisplay.format(total)}")
 
     embed
   end
@@ -86,8 +88,9 @@ defmodule MarblesDiscordbot.Embeds do
     lines =
       Enum.map(items, fn um ->
         m = um.marble
-        stars = rarity_stars_string(m.rarity)
-        "**#{m.name}** #{stars} Lv.#{um.level}"
+        stars = MarbleLabel.stars(m.rarity)
+        lv = IntegerDisplay.format(um.level || 1)
+        "**#{m.name}** #{stars} Lv.#{lv}"
       end)
 
     field_values =
@@ -120,9 +123,11 @@ defmodule MarblesDiscordbot.Embeds do
 
     embed =
       %Embed{}
-      |> Embed.put_title("Your collection: #{total} marble#{if total != 1, do: "s", else: ""}")
+      |> Embed.put_title(
+        "Your collection: #{IntegerDisplay.format(total)} marble#{if total != 1, do: "s", else: ""}"
+      )
       |> Embed.put_footer(
-        "Page #{page}/#{total_pages} · #{total} marbles #{sort_label && "· Sorted by #{sort_label}"}"
+        "Page #{IntegerDisplay.format(page)}/#{IntegerDisplay.format(total_pages)} · #{IntegerDisplay.format(total)} marbles #{sort_label && "· Sorted by #{sort_label}"}"
       )
 
     embed =
@@ -138,13 +143,16 @@ defmodule MarblesDiscordbot.Embeds do
   # Helper to build the description string
   defp build_description(marble) do
     team_line = if marble.team, do: "\n**Team:** #{marble.team.name}", else: ""
-    stars = String.duplicate("⭐", marble.rarity) <> String.duplicate("☆", 3 - marble.rarity)
+    stars = MarbleLabel.stars(marble.rarity)
     base = "**Rarity:** #{stars}#{team_line}\n\n#{marble.name} — #{marble.edition}"
 
     if is_map(marble.base_stats) and marble.base_stats != %{} do
       stats =
         marble.base_stats
-        |> Enum.map(fn {k, v} -> "#{k}: #{v}" end)
+        |> Enum.map(fn {k, v} ->
+          val = if is_integer(v), do: IntegerDisplay.format(v), else: to_string(v)
+          "#{k}: #{val}"
+        end)
         |> Enum.join(", ")
 
       base <> "\n*Stats: #{stats}*"
@@ -197,18 +205,14 @@ defmodule MarblesDiscordbot.Embeds do
     emb =
       Enum.with_index(marbles, 1)
       |> Enum.reduce(base, fn {m, idx}, acc ->
-        stars = rarity_stars_string(m.rarity || 1)
-        v = "|| #{m.name} · #{stars} ||"
-        Embed.put_field(acc, "##{idx}", v, true)
+        line = MarbleLabel.pull_line(%{name: m.name, rarity: m.rarity})
+        Embed.put_field(acc, "##{IntegerDisplay.format(idx)}", line, true)
       end)
 
     Embed.put_footer(emb, "Belongs to #{discord_user.global_name}")
   end
 
-  def rarity_stars_string(rarity) do
-    r = min(3, max(1, rarity || 1))
-    String.duplicate("⭐", r) <> String.duplicate("☆", 3 - r)
-  end
+  def rarity_stars_string(rarity), do: MarbleLabel.stars(rarity)
 
   def rarity_color(1), do: 0x808080
   def rarity_color(2), do: 0x00FF00

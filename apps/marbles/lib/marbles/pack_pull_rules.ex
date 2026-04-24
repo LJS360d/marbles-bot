@@ -3,8 +3,11 @@ defmodule Marbles.PackPullRules do
 
   alias Marbles.Repo
   alias Marbles.Economy.Currency
+  alias Marbles.IntegerDisplay
   alias Marbles.Schema.{UserPackPullRuleState, Pack}
   import Ecto.Query
+
+  defp fmt_int(n), do: IntegerDisplay.format(n)
 
   def active_rules(%Pack{pull_rules: list}) when is_list(list) do
     now = DateTime.utc_now()
@@ -338,7 +341,7 @@ defmodule Marbles.PackPullRules do
   defp describe_rule(%{effect_type: "pity"} = r) do
     n = r.every_n_pulls || 0
     mr = r.min_rarity || 3
-    "Guaranteed #{rarity_stars_string(mr)} every #{n} pulls"
+    "Guaranteed #{rarity_stars_string(mr)} every #{fmt_int(n)} pulls"
   end
 
   defp describe_rule(r) do
@@ -355,9 +358,9 @@ defmodule Marbles.PackPullRules do
     trig =
       case r.trigger_type do
         "always" -> "always"
-        "lifetime_uses" -> "Max #{r.lifetime_max_uses} times per account"
+        "lifetime_uses" -> "Max #{fmt_int(r.lifetime_max_uses || 0)} times per account"
         "period_once" -> "Once per #{r.period_unit}"
-        "every_n_pulls" -> "Every #{r.every_n_pulls} pulls"
+        "every_n_pulls" -> "Every #{fmt_int(r.every_n_pulls || 0)} pulls"
         _ -> r.trigger_type
       end
 
@@ -462,11 +465,13 @@ defmodule Marbles.PackPullRules do
         truncate_btn("Pull x1 FREE")
 
       q.final_price < cost ->
-        truncate_btn("Pull x1 #{q.final_price}#{coin} (−#{q.base_price - q.final_price})")
+        truncate_btn(
+          "Pull x1 #{fmt_int(q.final_price)}#{coin} (−#{fmt_int(q.base_price - q.final_price)})"
+        )
 
       true ->
         suffix = countdown_suffix_1x(pack, user_id, rules)
-        base = "Pull x1 #{cost}#{coin}"
+        base = "Pull x1 #{fmt_int(cost)}#{coin}"
         truncate_btn(if suffix != "", do: base <> " " <> suffix, else: base)
     end
   end
@@ -482,11 +487,13 @@ defmodule Marbles.PackPullRules do
         truncate_btn("Pull x10 FREE")
 
       q.final_price < base_p ->
-        truncate_btn("Pull x10 #{q.final_price}#{coin} (−#{base_p - q.final_price})")
+        truncate_btn(
+          "Pull x10 #{fmt_int(q.final_price)}#{coin} (−#{fmt_int(base_p - q.final_price)})"
+        )
 
       true ->
         suffix = countdown_suffix_10x(pack, user_id, rules)
-        b = "Pull x10 #{base_p}#{coin}"
+        b = "Pull x10 #{fmt_int(base_p)}#{coin}"
         truncate_btn(if suffix != "", do: b <> " " <> suffix, else: b)
     end
   end
@@ -506,7 +513,7 @@ defmodule Marbles.PackPullRules do
         mr = rule.min_rarity || 1
         streak = Map.get(states, rule.id, %{acc: 0})[:acc] || 0
         left = max(1, n - streak)
-        "#{rarity_stars_string(mr)} guaranteed in #{left}"
+        "#{rarity_stars_string(mr)} guaranteed in #{fmt_int(left)}"
       end)
       |> Enum.join("\n")
     end
@@ -538,7 +545,10 @@ defmodule Marbles.PackPullRules do
               n = r.every_n_pulls || 10
               st = Map.get(states, r.id, %{acc: 0})
               left = max(0, n - st[:acc])
-              if left > 0, do: ["(#{effect_hint(r)} after #{left} toward discount)"], else: []
+
+              if left > 0,
+                do: ["(#{effect_hint(r)} after #{fmt_int(left)} toward discount)"],
+                else: []
             else
               []
             end
@@ -575,7 +585,7 @@ defmodule Marbles.PackPullRules do
               left = max(0, n - st[:acc] - w)
 
               if st[:acc] + w < n,
-                do: ["(#{effect_hint(r)} after #{left} more toward discount)"],
+                do: ["(#{effect_hint(r)} after #{fmt_int(left)} more toward discount)"],
                 else: []
             else
               []
@@ -590,7 +600,7 @@ defmodule Marbles.PackPullRules do
   end
 
   defp effect_hint(%{effect_type: "discount", discount_percent: 100}), do: "FREE"
-  defp effect_hint(%{effect_type: "discount", discount_percent: d}), do: "#{d}% off"
+  defp effect_hint(%{effect_type: "discount", discount_percent: d}), do: "#{fmt_int(d)}% off"
 
   defp seconds_until_period_end("day") do
     t = Date.utc_today() |> Date.add(1) |> DateTime.new!(~T[00:00:00], "Etc/UTC")

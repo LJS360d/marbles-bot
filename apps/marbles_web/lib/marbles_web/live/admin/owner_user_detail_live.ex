@@ -8,6 +8,7 @@ defmodule MarblesWeb.Admin.OwnerUserDetailLive do
   alias Marbles.Economy.Currency
   alias Marbles.Economy.MineRoster
   alias Marbles.Economy.Shop
+  alias Marbles.{IntegerDisplay, MarbleLabel}
 
   @collection_preview 15
 
@@ -137,7 +138,7 @@ defmodule MarblesWeb.Admin.OwnerUserDetailLive do
     upgrades = EconomyAdmin.list_user_upgrades(user.id)
     effects = EconomyAdmin.list_user_effects(user.id)
     mine = Mining.compute_coins(user.id, Mining.max_accrual_seconds(user.id))
-    {:ok, roster_names} = MineRoster.view(user.id)
+    {:ok, roster_entries} = MineRoster.view(user.id)
 
     streak =
       case Marbles.Repo.get_by(Marbles.Schema.UserDailyStreak, user_id: user.id) do
@@ -162,7 +163,7 @@ defmodule MarblesWeb.Admin.OwnerUserDetailLive do
     |> assign(:effects, effects)
     |> assign(:effect_options, effect_options)
     |> assign(:mine_preview, mine)
-    |> assign(:roster_names, roster_names)
+    |> assign(:roster_entries, roster_entries)
     |> assign(:breadcrumbs, breadcrumbs)
   end
 
@@ -269,7 +270,7 @@ defmodule MarblesWeb.Admin.OwnerUserDetailLive do
             <p class="text-xs text-base-content/60">Identities</p>
             <ul class="mt-0.5 list-inside list-disc space-y-0.5 text-xs text-base-content/60">
               <li :for={i <- @user.identities}>
-                {i.platform}: {i.username}
+                {i.platform}: {i.username} {i.platform_id}
               </li>
             </ul>
           </div>
@@ -350,15 +351,19 @@ defmodule MarblesWeb.Admin.OwnerUserDetailLive do
         <section class="rounded-xl border border-base-300 bg-base-200 p-4">
           <h2 class="text-lg font-semibold">Cooldowns and mining</h2>
           <p class="mt-2 text-sm text-base-content/70">
-            Next daily: {fmt_eta(@next_daily_eta)} · Current streak: {@streak.current_streak} · Longest streak: {@streak.longest_streak}
+            Next daily: {fmt_eta(@next_daily_eta)} · Current streak: {IntegerDisplay.format(
+              @streak.current_streak
+            )} · Longest streak: {IntegerDisplay.format(@streak.longest_streak)}
           </p>
           <p class="mt-1 text-sm text-base-content/70">
-            Mine roster slots: {roster_slots_count(@user.mine_roster)} · Full-cap projected payout: {@mine_preview.coins} {Currency.coin_emoji()}
+            Mine roster slots: {IntegerDisplay.format(roster_slots_count(@user.mine_roster))} · Full-cap projected payout: {IntegerDisplay.format(
+              @mine_preview.coins
+            )} {Currency.coin_emoji()}
           </p>
           <p class="mt-1 text-xs text-base-content/60">
-            <span :if={empty_list?(@roster_names)}>Roster is empty.</span>
-            <span :if={!empty_list?(@roster_names)}>
-              Roster: {Enum.join(@roster_names, ", ")}
+            <span :if={empty_list?(@roster_entries)}>Roster is empty.</span>
+            <span :if={!empty_list?(@roster_entries)}>
+              Roster: {Enum.join(Enum.map(@roster_entries, &MarbleLabel.owned_line/1), ", ")}
             </span>
           </p>
         </section>

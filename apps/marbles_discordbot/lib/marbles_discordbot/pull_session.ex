@@ -4,7 +4,7 @@ defmodule MarblesDiscordbot.PullSession do
   alias Nostrum.Api
   alias Nostrum.Api.Interaction, as: ApiInteraction
   alias Nostrum.Constants
-  alias Marbles.{Accounts, Catalog, PackPullRules}
+  alias Marbles.{Accounts, Catalog, IntegerDisplay, PackPullRules}
   alias Marbles.Schema.User
   alias MarblesDiscordbot.Components
 
@@ -75,7 +75,8 @@ defmodule MarblesDiscordbot.PullSession do
     %{
       type: 4,
       data: %{
-        content: "You need **#{needed}** coins for #{label}. You have #{have}.",
+        content:
+          "You need **#{IntegerDisplay.format(needed)}** coins for #{label}. You have #{IntegerDisplay.format(have)}.",
         flags: 64
       }
     }

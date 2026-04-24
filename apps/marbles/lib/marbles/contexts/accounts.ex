@@ -88,15 +88,84 @@ defmodule Marbles.Accounts do
     Application.get_env(:marbles, :owner_platform_ids, [])
   end
 
+  @user_sort ~w(inserted_at display_name currency dust role)a
+
+  @spec list_users(keyword()) :: {[User.t()], non_neg_integer()}
   def list_users(opts \\ []) do
-    page = Keyword.get(opts, :page, 1)
+    page = Keyword.get(opts, :page, 1) |> max(1)
     per = Keyword.get(opts, :per_page, 20)
-    offset = (max(1, page) - 1) * per
-    base = from(u in User, order_by: [desc: u.inserted_at], preload: :identities)
+    offset = (page - 1) * per
+    sort = normalize_user_sort(Keyword.get(opts, :sort))
+    order = normalize_user_order(Keyword.get(opts, :order))
+    q = Keyword.get(opts, :q, "") |> to_string() |> String.trim()
+
+    base = from(u in User, as: :u, preload: :identities)
+    base = apply_user_search(base, q)
     total = Repo.aggregate(base, :count, :id)
-    users = base |> offset(^offset) |> limit(^per) |> Repo.all()
+    ordered = apply_user_order(base, sort, order)
+    users = ordered |> offset(^offset) |> limit(^per) |> Repo.all()
     {users, total}
   end
+
+  defp normalize_user_sort(nil), do: :inserted_at
+
+  defp normalize_user_sort(s) when is_atom(s) do
+    if s in @user_sort, do: s, else: :inserted_at
+  end
+
+  defp normalize_user_sort(s) when is_binary(s) do
+    case s do
+      "inserted_at" -> :inserted_at
+      "display_name" -> :display_name
+      "currency" -> :currency
+      "dust" -> :dust
+      "role" -> :role
+      _ -> :inserted_at
+    end
+  end
+
+  defp normalize_user_order(:asc), do: :asc
+  defp normalize_user_order("asc"), do: :asc
+  defp normalize_user_order(_), do: :desc
+
+  defp apply_user_search(query, ""), do: query
+
+  defp apply_user_search(query, q) do
+    term = "%" <> admin_search_fragment(q) <> "%"
+
+    from(u in query,
+      where:
+        ilike(u.display_name, ^term) or
+          exists(
+            from(i in UserIdentity,
+              where: i.user_id == parent_as(:u).id and ilike(i.username, ^term)
+            )
+          )
+    )
+  end
+
+  defp admin_search_fragment(q) do
+    q
+    |> String.replace("\\", "")
+    |> String.replace("%", "")
+    |> String.replace("_", "")
+  end
+
+  defp apply_user_order(query, :inserted_at, :asc), do: order_by(query, [u], asc: u.inserted_at)
+  defp apply_user_order(query, :inserted_at, :desc), do: order_by(query, [u], desc: u.inserted_at)
+
+  defp apply_user_order(query, :display_name, :asc),
+    do: order_by(query, [u], asc_nulls_last: u.display_name)
+
+  defp apply_user_order(query, :display_name, :desc),
+    do: order_by(query, [u], desc_nulls_last: u.display_name)
+
+  defp apply_user_order(query, :currency, :asc), do: order_by(query, [u], asc: u.currency)
+  defp apply_user_order(query, :currency, :desc), do: order_by(query, [u], desc: u.currency)
+  defp apply_user_order(query, :dust, :asc), do: order_by(query, [u], asc: u.dust)
+  defp apply_user_order(query, :dust, :desc), do: order_by(query, [u], desc: u.dust)
+  defp apply_user_order(query, :role, :asc), do: order_by(query, [u], asc: u.role)
+  defp apply_user_order(query, :role, :desc), do: order_by(query, [u], desc: u.role)
 
   def primary_display_name(%User{} = user) do
     if user.display_name && user.display_name != "" do

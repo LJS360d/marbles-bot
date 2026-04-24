@@ -161,6 +161,7 @@ defmodule Marbles.Daily do
                   name: Map.get(row, :name, "Marble"),
                   xp: gained_xp,
                   level: updated.level,
+                  rarity: rarity,
                   gained_levels: updated.gained_levels
                 }
                 | acc

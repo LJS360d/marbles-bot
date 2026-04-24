@@ -1,6 +1,7 @@
 defmodule Marbles.Economy.Upgrades do
   @moduledoc false
 
+  alias Marbles.Economy.Currency
   alias Marbles.Repo
   alias Marbles.Schema.{User, UserUpgrade}
   alias Marbles.Accounts
@@ -23,7 +24,7 @@ defmodule Marbles.Economy.Upgrades do
         extra_hours_per_level: 4
       },
       "dust_gain" => %{
-        title: "Duplicate dust",
+        title: "#{Currency.dust_emoji()} gain",
         max_level: 5,
         costs: [22, 50, 95, 170, 300],
         dust_percent_per_level: 8

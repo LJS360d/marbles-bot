@@ -13,7 +13,13 @@ defmodule Marbles.Economy.MineRoster do
           rarity: non_neg_integer()
         }
 
-  @spec view(Ecto.UUID.t()) :: {:ok, [String.t()]} | {:error, term()}
+  @type roster_entry :: %{
+          name: String.t(),
+          level: non_neg_integer(),
+          rarity: pos_integer()
+        }
+
+  @spec view(Ecto.UUID.t()) :: {:ok, [roster_entry()]} | {:error, term()}
   def view(user_id) do
     user = Repo.get(User, user_id)
     if user, do: {:ok, describe_roster(user_id, user.mine_roster)}, else: {:error, :not_found}
@@ -22,21 +28,33 @@ defmodule Marbles.Economy.MineRoster do
   defp describe_roster(user_id, roster) do
     ids = slot_ids(roster)
 
-    names =
+    rows =
       if ids == [] do
-        []
+        %{}
       else
         from(um in UserMarble,
           join: m in Marble,
           on: m.id == um.marble_id,
           where: um.user_id == ^user_id and um.id in ^ids,
-          select: {um.id, m.name}
+          select: {
+            um.id,
+            %{
+              name: m.name,
+              level: fragment("coalesce(?, 1)", um.level),
+              rarity: fragment("coalesce(?, 1)", m.rarity)
+            }
+          }
         )
         |> Repo.all()
         |> Map.new()
       end
 
-    Enum.map(ids, fn id -> Map.get(names, id, "(missing)") end)
+    Enum.map(ids, fn id ->
+      case Map.get(rows, id) do
+        %{name: n, level: lv, rarity: r} -> %{name: n, level: lv, rarity: r}
+        _ -> %{name: "(missing)", level: 1, rarity: 1}
+      end
+    end)
   end
 
   @spec add_by_marble_name(Ecto.UUID.t(), String.t()) ::

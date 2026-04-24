@@ -42,6 +42,8 @@ defmodule MarblesWeb.Router do
     pipe_through [:browser, :auth]
 
     get "/", PageController, :home
+    get "/privacy-policy", PageController, :privacy_policy
+    get "/terms-of-service", PageController, :terms_of_service
     get "/login", AuthController, :login_page
     get "/auth/:provider", AuthController, :request
     get "/auth/:provider/callback", AuthController, :callback

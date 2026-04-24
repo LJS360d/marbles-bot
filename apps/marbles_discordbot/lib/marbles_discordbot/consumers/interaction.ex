@@ -4,7 +4,19 @@ defmodule MarblesDiscordbot.Consumers.Interaction do
   alias Nostrum.Struct.Embed
   alias Nostrum.Struct.Interaction
   alias Nostrum.Api
-  alias Marbles.{Catalog, Guilds, Analytics, Accounts, Collection, Daily, Leaderboards}
+
+  alias Marbles.{
+    Catalog,
+    Guilds,
+    Analytics,
+    Accounts,
+    Collection,
+    Daily,
+    IntegerDisplay,
+    Leaderboards,
+    MarbleLabel
+  }
+
   alias Marbles.Economy.{Currency, MineRoster, Upgrades, Shop, Effects}
   alias MarblesDiscordbot.{Embeds, Components, PullSession}
   require Logger
@@ -264,19 +276,20 @@ defmodule MarblesDiscordbot.Consumers.Interaction do
 
   defp mines_autocomplete_label(%{name: name, level: level, rarity: rarity}) do
     stars = Embeds.rarity_stars_string(rarity || 1)
-    String.slice("#{name} · Lv.#{level} · #{stars}", 0, 100)
+    lv = IntegerDisplay.format(level || 1)
+    String.slice("#{name} · Lv.#{lv} · #{stars}", 0, 100)
   end
 
   defp price_line(%{coin: c, dust: d}) do
     cond do
       c > 0 and d > 0 ->
-        "**#{c}** #{Currency.coin_emoji()} + **#{d}** #{Currency.dust_emoji()}"
+        "**#{IntegerDisplay.format(c)}** #{Currency.coin_emoji()} + **#{IntegerDisplay.format(d)}** #{Currency.dust_emoji()}"
 
       c > 0 ->
-        "**#{c}** #{Currency.coin_emoji()}"
+        "**#{IntegerDisplay.format(c)}** #{Currency.coin_emoji()}"
 
       true ->
-        "**#{d}** #{Currency.dust_emoji()}"
+        "**#{IntegerDisplay.format(d)}** #{Currency.dust_emoji()}"
     end
   end
 
@@ -367,8 +380,16 @@ defmodule MarblesDiscordbot.Consumers.Interaction do
     core_version = Application.spec(:marbles, :vsn)
 
     fields = [
-      %Field{name: "Pulls today (global)", value: to_string(pulls_global), inline: true},
-      %Field{name: "Spawns today (global)", value: to_string(spawns_global), inline: true},
+      %Field{
+        name: "Pulls today (global)",
+        value: IntegerDisplay.format(pulls_global),
+        inline: true
+      },
+      %Field{
+        name: "Spawns today (global)",
+        value: IntegerDisplay.format(spawns_global),
+        inline: true
+      },
       %Field{name: "\t", value: "\t"}
     ]
 
@@ -378,12 +399,12 @@ defmodule MarblesDiscordbot.Consumers.Interaction do
           [
             %Field{
               name: "Pulls today (this server)",
-              value: to_string(pulls_guild),
+              value: IntegerDisplay.format(pulls_guild),
               inline: true
             },
             %Field{
               name: "Spawns today (this server)",
-              value: to_string(spawns_guild),
+              value: IntegerDisplay.format(spawns_guild),
               inline: true
             }
           ]
@@ -468,7 +489,7 @@ defmodule MarblesDiscordbot.Consumers.Interaction do
         mining_line =
           cond do
             m.mining_roster_size == 0 ->
-              "Mining: **#{m.mining_coins}** #{Currency.coin_emoji()} (no roster — use `/mines add`)."
+              "Mining: **#{IntegerDisplay.format(m.mining_coins)}** #{Currency.coin_emoji()} (no roster — use `/mines add`)."
 
             m.mining_seconds == 0 ->
               "Mining: **0** #{Currency.coin_emoji()} (Roster set — mining pays from hours since your last `/daily`; none accrued for this claim yet.)"
@@ -476,9 +497,11 @@ defmodule MarblesDiscordbot.Consumers.Interaction do
             m.mining_coins > 0 ->
               breakdown =
                 (m.mining_breakdown || [])
-                |> Enum.map_join(", ", fn b -> "#{b.name} +#{b.coins}" end)
+                |> Enum.map_join(", ", fn b ->
+                  "#{b.name} +#{IntegerDisplay.format(b.coins)}"
+                end)
 
-              "Mining: **#{m.mining_coins}** #{Currency.coin_emoji()} · Mined for **#{format_hh_mm(m.mining_seconds)}**#{if breakdown == "", do: "", else: ", #{breakdown}"}."
+              "Mining: **#{IntegerDisplay.format(m.mining_coins)}** #{Currency.coin_emoji()} · Mined for **#{format_hh_mm(m.mining_seconds)}**#{if breakdown == "", do: "", else: ", #{breakdown}"}."
 
             true ->
               "Mining: **0** #{Currency.coin_emoji()} (roster set; accrual window was empty or capped)."
@@ -488,19 +511,21 @@ defmodule MarblesDiscordbot.Consumers.Interaction do
           if (m.mining_xp_total || 0) > 0 do
             breakdown =
               (m.mining_xp_breakdown || [])
-              |> Enum.map_join(", ", fn b -> "#{b.name} +#{b.xp}xp" end)
+              |> Enum.map_join(", ", fn b ->
+                "#{b.name} +#{IntegerDisplay.format(b.xp)}xp"
+              end)
 
-            "XP gained: **#{m.mining_xp_total}xp**#{if breakdown == "", do: "", else: " · #{breakdown}"}"
+            "XP gained: **#{IntegerDisplay.format(m.mining_xp_total)}xp**#{if breakdown == "", do: "", else: " · #{breakdown}"}"
           else
             ""
           end
 
         content =
           "You claimed your daily reward!\n" <>
-            "Streak bonus: **#{m.streak_coins}** #{Currency.coin_emoji()} · Streak **#{m.streak}** days.\n" <>
+            "Streak bonus: **#{IntegerDisplay.format(m.streak_coins)}** #{Currency.coin_emoji()} · Streak **#{IntegerDisplay.format(m.streak)}** days.\n" <>
             mining_line <>
             if(xp_line == "", do: "", else: "\n" <> xp_line) <>
-            "\n\n**Total today: #{m.coins}** #{Currency.coin_emoji()}" <>
+            "\n\n**Total today: #{IntegerDisplay.format(m.coins)}** #{Currency.coin_emoji()}" <>
             items_text
 
         %{type: 4, data: %{content: content}}
@@ -523,7 +548,7 @@ defmodule MarblesDiscordbot.Consumers.Interaction do
     dust = ur.dust || 0
 
     content =
-      "**Wallet**\n#{Embeds.currency_line(ur.currency)} · **#{dust}** #{Currency.dust_emoji()}"
+      "**Wallet**\n#{Embeds.currency_line(ur.currency)} · **#{IntegerDisplay.format(dust)}** #{Currency.dust_emoji()}"
 
     %{type: 4, data: %{content: content}}
   end
@@ -555,7 +580,7 @@ defmodule MarblesDiscordbot.Consumers.Interaction do
         {_items, total_collection} =
           Collection.list_user_inventory(internal.id, page: 1, per_page: 1)
 
-        {:ok, roster_names} = MineRoster.view(internal.id)
+        {:ok, roster_entries} = MineRoster.view(internal.id)
         active_effects = Effects.list_active(internal.id)
 
         streak =
@@ -569,9 +594,9 @@ defmodule MarblesDiscordbot.Consumers.Interaction do
 
         streak_line =
           if longest_st > 0 do
-            "Streak: **#{current_st}** (longest #{longest_st})"
+            "Streak: **#{IntegerDisplay.format(current_st)}** (longest #{IntegerDisplay.format(longest_st)})"
           else
-            "Streak: **#{current_st}**"
+            "Streak: **#{IntegerDisplay.format(current_st)}**"
           end
 
         effects_text =
@@ -586,14 +611,16 @@ defmodule MarblesDiscordbot.Consumers.Interaction do
           end
 
         roster_text =
-          case roster_names do
+          case roster_entries do
             [] ->
               "Empty"
 
-            names ->
-              names
+            entries ->
+              entries
               |> Enum.with_index(1)
-              |> Enum.map_join("\n", fn {n, idx} -> "#{idx}. #{n}" end)
+              |> Enum.map_join("\n", fn {e, idx} ->
+                "#{IntegerDisplay.format(idx)}. #{MarbleLabel.owned_line(e)}"
+              end)
           end
 
         title = display_name(tgt, internal)
@@ -604,9 +631,9 @@ defmodule MarblesDiscordbot.Consumers.Interaction do
           %Embed{}
           |> Embed.put_title(title)
           |> Embed.put_description(
-            "Coins: **#{internal.currency}** #{Currency.coin_emoji()}\n" <>
-              "Dust: **#{internal.dust}** #{Currency.dust_emoji()}\n" <>
-              "Owned marbles: **#{total_collection}**\n" <>
+            "**#{IntegerDisplay.format(internal.currency)}** #{Currency.coin_emoji()}\n" <>
+              "**#{IntegerDisplay.format(internal.dust || 0)}** #{Currency.dust_emoji()}\n" <>
+              "Owned marbles: **#{IntegerDisplay.format(total_collection)}**\n" <>
               "#{streak_line}\n" <>
               "Mine roster:\n#{roster_text}\n\n" <>
               "Active boosts:\n#{effects_text}"
@@ -676,7 +703,7 @@ defmodule MarblesDiscordbot.Consumers.Interaction do
         "No entries yet."
       else
         Enum.map_join(rows, "\n", fn r ->
-          "#{r.rank}. **#{r.label}** — #{r.score}"
+          "#{IntegerDisplay.format(r.rank)}. **#{r.label}** — #{IntegerDisplay.format(r.score)}"
         end)
       end
 
@@ -703,14 +730,16 @@ defmodule MarblesDiscordbot.Consumers.Interaction do
     case sub do
       "view" ->
         case MineRoster.view(ur.id) do
-          {:ok, names} ->
+          {:ok, entries} ->
             lines =
-              if names == [] do
+              if entries == [] do
                 "Roster is empty. Add up to 5 marbles with `/mines add`."
               else
-                names
+                entries
                 |> Enum.with_index(1)
-                |> Enum.map_join("\n", fn {n, idx} -> "#{idx}. #{n}" end)
+                |> Enum.map_join("\n", fn {e, idx} ->
+                  "#{IntegerDisplay.format(idx)}. #{MarbleLabel.owned_line(e)}"
+                end)
               end
 
             %{type: 4, data: %{content: "**Mine roster**\n#{lines}", flags: 64}}
@@ -726,7 +755,11 @@ defmodule MarblesDiscordbot.Consumers.Interaction do
           {:ok, %{slots: n}} ->
             %{
               type: 4,
-              data: %{content: "**#{marble}** Added to roster (**#{n}/5**).", flags: 64}
+              data: %{
+                content:
+                  "**#{marble}** Added to roster (**#{IntegerDisplay.format(n)}/#{IntegerDisplay.format(5)}**).",
+                flags: 64
+              }
             }
 
           {:error, :roster_full} ->
@@ -755,7 +788,11 @@ defmodule MarblesDiscordbot.Consumers.Interaction do
           {:ok, %{slots: n}} ->
             %{
               type: 4,
-              data: %{content: "**#{marble}** removed from roster (**#{n}/5**).", flags: 64}
+              data: %{
+                content:
+                  "**#{marble}** removed from roster (**#{IntegerDisplay.format(n)}/#{IntegerDisplay.format(5)}**).",
+                flags: 64
+              }
             }
 
           {:error, :not_found} ->
@@ -805,9 +842,9 @@ defmodule MarblesDiscordbot.Consumers.Interaction do
             next =
               if lv >= v.max_level,
                 do: "MAX",
-                else: "#{Enum.at(v.costs, lv)} #{Currency.dust_emoji()}"
+                else: "#{IntegerDisplay.format(Enum.at(v.costs, lv))} #{Currency.dust_emoji()}"
 
-            "• **#{v.title}** — Lv.#{lv}/#{v.max_level} — next: #{next}"
+            "• **#{v.title}** — Lv.#{IntegerDisplay.format(lv)}/#{IntegerDisplay.format(v.max_level)} — next: #{next}"
           end)
 
         %{type: 4, data: %{content: "**Upgrades**\n#{lines}", flags: 64}}
@@ -828,7 +865,7 @@ defmodule MarblesDiscordbot.Consumers.Interaction do
               type: 4,
               data: %{
                 content:
-                  "Upgraded **#{title}** to level **#{nl}**.\nRemaining dust: **#{fresh.dust}** #{Currency.dust_emoji()}",
+                  "Upgraded **#{title}** to level **#{IntegerDisplay.format(nl)}**.\nRemaining dust: **#{IntegerDisplay.format(fresh.dust)}** #{Currency.dust_emoji()}",
                 flags: 64
               }
             }
@@ -840,13 +877,13 @@ defmodule MarblesDiscordbot.Consumers.Interaction do
             %{type: 4, data: %{content: "That upgrade is already maxed.", flags: 64}}
 
           {:error, :insufficient_dust} ->
-            need_text = if is_integer(need), do: to_string(need), else: "?"
+            need_text = if is_integer(need), do: IntegerDisplay.format(need), else: "?"
 
             %{
               type: 4,
               data: %{
                 content:
-                  "Not enough dust. Needed **#{need_text}** #{Currency.dust_emoji()}, you have **#{ur.dust}** #{Currency.dust_emoji()}.",
+                  "Not enough dust. Needed **#{need_text}** #{Currency.dust_emoji()}, you have **#{IntegerDisplay.format(ur.dust || 0)}** #{Currency.dust_emoji()}.",
                 flags: 64
               }
             }
@@ -882,7 +919,8 @@ defmodule MarblesDiscordbot.Consumers.Interaction do
                 ""
               else
                 period = Shop.period_label(p.limit_period_unit || "week")
-                " — bought #{period}: **#{used}/#{p.limit_count}**"
+
+                " — bought #{period}: **#{IntegerDisplay.format(used)}/#{IntegerDisplay.format(p.limit_count)}**"
               end
 
             "**#{p.name}** — #{price}#{limit_text}"
@@ -909,7 +947,7 @@ defmodule MarblesDiscordbot.Consumers.Interaction do
               type: 4,
               data: %{
                 content:
-                  "Purchased **#{title}**. Effect lasts **#{duration}**.\nWallet now: **#{fresh.currency}** #{Currency.coin_emoji()} · **#{fresh.dust}** #{Currency.dust_emoji()}",
+                  "Purchased **#{title}**. Effect lasts **#{duration}**.\nWallet now: **#{IntegerDisplay.format(fresh.currency)}** #{Currency.coin_emoji()} · **#{IntegerDisplay.format(fresh.dust)}** #{Currency.dust_emoji()}",
                 flags: 64
               }
             }
@@ -925,26 +963,26 @@ defmodule MarblesDiscordbot.Consumers.Interaction do
 
           {:error, :insufficient_coins} ->
             need = if product, do: product.coin, else: nil
-            need_text = if is_integer(need), do: to_string(need), else: "?"
+            need_text = if is_integer(need), do: IntegerDisplay.format(need), else: "?"
 
             %{
               type: 4,
               data: %{
                 content:
-                  "Not enough coins. Needed **#{need_text}** #{Currency.coin_emoji()}, you have **#{ur.currency}** #{Currency.coin_emoji()}.",
+                  "Not enough coins. Needed **#{need_text}** #{Currency.coin_emoji()}, you have **#{IntegerDisplay.format(ur.currency)}** #{Currency.coin_emoji()}.",
                 flags: 64
               }
             }
 
           {:error, :insufficient_dust} ->
             need = if product, do: product.dust, else: nil
-            need_text = if is_integer(need), do: to_string(need), else: "?"
+            need_text = if is_integer(need), do: IntegerDisplay.format(need), else: "?"
 
             %{
               type: 4,
               data: %{
                 content:
-                  "Not enough dust. Needed **#{need_text}** #{Currency.dust_emoji()}, you have **#{ur.dust}** #{Currency.dust_emoji()}.",
+                  "Not enough dust. Needed **#{need_text}** #{Currency.dust_emoji()}, you have **#{IntegerDisplay.format(ur.dust || 0)}** #{Currency.dust_emoji()}.",
                 flags: 64
               }
             }

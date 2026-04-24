@@ -97,7 +97,19 @@ defmodule MarblesWeb.Layouts do
                 Log in with Discord
               </a>
               <p class="mt-4 text-xs text-base-content/50">
-                By logging in, you agree to our Terms of Service and Privacy Policy.
+                By logging in, you agree to our
+                <a
+                  href={~p"/terms-of-service"}
+                  class="underline underline-offset-2 hover:text-base-content/80"
+                >
+                  Terms of Service
+                </a>
+                and <a
+                  href={~p"/privacy-policy"}
+                  class="underline underline-offset-2 hover:text-base-content/80"
+                >
+                  Privacy Policy
+                </a>.
               </p>
             </div>
           </div>
