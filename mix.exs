@@ -17,6 +17,20 @@ defmodule Marbles.Umbrella.MixProject do
             marbles_discordbot: :permanent,
             marbles_web: :permanent
           ]
+        ],
+        web: [
+          include_executables_for: [:unix],
+          applications: [
+            marbles: :permanent,
+            marbles_web: :permanent
+          ]
+        ],
+        bot: [
+          include_executables_for: [:unix],
+          applications: [
+            marbles: :permanent,
+            marbles_discordbot: :permanent
+          ]
         ]
       ]
     ]

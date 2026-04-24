@@ -5,25 +5,22 @@ if Code.ensure_loaded?(Dotenvy) do
   Dotenvy.source!([".env", System.get_env()]) |> System.put_env()
 end
 
-# config/runtime.exs is executed for all environments, including
-# during releases. It is executed after compilation and before the
-# system starts, so it is typically used to load production configuration
-# and secrets from environment variables or elsewhere. Do not define
-# any compile-time configuration in here, as it won't be applied.
-# The block below contains prod specific runtime configuration.
+release_role = System.get_env("RELEASE_ROLE", "all")
 
 config :marbles_web, MarblesWeb.Endpoint,
   http: [port: String.to_integer(System.get_env("PORT", "4000"))]
 
-config :nostrum,
-  token:
-    System.get_env("DISCORD_BOT_TOKEN") ||
-      raise("""
-      environment variable DISCORD_BOT_TOKEN is missing.
-      """)
+unless config_env() == :prod and release_role == "web" do
+  config :nostrum,
+    token:
+      System.get_env("DISCORD_BOT_TOKEN") ||
+        raise("""
+        environment variable DISCORD_BOT_TOKEN is missing.
+        """)
 
-config :nostrum, youtubedl: nil
-config :nostrum, streamlink: nil
+  config :nostrum, youtubedl: nil
+  config :nostrum, streamlink: nil
+end
 
 config :ueberauth, Ueberauth.Strategy.Discord.OAuth,
   client_id: System.get_env("DISCORD_OAUTH_CLIENT_ID"),
@@ -31,161 +28,108 @@ config :ueberauth, Ueberauth.Strategy.Discord.OAuth,
 
 owner_platform_ids = System.get_env("OWNER_USER_IDS", "") |> String.split(",", trim: true)
 config :marbles_web, :owner_platform_ids, owner_platform_ids
-
 config :marbles_web, :discord_server_invite, System.get_env("DISCORD_SERVER_INVITE_URL")
 config :marbles_web, :discord_bot_invite, System.get_env("DISCORD_BOT_INVITE_URL")
-
 config :marbles, :owner_platform_ids, owner_platform_ids
 
 assets_base_url = System.get_env("ASSETS_BASE_URL")
 
-if config_env() == :prod do
-  # In Prod, we use SeaweedFS/S3
-  if is_nil(assets_base_url) or assets_base_url == "" do
-    raise "environment variable ASSETS_BASE_URL is required in production."
-  end
-
-  config :marbles, :storage_adapter, Marbles.Storage.S3
-
-  # ExAws Configuration for SeaweedFS
-  config :ex_aws,
-    # Seaweed ignores these 3 but library needs it
-    http_client: ExAws.Request.Req,
-    access_key_id: System.get_env("S3_ACCESS_KEY", "any"),
-    secret_access_key: System.get_env("S3_SECRET_KEY", "any"),
-    region: "us-east-1",
-    s3: [
-      scheme: "http://",
-      host: System.get_env("S3_HOST", "bucket"),
-      port: 8333,
-      # Requirement for SeaweedFS
-      path_style: true
-    ]
-else
-  # In Dev, we use cloudflare r2
-  config :marbles, :storage_adapter, Marbles.Storage.S3
-
-  # ExAws Configuration for Cloudflare R2
-  config :ex_aws,
-    http_client: ExAws.Request.Req,
-    access_key_id: System.get_env("S3_ACCESS_KEY", "any"),
-    secret_access_key: System.get_env("S3_SECRET_KEY", "any"),
-    region: System.get_env("S3_REGION", "auto"),
-    s3: [
-      scheme: System.get_env("S3_SCHEME", "https://"),
-      host: System.get_env("S3_HOST", "bucket"),
-      port: 443,
-      path_style: System.get_env("S3_PATH_STYLE", "true") == "true"
-    ]
-end
-
-config :marbles, :assets_base_url, assets_base_url
-
 if config_env() == :prod and (is_nil(assets_base_url) or assets_base_url == "") do
   raise """
   environment variable ASSETS_BASE_URL is required in production.
-  Set it to the base URL where asset paths are served (e.g. CDN or bucket URL).
+  Set it to the base URL where asset paths are served (e.g. CDN or public R2 URL).
   """
 end
 
-if assets_base_url != nil and assets_base_url != "" do
+{s3_access, s3_secret, s3_host} =
+  if config_env() == :prod do
+    {
+      System.get_env("S3_ACCESS_KEY") ||
+        raise("environment variable S3_ACCESS_KEY is required in production."),
+      System.get_env("S3_SECRET_KEY") ||
+        raise("environment variable S3_SECRET_KEY is required in production."),
+      System.get_env("S3_HOST") ||
+        raise("environment variable S3_HOST is required in production (e.g. <accountid>.r2.cloudflarestorage.com).")
+    }
+  else
+    {
+      System.get_env("S3_ACCESS_KEY", "any"),
+      System.get_env("S3_SECRET_KEY", "any"),
+      System.get_env("S3_HOST", "bucket")
+    }
+  end
+
+config :marbles, :storage_adapter, Marbles.Storage.S3
+
+config :ex_aws,
+  http_client: ExAws.Request.Req,
+  access_key_id: s3_access,
+  secret_access_key: s3_secret,
+  region: System.get_env("S3_REGION", "auto"),
+  s3: [
+    scheme: System.get_env("S3_SCHEME", "https://"),
+    host: s3_host,
+    port: String.to_integer(System.get_env("S3_PORT", "443")),
+    path_style: System.get_env("S3_PATH_STYLE", "true") == "true"
+  ]
+
+if assets_base_url not in [nil, ""] do
   config :marbles, :assets_base_url, assets_base_url
 end
 
 if config_env() == :prod do
-  database_url =
-    System.get_env("DATABASE_URL") ||
+  database_path =
+    System.get_env("DATABASE_PATH") ||
       raise """
-      environment variable DATABASE_URL is missing.
-      For example: ecto://USER:PASS@HOST/DATABASE
+      environment variable DATABASE_PATH is required in production (SQLite file path).
+      Example: /app/data/marbles_prod.db — mount a Railway volume on /app/data and point here.
       """
 
   config :marbles, Marbles.Repo,
-    url: database_url,
-    # SSL is usually required for external DBs, but since we are in
-    # the same Docker network as Postgres, we can keep it simple.
-    pool_size: String.to_integer(System.get_env("POOL_SIZE") || "10"),
-    socket_options: [:inet6]
+    database: database_path,
+    pool_size: String.to_integer(System.get_env("POOL_SIZE") || "5")
 
-  # The secret key base is used to sign/encrypt cookies and other secrets.
-  # A default value is used in config/dev.exs and config/test.exs but you
-  # want to use a different value for prod and you most likely don't want
-  # to check this value into version control, so we use an environment
-  # variable instead.
-  secret_key_base =
-    System.get_env("SECRET_KEY_BASE") ||
-      raise """
-      environment variable SECRET_KEY_BASE is missing.
-      You can generate one by calling: mix phx.gen.secret
-      """
+  if release_role in ["web", "all"] do
+    secret_key_base =
+      System.get_env("SECRET_KEY_BASE") ||
+        raise """
+        environment variable SECRET_KEY_BASE is missing.
+        You can generate one by calling: mix phx.gen.secret
+        """
 
-  config :marbles_web, MarblesWeb.Endpoint,
-    http: [
-      # Enable IPv6 and bind on all interfaces.
-      # Set it to  {0, 0, 0, 0, 0, 0, 0, 1} for local network only access.
-      ip: {0, 0, 0, 0, 0, 0, 0, 0}
-    ],
-    secret_key_base: secret_key_base
+    endpoint_opts = [
+      http: [ip: {0, 0, 0, 0, 0, 0, 0, 0}],
+      secret_key_base: secret_key_base,
+      server: true
+    ]
 
-  # ## Using releases
-  #
-  # If you are doing OTP releases, you need to instruct Phoenix
-  # to start each relevant endpoint:
-  #
-  #     config :marbles_web, MarblesWeb.Endpoint, server: true
-  #
-  # Then you can assemble a release by calling `mix release`.
-  # See `mix help release` for more information.
+    endpoint_opts =
+      case {System.get_env("PHX_HOST"), System.get_env("RAILWAY_PUBLIC_DOMAIN")} do
+        {h, _} when is_binary(h) and h != "" ->
+          Keyword.put(endpoint_opts, :url,
+            host: h,
+            port: String.to_integer(System.get_env("PHX_URL_PORT", "443")),
+            scheme: System.get_env("PHX_SCHEME", "https")
+          )
 
-  # ## SSL Support
-  #
-  # To get SSL working, you will need to add the `https` key
-  # to your endpoint configuration:
-  #
-  #     config :marbles_web, MarblesWeb.Endpoint,
-  #       https: [
-  #         ...,
-  #         port: 443,
-  #         cipher_suite: :strong,
-  #         keyfile: System.get_env("SOME_APP_SSL_KEY_PATH"),
-  #         certfile: System.get_env("SOME_APP_SSL_CERT_PATH")
-  #       ]
-  #
-  # The `cipher_suite` is set to `:strong` to support only the
-  # latest and more secure SSL ciphers. This means old browsers
-  # and clients may not be supported. You can set it to
-  # `:compatible` for wider support.
-  #
-  # `:keyfile` and `:certfile` expect an absolute path to the key
-  # and cert in disk or a relative path inside priv, for example
-  # "priv/ssl/server.key". For all supported SSL configuration
-  # options, see https://hexdocs.pm/plug/Plug.SSL.html#configure/1
-  #
-  # We also recommend setting `force_ssl` in your config/prod.exs,
-  # ensuring no data is ever sent via http, always redirecting to https:
-  #
-  #     config :marbles_web, MarblesWeb.Endpoint,
-  #       force_ssl: [hsts: true]
-  #
-  # Check `Plug.SSL` for all available options in `force_ssl`.
+        {_, d} when is_binary(d) and d != "" ->
+          Keyword.put(endpoint_opts, :url,
+            host: d,
+            port: String.to_integer(System.get_env("PHX_URL_PORT", "443")),
+            scheme: System.get_env("PHX_SCHEME", "https")
+          )
 
-  # ## Configuring the mailer
-  #
-  # In production you need to configure the mailer to use a different adapter.
-  # Here is an example configuration for Mailgun:
-  #
-  #     config :marbles, Marbles.Mailer,
-  #       adapter: Swoosh.Adapters.Mailgun,
-  #       api_key: System.get_env("MAILGUN_API_KEY"),
-  #       domain: System.get_env("MAILGUN_DOMAIN")
-  #
-  # Most non-SMTP adapters require an API client. Swoosh supports Req, Hackney,
-  # and Finch out-of-the-box. This configuration is typically done at
-  # compile-time in your config/prod.exs:
-  #
-  #     config :swoosh, :api_client, Swoosh.ApiClient.Req
-  #
-  # See https://hexdocs.pm/swoosh/Swoosh.html#module-installation for details.
+        _ ->
+          endpoint_opts
+      end
+
+    config :marbles_web, MarblesWeb.Endpoint, endpoint_opts
+  end
 
   config :marbles, :dns_cluster_query, System.get_env("DNS_CLUSTER_QUERY")
+
+  if System.get_env("RAILWAY_ENVIRONMENT") not in [nil, ""] do
+    config :marbles_web, MarblesWeb.Endpoint,
+      force_ssl: [rewrite_on: [:x_forwarded_proto]]
+  end
 end

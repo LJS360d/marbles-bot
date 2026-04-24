@@ -1,0 +1,21 @@
+# Railway (https://railway.app) — create two services from this repo for split deploy:
+#
+# 1) "marbles-bot" — always at least 1 replica
+#    Build: Docker, build arg RELEASE_NAME=bot
+#    Start: default CMD (uses RELEASE_NAME from image)
+#    Env: RELEASE_ROLE=bot, DATABASE_PATH=/app/data/marbles_prod.db, DISCORD_BOT_TOKEN, …
+#    Volume: mount at /app/data (same path as web if you share one logical DB — see docs in chat)
+#
+# 2) "marbles-web" — optional scale-to-zero on hobby plans that support it
+#    Build: Docker, build arg RELEASE_NAME=web
+#    Env: RELEASE_ROLE=web, DATABASE_PATH=…, SECRET_KEY_BASE, ASSETS_BASE_URL, S3_*, PHX_HOST, …
+#
+# Single-service dev: build arg RELEASE_NAME=marbles_umbrella (default), RELEASE_ROLE=all
+
+[build]
+builder = "DOCKERFILE"
+dockerfilePath = "Dockerfile"
+
+[deploy]
+restartPolicyType = "ON_FAILURE"
+# Set healthcheckPath=/ on the *web* service only. The *bot* release has no HTTP listener.

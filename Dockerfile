@@ -11,6 +11,8 @@ RUN apt-get update -y && apt-get install -y build-essential git curl \
 WORKDIR /app
 RUN mix local.hex --force && mix local.rebar --force
 ENV MIX_ENV=prod
+ARG RELEASE_NAME=marbles_umbrella
+ENV RELEASE_NAME=${RELEASE_NAME}
 
 COPY mix.exs mix.lock ./
 COPY config config
@@ -19,10 +21,12 @@ COPY apps apps
 RUN mix deps.get --only $MIX_ENV
 RUN mix compile
 RUN mix assets.deploy
-RUN mix release
+RUN mix release ${RELEASE_NAME}
 
 # Run stage
 FROM ${RUNNER_IMAGE}
+ARG RELEASE_NAME=marbles_umbrella
+ENV RELEASE_NAME=${RELEASE_NAME}
 RUN apt-get update -y && apt-get install -y libssl3 libncurses6 locales ca-certificates \
   && apt-get clean && rm -f /var/lib/apt/lists/*_*
 RUN sed -i '/en_US.UTF-8/s/^# //g' /etc/locale.gen && locale-gen
@@ -34,7 +38,7 @@ WORKDIR /app
 RUN chown nobody:nogroup /app
 USER nobody
 
-COPY --from=builder --chown=nobody:nogroup /app/_build/prod/rel/marbles_umbrella ./
+COPY --from=builder --chown=nobody:nogroup /app/_build/prod/rel/${RELEASE_NAME} ./
 ENV PHX_SERVER=true
 ENV ECTO_EDITOR=
 
@@ -43,4 +47,4 @@ RUN mkdir -p /app/data
 VOLUME /app/data
 
 EXPOSE 4000
-CMD ["/app/bin/marbles_umbrella", "start"]
+CMD ["/bin/sh", "-c", "/app/bin/${RELEASE_NAME} start"]
