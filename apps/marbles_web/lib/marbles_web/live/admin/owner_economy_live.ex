@@ -65,7 +65,6 @@ defmodule MarblesWeb.Admin.OwnerEconomyLive do
     |> assign(:cooldowns_total_pages, total_pages)
     |> assign(:top_coins, Leaderboards.top_coins(5))
     |> assign(:top_collection, Leaderboards.top_collection_count(5))
-    |> assign(:top_strongest, Leaderboards.top_strongest_marble(5))
   end
 
   defp fmt_daily_cooldown(0), do: "Ready now"
@@ -101,7 +100,7 @@ defmodule MarblesWeb.Admin.OwnerEconomyLive do
           </.link>
         </div>
 
-        <section class="grid grid-cols-1 gap-4 lg:grid-cols-3">
+        <section class="grid grid-cols-1 gap-4 lg:grid-cols-2">
           <article class="rounded-xl border border-base-300 bg-base-200 p-4">
             <h2 class="text-sm font-semibold text-base-content/70">Top coins</h2>
             <ul class="mt-2 space-y-1 text-sm">
@@ -114,19 +113,10 @@ defmodule MarblesWeb.Admin.OwnerEconomyLive do
               <li :for={row <- @top_collection}>{row.rank}. {row.label} — {row.score}</li>
             </ul>
           </article>
-          <article class="rounded-xl border border-base-300 bg-base-200 p-4">
-            <h2 class="text-sm font-semibold text-base-content/70">Top strongest</h2>
-            <ul class="mt-2 space-y-1 text-sm">
-              <li :for={row <- @top_strongest}>{row.rank}. {row.label} — {row.score}</li>
-            </ul>
-          </article>
         </section>
 
         <section class="rounded-xl border border-base-300 bg-base-200 p-4">
           <h2 class="text-lg font-semibold">User cooldowns and wallets</h2>
-          <p class="text-sm text-base-content/70">
-            Tracks `/daily` availability, current streak, and wallet balances.
-          </p>
 
           <div class="mt-4 overflow-x-auto rounded-xl border border-base-300">
             <table class="table table-zebra w-full">
@@ -171,8 +161,11 @@ defmodule MarblesWeb.Admin.OwnerEconomyLive do
                   <td>{row.currency}</td>
                   <td>{row.dust}</td>
                   <td>
-                    <.link navigate={~p"/admin/owner/users/#{row.id}"} class="btn btn-ghost btn-xs">
-                      Manage user
+                    <.link
+                      navigate={~p"/admin/owner/users/#{row.id}"}
+                      class="btn btn-secondary btn-sm w-fit"
+                    >
+                      Manage
                     </.link>
                   </td>
                 </tr>

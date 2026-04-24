@@ -7,6 +7,11 @@ defmodule Marbles.Economy.MineRoster do
   alias Marbles.Accounts
 
   @max_slots 5
+  @type autocomplete_choice :: %{
+          name: String.t(),
+          level: non_neg_integer(),
+          rarity: non_neg_integer()
+        }
 
   @spec view(Ecto.UUID.t()) :: {:ok, [String.t()]} | {:error, term()}
   def view(user_id) do
@@ -117,8 +122,10 @@ defmodule Marbles.Economy.MineRoster do
     {:ok, %{slots: 0}}
   end
 
-  @spec autocomplete_owned(Ecto.UUID.t(), String.t()) :: [String.t()]
+  @spec autocomplete_owned(Ecto.UUID.t(), String.t()) :: [autocomplete_choice()]
   def autocomplete_owned(user_id, query \\ "") when is_binary(user_id) and is_binary(query) do
+    user = Repo.get!(User, user_id)
+    roster_ids = slot_ids(user.mine_roster)
     q = String.downcase(String.trim(query))
 
     base =
@@ -126,9 +133,9 @@ defmodule Marbles.Economy.MineRoster do
         join: m in Marble,
         on: m.id == um.marble_id,
         where: um.user_id == ^user_id,
-        order_by: [asc: m.name],
-        limit: 25,
-        select: m.name
+        where: um.id not in ^roster_ids,
+        order_by: [asc: m.name, desc: um.level, desc: m.rarity],
+        select: %{name: m.name, level: um.level, rarity: m.rarity}
       )
 
     rows =
@@ -140,11 +147,11 @@ defmodule Marbles.Economy.MineRoster do
 
     rows
     |> Repo.all()
-    |> Enum.uniq()
+    |> uniq_autocomplete_choices_by_name()
     |> Enum.take(25)
   end
 
-  @spec autocomplete_roster(Ecto.UUID.t(), String.t()) :: [String.t()]
+  @spec autocomplete_roster(Ecto.UUID.t(), String.t()) :: [autocomplete_choice()]
   def autocomplete_roster(user_id, query \\ "") when is_binary(user_id) and is_binary(query) do
     user = Repo.get!(User, user_id)
     ids = slot_ids(user.mine_roster)
@@ -153,20 +160,38 @@ defmodule Marbles.Economy.MineRoster do
     if ids == [] do
       []
     else
-      from(um in UserMarble,
-        join: m in Marble,
-        on: m.id == um.marble_id,
-        where: um.user_id == ^user_id and um.id in ^ids,
-        order_by: [asc: m.name],
-        select: m.name
-      )
-      |> Repo.all()
-      |> Enum.filter(fn name ->
+      roster_rows =
+        from(um in UserMarble,
+          join: m in Marble,
+          on: m.id == um.marble_id,
+          where: um.user_id == ^user_id and um.id in ^ids,
+          select: {um.id, %{name: m.name, level: um.level, rarity: m.rarity}}
+        )
+        |> Repo.all()
+        |> Map.new()
+
+      ids
+      |> Enum.map(&Map.get(roster_rows, &1))
+      |> Enum.reject(&is_nil/1)
+      |> Enum.filter(fn %{name: name} ->
         q == "" || String.contains?(String.downcase(name), q)
       end)
-      |> Enum.uniq()
+      |> uniq_autocomplete_choices_by_name()
       |> Enum.take(25)
     end
+  end
+
+  defp uniq_autocomplete_choices_by_name(choices) do
+    {acc, _seen} =
+      Enum.reduce(choices, {[], MapSet.new()}, fn choice, {list, seen} ->
+        if MapSet.member?(seen, choice.name) do
+          {list, seen}
+        else
+          {[choice | list], MapSet.put(seen, choice.name)}
+        end
+      end)
+
+    Enum.reverse(acc)
   end
 
   defp slot_ids(roster) do

@@ -17,6 +17,10 @@ defmodule Marbles.Analytics do
     adapter().record_spawn(guild_id, channel_id, user_id, meta)
   end
 
+  def record_event(event_type, guild_id \\ nil, channel_id \\ nil, user_id \\ nil, meta \\ %{}) do
+    adapter().record_event(event_type, guild_id, channel_id, user_id, meta)
+  end
+
   def pulls_today(guild_id \\ nil) do
     adapter().pulls_today(guild_id)
   end

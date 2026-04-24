@@ -75,12 +75,15 @@ defmodule MarblesWeb.Admin.OwnerUsersLive do
                 <td>{user.dust || 0}</td>
                 <td>
                   <span class="flex gap-1">
-                    <.link navigate={~p"/admin/owner/users/#{user.id}"} class="btn btn-ghost btn-xs">
+                    <.link
+                      navigate={~p"/admin/owner/users/#{user.id}"}
+                      class="btn btn-outline btn-xs"
+                    >
                       View
                     </.link>
                     <.link
                       navigate={~p"/admin/owner/users/#{user.id}/edit"}
-                      class="btn btn-ghost btn-xs"
+                      class="btn btn-outline btn-xs"
                     >
                       Edit
                     </.link>

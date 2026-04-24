@@ -143,8 +143,7 @@ defmodule MarblesDiscordbot.Commands do
             required: false,
             choices: [
               %{name: "Coins", value: "coins"},
-              %{name: "Collection size", value: "collection"},
-              %{name: "Strongest marble", value: "strongest"}
+              %{name: "Collection size", value: "collection"}
             ]
           }
         ]

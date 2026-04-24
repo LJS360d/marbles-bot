@@ -11,6 +11,13 @@ defmodule Marbles.Analytics.Adapter do
               user_id :: binary() | nil,
               meta :: map()
             ) :: :ok | {:error, term()}
+  @callback record_event(
+              event_type :: String.t(),
+              guild_id :: String.t() | nil,
+              channel_id :: String.t() | nil,
+              user_id :: binary() | nil,
+              meta :: map()
+            ) :: :ok | {:error, term()}
   @callback pulls_today(guild_id :: String.t() | nil) :: non_neg_integer()
   @callback spawns_today(guild_id :: String.t() | nil) :: non_neg_integer()
   @callback guilds_count() :: non_neg_integer()

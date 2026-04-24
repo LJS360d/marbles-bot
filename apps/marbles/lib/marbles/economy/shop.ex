@@ -2,8 +2,10 @@ defmodule Marbles.Economy.Shop do
   @moduledoc false
 
   import Ecto.Query
+  alias Marbles.Economy.Currency
   alias Marbles.Repo
   alias Marbles.Schema.{User, UserEffect, ShopItem}
+  alias Marbles.Analytics
   alias Marbles.Accounts
 
   @type product_id :: String.t()
@@ -12,8 +14,8 @@ defmodule Marbles.Economy.Shop do
   def default_products do
     [
       %{
-        id: "mine_yield_boost_24h",
-        name: "+15% mine yield (24h)",
+        id: "boost_mine_yield",
+        name: "+15% Mining yield (24h)",
         coin: 400,
         dust: 0,
         duration_sec: 86_400,
@@ -23,25 +25,25 @@ defmodule Marbles.Economy.Shop do
         meta: %{"pct" => 15}
       },
       %{
-        id: "mine_cap_boost_24h",
-        name: "+8h offline mine cap (24h)",
-        coin: 350,
-        dust: 0,
-        duration_sec: 86_400,
-        limit_count: 3,
-        limit_period_unit: "week",
-        effect_key: "boost_mine_cap",
-        meta: %{"hours" => 8}
-      },
-      %{
-        id: "dust_gain_boost_24h",
-        name: "+20% duplicate dust (24h)",
+        id: "boost_dust_gain",
+        name: "+20% #{Currency.dust_emoji()} gain (24h)",
         coin: 0,
         dust: 180,
         duration_sec: 86_400,
         limit_count: 3,
         limit_period_unit: "week",
         effect_key: "boost_dust_gain",
+        meta: %{"pct" => 20}
+      },
+      %{
+        id: "boost_exp_gain",
+        name: "+20% EXP gains (24h)",
+        coin: 250,
+        dust: 0,
+        duration_sec: 86_400,
+        limit_count: 3,
+        limit_period_unit: "week",
+        effect_key: "boost_exp_gain",
         meta: %{"pct" => 20}
       }
     ]
@@ -119,9 +121,19 @@ defmodule Marbles.Economy.Shop do
   end
 
   defp effect_display_name_fallback(key) when is_binary(key) do
-    case Enum.find(default_products(), fn p -> String.starts_with?(key, p.effect_key <> "_") end) do
-      %{name: n} when is_binary(n) -> n
-      _ -> key
+    legacy_name =
+      cond do
+        String.starts_with?(key, "boost_mine_cap_") -> "+8h Resources mining cap (24h)"
+        true -> nil
+      end
+
+    if is_binary(legacy_name) do
+      legacy_name
+    else
+      case Enum.find(default_products(), fn p -> String.starts_with?(key, p.effect_key <> "_") end) do
+        %{name: n} when is_binary(n) -> n
+        _ -> key
+      end
     end
   end
 
@@ -129,20 +141,27 @@ defmodule Marbles.Economy.Shop do
 
   @spec purchases_in_period(Ecto.UUID.t(), map()) :: non_neg_integer()
   def purchases_in_period(user_id, product) do
-    start = period_start_utc(product.limit_period_unit || "week")
-    effect_prefix = product.effect_key
+    limit_count = product.limit_count || 0
 
-    from(e in UserEffect,
-      where: e.user_id == ^user_id and e.inserted_at >= ^start,
-      where: like(e.effect_key, ^"#{effect_prefix}%")
-    )
-    |> Repo.aggregate(:count, :id)
+    if limit_count <= 0 do
+      0
+    else
+      start = period_start_utc(product.limit_period_unit || "week")
+      product_id = product.id
+
+      from(e in UserEffect,
+        where: e.user_id == ^user_id and e.inserted_at >= ^start,
+        where: fragment("? ->> 'product_id' = ?", e.meta, ^product_id)
+      )
+      |> Repo.aggregate(:count, :id)
+    end
   end
 
   @spec period_label(String.t()) :: String.t()
-  def period_label("day"), do: "day"
-  def period_label("month"), do: "month"
-  def period_label(_), do: "week"
+  def period_label("day"), do: "today"
+  def period_label("month"), do: "this month"
+  def period_label("year"), do: "this year"
+  def period_label(_), do: "this week"
 
   defp period_start_utc("day") do
     Date.utc_today() |> DateTime.new!(~T[00:00:00], "Etc/UTC")
@@ -151,6 +170,11 @@ defmodule Marbles.Economy.Shop do
   defp period_start_utc("month") do
     d = Date.utc_today()
     Date.new!(d.year, d.month, 1) |> DateTime.new!(~T[00:00:00], "Etc/UTC")
+  end
+
+  defp period_start_utc("year") do
+    d = Date.utc_today()
+    Date.new!(d.year, 1, 1) |> DateTime.new!(~T[00:00:00], "Etc/UTC")
   end
 
   defp period_start_utc(_) do
@@ -165,12 +189,13 @@ defmodule Marbles.Economy.Shop do
           | {:error, :invalid_product | :period_limit | :insufficient_coins | :insufficient_dust}
   def buy(user_id, product_id) when is_binary(product_id) do
     product = Enum.find(products(), &(&1.id == product_id))
+    limit_count = product && (product.limit_count || 0)
 
     cond do
       is_nil(product) ->
         {:error, :invalid_product}
 
-      purchases_in_period(user_id, product) >= (product.limit_count || 3) ->
+      limit_count > 0 and purchases_in_period(user_id, product) >= limit_count ->
         {:error, :period_limit}
 
       true ->
@@ -191,29 +216,71 @@ defmodule Marbles.Economy.Shop do
                if product.coin > 0, do: {:ok, _} = Accounts.update_currency(user, -product.coin)
                if product.dust > 0, do: {:ok, _} = Accounts.update_dust(user, -product.dust)
 
-               expires_at = DateTime.utc_now() |> DateTime.add(product.duration_sec, :second)
-               suffix = :rand.uniform(999_999_999) |> to_string()
+               now = DateTime.utc_now()
+               existing = active_product_effect(user_id, product.id, now)
+               base_expiry = if existing, do: existing.expires_at, else: now
+               expires_at = DateTime.add(base_expiry, product.duration_sec, :second)
 
-               %UserEffect{}
-               |> UserEffect.changeset(%{
-                 user_id: user_id,
-                 effect_key: product.effect_key <> "_" <> suffix,
-                 scope: "account",
-                 guild_id: nil,
-                 expires_at: expires_at,
-                 meta:
-                   product.meta
-                   |> Map.put("product_id", product.id)
-                   |> Map.put("source", "shop")
-               })
-               |> Repo.insert!()
+               meta =
+                 product.meta |> Map.put("product_id", product.id) |> Map.put("source", "shop")
+
+               case existing do
+                 %UserEffect{} = effect ->
+                   effect
+                   |> UserEffect.changeset(%{
+                     expires_at: expires_at,
+                     meta: Map.merge(effect.meta || %{}, meta)
+                   })
+                   |> Repo.update!()
+
+                 nil ->
+                   suffix = :rand.uniform(999_999_999) |> to_string()
+
+                   %UserEffect{}
+                   |> UserEffect.changeset(%{
+                     user_id: user_id,
+                     effect_key: product.effect_key <> "_" <> suffix,
+                     scope: "account",
+                     guild_id: nil,
+                     expires_at: expires_at,
+                     meta: meta
+                   })
+                   |> Repo.insert!()
+               end
              end) do
-          {:ok, %UserEffect{} = e} -> {:ok, e}
-          {:error, :insufficient_coins} -> {:error, :insufficient_coins}
-          {:error, :insufficient_dust} -> {:error, :insufficient_dust}
-          other -> other
+          {:ok, %UserEffect{} = e} ->
+            _ =
+              Analytics.record_event("shop_buy", nil, nil, user_id, %{
+                "product_id" => product.id,
+                "effect_key" => product.effect_key,
+                "coin_price" => product.coin,
+                "dust_price" => product.dust,
+                "duration_sec" => product.duration_sec
+              })
+
+            {:ok, e}
+
+          {:error, :insufficient_coins} ->
+            {:error, :insufficient_coins}
+
+          {:error, :insufficient_dust} ->
+            {:error, :insufficient_dust}
+
+          other ->
+            other
         end
     end
+  end
+
+  @spec active_product_effect(Ecto.UUID.t(), String.t(), DateTime.t()) :: UserEffect.t() | nil
+  defp active_product_effect(user_id, product_id, now) do
+    from(e in UserEffect,
+      where: e.user_id == ^user_id and e.expires_at > ^now,
+      where: fragment("? ->> 'product_id' = ?", e.meta, ^product_id),
+      order_by: [desc: e.expires_at],
+      limit: 1
+    )
+    |> Repo.one()
   end
 
   defp present?(nil), do: false

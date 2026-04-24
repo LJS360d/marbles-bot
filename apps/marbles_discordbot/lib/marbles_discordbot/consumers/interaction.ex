@@ -186,6 +186,17 @@ defmodule MarblesDiscordbot.Consumers.Interaction do
 
   defp format_duration(_), do: "0m"
 
+  defp format_hh_mm(seconds) when is_integer(seconds) and seconds > 0 do
+    h = div(seconds, 3600)
+    m = div(rem(seconds, 3600), 60)
+    "#{pad2(h)}:#{pad2(m)}"
+  end
+
+  defp format_hh_mm(_), do: "00:00"
+
+  defp pad2(v) when is_integer(v) and v < 10, do: "0#{v}"
+  defp pad2(v) when is_integer(v), do: Integer.to_string(v)
+
   defp effect_expires_in_human(%DateTime{} = expires_at) do
     now = DateTime.utc_now()
     sec = DateTime.diff(expires_at, now, :second)
@@ -234,18 +245,27 @@ defmodule MarblesDiscordbot.Consumers.Interaction do
     focused = focused_option(i.data.options || [])
     query = if focused, do: to_string(focused.value || ""), else: ""
 
-    names =
+    marble_choices =
       case sub do
         "add" -> MineRoster.autocomplete_owned(ur.id, query)
         "remove" -> MineRoster.autocomplete_roster(ur.id, query)
         _ -> []
       end
 
-    choices = Enum.map(names, fn n -> %{name: String.slice(n, 0, 100), value: n} end)
+    choices =
+      Enum.map(marble_choices, fn %{name: name} = choice ->
+        %{name: mines_autocomplete_label(choice), value: name}
+      end)
+
     %{type: 8, data: %{choices: choices}}
   end
 
   defp handle_autocomplete(_, _), do: nil
+
+  defp mines_autocomplete_label(%{name: name, level: level, rarity: rarity}) do
+    stars = Embeds.rarity_stars_string(rarity || 1)
+    String.slice("#{name} · Lv.#{level} · #{stars}", 0, 100)
+  end
 
   defp price_line(%{coin: c, dust: d}) do
     cond do
@@ -445,13 +465,6 @@ defmodule MarblesDiscordbot.Consumers.Interaction do
             " You also received: " <> Enum.map_join(m.items, ", ", & &1.name)
           end
 
-        hours =
-          if m.mining_seconds > 0,
-            do: Float.round(m.mining_seconds / 3600.0, 2) |> to_string(),
-            else: "0"
-
-        cap_h = Float.round(m.mining_cap_seconds / 3600.0, 1) |> to_string()
-
         mining_line =
           cond do
             m.mining_roster_size == 0 ->
@@ -461,17 +474,33 @@ defmodule MarblesDiscordbot.Consumers.Interaction do
               "Mining: **0** #{Currency.coin_emoji()} (Roster set — mining pays from hours since your last `/daily`; none accrued for this claim yet.)"
 
             m.mining_coins > 0 ->
-              "Mining: **#{m.mining_coins}** #{Currency.coin_emoji()} (~#{hours}h toward **#{cap_h}h** cap)."
+              breakdown =
+                (m.mining_breakdown || [])
+                |> Enum.map_join(", ", fn b -> "#{b.name} +#{b.coins}" end)
+
+              "Mining: **#{m.mining_coins}** #{Currency.coin_emoji()} · Mined for **#{format_hh_mm(m.mining_seconds)}**#{if breakdown == "", do: "", else: ", #{breakdown}"}."
 
             true ->
               "Mining: **0** #{Currency.coin_emoji()} (roster set; accrual window was empty or capped)."
+          end
+
+        xp_line =
+          if (m.mining_xp_total || 0) > 0 do
+            breakdown =
+              (m.mining_xp_breakdown || [])
+              |> Enum.map_join(", ", fn b -> "#{b.name} +#{b.xp}xp" end)
+
+            "XP gained: **#{m.mining_xp_total}xp**#{if breakdown == "", do: "", else: " · #{breakdown}"}"
+          else
+            ""
           end
 
         content =
           "You claimed your daily reward!\n" <>
             "Streak bonus: **#{m.streak_coins}** #{Currency.coin_emoji()} · Streak **#{m.streak}** days.\n" <>
             mining_line <>
-            "\n**Total today: #{m.coins}** #{Currency.coin_emoji()}" <>
+            if(xp_line == "", do: "", else: "\n" <> xp_line) <>
+            "\n\n**Total today: #{m.coins}** #{Currency.coin_emoji()}" <>
             items_text
 
         %{type: 4, data: %{content: content}}
@@ -493,22 +522,8 @@ defmodule MarblesDiscordbot.Consumers.Interaction do
 
     dust = ur.dust || 0
 
-    roster_lines =
-      case MineRoster.view(ur.id) do
-        {:ok, names} ->
-          if names == [] do
-            "_Empty — add marbles with `/mines add`._"
-          else
-            names |> Enum.with_index(1) |> Enum.map_join("\n", fn {n, idx} -> "#{idx}. #{n}" end)
-          end
-
-        _ ->
-          "_Unknown_"
-      end
-
     content =
-      "**Wallet**\n#{Embeds.currency_line(ur.currency)} · **#{dust}** #{Currency.dust_emoji()}\n\n" <>
-        "**Mine roster** (max 5)\n#{roster_lines}"
+      "**Wallet**\n#{Embeds.currency_line(ur.currency)} · **#{dust}** #{Currency.dust_emoji()}"
 
     %{type: 4, data: %{content: content}}
   end
@@ -647,14 +662,12 @@ defmodule MarblesDiscordbot.Consumers.Interaction do
     rows =
       case kind do
         "collection" -> Leaderboards.top_collection_count(10)
-        "strongest" -> Leaderboards.top_strongest_marble(10)
         _ -> Leaderboards.top_coins(10)
       end
 
     title =
       case kind do
         "collection" -> "Top collections"
-        "strongest" -> "Strongest marble (level score)"
         _ -> "Richest players"
       end
 
@@ -862,10 +875,17 @@ defmodule MarblesDiscordbot.Consumers.Interaction do
           Shop.products()
           |> Enum.map_join("\n", fn p ->
             used = Shop.purchases_in_period(ur.id, p)
-            max_count = p.limit_count || 3
-            period = Shop.period_label(p.limit_period_unit || "week")
             price = price_line(p)
-            "• **#{p.name}** — #{price} — bought this #{period}: **#{used}/#{max_count}**"
+
+            limit_text =
+              if (p.limit_count || 0) <= 0 do
+                ""
+              else
+                period = Shop.period_label(p.limit_period_unit || "week")
+                " — bought #{period}: **#{used}/#{p.limit_count}**"
+              end
+
+            "**#{p.name}** — #{price}#{limit_text}"
           end)
 
         %{type: 4, data: %{content: "**Shop**\n#{lines}", flags: 64}}

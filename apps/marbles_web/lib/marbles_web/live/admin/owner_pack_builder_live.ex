@@ -50,34 +50,27 @@ defmodule MarblesWeb.Admin.OwnerPackBuilderLive do
             })
             |> to_form(as: "pack")
 
-          rule_rows =
-            Enum.map(pack.pull_rules || [], fn r ->
-              scope =
-                cond do
-                  r.apply_1x && r.apply_10x -> "both"
-                  r.apply_1x -> "1x_only"
-                  true -> "10x_only"
-                end
-
-              %{
-                effect_type: r.effect_type,
-                discount_percent: r.discount_percent,
-                min_rarity: r.min_rarity || 3,
-                scope: scope,
-                trigger_type: r.trigger_type,
-                lifetime_max_uses: r.lifetime_max_uses || "",
-                period_unit: r.period_unit || "day",
-                every_n_pulls: r.every_n_pulls || 10,
-                starts_at: offer_date_input(r.starts_at),
-                ends_at: offer_date_input(r.ends_at)
-              }
-            end)
+          rule_rows = rule_rows_from_rules(pack.pull_rules || [])
 
           assign(socket, pack: pack, form: form, marble_ids: marble_ids, rule_rows: rule_rows)
       end
 
     marbles = Catalog.list_marbles(per_page: 500) |> elem(0)
     teams = Catalog.list_teams()
+
+    copy_rule_options =
+      Packs.list_all_packs(order: :name)
+      |> Enum.map(&{&1.name, &1.id})
+      |> case do
+        [] -> [{"No packs available", ""}]
+        options -> options
+      end
+
+    default_copy_rule_pack_id =
+      case copy_rule_options do
+        [{_, id} | _] -> id
+        _ -> ""
+      end
 
     socket =
       socket
@@ -87,6 +80,9 @@ defmodule MarblesWeb.Admin.OwnerPackBuilderLive do
       |> assign(:marble_filter_team_id, nil)
       |> assign(:marble_filter_rarity, nil)
       |> assign(:filtered_marbles, apply_marble_filters(marbles, "", nil, nil))
+      |> assign(:copy_rule_options, copy_rule_options)
+      |> assign(:copy_rule_pack_id, default_copy_rule_pack_id)
+      |> assign(:copy_rule_dialog_open, false)
       |> assign_new(:file_picker_open, fn -> false end)
       |> assign_new(:file_picker_path, fn -> "" end)
       |> assign_new(:file_picker_entries, fn -> [] end)
@@ -143,6 +139,40 @@ defmodule MarblesWeb.Admin.OwnerPackBuilderLive do
 
   defp offer_date_input(_), do: ""
 
+  defp rule_rows_from_rules(rules) do
+    Enum.map(rules, fn r ->
+      scope =
+        cond do
+          r.apply_1x && r.apply_10x -> "both"
+          r.apply_1x -> "1x_only"
+          true -> "10x_only"
+        end
+
+      %{
+        effect_type: r.effect_type,
+        discount_percent: r.discount_percent,
+        min_rarity: r.min_rarity || 3,
+        scope: scope,
+        trigger_type: r.trigger_type,
+        lifetime_max_uses: r.lifetime_max_uses || "",
+        period_unit: r.period_unit || "day",
+        every_n_pulls: r.every_n_pulls || 10,
+        starts_at: offer_date_input(r.starts_at),
+        ends_at: offer_date_input(r.ends_at)
+      }
+    end)
+  end
+
+  defp safe_get_pack(""), do: :error
+
+  defp safe_get_pack(pack_id) when is_binary(pack_id) do
+    try do
+      {:ok, Packs.get_pack!(pack_id)}
+    rescue
+      Ecto.NoResultsError -> :error
+    end
+  end
+
   defp apply_marble_filters(marbles, search, team_id, rarity) do
     marbles
     |> Enum.filter(fn m ->
@@ -180,6 +210,46 @@ defmodule MarblesWeb.Admin.OwnerPackBuilderLive do
       {:error, %Ecto.Changeset{} = changeset} ->
         {:noreply, assign(socket, form: to_form(changeset, as: "pack"))}
     end
+  end
+
+  @impl true
+  def handle_event("open_copy_rules_dialog", _params, socket) do
+    {:noreply, assign(socket, :copy_rule_dialog_open, true)}
+  end
+
+  @impl true
+  def handle_event("close_copy_rules_dialog", _params, socket) do
+    {:noreply, assign(socket, :copy_rule_dialog_open, false)}
+  end
+
+  @impl true
+  def handle_event("copy_rule_source_changed", %{"pack_id" => pack_id}, socket) do
+    {:noreply, assign(socket, :copy_rule_pack_id, normalize_pack_id(pack_id))}
+  end
+
+  @impl true
+  def handle_event("copy_rules_from_pack", %{"pack_id" => pack_id}, socket) do
+    normalized_pack_id = normalize_pack_id(pack_id)
+
+    copied_rows =
+      case safe_get_pack(normalized_pack_id) do
+        {:ok, source_pack} -> rule_rows_from_rules(source_pack.pull_rules || [])
+        :error -> socket.assigns.rule_rows || []
+      end
+
+    message =
+      if copied_rows == [] do
+        "Source pack has no rules."
+      else
+        "Copied #{length(copied_rows)} pull rule(s)."
+      end
+
+    {:noreply,
+     socket
+     |> assign(:rule_rows, copied_rows)
+     |> assign(:copy_rule_pack_id, normalized_pack_id)
+     |> assign(:copy_rule_dialog_open, false)
+     |> put_flash(:info, message)}
   end
 
   @impl true
@@ -438,6 +508,9 @@ defmodule MarblesWeb.Admin.OwnerPackBuilderLive do
   defp parse_offer_int(v, _) when is_integer(v), do: v
   defp parse_offer_int(_, d), do: d
 
+  defp normalize_pack_id(pack_id) when is_binary(pack_id), do: pack_id
+  defp normalize_pack_id(_), do: ""
+
   @impl true
   def render(assigns) do
     ~H"""
@@ -489,9 +562,14 @@ defmodule MarblesWeb.Admin.OwnerPackBuilderLive do
           <p class="text-sm text-base-content/70 max-w-3xl leading-relaxed">
             <strong>Discount</strong>: % off with trigger (always, N uses per account, once per period, or every N <em>pull actions</em>—1× adds 1, 10× adds 10). <strong>Pity</strong>: counts <em>marbles</em>; each 1× is one marble, each 10× is ten marbles in order. After N consecutive marbles below the minimum ★ without a natural hit at/above that ★, the next marble is forced to that ★ or higher. Rules have no ordering; discounts combine in insertion order.
           </p>
-          <button type="button" phx-click="rule_add" class="btn btn-outline btn-sm">
-            Add rule
-          </button>
+          <div class="flex flex-wrap gap-2">
+            <button type="button" phx-click="rule_add" class="btn btn-outline btn-sm">
+              Add rule
+            </button>
+            <button type="button" phx-click="open_copy_rules_dialog" class="btn btn-ghost btn-sm">
+              Copy rules from pack
+            </button>
+          </div>
           <div
             :for={{o, i} <- Enum.with_index(@rule_rows || [])}
             class={[
@@ -765,6 +843,39 @@ defmodule MarblesWeb.Admin.OwnerPackBuilderLive do
               <% end %>
             </div>
           </div>
+        </div>
+      </div>
+
+      <div :if={@copy_rule_dialog_open} id="copy-rules-modal" class="modal modal-open" role="dialog">
+        <div class="modal-box max-w-md">
+          <h3 class="text-lg font-semibold">Copy pull rules</h3>
+          <p class="mt-1 text-sm text-base-content/70">
+            Select a source pack. Existing rules in this editor will be replaced.
+          </p>
+          <.form
+            for={%{}}
+            id="copy-rules-form"
+            phx-change="copy_rule_source_changed"
+            phx-submit="copy_rules_from_pack"
+            class="mt-4 space-y-4"
+          >
+            <.input
+              type="select"
+              name="pack_id"
+              label="Source pack"
+              options={@copy_rule_options}
+              value={@copy_rule_pack_id}
+            />
+            <div class="modal-action mt-0">
+              <button type="button" phx-click="close_copy_rules_dialog" class="btn btn-ghost">
+                Cancel
+              </button>
+              <button type="submit" class="btn btn-primary">Copy rules</button>
+            </div>
+          </.form>
+        </div>
+        <div class="modal-backdrop">
+          <button type="button" phx-click="close_copy_rules_dialog">close</button>
         </div>
       </div>
 

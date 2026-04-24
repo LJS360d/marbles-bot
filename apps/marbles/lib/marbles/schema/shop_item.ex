@@ -35,7 +35,7 @@ defmodule Marbles.Schema.ShopItem do
     |> validate_number(:coin_price, greater_than_or_equal_to: 0)
     |> validate_number(:dust_price, greater_than_or_equal_to: 0)
     |> validate_number(:duration_sec, greater_than: 0)
-    |> validate_number(:limit_count, greater_than: 0)
-    |> validate_inclusion(:limit_period_unit, ["day", "week", "month"])
+    |> validate_number(:limit_count, greater_than_or_equal_to: 0)
+    |> validate_inclusion(:limit_period_unit, ["day", "week", "month", "year"])
   end
 end

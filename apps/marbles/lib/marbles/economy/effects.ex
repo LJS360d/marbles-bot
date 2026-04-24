@@ -39,6 +39,14 @@ defmodule Marbles.Economy.Effects do
     |> Enum.reduce(0, fn e, acc -> acc + meta_int(e.meta, "pct") end)
   end
 
+  @spec exp_gain_bonus_percent(Ecto.UUID.t()) :: non_neg_integer()
+  def exp_gain_bonus_percent(user_id) do
+    user_id
+    |> list_active()
+    |> Enum.filter(&String.starts_with?(&1.effect_key, "boost_exp_gain"))
+    |> Enum.reduce(0, fn e, acc -> acc + meta_int(e.meta, "pct") end)
+  end
+
   defp meta_int(meta, k) when is_map(meta) do
     v = Map.get(meta, k) || Map.get(meta, String.to_atom(k))
 

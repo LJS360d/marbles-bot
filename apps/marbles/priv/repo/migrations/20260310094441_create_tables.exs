@@ -48,18 +48,26 @@ defmodule Marbles.Repo.Migrations.CreateTables do
       add :dust, :integer, default: 0, null: false
       add :mine_roster, :map, default: %{}, null: false
       add :role, :string, null: false, default: "regular"
-      add :elo, :integer, default: 1000
       add :last_marble_id, references(:marbles, type: :binary_id, on_delete: :nilify_all)
-      add :race_wins, :integer, default: 0
-      add :race_losses, :integer, default: 0
-      add :races_entered, :integer, default: 0
-      add :total_currency_won, :integer, default: 0
-      add :total_currency_wagered, :integer, default: 0
-      add :highest_elo, :integer, default: 1000
-      add :current_streak, :integer, default: 0
-      add :best_streak, :integer, default: 0
       timestamps()
     end
+
+    create table(:user_race_stats, primary_key: false) do
+      add :id, :binary_id, primary_key: true
+      add :user_id, references(:users, type: :binary_id, on_delete: :delete_all), null: false
+      add :elo, :integer, default: 1000, null: false
+      add :race_wins, :integer, default: 0, null: false
+      add :race_losses, :integer, default: 0, null: false
+      add :races_entered, :integer, default: 0, null: false
+      add :total_currency_won, :integer, default: 0, null: false
+      add :total_currency_wagered, :integer, default: 0, null: false
+      add :highest_elo, :integer, default: 1000, null: false
+      add :current_streak, :integer, default: 0, null: false
+      add :best_streak, :integer, default: 0, null: false
+      timestamps()
+    end
+
+    create unique_index(:user_race_stats, [:user_id])
 
     create table(:user_identities, primary_key: false) do
       add :id, :binary_id, primary_key: true

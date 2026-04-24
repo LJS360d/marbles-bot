@@ -38,12 +38,14 @@ defmodule MarblesDiscordbot.Consumers.Message do
                }) do
             {:ok, created} ->
               expires = DateTime.utc_now() |> DateTime.add(300, :second)
+              spawn_rate = channel.spawn_rate * 1.0
 
               PendingSpawns.create(
                 to_string(created.id),
                 channel_id_str,
                 marble.id,
                 emoji,
+                spawn_rate,
                 expires
               )
 

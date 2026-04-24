@@ -4,8 +4,11 @@ defmodule Marbles.Daily do
   """
 
   alias Marbles.Repo
-  alias Marbles.Schema.{UserDailyStreak, User}
+  alias Marbles.Schema.{UserDailyStreak, User, UserMarble}
+  alias Marbles.Analytics
   alias Marbles.Economy.Mining
+  alias Marbles.Economy.Experience
+  alias Marbles.Economy.Effects
 
   @base_coins 100
   @streak_multiplier 10
@@ -67,6 +70,8 @@ defmodule Marbles.Daily do
       accrual_seconds = Mining.accrual_seconds(prev_claim_at, now, user_id)
       mining = Mining.compute_coins(user_id, accrual_seconds)
       total_coins = streak_coins + mining.coins
+      mining_xp_breakdown = grant_mining_xp(user_id, mining.breakdown, mining.seconds)
+      mining_xp_total = Enum.reduce(mining_xp_breakdown, 0, fn row, acc -> acc + row.xp end)
 
       user = Repo.get!(User, user_id)
       {:ok, _} = Marbles.Accounts.update_currency(user, total_coins)
@@ -82,6 +87,25 @@ defmodule Marbles.Daily do
 
       items = give_random_items(user_id)
 
+      _ =
+        Analytics.record_event("daily_claim", nil, nil, user_id, %{
+          "streak" => new_streak,
+          "streak_coins" => streak_coins,
+          "mining_coins" => mining.coins,
+          "mining_seconds" => mining.seconds,
+          "mining_roster_size" => mining.roster_size,
+          "mining_xp_total" => mining_xp_total,
+          "total_coins" => total_coins
+        })
+
+      _ =
+        Analytics.record_event("mining_payout", nil, nil, user_id, %{
+          "coins" => mining.coins,
+          "seconds" => mining.seconds,
+          "roster_size" => mining.roster_size,
+          "xp_total" => mining_xp_total
+        })
+
       %{
         coins: total_coins,
         streak_coins: streak_coins,
@@ -89,10 +113,65 @@ defmodule Marbles.Daily do
         mining_seconds: mining.seconds,
         mining_cap_seconds: mining.cap_seconds,
         mining_roster_size: mining.roster_size,
+        mining_breakdown: mining.breakdown,
+        mining_xp_total: mining_xp_total,
+        mining_xp_breakdown: mining_xp_breakdown,
         streak: new_streak,
         items: items
       }
     end)
+  end
+
+  defp grant_mining_xp(user_id, breakdown, mining_seconds) do
+    xp_bonus_pct = Effects.exp_gain_bonus_percent(user_id)
+    hours = max(0.0, mining_seconds / 3600.0)
+
+    breakdown
+    |> Enum.reduce([], fn row, acc ->
+      rarity = max(1, Map.get(row, :rarity, 1))
+      level = max(1, Map.get(row, :level, 1))
+      xp_rate_per_hour = 10.0 + level * 1.2 + rarity * 4.0
+      base_xp = max(0, trunc(hours * xp_rate_per_hour))
+      gained_xp = max(0, trunc(base_xp * (100 + xp_bonus_pct) / 100.0))
+      user_marble_id = Map.get(row, :user_marble_id)
+
+      cond do
+        gained_xp <= 0 ->
+          acc
+
+        not is_binary(user_marble_id) ->
+          acc
+
+        true ->
+          case Repo.get(UserMarble, user_marble_id) do
+            %UserMarble{} = um ->
+              updated =
+                Experience.apply_xp_gain(um.level || 1, um.experience || 0, gained_xp, rarity)
+
+              um
+              |> UserMarble.changeset(%{
+                level: updated.level,
+                experience: updated.experience
+              })
+              |> Repo.update!()
+
+              [
+                %{
+                  user_marble_id: user_marble_id,
+                  name: Map.get(row, :name, "Marble"),
+                  xp: gained_xp,
+                  level: updated.level,
+                  gained_levels: updated.gained_levels
+                }
+                | acc
+              ]
+
+            nil ->
+              acc
+          end
+      end
+    end)
+    |> Enum.reverse()
   end
 
   defp streak_bonus_coins(streak) do

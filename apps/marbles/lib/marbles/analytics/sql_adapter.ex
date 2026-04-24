@@ -6,34 +6,19 @@ defmodule Marbles.Analytics.SQLAdapter do
 
   @impl true
   def record_pull(guild_id, user_id, meta \\ %{}) do
-    %AnalyticsEvent{}
-    |> AnalyticsEvent.changeset(%{
-      event_type: "pull",
-      guild_id: guild_id,
-      user_id: user_id,
-      meta: meta
-    })
-    |> Repo.insert()
-    |> case do
-      {:ok, _} ->
-        Phoenix.PubSub.broadcast(
-          Marbles.PubSub,
-          "admin_dashboard",
-          {:admin_dashboard, :stats_updated}
-        )
-
-        :ok
-
-      e ->
-        e
-    end
+    record_event("pull", guild_id, nil, user_id, meta)
   end
 
   @impl true
   def record_spawn(guild_id, channel_id, user_id, meta \\ %{}) do
+    record_event("spawn", guild_id, channel_id, user_id, meta)
+  end
+
+  @impl true
+  def record_event(event_type, guild_id, channel_id, user_id, meta \\ %{}) do
     %AnalyticsEvent{}
     |> AnalyticsEvent.changeset(%{
-      event_type: "spawn",
+      event_type: event_type,
       guild_id: guild_id,
       channel_id: channel_id,
       user_id: user_id,

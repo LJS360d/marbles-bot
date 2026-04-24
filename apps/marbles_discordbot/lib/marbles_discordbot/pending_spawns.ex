@@ -3,11 +3,12 @@ defmodule MarblesDiscordbot.PendingSpawns do
 
   alias MarblesDiscordbot.{HordeRegistry, HordeSupervisor}
 
-  def create(message_id, channel_id, marble_id, emoji, expires_at) do
+  def create(message_id, channel_id, marble_id, emoji, spawn_rate, expires_at) do
     data = %{
       channel_id: channel_id,
       marble_id: marble_id,
       emoji: emoji,
+      spawn_rate: spawn_rate,
       expires_at: expires_at
     }
 

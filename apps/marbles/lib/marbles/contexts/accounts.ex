@@ -1,8 +1,9 @@
 defmodule Marbles.Accounts do
   alias Marbles.Repo
-  alias Marbles.Schema.{User, UserIdentity}
+  alias Marbles.Schema.{User, UserIdentity, UserRaceStat}
   import Ecto.Query
 
+  @spec get_user!(Ecto.UUID.t()) :: User.t()
   def get_user!(id), do: Repo.get!(User, id) |> Repo.preload(:identities)
 
   def get_user(id) when is_integer(id) do
@@ -120,6 +121,28 @@ defmodule Marbles.Accounts do
   def update_user(user, attrs) do
     user
     |> User.changeset(attrs)
+    |> Repo.update()
+  end
+
+  @spec get_or_create_user_race_stat(Ecto.UUID.t()) :: UserRaceStat.t()
+  def get_or_create_user_race_stat(user_id) when is_binary(user_id) do
+    case Repo.get_by(UserRaceStat, user_id: user_id) do
+      %UserRaceStat{} = stat ->
+        stat
+
+      nil ->
+        %UserRaceStat{}
+        |> UserRaceStat.changeset(%{user_id: user_id})
+        |> Repo.insert!()
+    end
+  end
+
+  @spec update_user_race_stat(Ecto.UUID.t(), map()) ::
+          {:ok, UserRaceStat.t()} | {:error, Ecto.Changeset.t()}
+  def update_user_race_stat(user_id, attrs) when is_binary(user_id) and is_map(attrs) do
+    user_id
+    |> get_or_create_user_race_stat()
+    |> UserRaceStat.changeset(Map.put(attrs, :user_id, user_id))
     |> Repo.update()
   end
 

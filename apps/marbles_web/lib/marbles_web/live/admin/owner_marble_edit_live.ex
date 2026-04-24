@@ -117,7 +117,7 @@ defmodule MarblesWeb.Admin.OwnerMarbleEditLive do
             options={Enum.map(@teams, fn t -> {t.name, t.id} end)}
             value={@form[:team_id].value}
           />
-          <div class="fieldset mb-2">
+          <div class="fieldset pb-0">
             <label for="marble_base_stats_json">
               <span class="label mb-1">Base stats (JSON)</span>
               <textarea

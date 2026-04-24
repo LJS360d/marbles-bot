@@ -4,16 +4,14 @@ defmodule MarblesWeb.AuthController do
 
   alias Marbles.Accounts
 
-  def login_page(conn, _params) do
-    render(conn, :login_page)
-  end
+  def login_page(conn, _params), do: redirect(conn, to: ~p"/auth/discord")
 
   def request(conn, _params), do: conn
 
   def callback(%{assigns: %{ueberauth_failure: _}} = conn, _params) do
     conn
     |> put_flash(:error, "Login failed.")
-    |> redirect(to: ~p"/login")
+    |> redirect(to: ~p"/")
   end
 
   def callback(%{assigns: %{ueberauth_auth: auth}} = conn, _params) do
@@ -36,7 +34,7 @@ defmodule MarblesWeb.AuthController do
       {:error, _changeset} ->
         conn
         |> put_flash(:error, "Could not create or find your account.")
-        |> redirect(to: ~p"/login")
+        |> redirect(to: ~p"/")
     end
   end
 

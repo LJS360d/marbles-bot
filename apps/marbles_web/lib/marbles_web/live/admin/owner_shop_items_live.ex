@@ -19,14 +19,16 @@ defmodule MarblesWeb.Admin.OwnerShopItemsLive do
   @impl true
   def handle_event("save_item", %{"item" => params}, socket) do
     id = params["id"]
+    limit_count = parse_int_or_nil(params["limit_count"])
+    period_unit = normalize_period_unit(params["limit_period_unit"])
 
     attrs = %{
       enabled: params["enabled"] == "true",
       coin_price: parse_int_or_nil(params["coin_price"]),
       dust_price: parse_int_or_nil(params["dust_price"]),
       duration_sec: parse_int_or_nil(params["duration_sec"]),
-      limit_count: parse_int_or_nil(params["limit_count"]),
-      limit_period_unit: empty_to_nil(params["limit_period_unit"]),
+      limit_count: limit_count,
+      limit_period_unit: period_unit,
       label_override: empty_to_nil(params["label_override"])
     }
 
@@ -45,6 +47,7 @@ defmodule MarblesWeb.Admin.OwnerShopItemsLive do
   @impl true
   def render(assigns) do
     ~H"""
+    <Layouts.header current_user={@current_user} />
     <Layouts.app
       flash={@flash}
       current_scope={@current_scope}
@@ -57,11 +60,6 @@ defmodule MarblesWeb.Admin.OwnerShopItemsLive do
             Back to economy
           </.link>
         </div>
-
-        <p class="text-sm text-base-content/70">
-          Overrides are stored in DB and applied immediately to `/shop`.
-        </p>
-
         <div class="space-y-4">
           <article
             :for={item <- @items}
@@ -88,7 +86,7 @@ defmodule MarblesWeb.Admin.OwnerShopItemsLive do
                   </select>
                 </label>
               </div>
-              <div class="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-6">
+              <div class="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
                 <.input
                   name="item[label_override]"
                   value={item.name}
@@ -97,6 +95,8 @@ defmodule MarblesWeb.Admin.OwnerShopItemsLive do
                 />
                 <.input name="item[coin_price]" value={item.coin} label="Coin price" type="number" />
                 <.input name="item[dust_price]" value={item.dust} label="Dust price" type="number" />
+              </div>
+              <div class="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
                 <.input
                   name="item[duration_sec]"
                   value={item.duration_sec}
@@ -106,14 +106,20 @@ defmodule MarblesWeb.Admin.OwnerShopItemsLive do
                 <.input
                   name="item[limit_count]"
                   value={item.limit_count}
-                  label="Limit count"
+                  label="Limit count (0 = unlimited)"
                   type="number"
                 />
                 <.input
+                  type="select"
                   name="item[limit_period_unit]"
                   value={item.limit_period_unit}
-                  label="Limit period (day|week|month)"
-                  type="text"
+                  label="Limit period"
+                  options={[
+                    {"Day", "day"},
+                    {"Week", "week"},
+                    {"Month", "month"},
+                    {"Year", "year"}
+                  ]}
                 />
               </div>
               <button type="submit" class="btn btn-primary btn-sm">Save overrides</button>
@@ -140,4 +146,7 @@ defmodule MarblesWeb.Admin.OwnerShopItemsLive do
   defp empty_to_nil(nil), do: nil
   defp empty_to_nil(""), do: nil
   defp empty_to_nil(v), do: v
+
+  defp normalize_period_unit(v) when v in ["day", "week", "month", "year"], do: v
+  defp normalize_period_unit(_), do: "week"
 end

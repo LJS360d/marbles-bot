@@ -38,7 +38,7 @@ defmodule MarblesWeb.Layouts do
     container_width =
       if Map.get(assigns, :current_scope, nil) == nil,
         do: [],
-        else: ["mx-auto", "max-w-2xl", "md:max-w-7xl"]
+        else: ["mx-auto", "max-w-2xl", "md:max-w-7xl", "p-4"]
 
     assigns = assign(assigns, :container_width, container_width)
 

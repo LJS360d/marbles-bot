@@ -3,7 +3,7 @@ defmodule MarblesDiscordbot.Consumers.Reaction do
   alias Nostrum.Struct.Embed
   alias Nostrum.Struct.Event.MessageReactionAdd
   alias Nostrum.Api
-  alias Marbles.{Accounts, Catalog, Guilds, SpawnCatch}
+  alias Marbles.{Accounts, Catalog, SpawnCatch}
   alias Marbles.Economy.Currency
   alias MarblesDiscordbot.{PendingSpawns, Embeds}
   require Logger
@@ -23,31 +23,40 @@ defmodule MarblesDiscordbot.Consumers.Reaction do
           username: username
         })
 
-      channel = Guilds.get_channel(pending.channel_id)
-      spawn_rate = if channel, do: channel.spawn_rate * 1.0, else: 0.0
+      spawn_rate = Map.get(pending, :spawn_rate, 0.0) * 1.0
 
       case SpawnCatch.collect(to_string(event.message_id), user_record.id, marble, spawn_rate) do
         {:error, :already_claimed} ->
           :ok
 
-        {:ok, %{coins: coins, template: tpl}} ->
-          collection_line =
+        {:ok, %{coins: coins, dust: dust, template: tpl}} ->
+          {collection_line, duplicate_dust} =
             case tpl do
               {:new, _} ->
-                "Added to your `/collection`."
+                {"Added to your `/collection`.", 0}
 
               {:duplicate, d, _} ->
-                "Already owned — **+#{d}** #{Currency.dust_emoji()} dust."
+                {"Already owned — **+#{d}** #{Currency.dust_emoji()} dust.", d}
             end
 
-          coin_line =
-            if coins > 0 do
-              "**+#{coins}** #{Currency.coin_emoji()} catch bonus.\n"
+          rewards_line =
+            if coins > 0 or dust > 0 do
+              parts = [
+                dust > 0 && "**+#{dust}** #{Currency.dust_emoji()}",
+                coins > 0 && "**+#{coins}** #{Currency.coin_emoji()}"
+              ]
+
+              "Spawn rewards: " <>
+                (parts
+                 |> Enum.reject(&is_boolean/1)
+                 |> Enum.join(" · ")) <> "\n"
             else
               ""
             end
 
-          description = coin_line <> collection_line
+          description = rewards_line <> collection_line
+          total_dust = dust + duplicate_dust
+          total_coins = coins
 
           collected_by =
             cond do
@@ -59,6 +68,21 @@ defmodule MarblesDiscordbot.Consumers.Reaction do
                 username
             end
 
+          content =
+            if total_coins > 0 or total_dust > 0 do
+              gains =
+                [
+                  total_dust > 0 && "+#{total_dust} #{Currency.dust_emoji()}",
+                  total_coins > 0 && "+#{total_coins} #{Currency.coin_emoji()}"
+                ]
+                |> Enum.reject(&is_boolean/1)
+                |> Enum.join(" · ")
+
+              "<@#{user_id}> claimed this marble and gained #{gains}."
+            else
+              "<@#{user_id}> claimed this marble."
+            end
+
           embed =
             Embeds.marble_embed(marble)
             |> Embed.put_title("You got a #{marble.name}!")
@@ -66,7 +90,7 @@ defmodule MarblesDiscordbot.Consumers.Reaction do
             |> Embed.put_footer("Collected by #{collected_by}", "")
 
           case Api.Message.edit(event.channel_id, event.message_id, %{
-                 content: "<@#{user_id}>",
+                 content: content,
                  embeds: [embed]
                }) do
             {:ok, _} ->

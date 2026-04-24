@@ -181,14 +181,7 @@ defmodule MarblesWeb.Admin.OwnerAdminLive do
       <div class="space-y-6 sm:space-y-8" id="owner-admin-root" phx-hook="OwnerAdminMemoryInsights">
         <h1 class="text-2xl font-semibold text-base-content">Owner admin</h1>
 
-        <section class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-          <.link
-            navigate={~p"/admin/owner/guilds"}
-            class="rounded-xl border border-base-300 bg-base-200 p-4 shadow-sm transition-colors hover:bg-base-300"
-          >
-            <p class="text-sm font-medium text-base-content/70">Guilds</p>
-            <p class="mt-1 text-2xl font-semibold">{@guilds_count}</p>
-          </.link>
+        <section class="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3">
           <.link
             navigate={~p"/admin/owner/users"}
             class="rounded-xl border border-base-300 bg-base-200 p-4 shadow-sm transition-colors hover:bg-base-300"
@@ -197,35 +190,11 @@ defmodule MarblesWeb.Admin.OwnerAdminLive do
             <p class="mt-1 text-2xl font-semibold">{@users_count}</p>
           </.link>
           <.link
-            navigate={~p"/admin/owner/marbles"}
+            navigate={~p"/admin/owner/guilds"}
             class="rounded-xl border border-base-300 bg-base-200 p-4 shadow-sm transition-colors hover:bg-base-300"
           >
-            <p class="text-sm font-medium text-base-content/70">Marbles</p>
-            <p class="mt-1 text-2xl font-semibold">{@marbles_count}</p>
-          </.link>
-          <div class="rounded-xl border border-base-300 bg-base-200 p-4 shadow-sm">
-            <div class="flex items-start justify-between gap-2">
-              <div>
-                <p class="text-sm font-medium text-base-content/70">Packs</p>
-                <p class="mt-1 text-2xl font-semibold">{@packs_count}</p>
-              </div>
-              <.link navigate={~p"/admin/owner/packs/new"} class="btn btn-primary btn-sm shrink-0">
-                New pack
-              </.link>
-            </div>
-            <.link
-              navigate={~p"/admin/owner/packs"}
-              class="mt-2 block text-sm text-primary hover:underline"
-            >
-              View packs
-            </.link>
-          </div>
-          <.link
-            navigate={~p"/admin/owner/teams"}
-            class="rounded-xl border border-base-300 bg-base-200 p-4 shadow-sm transition-colors hover:bg-base-300"
-          >
-            <p class="text-sm font-medium text-base-content/70">Teams</p>
-            <p class="mt-1 text-2xl font-semibold">{@teams_count}</p>
+            <p class="text-sm font-medium text-base-content/70">Guilds</p>
+            <p class="mt-1 text-2xl font-semibold">{@guilds_count}</p>
           </.link>
           <.link
             navigate={~p"/admin/owner/economy"}
@@ -233,6 +202,31 @@ defmodule MarblesWeb.Admin.OwnerAdminLive do
           >
             <p class="text-sm font-medium text-base-content/70">Economy</p>
             <p class="mt-1 text-base font-semibold">Cooldowns · Shop · Wallets</p>
+          </.link>
+          <.link
+            navigate={~p"/admin/owner/packs"}
+            class="rounded-xl border border-base-300 bg-base-200 p-4 shadow-sm transition-colors hover:bg-base-300"
+          >
+            <div class="flex items-start justify-between gap-2">
+              <div>
+                <p class="text-sm font-medium text-base-content/70">Packs</p>
+                <p class="mt-1 text-2xl font-semibold">{@packs_count}</p>
+              </div>
+            </div>
+          </.link>
+          <.link
+            navigate={~p"/admin/owner/marbles"}
+            class="rounded-xl border border-base-300 bg-base-200 p-4 shadow-sm transition-colors hover:bg-base-300"
+          >
+            <p class="text-sm font-medium text-base-content/70">Marbles</p>
+            <p class="mt-1 text-2xl font-semibold">{@marbles_count}</p>
+          </.link>
+          <.link
+            navigate={~p"/admin/owner/teams"}
+            class="rounded-xl border border-base-300 bg-base-200 p-4 shadow-sm transition-colors hover:bg-base-300"
+          >
+            <p class="text-sm font-medium text-base-content/70">Teams</p>
+            <p class="mt-1 text-2xl font-semibold">{@teams_count}</p>
           </.link>
         </section>
 

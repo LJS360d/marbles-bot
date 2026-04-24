@@ -7,6 +7,7 @@ defmodule MarblesWeb.Admin.OwnerUserDetailLive do
   alias Marbles.Economy.Mining
   alias Marbles.Economy.Currency
   alias Marbles.Economy.MineRoster
+  alias Marbles.Economy.Shop
 
   @collection_preview 15
 
@@ -25,8 +26,53 @@ defmodule MarblesWeb.Admin.OwnerUserDetailLive do
   end
 
   @impl true
+  def handle_event("set_race_stats", %{"race_stats" => params}, socket) do
+    user = socket.assigns.user
+
+    attrs = %{
+      elo: parse_non_neg_with_default(params["elo"], socket.assigns.race_stat.elo),
+      highest_elo:
+        parse_non_neg_with_default(params["highest_elo"], socket.assigns.race_stat.highest_elo),
+      race_wins:
+        parse_non_neg_with_default(params["race_wins"], socket.assigns.race_stat.race_wins),
+      race_losses:
+        parse_non_neg_with_default(params["race_losses"], socket.assigns.race_stat.race_losses),
+      races_entered:
+        parse_non_neg_with_default(
+          params["races_entered"],
+          socket.assigns.race_stat.races_entered
+        ),
+      total_currency_won:
+        parse_non_neg_with_default(
+          params["total_currency_won"],
+          socket.assigns.race_stat.total_currency_won
+        ),
+      total_currency_wagered:
+        parse_non_neg_with_default(
+          params["total_currency_wagered"],
+          socket.assigns.race_stat.total_currency_wagered
+        ),
+      current_streak:
+        parse_non_neg_with_default(
+          params["current_streak"],
+          socket.assigns.race_stat.current_streak
+        ),
+      best_streak:
+        parse_non_neg_with_default(params["best_streak"], socket.assigns.race_stat.best_streak)
+    }
+
+    case Accounts.update_user_race_stat(user.id, attrs) do
+      {:ok, _} ->
+        {:noreply, socket |> put_flash(:info, "Race stats updated.") |> load_user(user.id)}
+
+      {:error, _} ->
+        {:noreply, put_flash(socket, :error, "Could not update race stats.")}
+    end
+  end
+
+  @impl true
   def handle_event("set_upgrade_level", %{"upgrade" => params}, socket) do
-    key = params["key"] || ""
+    key = Map.get(params, "key", "")
     level = parse_non_neg(params["level"])
     user = socket.assigns.user
 
@@ -51,7 +97,7 @@ defmodule MarblesWeb.Admin.OwnerUserDetailLive do
   @impl true
   def handle_event("grant_effect", %{"effect" => params}, socket) do
     user = socket.assigns.user
-    effect_key = String.trim(params["effect_key"] || "")
+    effect_key = String.trim(Map.get(params, "effect_key", ""))
     hours = parse_non_neg(params["hours"])
 
     cond do
@@ -85,6 +131,7 @@ defmodule MarblesWeb.Admin.OwnerUserDetailLive do
 
   defp load_user(socket, user_id) do
     user = Accounts.get_user!(user_id)
+    race_stat = Accounts.get_or_create_user_race_stat(user.id)
     {items, total} = Collection.list_user_inventory(user.id, per_page: @collection_preview)
     breadcrumbs = [{"Owner", ~p"/admin/owner"}, {"Users", ~p"/admin/owner/users"}, {"User", nil}]
     upgrades = EconomyAdmin.list_user_upgrades(user.id)
@@ -100,9 +147,11 @@ defmodule MarblesWeb.Admin.OwnerUserDetailLive do
 
     next_daily_eta = seconds_until_next_daily(streak.last_claimed_at)
     upgrade_map = Map.new(upgrades, &{&1.upgrade_key, &1.level})
+    effect_options = effect_options()
 
     socket
     |> assign(:user, user)
+    |> assign(:race_stat, race_stat)
     |> assign(:collection, items)
     |> assign(:collection_total, total)
     |> assign(:streak, streak)
@@ -111,6 +160,7 @@ defmodule MarblesWeb.Admin.OwnerUserDetailLive do
     |> assign(:upgrade_map, upgrade_map)
     |> assign(:upgrade_defs, Upgrades.definitions())
     |> assign(:effects, effects)
+    |> assign(:effect_options, effect_options)
     |> assign(:mine_preview, mine)
     |> assign(:roster_names, roster_names)
     |> assign(:breadcrumbs, breadcrumbs)
@@ -143,6 +193,53 @@ defmodule MarblesWeb.Admin.OwnerUserDetailLive do
     end
   end
 
+  defp parse_non_neg_with_default(v, default) do
+    case parse_non_neg(v) do
+      nil -> default
+      parsed -> parsed
+    end
+  end
+
+  defp effect_options do
+    Shop.products()
+    |> Enum.reduce([], fn p, acc ->
+      if Enum.any?(acc, fn {_label, key} -> key == p.effect_key end) do
+        acc
+      else
+        [{p.name, p.effect_key} | acc]
+      end
+    end)
+    |> Enum.reverse()
+  end
+
+  defp effect_label(effect) do
+    Shop.effect_display_name(effect)
+  end
+
+  defp roster_slots_count(roster) when is_map(roster) do
+    slots =
+      case Map.get(roster, "slots") do
+        s when is_list(s) ->
+          s
+
+        _ ->
+          case Map.get(roster, :slots) do
+            s when is_list(s) -> s
+            _ -> []
+          end
+      end
+
+    length(slots)
+  end
+
+  defp roster_slots_count(_), do: 0
+
+  defp default_effect_key([{_label, key} | _]) when is_binary(key), do: key
+  defp default_effect_key(_), do: ""
+
+  defp empty_list?(list) when is_list(list), do: Enum.empty?(list)
+  defp empty_list?(_), do: true
+
   @impl true
   def render(assigns) do
     ~H"""
@@ -161,17 +258,17 @@ defmodule MarblesWeb.Admin.OwnerUserDetailLive do
                 {@user.display_name}
               </p>
               <p class="mt-2 text-sm">
-                Role: {@user.role} · {@user.currency} {Currency.coin_emoji()} {@user.dust || 0} {Currency.dust_emoji()}
+                Role: {@user.role} · {@user.currency} {Currency.coin_emoji()} {@user.dust} {Currency.dust_emoji()}
               </p>
             </div>
-            <.link navigate={~p"/admin/owner/users/#{@user.id}/edit"} class="btn btn-ghost btn-sm">
+            <.link navigate={~p"/admin/owner/users/#{@user.id}/edit"} class="btn btn-outline btn-sm">
               Edit
             </.link>
           </div>
-          <div :if={(@user.identities || []) != []} class="mt-1">
+          <div :if={!empty_list?(@user.identities)} class="mt-1">
             <p class="text-xs text-base-content/60">Identities</p>
             <ul class="mt-0.5 list-inside list-disc space-y-0.5 text-xs text-base-content/60">
-              <li :for={i <- @user.identities || []}>
+              <li :for={i <- @user.identities}>
                 {i.platform}: {i.username}
               </li>
             </ul>
@@ -179,16 +276,88 @@ defmodule MarblesWeb.Admin.OwnerUserDetailLive do
         </div>
 
         <section class="rounded-xl border border-base-300 bg-base-200 p-4">
+          <h2 class="text-lg font-semibold">Race stats</h2>
+          <.form
+            for={%{}}
+            as={:race_stats}
+            id="set-race-stats-form"
+            phx-submit="set_race_stats"
+            class="mt-3 grid grid-cols-1 gap-3 rounded-lg border border-base-300 bg-base-100 p-3 sm:grid-cols-2 lg:grid-cols-3"
+          >
+            <.input name="race_stats[elo]" type="number" label="ELO" value={@race_stat.elo} min="0" />
+            <.input
+              name="race_stats[highest_elo]"
+              type="number"
+              label="Highest ELO"
+              value={@race_stat.highest_elo}
+              min="0"
+            />
+            <.input
+              name="race_stats[races_entered]"
+              type="number"
+              label="Races entered"
+              value={@race_stat.races_entered}
+              min="0"
+            />
+            <.input
+              name="race_stats[race_wins]"
+              type="number"
+              label="Race wins"
+              value={@race_stat.race_wins}
+              min="0"
+            />
+            <.input
+              name="race_stats[race_losses]"
+              type="number"
+              label="Race losses"
+              value={@race_stat.race_losses}
+              min="0"
+            />
+            <.input
+              name="race_stats[current_streak]"
+              type="number"
+              label="Current streak"
+              value={@race_stat.current_streak}
+              min="0"
+            />
+            <.input
+              name="race_stats[best_streak]"
+              type="number"
+              label="Best streak"
+              value={@race_stat.best_streak}
+              min="0"
+            />
+            <.input
+              name="race_stats[total_currency_won]"
+              type="number"
+              label={"Currency won #{Currency.coin_emoji()}"}
+              value={@race_stat.total_currency_won}
+              min="0"
+            />
+            <.input
+              name="race_stats[total_currency_wagered]"
+              type="number"
+              label={"Currency wagered #{Currency.coin_emoji()}"}
+              value={@race_stat.total_currency_wagered}
+              min="0"
+            />
+            <div class="sm:col-span-2 lg:col-span-3">
+              <button type="submit" class="btn btn-primary btn-sm">Save race stats</button>
+            </div>
+          </.form>
+        </section>
+
+        <section class="rounded-xl border border-base-300 bg-base-200 p-4">
           <h2 class="text-lg font-semibold">Cooldowns and mining</h2>
           <p class="mt-2 text-sm text-base-content/70">
             Next daily: {fmt_eta(@next_daily_eta)} · Current streak: {@streak.current_streak} · Longest streak: {@streak.longest_streak}
           </p>
           <p class="mt-1 text-sm text-base-content/70">
-            Mine roster slots: {(@user.mine_roster["slots"] || []) |> length()} · Full-cap projected payout: {@mine_preview.coins} {Currency.coin_emoji()}
+            Mine roster slots: {roster_slots_count(@user.mine_roster)} · Full-cap projected payout: {@mine_preview.coins} {Currency.coin_emoji()}
           </p>
           <p class="mt-1 text-xs text-base-content/60">
-            <span :if={@roster_names == []}>Roster is empty.</span>
-            <span :if={@roster_names != []}>
+            <span :if={empty_list?(@roster_names)}>Roster is empty.</span>
+            <span :if={!empty_list?(@roster_names)}>
               Roster: {Enum.join(@roster_names, ", ")}
             </span>
           </p>
@@ -235,11 +404,11 @@ defmodule MarblesWeb.Admin.OwnerUserDetailLive do
             class="mt-3 flex flex-wrap items-end gap-3 rounded-lg border border-base-300 bg-base-100 p-3"
           >
             <.input
+              type="select"
               name="effect[effect_key]"
-              type="text"
-              label="Effect key"
-              value=""
-              placeholder="boost_mine_yield_manual"
+              label="Effect"
+              value={default_effect_key(@effect_options)}
+              options={@effect_options}
             />
             <.input name="effect[hours]" type="number" label="Hours" value="24" min="1" />
             <button type="submit" class="btn btn-primary btn-sm">Grant effect</button>
@@ -250,9 +419,12 @@ defmodule MarblesWeb.Admin.OwnerUserDetailLive do
               class="flex flex-wrap items-center justify-between gap-2 rounded-lg border border-base-300 bg-base-100 p-3"
             >
               <div>
-                <p class="font-medium">{e.effect_key}</p>
+                <p class="font-medium">{effect_label(e)}</p>
                 <p class="text-xs text-base-content/70">
-                  Scope: {e.scope} · Expires: {Calendar.strftime(e.expires_at, "%Y-%m-%d %H:%M UTC")}
+                  Key: {e.effect_key} · Scope: {e.scope} · Expires: {Calendar.strftime(
+                    e.expires_at,
+                    "%Y-%m-%d %H:%M UTC"
+                  )}
                 </p>
               </div>
               <button
@@ -265,7 +437,7 @@ defmodule MarblesWeb.Admin.OwnerUserDetailLive do
               </button>
             </li>
           </ul>
-          <p :if={@effects == []} class="mt-2 text-sm text-base-content/60">No effects.</p>
+          <p :if={empty_list?(@effects)} class="mt-2 text-sm text-base-content/60">No effects.</p>
         </section>
 
         <section class="rounded-xl border border-base-300 bg-base-200 p-3">
@@ -283,7 +455,7 @@ defmodule MarblesWeb.Admin.OwnerUserDetailLive do
             </span>
           </div>
           <div
-            :if={@collection != []}
+            :if={!empty_list?(@collection)}
             class="mt-2 max-h-44 overflow-y-auto rounded-lg border border-base-300/70 bg-base-100/60"
           >
             <ul class="divide-y divide-base-300/50">
@@ -298,7 +470,7 @@ defmodule MarblesWeb.Admin.OwnerUserDetailLive do
               </li>
             </ul>
           </div>
-          <p :if={@collection == []} class="mt-2 py-2 text-center text-xs text-base-content/60">
+          <p :if={empty_list?(@collection)} class="mt-2 py-2 text-center text-xs text-base-content/60">
             No marbles.
           </p>
         </section>

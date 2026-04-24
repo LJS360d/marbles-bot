@@ -31,7 +31,16 @@ defmodule Marbles.Economy.Mining do
           coins: non_neg_integer(),
           seconds: non_neg_integer(),
           cap_seconds: pos_integer(),
-          roster_size: non_neg_integer()
+          roster_size: non_neg_integer(),
+          breakdown: [
+            %{
+              user_marble_id: Ecto.UUID.t(),
+              name: String.t(),
+              rarity: pos_integer(),
+              level: pos_integer(),
+              coins: non_neg_integer()
+            }
+          ]
         }
   def compute_coins(user_id, accrual_seconds)
       when is_integer(accrual_seconds) and accrual_seconds >= 0 do
@@ -50,24 +59,70 @@ defmodule Marbles.Economy.Mining do
 
     cond do
       roster_ids == [] ->
-        %{coins: 0, seconds: accrual_seconds, cap_seconds: cap, roster_size: 0}
+        %{coins: 0, seconds: accrual_seconds, cap_seconds: cap, roster_size: 0, breakdown: []}
 
       roster == [] ->
-        %{coins: 0, seconds: accrual_seconds, cap_seconds: cap, roster_size: 0}
+        %{coins: 0, seconds: accrual_seconds, cap_seconds: cap, roster_size: 0, breakdown: []}
 
       accrual_seconds == 0 ->
-        %{coins: 0, seconds: 0, cap_seconds: cap, roster_size: roster_size}
+        %{
+          coins: 0,
+          seconds: 0,
+          cap_seconds: cap,
+          roster_size: roster_size,
+          breakdown:
+            Enum.map(roster, fn r ->
+              %{
+                user_marble_id: r.user_marble_id,
+                name: r.name,
+                rarity: r.rarity || 1,
+                level: max(1, r.level || 1),
+                coins: 0
+              }
+            end)
+        }
 
       true ->
         hours = accrual_seconds / 3600.0
-        per_hour = roster |> Enum.map(&marble_hour_rate/1) |> Enum.sum()
+
+        per_marble_base =
+          Enum.map(roster, fn r ->
+            %{
+              user_marble_id: r.user_marble_id,
+              name: r.name,
+              rarity: r.rarity || 1,
+              level: max(1, r.level || 1),
+              base_coins: hours * marble_hour_rate(r)
+            }
+          end)
+
+        total_base = per_marble_base |> Enum.map(& &1.base_coins) |> Enum.sum()
 
         yield_mult =
           (100 + Upgrades.mine_yield_percent(user_id) + Effects.mine_yield_bonus_percent(user_id)) /
             100.0
 
-        coins = trunc(hours * per_hour * yield_mult) |> max(0)
-        %{coins: coins, seconds: accrual_seconds, cap_seconds: cap, roster_size: roster_size}
+        coins = trunc(total_base * yield_mult) |> max(0)
+
+        breakdown =
+          per_marble_base
+          |> Enum.map(fn r ->
+            %{
+              user_marble_id: r.user_marble_id,
+              name: r.name,
+              rarity: r.rarity,
+              level: r.level,
+              coins: max(0, trunc(r.base_coins * yield_mult))
+            }
+          end)
+
+        %{
+          coins: coins,
+          seconds: accrual_seconds,
+          cap_seconds: cap,
+          roster_size: roster_size,
+          breakdown: breakdown
+        }
     end
   end
 
@@ -83,7 +138,7 @@ defmodule Marbles.Economy.Mining do
       join: m in Marble,
       on: m.id == um.marble_id,
       where: um.user_id == ^user_id and um.id in ^ids,
-      select: %{level: um.level, rarity: m.rarity}
+      select: %{user_marble_id: um.id, name: m.name, level: um.level, rarity: m.rarity}
     )
     |> Repo.all()
   end
@@ -91,6 +146,6 @@ defmodule Marbles.Economy.Mining do
   defp marble_hour_rate(%{level: level, rarity: rarity}) do
     r = min(3, max(1, rarity || 1))
     lv = max(1, level || 1)
-    6.0 + lv * 1.4 + r * 3.0
+    1.8 + lv * 0.4 + r * 0.9
   end
 end
