@@ -189,7 +189,6 @@ defmodule MarblesWeb.Admin.OwnerUsersLive do
                   order={@order}
                   q={@q}
                 />
-                <th class="w-0 whitespace-nowrap">Joined</th>
                 <th class="w-0">Collection</th>
               </tr>
             </thead>
