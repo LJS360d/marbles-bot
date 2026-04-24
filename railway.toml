@@ -27,6 +27,6 @@ sleepApplication = false
 # healthcheckPath = "/"
 # healthcheckTimeout = 30
 requiredMountPath = "/app/data"
-# Runs before the new deployment receives traffic. Migrates then seeds; `Marbles.Release.seed/0`
-# no-ops once any team exists (safe on every deploy). Requires RELEASE_NAME (e.g. web) on the service.
-preDeployCommand = "/bin/sh -lc 'exec /app/bin/${RELEASE_NAME} eval \"Marbles.Release.migrate(); Marbles.Release.seed()\"'"
+# Do not use preDeployCommand for migrate/seed: Railway often runs it without the service volume,
+# so SQLite would be written to ephemeral storage and the real container would see an empty DB.
+# `docker-entrypoint.sh` runs migrate + seed after the volume is mounted, before `start`.

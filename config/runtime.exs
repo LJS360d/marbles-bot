@@ -38,6 +38,7 @@ unless config_env() == :prod and release_role == "web" do
 
   config :nostrum, youtubedl: nil
   config :nostrum, streamlink: nil
+  config :nostrum, ffmpeg: nil
 end
 
 config :ueberauth, Ueberauth.Strategy.Discord.OAuth,
