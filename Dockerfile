@@ -1,8 +1,8 @@
-# Build stage: Elixir + Mix
+# Build stage: Elixir + Mix (hexpm tags: https://hub.docker.com/r/hexpm/elixir/tags — use -slim for smaller builds)
 ARG ELIXIR_VERSION=1.19.5
 ARG OTP_VERSION=28.4
-ARG BUILDER_IMAGE="hexpm/elixir:${ELIXIR_VERSION}-erlang-${OTP_VERSION}-debian-bookworm-20231009"
-ARG RUNNER_IMAGE="debian:bookworm-20231009-slim"
+ARG BUILDER_IMAGE="hexpm/elixir:${ELIXIR_VERSION}-erlang-${OTP_VERSION}-debian-bookworm-20260421-slim"
+ARG RUNNER_IMAGE="debian:bookworm-slim"
 
 FROM ${BUILDER_IMAGE} AS builder
 RUN apt-get update -y && apt-get install -y build-essential git curl \
