@@ -1,6 +1,10 @@
 {
   "name": "marbles_web_assets",
   "dependencies": {
-    "tailwindcss": "^4.2.1"
+    "tailwindcss": "^4.2.1",
+    "three": "^0.184.0"
+  },
+  "devDependencies": {
+    "@types/three": "^0.184.0"
   }
 }

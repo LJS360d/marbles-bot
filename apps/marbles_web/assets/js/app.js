@@ -25,6 +25,7 @@ import { LiveSocket } from "phoenix_live_view";
 import { hooks as colocatedHooks } from "phoenix-colocated/marbles_web";
 import topbar from "../vendor/topbar";
 import OwnerAdminMemoryInsights from "./owner_admin_memory_insights.js";
+import { GachaPage, GachaCinematic } from "./gacha_page_hooks.js";
 
 const csrfToken = document
   .querySelector("meta[name='csrf-token']")
@@ -32,7 +33,7 @@ const csrfToken = document
 const liveSocket = new LiveSocket("/live", Socket, {
   longPollFallbackMs: 2500,
   params: { _csrf_token: csrfToken },
-  hooks: { OwnerAdminMemoryInsights, ...colocatedHooks },
+  hooks: { OwnerAdminMemoryInsights, GachaPage, GachaCinematic, ...colocatedHooks },
 });
 
 // Show progress bar on live navigation and form submits

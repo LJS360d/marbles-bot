@@ -2,8 +2,8 @@ defmodule MarblesDiscordbot.Consumers.Component do
   use Nostrum.Consumer
   alias Nostrum.Struct.{Interaction, Embed}
   alias Nostrum.Api
-  alias Marbles.{Catalog, Accounts, Collection, Gacha, IntegerDisplay, PackPullRules, Repo}
-  alias Marbles.Schema.{User, Pack}
+  alias Marbles.{Catalog, Accounts, Collection, GachaSession, IntegerDisplay, PackPullRules, Repo}
+  alias Marbles.Schema.User
   alias MarblesDiscordbot.Embeds
   alias MarblesDiscordbot.Components
   alias MarblesDiscordbot.{PullButtons, PullSession}
@@ -281,8 +281,14 @@ defmodule MarblesDiscordbot.Consumers.Component do
 
       :ok
     else
-      case gacha_pull_one(pack_id, user_record, q, guild_id_str) do
-        {:ok, marble, pull_dust} ->
+      case GachaSession.execute_pull(user_record.id, pack_id, :one,
+             source: "discord_pull",
+             guild_id: guild_id_str,
+             analytics_meta: %{"surface" => "discord"}
+           ) do
+        {:ok, result} ->
+          marble = result.marbles |> List.first() |> Map.fetch!(:marble)
+          pull_dust = result.total_dust
           internal = reload_user!(user_record.id)
           comps = PullSession.action_row(internal, pack, owner_int)
           PullSession.clear_components_on_message(i.message)
@@ -301,7 +307,17 @@ defmodule MarblesDiscordbot.Consumers.Component do
 
           :ok
 
-        {:error, _} ->
+        {:error, {:insufficient_currency, needed, have}} ->
+          _ =
+            PullSession.followup_ephemeral(
+              aid,
+              token,
+              insufficient_followup_text(needed, have, "this pull")
+            )
+
+          :ok
+
+        {:error, _reason} ->
           _ =
             PullSession.followup_ephemeral(
               aid,
@@ -361,8 +377,14 @@ defmodule MarblesDiscordbot.Consumers.Component do
 
       :ok
     else
-      case gacha_pull_ten(pack_id, user_record, q, guild_id_str) do
-        {:ok, marbles, pull_dust} ->
+      case GachaSession.execute_pull(user_record.id, pack_id, :ten,
+             source: "discord_pull",
+             guild_id: guild_id_str,
+             analytics_meta: %{"surface" => "discord"}
+           ) do
+        {:ok, result} ->
+          marbles = Enum.map(result.marbles, & &1.marble)
+          pull_dust = result.total_dust
           internal = reload_user!(user_record.id)
           comps = PullSession.action_row(internal, pack, owner_int)
           PullSession.clear_components_on_message(i.message)
@@ -381,7 +403,17 @@ defmodule MarblesDiscordbot.Consumers.Component do
 
           :ok
 
-        {:error, _} ->
+        {:error, {:insufficient_currency, needed, have}} ->
+          _ =
+            PullSession.followup_ephemeral(
+              aid,
+              token,
+              insufficient_followup_text(needed, have, "this 10× pull")
+            )
+
+          :ok
+
+        {:error, _reason} ->
           _ =
             PullSession.followup_ephemeral(
               aid,
@@ -403,84 +435,6 @@ defmodule MarblesDiscordbot.Consumers.Component do
 
   defp insufficient_followup_text(needed, have, label) do
     "You need **#{IntegerDisplay.format(needed)}** coins for #{label}. You have #{IntegerDisplay.format(have)}."
-  end
-
-  defp gacha_pull_one(pack_id, %User{} = user_record, q, guild_id_str) do
-    pack = Repo.get!(Pack, pack_id) |> Repo.preload(:pull_rules)
-    mr = PackPullRules.pity_force_min_rarity(user_record.id, pack)
-    opts = if mr, do: [min_rarity: mr], else: []
-
-    case Gacha.pull_from_pack(pack_id, user_record.id, guild_id_str, opts) do
-      {:ok, marble} ->
-        PackPullRules.commit_pity_after_marble!(user_record.id, pack_id, marble.rarity)
-
-        if q.final_price > 0 do
-          {:ok, _} = Accounts.update_currency(user_record, -q.final_price)
-        end
-
-        PackPullRules.commit_after_one_pull!(user_record.id, pack_id, q)
-
-        pull_dust =
-          case Collection.acquire_marble_template(user_record.id, marble.id,
-                 meta: %{source: "discord_pull"}
-               ) do
-            {:new, _} -> 0
-            {:duplicate, d, _} -> d
-          end
-
-        {:ok, marble, pull_dust}
-
-      {:error, _} = e ->
-        e
-    end
-  end
-
-  defp gacha_pull_ten(pack_id, %User{} = user_record, q, guild_id_str) do
-    pack = Repo.get!(Pack, pack_id) |> Repo.preload(:pull_rules)
-
-    result =
-      Enum.reduce_while(1..10, [], fn _, acc ->
-        mr = PackPullRules.pity_force_min_rarity(user_record.id, pack)
-        opts = if mr, do: [min_rarity: mr], else: []
-
-        case Gacha.pull_from_pack(pack_id, user_record.id, guild_id_str, opts) do
-          {:ok, marble} ->
-            PackPullRules.commit_pity_after_marble!(user_record.id, pack_id, marble.rarity)
-            {:cont, [marble | acc]}
-
-          {:error, _} = e ->
-            {:halt, e}
-        end
-      end)
-
-    case result do
-      {:error, _} = e ->
-        e
-
-      marbles when is_list(marbles) ->
-        marbles = Enum.reverse(marbles)
-
-        if q.final_price > 0 do
-          {:ok, _} = Accounts.update_currency(user_record, -q.final_price)
-        end
-
-        PackPullRules.commit_after_ten_pull!(user_record.id, pack_id, q)
-
-        pull_dust =
-          Enum.reduce(marbles, 0, fn m, acc ->
-            extra =
-              case Collection.acquire_marble_template(user_record.id, m.id,
-                     meta: %{source: "discord_pull"}
-                   ) do
-                {:new, _} -> 0
-                {:duplicate, d, _} -> d
-              end
-
-            acc + extra
-          end)
-
-        {:ok, marbles, pull_dust}
-    end
   end
 
   defp marble_pull_embed(marble, discord_user) do

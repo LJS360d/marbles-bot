@@ -36,3 +36,6 @@ erl_crash.dump
 .env*
 !.env.example
 *.local
+
+# Slop
+.cursor

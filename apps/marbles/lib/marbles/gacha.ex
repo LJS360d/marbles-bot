@@ -9,12 +9,21 @@ defmodule Marbles.Gacha do
   }
 
   def pull_from_pack(pack_id, user_id, guild_id, opts \\ []) do
+    analytics_meta = Keyword.get(opts, :analytics_meta, %{})
+
     case do_pull_from_pack(pack_id, opts) do
       {:ok, {marble, _}} ->
-        Analytics.record_pull(guild_id, user_id, %{
-          "pack_id" => to_string(pack_id),
-          "marble_id" => to_string(marble.id)
-        })
+        Analytics.record_pull(
+          guild_id,
+          user_id,
+          Map.merge(
+            %{
+              "pack_id" => to_string(pack_id),
+              "marble_id" => to_string(marble.id)
+            },
+            analytics_meta
+          )
+        )
 
         {:ok, marble}
 
@@ -26,6 +35,7 @@ defmodule Marbles.Gacha do
   def pull_10_from_pack(pack_id, user_id, guild_id, opts \\ []) do
     all_min = Keyword.get(opts, :all_min_rarity)
     first_min = Keyword.get(opts, :first_min_rarity)
+    analytics_meta = Keyword.get(opts, :analytics_meta, %{})
 
     result =
       1..10
@@ -39,10 +49,17 @@ defmodule Marbles.Gacha do
 
         case do_pull_from_pack(pack_id, min_rarity: min_r) do
           {:ok, marble} ->
-            Analytics.record_pull(guild_id, user_id, %{
-              "pack_id" => to_string(pack_id),
-              "marble_id" => to_string(marble.id)
-            })
+            Analytics.record_pull(
+              guild_id,
+              user_id,
+              Map.merge(
+                %{
+                  "pack_id" => to_string(pack_id),
+                  "marble_id" => to_string(marble.id)
+                },
+                analytics_meta
+              )
+            )
 
             {:cont, [marble | acc]}
 

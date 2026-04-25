@@ -2,6 +2,26 @@ defmodule Marbles.Schema.PackPullRule do
   use Ecto.Schema
   import Ecto.Changeset
 
+  @type t :: %__MODULE__{
+          id: Ecto.UUID.t() | nil,
+          effect_type: String.t() | nil,
+          discount_percent: integer() | nil,
+          min_rarity: integer() | nil,
+          apply_1x: boolean() | nil,
+          apply_10x: boolean() | nil,
+          trigger_type: String.t() | nil,
+          lifetime_max_uses: integer() | nil,
+          period_unit: String.t() | nil,
+          every_n_pulls: integer() | nil,
+          starts_at: DateTime.t() | nil,
+          ends_at: DateTime.t() | nil,
+          pack_id: Ecto.UUID.t() | nil,
+          pack: Ecto.Association.NotLoaded.t() | Marbles.Schema.Pack.t() | nil,
+          user_states: Ecto.Association.NotLoaded.t() | [map()] | nil,
+          inserted_at: DateTime.t() | nil,
+          updated_at: DateTime.t() | nil
+        }
+
   @effect_types ~w(discount pity)
   @trigger_types ~w(always lifetime_uses period_once every_n_pulls)
   @period_units ~w(day week month)

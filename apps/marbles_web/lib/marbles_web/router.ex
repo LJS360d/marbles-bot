@@ -48,6 +48,11 @@ defmodule MarblesWeb.Router do
     get "/auth/:provider", AuthController, :request
     get "/auth/:provider/callback", AuthController, :callback
     delete "/logout", AuthController, :logout
+
+    live_session :public_pages,
+      on_mount: [{MarblesWeb.Live.AuthHooks, :assign_current_user}] do
+      live "/gacha", GachaLive, :index
+    end
   end
 
   scope "/admin", MarblesWeb.Admin do

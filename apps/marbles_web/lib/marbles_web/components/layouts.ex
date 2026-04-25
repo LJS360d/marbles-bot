@@ -186,6 +186,14 @@ defmodule MarblesWeb.Layouts do
             </label>
           </div>
           <ul class="flex flex-col gap-1 p-4 md:flex-row md:items-center md:gap-3 md:p-0">
+            <li>
+              <a
+                href={~p"/gacha"}
+                class="block rounded-lg px-3 py-2 hover:bg-base-200 md:inline-block md:px-2 md:py-1 md:text-sm"
+              >
+                Gacha
+              </a>
+            </li>
             <%= if @current_user do %>
               <li class="md:hidden">
                 <span class="block px-3 py-2 text-sm text-base-content/70">
