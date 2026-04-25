@@ -4,6 +4,11 @@ ARG OTP_VERSION=28.4
 ARG BUILDER_IMAGE="hexpm/elixir:${ELIXIR_VERSION}-erlang-${OTP_VERSION}-debian-bookworm-20260421-slim"
 ARG RUNNER_IMAGE="debian:bookworm-slim"
 
+FROM node:22-bookworm-slim AS asset_deps
+WORKDIR /assets
+COPY apps/marbles_web/assets/package.json apps/marbles_web/assets/package-lock.json ./
+RUN npm ci
+
 FROM ${BUILDER_IMAGE} AS builder
 RUN apt-get update -y && apt-get install -y build-essential git curl \
   && apt-get clean && rm -f /var/lib/apt/lists/*_*
@@ -24,6 +29,7 @@ COPY apps/marbles_web/mix.exs apps/marbles_web/mix.exs
 RUN mix deps.get --only $MIX_ENV
 
 COPY apps apps
+COPY --from=asset_deps /assets/node_modules /app/apps/marbles_web/assets/node_modules
 RUN mix compile
 RUN mix assets.deploy
 RUN mix release ${RELEASE_NAME}
