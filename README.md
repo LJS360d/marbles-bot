@@ -1,137 +1,229 @@
 # Marbles
 
-A marbles collection bot and game system. Core domain and gacha engine live in `apps/marbles`; a Phoenix app provides the admin panel and future client-side race game; a Discord bot exposes collection and gacha via slash commands. The design is loosely coupled so you can run locally with SQLite and no external services, or scale in production with a distributed supervision tree and a different database.
+Marbles is a collection game platform with three umbrella apps:
+
+- `apps/marbles` — core domain, economy, gacha, storage, analytics.
+- `apps/marbles_web` — Phoenix web/admin UI and owner tooling.
+- `apps/marbles_discordbot` — Nostrum Discord bot with slash commands, spawn/catch flow, and interactive pull sessions.
+
+The stack is SQLite-friendly for low-cost deployments, with S3-compatible storage support for assets.
 
 ## Architecture
 
-- **`apps/marbles`** — Core: Ecto repo, schemas (users, teams, marbles, packs, user_marbles, marble_assets), contexts (Catalog, Collection, Accounts), and the gacha engine. Single source of truth for data and pull logic.
-- **`apps/marbles_web`** — Phoenix app: admin panel for the core, and (planned) a client-side 3D race game (e.g. Three.js) with physics on racetracks.
-- **`apps/marbles_discordbot`** — Discord bot (Nostrum): slash commands for pull, collection, profile, upgrades, shop, leaderboards, mining, and analytics; talks to the Marbles core for gacha/economy/collection.
-
-Dev: SQLite, one node, no extra services. Prod: configurable DB path and pool, optional DNS-based clustering; the core can be swapped to a sharded or beefier DB by changing Repo config and migrations.
+- **Core (`apps/marbles`)**
+  - Accounts and Discord identity linking.
+  - Catalog: teams, marbles, packs, pack pull rules.
+  - Gacha pull engine with pity/rule hooks.
+  - Collection ownership, duplicate conversion to dust.
+  - Economy: daily streaks, mining, upgrades, boosts, shop, leaderboards.
+  - Analytics event recording.
+- **Web (`apps/marbles_web`)**
+  - Discord OAuth login.
+  - Guild admin pages.
+  - Owner admin pages for users, marbles, packs, teams, economy, shop overrides.
+  - Owner broadcast endpoints/UI.
+- **Discord bot (`apps/marbles_discordbot`)**
+  - Global slash command registration/sync.
+  - Message-driven spawn system with reaction-based catch.
+  - Interactive components for collection pagination and pull sessions.
+  - Command resync subscriber via PubSub.
 
 ## Requirements
 
-- Elixir and Erlang (e.g. via [mise](https://mise.jdx.dev/) — see `mise.toml`).
-- For Discord: a bot token.
+- Elixir + Erlang (see `mise.toml`).
+- Discord bot token for bot features.
 
-## Setup
+## Local setup
 
-From the project root:
+From repository root:
 
 ```bash
 mix setup
+mix ecto.setup
+iex -S mix
 ```
 
-This installs and sets up dependencies for all umbrella apps. Then:
-
-1. Copy `.env.example` to `.env` and set `DISCORD_BOT_TOKEN` if you will run the Discord bot.
-2. Run migrations and seeds from the marbles app:
-
-   ```bash
-   mix ecto.setup
-   ```
-
-3. Start everything (interactive):
-
-   ```bash
-   iex -S mix
-   ```
-
-   Or start only the web app (no Discord):
-
-   ```bash
-   cd apps/marbles_web && iex -S mix phx.server
-   ```
-
-Web UI: [http://localhost:4000](http://localhost:4000).
+Web UI runs at [http://localhost:4000](http://localhost:4000).
 
 ## Configuration
 
-- **Development** — SQLite DB path and pool are in `config/dev.exs`. No `DATABASE_PATH` required.
-- **Production** — Set in `config/runtime.exs` (or env):
-  - `DATABASE_PATH` — path to the SQLite DB file (e.g. `/etc/marbles/marbles.db`).
-  - `SECRET_KEY_BASE` — for Phoenix (e.g. `mix phx.gen.secret`).
-  - `DISCORD_BOT_TOKEN` — required if the Discord app is started.
-  - Optional: `PORT`, `POOL_SIZE`, `DNS_CLUSTER_QUERY` for clustering.
+Use `.env.example` as source of truth for env keys.
 
-Secrets and env-based config only; no credentials in the repo.
+- **Core prod keys**
+  - `DATABASE_PATH` (SQLite file path)
+  - `POOL_SIZE`
+  - `ASSETS_BASE_URL`
+  - `S3_ACCESS_KEY`, `S3_SECRET_KEY`, `S3_HOST`, `S3_REGION`, `S3_PORT`, `S3_SCHEME`, `S3_PATH_STYLE`
+- **Web prod keys**
+  - `SECRET_KEY_BASE`
+  - `PHX_HOST` (or `RAILWAY_PUBLIC_DOMAIN`)
+  - `PHX_SCHEME`, `PHX_URL_PORT`, `PORT`
+- **Bot prod keys**
+  - `DISCORD_BOT_TOKEN`
+- **Release selection**
+  - `RELEASE_NAME=web|bot|marbles_umbrella`
+  - `RELEASE_ROLE` is optional and inferred from `RELEASE_NAME`.
 
-## Economy system
+## Deployment strategy (Railway)
 
-The project now includes a full in-game economy:
+Read and follow `railway.toml` first. It documents the current production strategy and constraints.
 
-- **Currencies**
-  - `coins` (`🪙`) — primary spend currency for pulls and shop products.
-  - `dust` (`✨`) — duplicate-conversion currency and upgrade/shop spend currency.
-- **Duplicate handling**
-  - User marble ownership is unique per marble template (`user_id + marble_id`).
-  - Duplicate pulls/spawn catches are converted to dust instead of adding another owned row.
-- **Daily + mining**
-  - `/daily` grants streak bonus + passive mining payout since last claim.
-  - Mining payout is capped by offline accrual windows and modified by upgrades/effects.
-- **Upgrades**
-  - Permanent upgrades are purchased with dust via `/upgrades`.
-- **Shop**
-  - `/shop` offers timed boosts.
-  - Prices, durations, enablement, and period limits can be overridden in DB (`shop_items`).
-- **Leaderboards**
-  - Coins, collection size, strongest marble.
+Key points:
 
-### Key economy tables
+- SQLite must live on a mounted volume: `/app/data` + `DATABASE_PATH=/app/data/marbles_prod.db`.
+- Migrations and first-seed run from `docker-entrypoint.sh`, not Railway predeploy hooks.
+- Reason: predeploy jobs often run without mounted service volume, causing ephemeral SQLite writes.
+- Startup path is: mount volume -> entrypoint migrate -> conditional seed -> app start.
+- Seeding is guarded in `Marbles.Release.seed/0` (no-op when teams already exist).
 
-- `users` (`currency`, `dust`, `mine_roster`)
-- `user_marbles` (unique by `user_id + marble_id`)
-- `user_upgrades`
-- `user_effects`
-- `shop_items`
-- `user_daily_streaks`
-- `caught_spawns`
+### Service topologies
 
-### Owner admin pages (Phoenix)
+- **Single service**
+  - `RELEASE_NAME=marbles_umbrella` to run web + bot in one container.
+- **Split services**
+  - Web service: `RELEASE_NAME=web`.
+  - Bot service: `RELEASE_NAME=bot`.
+  - If both use SQLite, both must target the same mounted DB path semantics.
 
-Owner routes under `/admin/owner` include:
+## Discord bot features (complete)
 
-- `/economy` — economy dashboard (cooldowns + leaderboard slices + user links)
-- `/shop-items` — manage DB-backed shop overrides
-- `/users/:id` — deep per-user economy controls (wallet, cooldowns, upgrades, effects, roster view)
+This section reflects current command and consumer handlers in `apps/marbles_discordbot`.
+
+### Command system and lifecycle
+
+- Commands are declared in `MarblesDiscordbot.Commands`.
+- On `READY`, bot syncs slash commands (`bulk_overwrite_global_commands` when needed).
+- A PubSub subscriber (`commands_resync`) can force command re-sync at runtime.
+
+### Slash commands
+
+- `/pull pack:<pack>`
+  - Opens a pull session with interactive buttons.
+  - Uses pack pull pricing/rules and pity integration.
+- `/packs`
+  - Paginated active pack browser with `Previous`, `Next`, and `Pull` button.
+- `/collection [user]`
+  - Displays collection entries with pagination and sorting controls:
+    - By rarity
+    - By level
+    - By name
+- `/profile [user]`
+  - Wallet, dust, owned count, streak, mine roster, active boosts.
+- `/balance`
+  - Quick wallet view (coins + dust).
+- `/daily`
+  - Claims streak reward + mining payout + mining XP allocation.
+- `/boosts [user]`
+  - Lists active timed effects and remaining duration.
+- `/leaderboard [kind]`
+  - `coins` or `collection`.
+- `/mines <view|add|remove|clear>`
+  - Manages mining roster (max 5 slots).
+  - Autocomplete for add/remove marble names.
+- `/upgrades <view|buy>`
+  - Permanent progression upgrades purchased with dust:
+    - `mine_yield`
+    - `mine_cap`
+    - `dust_gain`
+    - `spawn_luck`
+- `/shop <list|buy>`
+  - Timed boosts with coin/dust prices and per-period limits.
+  - Backed by default products + DB overrides (`shop_items`).
+- `/spawnrate <list|set>`
+  - Guild channel spawn rate management.
+  - `set` accepts optional channel and percentage.
+- `/analytics`
+  - Pull/spawn counters (global + guild context), bot/core versions.
+- `/trade`
+  - Placeholder only; currently returns “not implemented yet.”
+
+### Spawn/catch loop
+
+- On eligible guild text messages, bot rolls channel spawn chance.
+- If roll passes:
+  - Spawns random marble.
+  - Posts embed with random required emoji.
+  - Creates pending spawn state with 5-minute expiry.
+- On matching reaction:
+  - First valid claimer gets ownership/rewards.
+  - Duplicates are converted to dust.
+  - Spawn message is edited with result and rewards.
+
+### Pull session behavior
+
+- Pull buttons are ownership-locked to the initiator.
+- Supports single pull and 10x pull.
+- Uses pack pull rules for pricing and pity behavior.
+- Deducts currency only after successful pulls.
+- Converts duplicates to dust.
+- Edits/rotates component rows to avoid stale interaction conflicts.
+
+### Economy behavior exposed through bot
+
+- **Coins (`🪙`)** primary spend currency.
+- **Dust (`✨`)** duplicate conversion + upgrades/shop currency.
+- **Daily streaks** with capped streak bonus.
+- **Mining** accrues between claims; affected by upgrades and active boosts.
+- **Timed effects** stack/extend via shop purchases.
+- **Leaderboards** for wealth and collection breadth.
+
+### Bot process composition
+
+- Consumers:
+  - events
+  - messages
+  - reactions
+  - slash interactions
+  - component interactions
+- Distributed helpers:
+  - Horde registry/supervisor for pending spawn state.
+- Presence:
+  - Updates Discord status with guild/server count.
+
+## Web/admin features
+
+- `/admin`
+  - Guild list and guild detail pages for authenticated server admins/owners.
+- `/admin/owner`
+  - Owner dashboard and management pages:
+    - users list/detail/edit
+    - marbles list/edit
+    - packs list/create/edit
+    - teams list/edit
+    - economy dashboard
+    - shop item overrides
+- `/broadcast`
+  - Owner broadcast panel.
+- `/api/owner/stats` and `/api/owner/broadcast`
+  - Owner API endpoints for dashboard/broadcast workflows.
 
 ## Releases
 
-A single OTP release runs all three apps:
+Build release:
 
 ```bash
 mix release marbles_umbrella
 ```
 
-Start with `./_build/prod/rel/marbles_umbrella/bin/marbles_umbrella start`. For production, set `DATABASE_PATH`, `SECRET_KEY_BASE`, and `DISCORD_BOT_TOKEN` in the environment.
+Run:
 
-## Roadmap
-
-- **Admin panel** — Manage teams, marbles, packs, and catalog from the Phoenix app.
-- **Discord** — Continue expanding command UX and profile/economy surfaces.
-- **3D race game** — Client-side physics simulation (Three.js or similar) of marbles on a racetrack; racecourses to be extracted from Jelle’s Marble Runs–style footage (e.g. via Meshroom) as 3D models, then loaded into the viewer with physics and game logic.
-
-## Project layout
-
-```sh
-tree -I  '_build|.elixir_ls|deps|node_modules|dist'
+```bash
+./_build/prod/rel/marbles_umbrella/bin/marbles_umbrella start
 ```
+
+For role-specific builds, set `RELEASE_NAME` accordingly.
 
 ## Checks
 
-From the root:
+Run from root:
 
 ```bash
 mix precommit
 ```
 
-Runs compile with warnings-as-errors, dependency cleanup, format, and tests across the umbrella.
+## Assets (R2 / S3-compatible)
 
-## Assets
-
-Use [rclone](https://github.com/rclone/rclone) and an S3 Compatible bucket (e.g. Cloudflare R2) to store assets, 
-with a confiuration like this:
+Example `rclone` profile:
 
 ```conf
 [r2]
@@ -143,7 +235,8 @@ region = auto
 endpoint = <s3_endpoint>
 ```
 
-To mount the bucket locally:
+Mount locally:
+
 ```bash
 RCLONE_CONF_NAME=r2
 R2_BUCKET_NAME=marbles-umbrella
@@ -153,13 +246,12 @@ rclone mount "$RCLONE_CONF_NAME:$R2_BUCKET_NAME" "$MOUNT_DIR" \
   --vfs-cache-mode full \
   --vfs-cache-max-size 10G
 ```
-When terminating the process the mount will be automatically unmounted (unless busy),
-add the `--daemon` flag to run in the background.
 
-To unmount it:
+Unmount:
+
 ```bash
 MOUNT_DIR=./mnt-r2
 fusermount -u "$MOUNT_DIR"
 ```
 
-NEVER RUN `sudo rm -rf $MOUNT_DIR` as it would delete the files in the cloud storage.
+Never run `sudo rm -rf $MOUNT_DIR` on a mounted remote.

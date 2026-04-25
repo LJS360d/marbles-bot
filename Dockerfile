@@ -14,31 +14,48 @@ ENV MIX_ENV=prod
 ARG RELEASE_NAME=marbles_umbrella
 ENV RELEASE_NAME=${RELEASE_NAME}
 
+# Copy only the mix manifests from each sub-app first
 COPY mix.exs mix.lock ./
 COPY config config
-COPY apps apps
+COPY apps/marbles/mix.exs apps/marbles/mix.exs
+COPY apps/marbles_discordbot/mix.exs apps/marbles_discordbot/mix.exs
+COPY apps/marbles_web/mix.exs apps/marbles_web/mix.exs
 
 RUN mix deps.get --only $MIX_ENV
+
+COPY apps apps
 RUN mix compile
 RUN mix assets.deploy
 RUN mix release ${RELEASE_NAME}
+# Strip dev tools from ERTS and remove non-fingerprinted assets
+RUN rel="/app/_build/prod/rel/${RELEASE_NAME}" \
+  && rm -f "$rel"/erts-*/bin/dialyzer "$rel"/erts-*/bin/erlc "$rel"/erts-*/bin/ct_run "$rel"/erts-*/bin/typer \
+  && find "$rel"/lib/marbles_web-*/priv/static \
+    -regextype posix-extended \
+    -type f \
+    \( -name '*.js' -o -name '*.css' -o -name '*.svg' -o -name '*.txt' -o -name '*.ico' \) \
+    ! -regex '.*-[a-f0-9]{32}\.(js|css|svg|txt|ico)$' \
+    -delete \
+  && find "$rel" -type f -name '*.map' -delete
 
 # Run stage
 FROM ${RUNNER_IMAGE}
 ARG RELEASE_NAME=marbles_umbrella
 ENV RELEASE_NAME=${RELEASE_NAME}
-RUN apt-get update -y && apt-get install -y libssl3 libncurses6 locales ca-certificates util-linux \
+RUN apt-get update -y && apt-get install -y libssl3 libncurses6 ca-certificates \
   && apt-get clean && rm -f /var/lib/apt/lists/*_*
-RUN sed -i '/en_US.UTF-8/s/^# //g' /etc/locale.gen && locale-gen
-ENV LANG=en_US.UTF-8
-ENV LANGUAGE=en_US:en
-ENV LC_ALL=en_US.UTF-8
+ENV LANG=C.UTF-8
+ENV LC_ALL=C.UTF-8
 
 WORKDIR /app
 
 COPY --from=builder --chown=nobody:nogroup /app/_build/prod/rel/${RELEASE_NAME} ./
 COPY docker-entrypoint.sh /usr/local/bin/docker-entrypoint.sh
-RUN chmod +x /usr/local/bin/docker-entrypoint.sh
+RUN mkdir -p /app/data \
+  && chown -R nobody:nogroup /app \
+  && chmod +x /usr/local/bin/docker-entrypoint.sh
+
+USER nobody:nogroup
 
 ENV PHX_SERVER=true
 ENV ECTO_EDITOR=

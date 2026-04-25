@@ -1,21 +1,9 @@
-# Railway config-as-code: one file = one service. This repo uses TWO services from the same GitHub repo:
+# Railway deploy strategy (single service, SQLite on mounted volume):
 #
-#   1) marbles-web  → In Railway dashboard set this service’s config file to:
-#                      `railway/marbles-web.toml`
-#      Variables: RELEASE_NAME=web, DATABASE_PATH=/app/data/marbles_prod.db,
-#      (RELEASE_ROLE=web optional — inferred from RELEASE_NAME)
-#      SECRET_KEY_BASE, ASSETS_BASE_URL, S3_*, PHX_HOST (see .env.example).
-#
-#   2) marbles-bot  → Config file:
-#                      `railway/marbles-bot.toml`
-#      Variables: RELEASE_NAME=bot, same DATABASE_PATH + volume as web,
-#      (RELEASE_ROLE=bot optional — inferred from RELEASE_NAME)
-#      DISCORD_BOT_TOKEN, ASSETS_BASE_URL, S3_*.
-#
-# This root `railway.toml` mirrors the WEB service so a default “deploy repo” still works;
-# for split production, prefer binding each service to `railway/marbles-*.toml` as above.
-#
-# Docker must receive build-arg RELEASE_NAME (set as a Railway variable with the same name).
+# - This file is the default production config for running ONE Railway service.
+# - Use RELEASE_NAME=marbles_umbrella.
+# - Persist SQLite at /app/data via DATABASE_PATH=/app/data/marbles_prod.db.
+# - docker-entrypoint.sh runs migrate+seed after the volume is mounted, then starts the app.
 
 [build]
 builder = "DOCKERFILE"
@@ -24,9 +12,4 @@ dockerfilePath = "Dockerfile"
 [deploy]
 restartPolicyType = "ON_FAILURE"
 sleepApplication = false
-# healthcheckPath = "/"
-# healthcheckTimeout = 30
 requiredMountPath = "/app/data"
-# Do not use preDeployCommand for migrate/seed: Railway often runs it without the service volume,
-# so SQLite would be written to ephemeral storage and the real container would see an empty DB.
-# `docker-entrypoint.sh` runs migrate + seed after the volume is mounted, before `start`.

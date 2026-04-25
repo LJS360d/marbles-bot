@@ -12,6 +12,7 @@ defmodule Marbles.Umbrella.MixProject do
       releases: [
         marbles_umbrella: [
           include_executables_for: [:unix],
+          strip_beams: true,
           applications: [
             marbles: :permanent,
             marbles_discordbot: :permanent,
@@ -20,6 +21,7 @@ defmodule Marbles.Umbrella.MixProject do
         ],
         web: [
           include_executables_for: [:unix],
+          strip_beams: true,
           applications: [
             marbles: :permanent,
             marbles_web: :permanent
@@ -27,6 +29,7 @@ defmodule Marbles.Umbrella.MixProject do
         ],
         bot: [
           include_executables_for: [:unix],
+          strip_beams: true,
           applications: [
             marbles: :permanent,
             marbles_discordbot: :permanent
