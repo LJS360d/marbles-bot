@@ -39,11 +39,44 @@ if File.exists?(teams_file) do
         end
 
       if team do
+        infer_texture_path = fn assets ->
+          case assets do
+            assets when is_list(assets) ->
+              case Enum.find(
+                     assets,
+                     &(is_map(&1) and &1["type"] == "splash" and is_binary(&1["filename"]))
+                   ) do
+                %{"filename" => path} ->
+                  path |> Path.dirname() |> Path.join("texture.png")
+
+                _ ->
+                  case Enum.find(
+                         assets,
+                         &(is_map(&1) and &1["type"] == "thumbnail" and is_binary(&1["filename"]))
+                       ) do
+                    %{"filename" => path} ->
+                      path |> Path.dirname() |> Path.join("texture.png")
+
+                    _ ->
+                      nil
+                  end
+              end
+
+            _ ->
+              nil
+          end
+        end
+
         Enum.each(team_data["marbles"] || [], fn marble_data ->
+          texture_path =
+            marble_data["texture_path"] || marble_data["texturePath"] ||
+              infer_texture_path.(marble_data["assets"])
+
           full_data =
             marble_data
             |> Map.put("team_id", team.id)
             |> Map.put("base_stats", marble_data["base_stats"])
+            |> Map.put("texture_path", texture_path)
 
           marble =
             %Marble{}

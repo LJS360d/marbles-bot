@@ -5,7 +5,7 @@ defmodule MarblesDiscordbot.Consumers.Reaction do
   alias Nostrum.Api
   alias Marbles.{Accounts, Catalog, IntegerDisplay, MarbleLabel, SpawnCatch}
   alias Marbles.Economy.Currency
-  alias MarblesDiscordbot.{PendingSpawns, Embeds}
+  alias MarblesDiscordbot.{DiscordUsername, Embeds, PendingSpawns}
   require Logger
 
   def handle_event({:MESSAGE_REACTION_ADD, %MessageReactionAdd{} = event, _ws_state}) do
@@ -14,7 +14,7 @@ defmodule MarblesDiscordbot.Consumers.Reaction do
 
     if pending && String.equivalent?(pending.emoji, event.emoji.name) do
       marble = Catalog.get_marble!(pending.marble_id)
-      username = get_username(user_id)
+      username = DiscordUsername.resolve_login(user_id)
 
       {:ok, user_record} =
         Accounts.ensure_user(%{
@@ -126,12 +126,4 @@ defmodule MarblesDiscordbot.Consumers.Reaction do
   end
 
   def handle_event(_), do: :ok
-
-  defp get_username(user_id) do
-    case Nostrum.Cache.UserCache.get(user_id) do
-      {:ok, %{username: ""}} -> "Invalid Username"
-      {:ok, %{username: username}} -> username
-      _ -> "Unknown Username"
-    end
-  end
 end

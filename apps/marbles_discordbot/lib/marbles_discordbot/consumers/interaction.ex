@@ -18,7 +18,7 @@ defmodule MarblesDiscordbot.Consumers.Interaction do
   }
 
   alias Marbles.Economy.{Currency, MineRoster, Upgrades, Shop, Effects}
-  alias MarblesDiscordbot.{Embeds, Components, PullSession}
+  alias MarblesDiscordbot.{Components, DiscordUsername, Embeds, PullSession}
   require Logger
 
   def handle_event({:INTERACTION_CREATE, %Interaction{} = i, _ws_state})
@@ -310,12 +310,7 @@ defmodule MarblesDiscordbot.Consumers.Interaction do
   end
 
   def handle_command("pull", %Interaction{} = i) do
-    username =
-      case Nostrum.Cache.UserCache.get(i.user.id) do
-        {:ok, %{username: ""}} -> "Invalid Username"
-        {:ok, %{username: username}} -> username
-        _ -> "Unknown Username"
-      end
+    username = DiscordUsername.resolve_login(i.user.id)
 
     {:ok, user_record} =
       Accounts.ensure_user(%{

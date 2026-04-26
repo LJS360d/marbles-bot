@@ -1,11 +1,12 @@
 import * as THREE from "three";
+import { clone } from "three/examples/jsm/utils/SkeletonUtils.js";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
 
 const GACHA_SKIP_CONFIRM_KEY = "gachaSkipConfirm";
 
 const TRACK_GLB_URL = "/3d/tracks/savage_speedway_s1.glb";
 
-const MARBLE_HD_GLB_URL = "/3d/marble-center-high.glb";
+const MARBLE_HD_GLB_URL = "/3d/marble-high.glb";
 
 const rarityColor = (rarity) => {
   if (rarity >= 3) return 0xffc857;
@@ -15,11 +16,39 @@ const rarityColor = (rarity) => {
 
 const easeOutCubic = (t) => 1 - Math.pow(1 - t, 3);
 
-const easeInOutQuad = (t) => (t < 0.5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2);
+const easeInOutQuad = (t) =>
+  t < 0.5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2;
+
+const textureUrlFromResult = (entry) =>
+  entry?.texture_url || entry?.textureUrl || null;
+
+const canonicalTextureUrl = (url) => {
+  if (!url || typeof url !== "string") return null;
+  try {
+    return new URL(url, window.location.href).href;
+  } catch {
+    return url;
+  }
+};
+
+const clearMaterialTextureRefs = (m) => {
+  if (!m || typeof m !== "object") return;
+  for (const k of Object.keys(m)) {
+    try {
+      const v = m[k];
+      if (v && typeof v === "object" && v.isTexture) {
+        m[k] = null;
+      }
+    } catch {
+      /* ignore */
+    }
+  }
+};
 
 const GachaPage = {
   mounted() {
-    const saved = window.localStorage.getItem(GACHA_SKIP_CONFIRM_KEY) === "true";
+    const saved =
+      window.localStorage.getItem(GACHA_SKIP_CONFIRM_KEY) === "true";
     this.pushEvent("gacha_pref_loaded", { skip_confirm: saved });
 
     this.changeHandler = (event) => {
@@ -51,6 +80,9 @@ const GachaCinematic = {
     this.results = [];
     this.currentIndex = 0;
     this.stage = "idle";
+    this.preloadGen = 0;
+    this.textureCache = new Map();
+    this.marbleTemplateRoot = null;
     this.resizeHandler = () => this.resizeRenderer();
     this.introActive = false;
     this.introSegment = null;
@@ -66,10 +98,11 @@ const GachaCinematic = {
     this.introLookAt = new THREE.Vector3(0, 0, 0);
     this.trackRoot = null;
     this.marbleRoot = null;
-    this.marbleLoadGen = 0;
     this.marbleMotion = null;
     this.gltfLoader = new GLTFLoader();
     this.textureLoader = new THREE.TextureLoader();
+    this.gltfLoader.setCrossOrigin("anonymous");
+    this.textureLoader.setCrossOrigin("anonymous");
 
     this.setupScene();
     window.addEventListener("resize", this.resizeHandler);
@@ -85,6 +118,7 @@ const GachaCinematic = {
 
   destroyed() {
     this.clearTimers();
+    this.preloadGen += 1;
     this.introActive = false;
     this.introSegment = null;
     this.marbleMotion = null;
@@ -99,8 +133,73 @@ const GachaCinematic = {
       }
     }
 
-    this.disposeObject3D(this.marbleRoot);
+    this.disposeObject3D(this.marbleRoot, { keepTextures: true });
     this.disposeObject3D(this.trackRoot);
+    this.disposeTextureCache();
+    this.disposeMarbleTemplate();
+    this.hideLoadingOverlay(true);
+  },
+
+  ensureLoadingOverlay() {
+    let el = this.el.querySelector("[data-gacha-cinematic-loading]");
+    if (!el) {
+      el = document.createElement("div");
+      el.dataset.gachaCinematicLoading = "";
+      el.className =
+        "pointer-events-auto absolute inset-0 z-30 flex flex-col items-center justify-center gap-4 bg-black/75 text-white";
+      el.innerHTML = `
+        <div
+          class="h-12 w-12 rounded-full border-2 border-white/20 border-t-white animate-spin"
+          aria-hidden="true"
+        ></div>
+        <p class="text-sm font-medium tracking-wide text-white/90">Loading scene…</p>
+      `;
+      this.el.appendChild(el);
+    }
+    return el;
+  },
+
+  showLoadingOverlay() {
+    const el = this.ensureLoadingOverlay();
+    el.classList.remove("hidden");
+  },
+
+  hideLoadingOverlay(forceRemove = false) {
+    const el = this.el.querySelector("[data-gacha-cinematic-loading]");
+    if (!el) return;
+    if (forceRemove) {
+      el.remove();
+    } else {
+      el.classList.add("hidden");
+    }
+  },
+
+  disposeTextureCache() {
+    if (!this.textureCache) return;
+    for (const tex of this.textureCache.values()) {
+      tex.dispose();
+    }
+    this.textureCache.clear();
+  },
+
+  disposeMarbleTemplate() {
+    if (!this.marbleTemplateRoot) return;
+    this.marbleTemplateRoot.traverse((child) => {
+      if (child.isMesh) {
+        child.geometry?.dispose?.();
+        const mat = child.material;
+        if (Array.isArray(mat)) {
+          mat.forEach((m) => {
+            m.map?.dispose?.();
+            m?.dispose?.();
+          });
+        } else {
+          mat.map?.dispose?.();
+          mat?.dispose?.();
+        }
+      }
+    });
+    this.marbleTemplateRoot = null;
   },
 
   setupScene() {
@@ -129,7 +228,11 @@ const GachaCinematic = {
 
     const floor = new THREE.Mesh(
       new THREE.PlaneGeometry(48, 48),
-      new THREE.MeshStandardMaterial({ color: 0x0b1220, roughness: 0.96, metalness: 0.05 }),
+      new THREE.MeshStandardMaterial({
+        color: 0x0b1220,
+        roughness: 0.96,
+        metalness: 0.05,
+      }),
     );
     floor.rotation.x = -Math.PI / 2;
     floor.position.y = -1.2;
@@ -143,6 +246,7 @@ const GachaCinematic = {
     try {
       this.renderer = new THREE.WebGLRenderer({ antialias: true });
       this.renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+      this.renderer.outputColorSpace = THREE.SRGBColorSpace;
       this.resizeRenderer();
       this.el.appendChild(this.renderer.domElement);
       this.webglReady = true;
@@ -160,9 +264,16 @@ const GachaCinematic = {
     }
 
     if (this.marbleRoot && this.marbleMotion) {
-      const t = Math.min(1, (performance.now() - this.marbleMotion.t0) / this.marbleMotion.duration);
+      const t = Math.min(
+        1,
+        (performance.now() - this.marbleMotion.t0) / this.marbleMotion.duration,
+      );
       const e = 1 - (1 - t) * (1 - t);
-      this.marbleRoot.position.lerpVectors(this.marbleMotion.spawn, this.marbleMotion.rest, e);
+      this.marbleRoot.position.lerpVectors(
+        this.marbleMotion.spawn,
+        this.marbleMotion.rest,
+        e,
+      );
       this.marbleRoot.position.y += 0.22 * Math.sin(t * Math.PI);
       this.marbleRoot.rotation.z = 0.42 * Math.sin(t * Math.PI * 1.5);
       this.marbleRoot.rotation.y += 0.055;
@@ -216,24 +327,45 @@ const GachaCinematic = {
 
   start(payload) {
     this.clearTimers();
+    this.preloadGen += 1;
+    const gen = this.preloadGen;
     this.introActive = false;
     this.introSegment = null;
     this.marbleMotion = null;
     this.currentPayload = payload;
     this.results = payload.results || [];
     this.currentIndex = 0;
-    this.stage = "intro";
+    this.stage = "loading";
 
-    this.disposeObject3D(this.marbleRoot);
+    this.disposeObject3D(this.marbleRoot, { keepTextures: true });
     this.marbleRoot = null;
+
+    this.disposeTextureCache();
+    this.disposeMarbleTemplate();
+
+    this.disposeObject3D(this.trackRoot);
+    this.trackRoot = null;
 
     this.finalCameraPosition.copy(this.introTo).add(this.driftDelta);
 
     this.camera.position.copy(this.introFrom);
     this.camera.lookAt(this.introLookAt);
 
-    this.loadTrackForPull();
+    this.showLoadingOverlay();
 
+    this.preloadPullAssets(payload, gen)
+      .catch(() => {})
+      .finally(() => {
+        if (gen !== this.preloadGen) return;
+        this.hideLoadingOverlay();
+        if (!this.currentPayload) return;
+        this.beginIntroSequence();
+      });
+  },
+
+  beginIntroSequence() {
+    if (!this.currentPayload || this.stage === "done") return;
+    this.stage = "intro";
     this.pushEvent("gacha_animation_progress", {
       phase: "intro",
       index: 0,
@@ -245,26 +377,138 @@ const GachaCinematic = {
     this.introActive = true;
   },
 
-  loadTrackForPull() {
-    this.disposeObject3D(this.trackRoot);
-    this.trackRoot = null;
+  async preloadPullAssets(payload, gen) {
+    if (!this.webglReady || gen !== this.preloadGen) return;
 
-    this.gltfLoader.load(
-      TRACK_GLB_URL,
-      (gltf) => {
-        const root = gltf.scene;
-        this.fitTrackToScene(root);
-        this.scene.add(root);
-        this.trackRoot = root;
-        const box = new THREE.Box3().setFromObject(root);
-        const c = box.getCenter(new THREE.Vector3());
-        this.introLookAt.set(c.x, Math.min(c.y + 0.4, 1.2), c.z);
-      },
-      undefined,
-      () => {
-        this.introLookAt.set(0, 0, 0);
-      },
-    );
+    const results = payload.results || [];
+
+    await this.loadTrackGltfPromise(gen);
+    if (gen !== this.preloadGen) return;
+
+    await this.loadMarbleTemplatePromise(gen);
+    if (gen !== this.preloadGen) return;
+
+    const urls = [
+      ...new Set(
+        results
+          .map((r) => canonicalTextureUrl(textureUrlFromResult(r)))
+          .filter(Boolean),
+      ),
+    ];
+    await Promise.all(urls.map((u) => this.ensureTextureCached(u, gen)));
+  },
+
+  loadTrackGltfPromise(gen) {
+    return new Promise((resolve, reject) => {
+      this.gltfLoader.load(
+        TRACK_GLB_URL,
+        (gltf) => {
+          if (gen !== this.preloadGen) {
+            gltf.scene.traverse((child) => {
+              if (child.isMesh) {
+                child.geometry?.dispose?.();
+                const mat = child.material;
+                if (Array.isArray(mat)) {
+                  mat.forEach((m) => {
+                    m.map?.dispose?.();
+                    m?.dispose?.();
+                  });
+                } else {
+                  mat.map?.dispose?.();
+                  mat?.dispose?.();
+                }
+              }
+            });
+            resolve();
+            return;
+          }
+          const root = gltf.scene;
+          this.fitTrackToScene(root);
+          this.scene.add(root);
+          this.trackRoot = root;
+          const box = new THREE.Box3().setFromObject(root);
+          const c = box.getCenter(new THREE.Vector3());
+          this.introLookAt.set(c.x, Math.min(c.y + 0.4, 1.2), c.z);
+          resolve();
+        },
+        undefined,
+        () => {
+          if (gen === this.preloadGen) {
+            this.introLookAt.set(0, 0, 0);
+          }
+          resolve();
+        },
+      );
+    });
+  },
+
+  loadMarbleTemplatePromise(gen) {
+    return new Promise((resolve, reject) => {
+      this.gltfLoader.load(
+        MARBLE_HD_GLB_URL,
+        (gltf) => {
+          if (gen !== this.preloadGen) {
+            gltf.scene.traverse((child) => {
+              if (child.isMesh) {
+                child.geometry?.dispose?.();
+                const mat = child.material;
+                if (Array.isArray(mat)) {
+                  mat.forEach((m) => {
+                    m.map?.dispose?.();
+                    m?.dispose?.();
+                  });
+                } else {
+                  mat.map?.dispose?.();
+                  mat?.dispose?.();
+                }
+              }
+            });
+            resolve();
+            return;
+          }
+          const root = gltf.scene;
+          this.marbleTemplateRoot = root;
+          resolve();
+        },
+        undefined,
+        () => resolve(),
+      );
+    });
+  },
+
+  ensureTextureCached(url, gen) {
+    const key = canonicalTextureUrl(url);
+    if (!key || this.textureCache.has(key)) {
+      return Promise.resolve();
+    }
+
+    return new Promise((resolve) => {
+      this.textureLoader.load(
+        key,
+        (tex) => {
+          if (gen !== this.preloadGen) {
+            tex.dispose();
+            resolve();
+            return;
+          }
+          this.configureMarbleTexture(tex);
+          this.textureCache.set(key, tex);
+          resolve();
+        },
+        undefined,
+        () => resolve(),
+      );
+    });
+  },
+
+  configureMarbleTexture(tex) {
+    tex.colorSpace = THREE.SRGBColorSpace;
+    tex.flipY = false;
+    tex.wrapS = THREE.ClampToEdgeWrapping;
+    tex.wrapT = THREE.ClampToEdgeWrapping;
+    tex.minFilter = THREE.LinearMipmapLinearFilter;
+    tex.magFilter = THREE.LinearFilter;
+    tex.generateMipmaps = true;
   },
 
   fitTrackToScene(root) {
@@ -317,7 +561,8 @@ const GachaCinematic = {
       }
 
       const entry = this.results[this.currentIndex];
-      this.showMarble(entry);
+      const idx = this.currentIndex;
+      this.showMarble(entry, idx);
       this.currentIndex += 1;
 
       this.pushEvent("gacha_animation_progress", {
@@ -330,65 +575,118 @@ const GachaCinematic = {
     this.activeTimers.push(interval);
   },
 
-  showMarble(entry) {
+  showMarble(entry, _resultIndex) {
     if (!this.webglReady) return;
 
-    this.disposeObject3D(this.marbleRoot);
+    this.disposeObject3D(this.marbleRoot, { keepTextures: true });
     this.marbleRoot = null;
     this.marbleMotion = null;
 
-    const gen = ++this.marbleLoadGen;
-    const textureUrl = entry.texture_url || null;
+    if (!this.marbleTemplateRoot) {
+      this.showMarbleFallbackSphere(entry);
+      return;
+    }
 
-    this.gltfLoader.load(
-      MARBLE_HD_GLB_URL,
-      (gltf) => {
-        if (gen !== this.marbleLoadGen || !this.currentPayload) return;
-        const root = gltf.scene;
-        this.fitMarbleToScene(root, 1.35);
-        this.scene.add(root);
-        this.marbleRoot = root;
-        if (textureUrl) {
-          this.applyMarbleTexture(root, textureUrl, gen);
-        }
-        this.startMarbleMotion(root);
-      },
-      undefined,
-      () => {
-        if (gen !== this.marbleLoadGen) return;
-        this.showMarbleFallbackSphere(entry);
-      },
-    );
+    const root = clone(this.marbleTemplateRoot);
+    this.cloneMarbleMaterialInstances(root);
+    this.fitMarbleToScene(root, 1.35);
+    this.scene.add(root);
+    this.marbleRoot = root;
+
+    const url = canonicalTextureUrl(textureUrlFromResult(entry));
+    let tex = url && this.textureCache.get(url);
+    if (tex) {
+      this.applyTextureToMarbleRoot(root, tex);
+    } else if (url) {
+      this.textureLoader.load(
+        url,
+        (loaded) => {
+          this.configureMarbleTexture(loaded);
+          this.textureCache.set(url, loaded);
+          if (this.marbleRoot !== root) {
+            loaded.dispose();
+            return;
+          }
+          this.applyTextureToMarbleRoot(root, loaded);
+        },
+        undefined,
+        () => {},
+      );
+    }
+
+    this.startMarbleMotion(root);
   },
 
-  applyMarbleTexture(root, url, gen) {
-    this.textureLoader.load(
-      url,
-      (tex) => {
-        if (gen !== this.marbleLoadGen) {
-          tex.dispose();
+  cloneMarbleMaterialInstances(root) {
+    root.traverse((o) => {
+      if (!o.isMesh || !o.material) return;
+      if (Array.isArray(o.material)) {
+        o.material = o.material.map((m) => m.clone());
+      } else {
+        o.material = o.material.clone();
+      }
+    });
+  },
+
+  applyTextureToMarbleRoot(root, tex) {
+    const materialName = (m) => (m.name || "").trim().toLowerCase();
+
+    const applyGlass = (m) => {
+      m.map = tex;
+      m.transparent = true;
+      m.opacity = 1;
+      m.alphaTest = 0.01;
+      m.needsUpdate = true;
+    };
+
+    const applyDiffuse = (m) => {
+      m.map = tex;
+      m.needsUpdate = true;
+    };
+
+    root.traverse((c) => {
+      if (!c.isMesh || !c.material) return;
+      const mats = Array.isArray(c.material) ? c.material : [c.material];
+      mats.forEach((m) => {
+        const n = materialName(m);
+        if (n === "glass") {
+          applyGlass(m);
+        } else if (
+          n === "colormap" ||
+          n.includes("diffuse") ||
+          n.includes("color") ||
+          n === "base"
+        ) {
+          applyDiffuse(m);
+        }
+      });
+    });
+
+    let hit = false;
+    root.traverse((c) => {
+      if (!c.isMesh || !c.material) return;
+      const mats = Array.isArray(c.material) ? c.material : [c.material];
+      for (const m of mats) {
+        if (m.map === tex) {
+          hit = true;
           return;
         }
-        tex.colorSpace = THREE.SRGBColorSpace;
-        tex.flipY = false;
-        tex.minFilter = THREE.LinearMipmapLinearFilter;
-        tex.magFilter = THREE.LinearFilter;
-        tex.generateMipmaps = true;
-        root.traverse((c) => {
-          if (!c.isMesh || !c.material) return;
-          const mats = Array.isArray(c.material) ? c.material : [c.material];
-          mats.forEach((m) => {
-            if (m.name === "colormap") {
-              if (m.map) m.map.dispose();
-              m.map = tex;
-              m.needsUpdate = true;
-            }
-          });
-        });
-      },
-      undefined,
-      () => {},
-    );
+      }
+    });
+
+    if (hit) return;
+
+    root.traverse((c) => {
+      if (!c.isMesh || !c.material || hit) return;
+      const mats = Array.isArray(c.material) ? c.material : [c.material];
+      for (const m of mats) {
+        if (m.isMeshPhysicalMaterial || m.isMeshStandardMaterial) {
+          applyGlass(m);
+          hit = true;
+          return;
+        }
+      }
+    });
   },
 
   startMarbleMotion(root) {
@@ -426,8 +724,9 @@ const GachaCinematic = {
     this.startMarbleMotion(mesh);
   },
 
-  disposeObject3D(obj) {
+  disposeObject3D(obj, opts = {}) {
     if (!obj) return;
+    const keepTextures = opts.keepTextures === true;
     this.scene.remove(obj);
     obj.traverse((child) => {
       if (child.isMesh) {
@@ -435,11 +734,19 @@ const GachaCinematic = {
         const mat = child.material;
         if (Array.isArray(mat)) {
           mat.forEach((m) => {
-            m.map?.dispose?.();
+            if (keepTextures) {
+              clearMaterialTextureRefs(m);
+            } else {
+              m.map?.dispose?.();
+            }
             m?.dispose?.();
           });
         } else {
-          mat.map?.dispose?.();
+          if (keepTextures) {
+            clearMaterialTextureRefs(mat);
+          } else {
+            mat.map?.dispose?.();
+          }
           mat?.dispose?.();
         }
       }
@@ -448,6 +755,15 @@ const GachaCinematic = {
 
   finishEarly() {
     if (!this.currentPayload) return;
+
+    if (this.stage === "loading") {
+      this.preloadGen += 1;
+      this.hideLoadingOverlay();
+      this.clearTimers();
+      this.complete();
+      return;
+    }
+
     this.introActive = false;
     this.introSegment = null;
     this.clearTimers();

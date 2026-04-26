@@ -22,6 +22,7 @@ defmodule MarblesWeb.GachaLive do
       |> assign(:animation_phase, :idle)
       |> assign(:animation_progress, %{index: 0, total: 0, phase: "idle"})
       |> assign(:latest_result, nil)
+      |> assign(:last_pull_kind, nil)
       |> assign(:confirm_form, to_form(%{"skip_confirm" => false}, as: :confirm))
       |> stream_configure(:packs, dom_id: &"pack-#{&1.pack.id}")
 
@@ -42,11 +43,15 @@ defmodule MarblesWeb.GachaLive do
   end
 
   def handle_event("cancel_confirm", _params, socket) do
+    animation_phase =
+      if socket.assigns.latest_result, do: :recap, else: :idle
+
     {:noreply,
      socket
      |> assign(:confirm_open, false)
      |> assign(:pending_pull_kind, nil)
-     |> assign(:preview, nil)}
+     |> assign(:preview, nil)
+     |> assign(:animation_phase, animation_phase)}
   end
 
   def handle_event("confirm_pull", _params, socket) do
@@ -85,14 +90,39 @@ defmodule MarblesWeb.GachaLive do
   end
 
   def handle_event("pull_again", _params, socket) do
-    {:noreply, assign(socket, :animation_phase, :idle)}
+    cond do
+      socket.assigns.current_user == nil ->
+        {:noreply, assign(socket, :show_login_modal, true)}
+
+      socket.assigns.last_pull_kind == nil ->
+        {:noreply, put_flash(socket, :error, "Nothing to repeat.")}
+
+      true ->
+        case preview_pull_again(socket) do
+          {:ok, preview, pull_kind} ->
+            if socket.assigns.skip_confirm do
+              execute_pull(socket, pull_kind)
+            else
+              {:noreply,
+               socket
+               |> assign(:animation_phase, :idle)
+               |> assign(:confirm_open, true)
+               |> assign(:preview, preview)
+               |> assign(:pending_pull_kind, pull_kind)}
+            end
+
+          {:error, _} ->
+            {:noreply, put_flash(socket, :error, "Pull preview failed.")}
+        end
+    end
   end
 
   def handle_event("back_to_packs", _params, socket) do
     {:noreply,
      socket
      |> assign(:animation_phase, :idle)
-     |> assign(:latest_result, nil)}
+     |> assign(:latest_result, nil)
+     |> assign(:last_pull_kind, nil)}
   end
 
   @impl true
@@ -404,6 +434,7 @@ defmodule MarblesWeb.GachaLive do
                 phase: "countdown"
               })
               |> assign(:latest_result, result)
+              |> assign(:last_pull_kind, result.pull_kind)
               |> refresh_packs()
               |> push_event("gacha_animation_start", animation_payload(result))
 
@@ -424,6 +455,20 @@ defmodule MarblesWeb.GachaLive do
 
       {:error, _reason} ->
         {:noreply, put_flash(socket, :error, "No active pack selected.")}
+    end
+  end
+
+  defp preview_pull_again(socket) do
+    pull_kind = socket.assigns.last_pull_kind
+
+    if is_nil(pull_kind) do
+      {:error, :no_kind}
+    else
+      with {:ok, pack_id} <- current_pack_id(socket),
+           {:ok, preview} <-
+             GachaSession.preview_pull_cost(socket.assigns.current_user.id, pack_id, pull_kind) do
+        {:ok, preview, pull_kind}
+      end
     end
   end
 
@@ -495,7 +540,7 @@ defmodule MarblesWeb.GachaLive do
       "pack_name" => result.pack.name,
       "results" =>
         Enum.map(result.marbles, fn entry ->
-          texture_url = Assets.url_for_path(entry.marble.texture_path)
+          texture_url = Assets.marble_texture_url(entry.marble)
 
           %{
             "marble_id" => entry.marble.id,

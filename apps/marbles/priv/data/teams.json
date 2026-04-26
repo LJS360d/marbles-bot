@@ -21,7 +21,8 @@
         },
         "name": "Ace",
         "rarity": 1,
-        "role": "athlete"
+        "role": "athlete",
+        "texturePath": "/assets/marbles/ace/standard/texture.png"
       },
       {
         "assets": [
@@ -41,7 +42,8 @@
         },
         "name": "Club",
         "rarity": 2,
-        "role": "athlete"
+        "role": "athlete",
+        "texturePath": "/assets/marbles/club/standard/texture.png"
       },
       {
         "assets": [
@@ -61,7 +63,8 @@
         },
         "name": "Diamond",
         "rarity": 2,
-        "role": "athlete"
+        "role": "athlete",
+        "texturePath": "/assets/marbles/diamond/standard/texture.png"
       },
       {
         "assets": [
@@ -81,7 +84,8 @@
         },
         "name": "Heart",
         "rarity": 2,
-        "role": "athlete"
+        "role": "athlete",
+        "texturePath": "/assets/marbles/heart/standard/texture.png"
       },
       {
         "assets": [
@@ -101,7 +105,8 @@
         },
         "name": "Jack",
         "rarity": 2,
-        "role": "coach"
+        "role": "coach",
+        "texturePath": "/assets/marbles/jack/standard/texture.png"
       },
       {
         "assets": [
@@ -121,7 +126,8 @@
         },
         "name": "Spade",
         "rarity": 1,
-        "role": "athlete"
+        "role": "athlete",
+        "texturePath": "/assets/marbles/spade/standard/texture.png"
       }
     ],
     "name": "Black Jacks"
@@ -148,7 +154,8 @@
         },
         "name": "Akela",
         "rarity": 1,
-        "role": "coach"
+        "role": "coach",
+        "texturePath": "/assets/marbles/akela/standard/texture.png"
       },
       {
         "assets": [
@@ -168,7 +175,8 @@
         },
         "name": "Balto",
         "rarity": 1,
-        "role": "athlete"
+        "role": "athlete",
+        "texturePath": "/assets/marbles/balto/standard/texture.png"
       },
       {
         "assets": [
@@ -188,7 +196,8 @@
         },
         "name": "Fenrir",
         "rarity": 1,
-        "role": "athlete"
+        "role": "athlete",
+        "texturePath": "/assets/marbles/fenrir/standard/texture.png"
       },
       {
         "assets": [
@@ -208,7 +217,8 @@
         },
         "name": "Nova",
         "rarity": 1,
-        "role": "athlete"
+        "role": "athlete",
+        "texturePath": "/assets/marbles/nova/standard/texture.png"
       },
       {
         "assets": [
@@ -228,7 +238,8 @@
         },
         "name": "Remus",
         "rarity": 1,
-        "role": "athlete"
+        "role": "athlete",
+        "texturePath": "/assets/marbles/remus/standard/texture.png"
       },
       {
         "assets": [
@@ -248,7 +259,8 @@
         },
         "name": "Sheep",
         "rarity": 2,
-        "role": "athlete"
+        "role": "athlete",
+        "texturePath": "/assets/marbles/sheep/standard/texture.png"
       },
       {
         "assets": [
@@ -268,7 +280,8 @@
         },
         "name": "Sirius",
         "rarity": 1,
-        "role": "athlete"
+        "role": "athlete",
+        "texturePath": "/assets/marbles/sirius/standard/texture.png"
       }
     ],
     "name": "Wolfpack"
@@ -295,7 +308,8 @@
         },
         "name": "Alpine",
         "rarity": 2,
-        "role": "athlete"
+        "role": "athlete",
+        "texturePath": "/assets/marbles/alpine/standard/texture.png"
       },
       {
         "assets": [
@@ -315,7 +329,8 @@
         },
         "name": "Frost",
         "rarity": 1,
-        "role": "athlete"
+        "role": "athlete",
+        "texturePath": "/assets/marbles/frost/standard/texture.png"
       },
       {
         "assets": [
@@ -335,7 +350,8 @@
         },
         "name": "Glace",
         "rarity": 1,
-        "role": "athlete"
+        "role": "athlete",
+        "texturePath": "/assets/marbles/glace/standard/texture.png"
       },
       {
         "assets": [
@@ -355,7 +371,8 @@
         },
         "name": "Glacie",
         "rarity": 1,
-        "role": "athlete"
+        "role": "athlete",
+        "texturePath": "/assets/marbles/glacie/standard/texture.png"
       },
       {
         "assets": [
@@ -375,7 +392,8 @@
         },
         "name": "Glacier",
         "rarity": 1,
-        "role": "athlete"
+        "role": "athlete",
+        "texturePath": "/assets/marbles/glacier/standard/texture.png"
       },
       {
         "assets": [
@@ -395,7 +413,8 @@
         },
         "name": "Glide",
         "rarity": 2,
-        "role": "athlete"
+        "role": "athlete",
+        "texturePath": "/assets/marbles/glide/standard/texture.png"
       },
       {
         "assets": [
@@ -415,7 +434,8 @@
         },
         "name": "Glidy",
         "rarity": 1,
-        "role": "athlete"
+        "role": "athlete",
+        "texturePath": "/assets/marbles/glidy/standard/texture.png"
       },
       {
         "assets": [
@@ -435,7 +455,8 @@
         },
         "name": "Iceberg",
         "rarity": 1,
-        "role": "athlete"
+        "role": "athlete",
+        "texturePath": "/assets/marbles/iceberg/standard/texture.png"
       },
       {
         "assets": [
@@ -455,7 +476,8 @@
         },
         "name": "Polar",
         "rarity": 2,
-        "role": "athlete"
+        "role": "athlete",
+        "texturePath": "/assets/marbles/polar/standard/texture.png"
       },
       {
         "assets": [
@@ -475,7 +497,8 @@
         },
         "name": "Sheet",
         "rarity": 3,
-        "role": "athlete"
+        "role": "athlete",
+        "texturePath": "/assets/marbles/sheet/standard/texture.png"
       }
     ],
     "name": "Gliding Glaciers"
@@ -502,7 +525,8 @@
         },
         "name": "Alvin",
         "rarity": 1,
-        "role": "athlete"
+        "role": "athlete",
+        "texturePath": "/assets/marbles/alvin/standard/texture.png"
       },
       {
         "assets": [
@@ -522,7 +546,8 @@
         },
         "name": "Amethyst",
         "rarity": 1,
-        "role": "rally"
+        "role": "rally",
+        "texturePath": "/assets/marbles/amethyst/standard/texture.png"
       },
       {
         "assets": [
@@ -542,7 +567,8 @@
         },
         "name": "Atlas",
         "rarity": 1,
-        "role": "athlete"
+        "role": "athlete",
+        "texturePath": "/assets/marbles/atlas/standard/texture.png"
       },
       {
         "assets": [
@@ -562,7 +588,8 @@
         },
         "name": "Audi Sport ABT Schaeffler",
         "rarity": 1,
-        "role": "athlete"
+        "role": "athlete",
+        "texturePath": "/assets/marbles/audi-sport-abt-schaeffler/standard/texture.png"
       },
       {
         "assets": [
@@ -582,7 +609,8 @@
         },
         "name": "Big Pearl",
         "rarity": 2,
-        "role": "rally"
+        "role": "rally",
+        "texturePath": "/assets/marbles/big-pearl/standard/texture.png"
       },
       {
         "assets": [
@@ -602,7 +630,8 @@
         },
         "name": "Black Knight",
         "rarity": 1,
-        "role": "rally"
+        "role": "rally",
+        "texturePath": "/assets/marbles/black-knight/standard/texture.png"
       },
       {
         "assets": [
@@ -622,7 +651,8 @@
         },
         "name": "Blazey",
         "rarity": 1,
-        "role": "athlete"
+        "role": "athlete",
+        "texturePath": "/assets/marbles/blazey/standard/texture.png"
       },
       {
         "assets": [
@@ -642,7 +672,8 @@
         },
         "name": "Blazing Fireball",
         "rarity": 1,
-        "role": "rally"
+        "role": "rally",
+        "texturePath": "/assets/marbles/blazing-fireball/standard/texture.png"
       },
       {
         "assets": [
@@ -662,7 +693,8 @@
         },
         "name": "Blizzard Blaster",
         "rarity": 1,
-        "role": "rally"
+        "role": "rally",
+        "texturePath": "/assets/marbles/blizzard-blaster/standard/texture.png"
       },
       {
         "assets": [
@@ -682,7 +714,8 @@
         },
         "name": "Blue Moon",
         "rarity": 2,
-        "role": "rally"
+        "role": "rally",
+        "texturePath": "/assets/marbles/blue-moon/standard/texture.png"
       },
       {
         "assets": [
@@ -702,7 +735,8 @@
         },
         "name": "Blue Smoke",
         "rarity": 1,
-        "role": "rally"
+        "role": "rally",
+        "texturePath": "/assets/marbles/blue-smoke/standard/texture.png"
       },
       {
         "assets": [
@@ -722,7 +756,8 @@
         },
         "name": "Bluebell",
         "rarity": 1,
-        "role": "athlete"
+        "role": "athlete",
+        "texturePath": "/assets/marbles/bluebell/standard/texture.png"
       },
       {
         "assets": [
@@ -742,7 +777,8 @@
         },
         "name": "Cobra",
         "rarity": 1,
-        "role": "rally"
+        "role": "rally",
+        "texturePath": "/assets/marbles/cobra/standard/texture.png"
       },
       {
         "assets": [
@@ -762,7 +798,8 @@
         },
         "name": "Comet",
         "rarity": 1,
-        "role": "rally"
+        "role": "rally",
+        "texturePath": "/assets/marbles/comet/standard/texture.png"
       },
       {
         "assets": [
@@ -782,7 +819,8 @@
         },
         "name": "Cool Moody",
         "rarity": 2,
-        "role": "rally"
+        "role": "rally",
+        "texturePath": "/assets/marbles/cool-moody/standard/texture.png"
       },
       {
         "assets": [
@@ -802,7 +840,8 @@
         },
         "name": "DS Techeetah",
         "rarity": 1,
-        "role": "athlete"
+        "role": "athlete",
+        "texturePath": "/assets/marbles/ds-techeetah/standard/texture.png"
       },
       {
         "assets": [
@@ -822,7 +861,8 @@
         },
         "name": "Deep Ocean",
         "rarity": 1,
-        "role": "rally"
+        "role": "rally",
+        "texturePath": "/assets/marbles/deep-ocean/standard/texture.png"
       },
       {
         "assets": [
@@ -842,7 +882,8 @@
         },
         "name": "Dion Bakker",
         "rarity": 1,
-        "role": "athlete"
+        "role": "athlete",
+        "texturePath": "/assets/marbles/dion-bakker/standard/texture.png"
       },
       {
         "assets": [
@@ -862,7 +903,8 @@
         },
         "name": "Dragon's Egg",
         "rarity": 2,
-        "role": "rally"
+        "role": "rally",
+        "texturePath": "/assets/marbles/dragons-egg/standard/texture.png"
       },
       {
         "assets": [
@@ -882,7 +924,8 @@
         },
         "name": "Duchess and Duke of Craven",
         "rarity": 1,
-        "role": "athlete"
+        "role": "athlete",
+        "texturePath": "/assets/marbles/duchess-and-duke-of-craven/standard/texture.png"
       },
       {
         "assets": [
@@ -902,7 +945,8 @@
         },
         "name": "Ducktape",
         "rarity": 2,
-        "role": "rally"
+        "role": "rally",
+        "texturePath": "/assets/marbles/ducktape/standard/texture.png"
       },
       {
         "assets": [
@@ -922,7 +966,8 @@
         },
         "name": "Eevee",
         "rarity": 1,
-        "role": "athlete"
+        "role": "athlete",
+        "texturePath": "/assets/marbles/eevee/standard/texture.png"
       },
       {
         "assets": [
@@ -942,7 +987,8 @@
         },
         "name": "El Capitan",
         "rarity": 1,
-        "role": "rally"
+        "role": "rally",
+        "texturePath": "/assets/marbles/el-capitan/standard/texture.png"
       },
       {
         "assets": [
@@ -962,7 +1008,8 @@
         },
         "name": "Envision Virgin Racing",
         "rarity": 1,
-        "role": "athlete"
+        "role": "athlete",
+        "texturePath": "/assets/marbles/envision-virgin-racing/standard/texture.png"
       },
       {
         "assets": [
@@ -982,7 +1029,8 @@
         },
         "name": "GEOX Dragon",
         "rarity": 1,
-        "role": "athlete"
+        "role": "athlete",
+        "texturePath": "/assets/marbles/geox-dragon/standard/texture.png"
       },
       {
         "assets": [
@@ -1002,7 +1050,8 @@
         },
         "name": "Ghost Marble",
         "rarity": 1,
-        "role": "athlete"
+        "role": "athlete",
+        "texturePath": "/assets/marbles/ghost-marble/standard/texture.png"
       },
       {
         "assets": [
@@ -1022,7 +1071,8 @@
         },
         "name": "Ghost Plasma",
         "rarity": 2,
-        "role": "rally"
+        "role": "rally",
+        "texturePath": "/assets/marbles/ghost-plasma/standard/texture.png"
       },
       {
         "assets": [
@@ -1042,7 +1092,8 @@
         },
         "name": "Glassy",
         "rarity": 1,
-        "role": "rally"
+        "role": "rally",
+        "texturePath": "/assets/marbles/glassy/standard/texture.png"
       },
       {
         "assets": [
@@ -1062,7 +1113,8 @@
         },
         "name": "Grasshopper",
         "rarity": 1,
-        "role": "rally"
+        "role": "rally",
+        "texturePath": "/assets/marbles/grasshopper/standard/texture.png"
       },
       {
         "assets": [
@@ -1082,7 +1134,8 @@
         },
         "name": "Green Turtle",
         "rarity": 1,
-        "role": "rally"
+        "role": "rally",
+        "texturePath": "/assets/marbles/green-turtle/standard/texture.png"
       },
       {
         "assets": [
@@ -1102,7 +1155,8 @@
         },
         "name": "H2 Blue",
         "rarity": 1,
-        "role": "rally"
+        "role": "rally",
+        "texturePath": "/assets/marbles/h2-blue/standard/texture.png"
       },
       {
         "assets": [
@@ -1122,7 +1176,8 @@
         },
         "name": "John Rolliver",
         "rarity": 1,
-        "role": "athlete"
+        "role": "athlete",
+        "texturePath": "/assets/marbles/john-rolliver/standard/texture.png"
       },
       {
         "assets": [
@@ -1142,7 +1197,8 @@
         },
         "name": "Lollipop",
         "rarity": 1,
-        "role": "rally"
+        "role": "rally",
+        "texturePath": "/assets/marbles/lollipop/standard/texture.png"
       },
       {
         "assets": [
@@ -1162,7 +1218,8 @@
         },
         "name": "Lucky Clover",
         "rarity": 1,
-        "role": "athlete"
+        "role": "athlete",
+        "texturePath": "/assets/marbles/lucky-clover/standard/texture.png"
       },
       {
         "assets": [
@@ -1182,7 +1239,8 @@
         },
         "name": "Mahindra Racing",
         "rarity": 1,
-        "role": "athlete"
+        "role": "athlete",
+        "texturePath": "/assets/marbles/mahindra-racing/standard/texture.png"
       },
       {
         "assets": [
@@ -1202,7 +1260,8 @@
         },
         "name": "Marbly McMarbleface",
         "rarity": 1,
-        "role": "rally"
+        "role": "rally",
+        "texturePath": "/assets/marbles/marbly-mcmarbleface/standard/texture.png"
       },
       {
         "assets": [
@@ -1222,7 +1281,8 @@
         },
         "name": "Mellacus",
         "rarity": 1,
-        "role": "athlete"
+        "role": "athlete",
+        "texturePath": "/assets/marbles/mellacus/standard/texture.png"
       },
       {
         "assets": [
@@ -1242,7 +1302,8 @@
         },
         "name": "Michael",
         "rarity": 1,
-        "role": "athlete"
+        "role": "athlete",
+        "texturePath": "/assets/marbles/michael/standard/texture.png"
       },
       {
         "assets": [
@@ -1262,7 +1323,8 @@
         },
         "name": "Michelle",
         "rarity": 1,
-        "role": "athlete"
+        "role": "athlete",
+        "texturePath": "/assets/marbles/michelle/standard/texture.png"
       },
       {
         "assets": [
@@ -1282,7 +1344,8 @@
         },
         "name": "Mike",
         "rarity": 1,
-        "role": "athlete"
+        "role": "athlete",
+        "texturePath": "/assets/marbles/mike/standard/texture.png"
       },
       {
         "assets": [
@@ -1302,7 +1365,8 @@
         },
         "name": "Mocha Madness",
         "rarity": 1,
-        "role": "rally"
+        "role": "rally",
+        "texturePath": "/assets/marbles/mocha-madness/standard/texture.png"
       },
       {
         "assets": [
@@ -1322,7 +1386,8 @@
         },
         "name": "Nemo",
         "rarity": 1,
-        "role": "rally"
+        "role": "rally",
+        "texturePath": "/assets/marbles/nemo/standard/texture.png"
       },
       {
         "assets": [
@@ -1342,7 +1407,8 @@
         },
         "name": "Nissan e.dams",
         "rarity": 1,
-        "role": "athlete"
+        "role": "athlete",
+        "texturePath": "/assets/marbles/nissan-e.dams/standard/texture.png"
       },
       {
         "assets": [
@@ -1362,7 +1428,8 @@
         },
         "name": "Oddball",
         "rarity": 1,
-        "role": "rally"
+        "role": "rally",
+        "texturePath": "/assets/marbles/oddball/standard/texture.png"
       },
       {
         "assets": [
@@ -1382,7 +1449,8 @@
         },
         "name": "Olympia",
         "rarity": 1,
-        "role": "rally"
+        "role": "rally",
+        "texturePath": "/assets/marbles/olympia/standard/texture.png"
       },
       {
         "assets": [
@@ -1402,7 +1470,8 @@
         },
         "name": "Panasonic Jaguar Racing",
         "rarity": 1,
-        "role": "athlete"
+        "role": "athlete",
+        "texturePath": "/assets/marbles/panasonic-jaguar-racing/standard/texture.png"
       },
       {
         "assets": [
@@ -1422,7 +1491,8 @@
         },
         "name": "Phoenix",
         "rarity": 2,
-        "role": "rally"
+        "role": "rally",
+        "texturePath": "/assets/marbles/phoenix/standard/texture.png"
       },
       {
         "assets": [
@@ -1442,7 +1512,8 @@
         },
         "name": "Pollo Loco",
         "rarity": 1,
-        "role": "rally"
+        "role": "rally",
+        "texturePath": "/assets/marbles/pollo-loco/standard/texture.png"
       },
       {
         "assets": [
@@ -1462,7 +1533,8 @@
         },
         "name": "Quicksilver",
         "rarity": 2,
-        "role": "rally"
+        "role": "rally",
+        "texturePath": "/assets/marbles/quicksilver/standard/texture.png"
       },
       {
         "assets": [
@@ -1482,7 +1554,8 @@
         },
         "name": "ROKiT Venturi Racing",
         "rarity": 1,
-        "role": "athlete"
+        "role": "athlete",
+        "texturePath": "/assets/marbles/rokit-venturi-racing/standard/texture.png"
       },
       {
         "assets": [
@@ -1502,7 +1575,8 @@
         },
         "name": "Rastafarian",
         "rarity": 1,
-        "role": "rally"
+        "role": "rally",
+        "texturePath": "/assets/marbles/rastafarian/standard/texture.png"
       },
       {
         "assets": [
@@ -1522,7 +1596,8 @@
         },
         "name": "Rattler",
         "rarity": 1,
-        "role": "athlete"
+        "role": "athlete",
+        "texturePath": "/assets/marbles/rattler/standard/texture.png"
       },
       {
         "assets": [
@@ -1542,7 +1617,8 @@
         },
         "name": "Red Number 3",
         "rarity": 3,
-        "role": "rally"
+        "role": "rally",
+        "texturePath": "/assets/marbles/red-number-3/standard/texture.png"
       },
       {
         "assets": [
@@ -1562,7 +1638,8 @@
         },
         "name": "Red Tarantula",
         "rarity": 1,
-        "role": "athlete"
+        "role": "athlete",
+        "texturePath": "/assets/marbles/red-tarantula/standard/texture.png"
       },
       {
         "assets": [
@@ -1582,7 +1659,8 @@
         },
         "name": "Reflektor",
         "rarity": 1,
-        "role": "rally"
+        "role": "rally",
+        "texturePath": "/assets/marbles/reflektor/standard/texture.png"
       },
       {
         "assets": [
@@ -1602,7 +1680,8 @@
         },
         "name": "Safety Marble",
         "rarity": 1,
-        "role": "athlete"
+        "role": "athlete",
+        "texturePath": "/assets/marbles/safety-marble/standard/texture.png"
       },
       {
         "assets": [
@@ -1622,7 +1701,8 @@
         },
         "name": "Seal",
         "rarity": 1,
-        "role": "athlete"
+        "role": "athlete",
+        "texturePath": "/assets/marbles/seal/standard/texture.png"
       },
       {
         "assets": [
@@ -1642,7 +1722,8 @@
         },
         "name": "Security Guards",
         "rarity": 1,
-        "role": "athlete"
+        "role": "athlete",
+        "texturePath": "/assets/marbles/security-guards/standard/texture.png"
       },
       {
         "assets": [
@@ -1662,7 +1743,8 @@
         },
         "name": "Silver Bolt",
         "rarity": 1,
-        "role": "rally"
+        "role": "rally",
+        "texturePath": "/assets/marbles/silver-bolt/standard/texture.png"
       },
       {
         "assets": [
@@ -1682,7 +1764,8 @@
         },
         "name": "Slimer",
         "rarity": 3,
-        "role": "rally"
+        "role": "rally",
+        "texturePath": "/assets/marbles/slimer/standard/texture.png"
       },
       {
         "assets": [
@@ -1702,7 +1785,8 @@
         },
         "name": "Snake's Tub",
         "rarity": 1,
-        "role": "rally"
+        "role": "rally",
+        "texturePath": "/assets/marbles/snakes-tub/standard/texture.png"
       },
       {
         "assets": [
@@ -1722,7 +1806,8 @@
         },
         "name": "Souless Wonder",
         "rarity": 1,
-        "role": "athlete"
+        "role": "athlete",
+        "texturePath": "/assets/marbles/souless-wonder/standard/texture.png"
       },
       {
         "assets": [
@@ -1742,7 +1827,8 @@
         },
         "name": "Spearmint",
         "rarity": 1,
-        "role": "athlete"
+        "role": "athlete",
+        "texturePath": "/assets/marbles/spearmint/standard/texture.png"
       },
       {
         "assets": [
@@ -1762,7 +1848,8 @@
         },
         "name": "Stardust",
         "rarity": 1,
-        "role": "athlete"
+        "role": "athlete",
+        "texturePath": "/assets/marbles/stardust/standard/texture.png"
       },
       {
         "assets": [
@@ -1782,7 +1869,8 @@
         },
         "name": "Starfish",
         "rarity": 1,
-        "role": "athlete"
+        "role": "athlete",
+        "texturePath": "/assets/marbles/starfish/standard/texture.png"
       },
       {
         "assets": [
@@ -1802,7 +1890,8 @@
         },
         "name": "Starman",
         "rarity": 1,
-        "role": "rally"
+        "role": "rally",
+        "texturePath": "/assets/marbles/starman/standard/texture.png"
       },
       {
         "assets": [
@@ -1822,7 +1911,8 @@
         },
         "name": "Summer Sky",
         "rarity": 1,
-        "role": "rally"
+        "role": "rally",
+        "texturePath": "/assets/marbles/summer-sky/standard/texture.png"
       },
       {
         "assets": [
@@ -1842,7 +1932,8 @@
         },
         "name": "Supernova",
         "rarity": 1,
-        "role": "athlete"
+        "role": "athlete",
+        "texturePath": "/assets/marbles/supernova/standard/texture.png"
       },
       {
         "assets": [
@@ -1862,7 +1953,8 @@
         },
         "name": "TAG Heuer Porsche",
         "rarity": 1,
-        "role": "athlete"
+        "role": "athlete",
+        "texturePath": "/assets/marbles/tag-heuer-porsche/standard/texture.png"
       },
       {
         "assets": [
@@ -1882,7 +1974,8 @@
         },
         "name": "Tarantula",
         "rarity": 1,
-        "role": "rally"
+        "role": "rally",
+        "texturePath": "/assets/marbles/tarantula/standard/texture.png"
       },
       {
         "assets": [
@@ -1902,7 +1995,8 @@
         },
         "name": "The Flash",
         "rarity": 1,
-        "role": "rally"
+        "role": "rally",
+        "texturePath": "/assets/marbles/the-flash/standard/texture.png"
       },
       {
         "assets": [
@@ -1922,7 +2016,8 @@
         },
         "name": "White Widow",
         "rarity": 1,
-        "role": "rally"
+        "role": "rally",
+        "texturePath": "/assets/marbles/white-widow/standard/texture.png"
       },
       {
         "assets": [
@@ -1942,7 +2037,8 @@
         },
         "name": "Willamette",
         "rarity": 1,
-        "role": "athlete"
+        "role": "athlete",
+        "texturePath": "/assets/marbles/willamette/standard/texture.png"
       },
       {
         "assets": [
@@ -1962,7 +2058,8 @@
         },
         "name": "Wisp of Darkness",
         "rarity": 1,
-        "role": "rally"
+        "role": "rally",
+        "texturePath": "/assets/marbles/wisp-of-darkness/standard/texture.png"
       }
     ],
     "name": "none"
@@ -1989,7 +2086,8 @@
         },
         "name": "Amaya",
         "rarity": 1,
-        "role": "athlete"
+        "role": "athlete",
+        "texturePath": "/assets/marbles/amaya/standard/texture.png"
       },
       {
         "assets": [
@@ -2009,7 +2107,8 @@
         },
         "name": "Eve",
         "rarity": 1,
-        "role": "athlete"
+        "role": "athlete",
+        "texturePath": "/assets/marbles/eve/standard/texture.png"
       },
       {
         "assets": [
@@ -2029,7 +2128,8 @@
         },
         "name": "Mercedes-Benz EQ",
         "rarity": 1,
-        "role": "athlete"
+        "role": "athlete",
+        "texturePath": "/assets/marbles/mercedes-benz-eq/standard/texture.png"
       },
       {
         "assets": [
@@ -2049,7 +2149,8 @@
         },
         "name": "Twila",
         "rarity": 1,
-        "role": "athlete"
+        "role": "athlete",
+        "texturePath": "/assets/marbles/twila/standard/texture.png"
       },
       {
         "assets": [
@@ -2069,7 +2170,8 @@
         },
         "name": "Waspy",
         "rarity": 1,
-        "role": "athlete"
+        "role": "athlete",
+        "texturePath": "/assets/marbles/waspy/standard/texture.png"
       },
       {
         "assets": [
@@ -2089,7 +2191,8 @@
         },
         "name": "Wespy",
         "rarity": 2,
-        "role": "athlete"
+        "role": "athlete",
+        "texturePath": "/assets/marbles/wespy/standard/texture.png"
       },
       {
         "assets": [
@@ -2109,7 +2212,8 @@
         },
         "name": "Willow",
         "rarity": 1,
-        "role": "athlete"
+        "role": "athlete",
+        "texturePath": "/assets/marbles/willow/standard/texture.png"
       },
       {
         "assets": [
@@ -2129,7 +2233,8 @@
         },
         "name": "Wispy",
         "rarity": 2,
-        "role": "athlete"
+        "role": "athlete",
+        "texturePath": "/assets/marbles/wispy/standard/texture.png"
       },
       {
         "assets": [
@@ -2149,7 +2254,8 @@
         },
         "name": "Wospy",
         "rarity": 2,
-        "role": "athlete"
+        "role": "athlete",
+        "texturePath": "/assets/marbles/wospy/standard/texture.png"
       },
       {
         "assets": [
@@ -2169,7 +2275,8 @@
         },
         "name": "Wuspy",
         "rarity": 2,
-        "role": "athlete"
+        "role": "athlete",
+        "texturePath": "/assets/marbles/wuspy/standard/texture.png"
       },
       {
         "assets": [
@@ -2189,7 +2296,8 @@
         },
         "name": "Wyspy",
         "rarity": 1,
-        "role": "coach"
+        "role": "coach",
+        "texturePath": "/assets/marbles/wyspy/standard/texture.png"
       },
       {
         "assets": [
@@ -2209,7 +2317,8 @@
         },
         "name": "Yvaine",
         "rarity": 1,
-        "role": "athlete"
+        "role": "athlete",
+        "texturePath": "/assets/marbles/yvaine/standard/texture.png"
       }
     ],
     "name": "Midnight Wisps"
@@ -2236,7 +2345,8 @@
         },
         "name": "Ana",
         "rarity": 1,
-        "role": "athlete"
+        "role": "athlete",
+        "texturePath": "/assets/marbles/ana/standard/texture.png"
       },
       {
         "assets": [
@@ -2256,7 +2366,8 @@
         },
         "name": "Boa",
         "rarity": 1,
-        "role": "athlete"
+        "role": "athlete",
+        "texturePath": "/assets/marbles/boa/standard/texture.png"
       },
       {
         "assets": [
@@ -2276,7 +2387,8 @@
         },
         "name": "Charmer",
         "rarity": 1,
-        "role": "coach"
+        "role": "coach",
+        "texturePath": "/assets/marbles/charmer/standard/texture.png"
       },
       {
         "assets": [
@@ -2296,7 +2408,8 @@
         },
         "name": "Conda",
         "rarity": 1,
-        "role": "athlete"
+        "role": "athlete",
+        "texturePath": "/assets/marbles/conda/standard/texture.png"
       },
       {
         "assets": [
@@ -2316,7 +2429,8 @@
         },
         "name": "Eryx",
         "rarity": 1,
-        "role": "athlete"
+        "role": "athlete",
+        "texturePath": "/assets/marbles/eryx/standard/texture.png"
       },
       {
         "assets": [
@@ -2336,7 +2450,8 @@
         },
         "name": "Python",
         "rarity": 1,
-        "role": "athlete"
+        "role": "athlete",
+        "texturePath": "/assets/marbles/python/standard/texture.png"
       }
     ],
     "name": "Constrictors"
@@ -2363,7 +2478,8 @@
         },
         "name": "Anarchy",
         "rarity": 2,
-        "role": "athlete"
+        "role": "athlete",
+        "texturePath": "/assets/marbles/anarchy/standard/texture.png"
       },
       {
         "assets": [
@@ -2383,7 +2499,8 @@
         },
         "name": "Angry Amber",
         "rarity": 1,
-        "role": "athlete"
+        "role": "athlete",
+        "texturePath": "/assets/marbles/angry-amber/standard/texture.png"
       },
       {
         "assets": [
@@ -2403,7 +2520,8 @@
         },
         "name": "Clutter",
         "rarity": 2,
-        "role": "athlete"
+        "role": "athlete",
+        "texturePath": "/assets/marbles/clutter/standard/texture.png"
       },
       {
         "assets": [
@@ -2423,7 +2541,8 @@
         },
         "name": "Disarray",
         "rarity": 1,
-        "role": "athlete"
+        "role": "athlete",
+        "texturePath": "/assets/marbles/disarray/standard/texture.png"
       },
       {
         "assets": [
@@ -2443,7 +2562,8 @@
         },
         "name": "Entropy",
         "rarity": 1,
-        "role": "athlete"
+        "role": "athlete",
+        "texturePath": "/assets/marbles/entropy/standard/texture.png"
       },
       {
         "assets": [
@@ -2463,7 +2583,8 @@
         },
         "name": "Harmony",
         "rarity": 2,
-        "role": "coach"
+        "role": "coach",
+        "texturePath": "/assets/marbles/harmony/standard/texture.png"
       },
       {
         "assets": [
@@ -2483,7 +2604,8 @@
         },
         "name": "Snarl",
         "rarity": 1,
-        "role": "athlete"
+        "role": "athlete",
+        "texturePath": "/assets/marbles/snarl/standard/texture.png"
       },
       {
         "assets": [
@@ -2503,7 +2625,8 @@
         },
         "name": "Tumult",
         "rarity": 2,
-        "role": "athlete"
+        "role": "athlete",
+        "texturePath": "/assets/marbles/tumult/standard/texture.png"
       },
       {
         "assets": [
@@ -2523,7 +2646,8 @@
         },
         "name": "Yuan Rong",
         "rarity": 2,
-        "role": "coach"
+        "role": "coach",
+        "texturePath": "/assets/marbles/yuan-rong/standard/texture.png"
       }
     ],
     "name": "Balls Of Chaos"
@@ -2550,7 +2674,8 @@
         },
         "name": "Aqua",
         "rarity": 1,
-        "role": "athlete"
+        "role": "athlete",
+        "texturePath": "/assets/marbles/aqua/standard/texture.png"
       },
       {
         "assets": [
@@ -2570,7 +2695,8 @@
         },
         "name": "BMW i Andretti Motorsport",
         "rarity": 1,
-        "role": "athlete"
+        "role": "athlete",
+        "texturePath": "/assets/marbles/bmw-i-andretti-motorsport/standard/texture.png"
       },
       {
         "assets": [
@@ -2590,7 +2716,8 @@
         },
         "name": "Bay",
         "rarity": 1,
-        "role": "athlete"
+        "role": "athlete",
+        "texturePath": "/assets/marbles/bay/standard/texture.png"
       },
       {
         "assets": [
@@ -2610,7 +2737,8 @@
         },
         "name": "Lagoon",
         "rarity": 1,
-        "role": "coach"
+        "role": "coach",
+        "texturePath": "/assets/marbles/lagoon/standard/texture.png"
       },
       {
         "assets": [
@@ -2630,7 +2758,8 @@
         },
         "name": "Marina",
         "rarity": 1,
-        "role": "athlete"
+        "role": "athlete",
+        "texturePath": "/assets/marbles/marina/standard/texture.png"
       },
       {
         "assets": [
@@ -2650,7 +2779,8 @@
         },
         "name": "Neptune",
         "rarity": 2,
-        "role": "coach"
+        "role": "coach",
+        "texturePath": "/assets/marbles/neptune/standard/texture.png"
       },
       {
         "assets": [
@@ -2670,7 +2800,8 @@
         },
         "name": "Nereid",
         "rarity": 2,
-        "role": "athlete"
+        "role": "athlete",
+        "texturePath": "/assets/marbles/nereid/standard/texture.png"
       },
       {
         "assets": [
@@ -2690,7 +2821,8 @@
         },
         "name": "Ocean",
         "rarity": 2,
-        "role": "athlete"
+        "role": "athlete",
+        "texturePath": "/assets/marbles/ocean/standard/texture.png"
       },
       {
         "assets": [
@@ -2710,7 +2842,8 @@
         },
         "name": "Ounce",
         "rarity": 2,
-        "role": "athlete"
+        "role": "athlete",
+        "texturePath": "/assets/marbles/ounce/standard/texture.png"
       },
       {
         "assets": [
@@ -2730,7 +2863,8 @@
         },
         "name": "Reef",
         "rarity": 1,
-        "role": "athlete"
+        "role": "athlete",
+        "texturePath": "/assets/marbles/reef/standard/texture.png"
       },
       {
         "assets": [
@@ -2750,7 +2884,8 @@
         },
         "name": "Rick O'Shea",
         "rarity": 1,
-        "role": "athlete"
+        "role": "athlete",
+        "texturePath": "/assets/marbles/rick-oshea/standard/texture.png"
       },
       {
         "assets": [
@@ -2770,7 +2905,8 @@
         },
         "name": "Sea",
         "rarity": 3,
-        "role": "athlete"
+        "role": "athlete",
+        "texturePath": "/assets/marbles/sea/standard/texture.png"
       },
       {
         "assets": [
@@ -2790,7 +2926,8 @@
         },
         "name": "Shore",
         "rarity": 1,
-        "role": "athlete"
+        "role": "athlete",
+        "texturePath": "/assets/marbles/shore/standard/texture.png"
       },
       {
         "assets": [
@@ -2810,7 +2947,8 @@
         },
         "name": "Siren",
         "rarity": 2,
-        "role": "athlete"
+        "role": "athlete",
+        "texturePath": "/assets/marbles/siren/standard/texture.png"
       },
       {
         "assets": [
@@ -2830,7 +2968,8 @@
         },
         "name": "Tide",
         "rarity": 1,
-        "role": "athlete"
+        "role": "athlete",
+        "texturePath": "/assets/marbles/tide/standard/texture.png"
       },
       {
         "assets": [
@@ -2850,7 +2989,8 @@
         },
         "name": "Triton",
         "rarity": 1,
-        "role": "athlete"
+        "role": "athlete",
+        "texturePath": "/assets/marbles/triton/standard/texture.png"
       }
     ],
     "name": "Oceanics"
@@ -2877,7 +3017,8 @@
         },
         "name": "Argent",
         "rarity": 1,
-        "role": "athlete"
+        "role": "athlete",
+        "texturePath": "/assets/marbles/argent/standard/texture.png"
       },
       {
         "assets": [
@@ -2897,7 +3038,8 @@
         },
         "name": "Gallum",
         "rarity": 1,
-        "role": "athlete"
+        "role": "athlete",
+        "texturePath": "/assets/marbles/gallum/standard/texture.png"
       },
       {
         "assets": [
@@ -2917,7 +3059,8 @@
         },
         "name": "Mercurial",
         "rarity": 1,
-        "role": "athlete"
+        "role": "athlete",
+        "texturePath": "/assets/marbles/mercurial/standard/texture.png"
       },
       {
         "assets": [
@@ -2937,7 +3080,8 @@
         },
         "name": "Quix",
         "rarity": 1,
-        "role": "athlete"
+        "role": "athlete",
+        "texturePath": "/assets/marbles/quix/standard/texture.png"
       },
       {
         "assets": [
@@ -2957,7 +3101,8 @@
         },
         "name": "Silvery",
         "rarity": 1,
-        "role": "athlete"
+        "role": "athlete",
+        "texturePath": "/assets/marbles/silvery/standard/texture.png"
       }
     ],
     "name": "Quicksilvers"
@@ -2984,7 +3129,8 @@
         },
         "name": "Aryp",
         "rarity": 2,
-        "role": "athlete"
+        "role": "athlete",
+        "texturePath": "/assets/marbles/aryp/standard/texture.png"
       },
       {
         "assets": [
@@ -3004,7 +3150,8 @@
         },
         "name": "Fantasy",
         "rarity": 1,
-        "role": "rally"
+        "role": "rally",
+        "texturePath": "/assets/marbles/fantasy/standard/texture.png"
       },
       {
         "assets": [
@@ -3024,7 +3171,8 @@
         },
         "name": "Imar",
         "rarity": 1,
-        "role": "athlete"
+        "role": "athlete",
+        "texturePath": "/assets/marbles/imar/standard/texture.png"
       },
       {
         "assets": [
@@ -3044,7 +3192,8 @@
         },
         "name": "Jelle",
         "rarity": 1,
-        "role": "athlete"
+        "role": "athlete",
+        "texturePath": "/assets/marbles/jelle/standard/texture.png"
       },
       {
         "assets": [
@@ -3064,7 +3213,8 @@
         },
         "name": "Mary",
         "rarity": 1,
-        "role": "athlete"
+        "role": "athlete",
+        "texturePath": "/assets/marbles/mary/standard/texture.png"
       },
       {
         "assets": [
@@ -3084,7 +3234,8 @@
         },
         "name": "Prim",
         "rarity": 1,
-        "role": "athlete"
+        "role": "athlete",
+        "texturePath": "/assets/marbles/prim/standard/texture.png"
       },
       {
         "assets": [
@@ -3104,7 +3255,8 @@
         },
         "name": "Prima",
         "rarity": 1,
-        "role": "athlete"
+        "role": "athlete",
+        "texturePath": "/assets/marbles/prima/standard/texture.png"
       },
       {
         "assets": [
@@ -3124,7 +3276,8 @@
         },
         "name": "Rima",
         "rarity": 2,
-        "role": "athlete"
+        "role": "athlete",
+        "texturePath": "/assets/marbles/rima/standard/texture.png"
       },
       {
         "assets": [
@@ -3144,7 +3297,8 @@
         },
         "name": "Rypr",
         "rarity": 1,
-        "role": "athlete"
+        "role": "athlete",
+        "texturePath": "/assets/marbles/rypr/standard/texture.png"
       },
       {
         "assets": [
@@ -3164,7 +3318,8 @@
         },
         "name": "Secondary",
         "rarity": 1,
-        "role": "coach"
+        "role": "coach",
+        "texturePath": "/assets/marbles/secondary/standard/texture.png"
       },
       {
         "assets": [
@@ -3184,7 +3339,8 @@
         },
         "name": "Yawn",
         "rarity": 1,
-        "role": "athlete"
+        "role": "athlete",
+        "texturePath": "/assets/marbles/yawn/standard/texture.png"
       },
       {
         "assets": [
@@ -3204,7 +3360,8 @@
         },
         "name": "Yell",
         "rarity": 1,
-        "role": "athlete"
+        "role": "athlete",
+        "texturePath": "/assets/marbles/yell/standard/texture.png"
       },
       {
         "assets": [
@@ -3224,7 +3381,8 @@
         },
         "name": "Yelp",
         "rarity": 1,
-        "role": "athlete"
+        "role": "athlete",
+        "texturePath": "/assets/marbles/yelp/standard/texture.png"
       },
       {
         "assets": [
@@ -3244,7 +3402,8 @@
         },
         "name": "Yodel",
         "rarity": 1,
-        "role": "athlete"
+        "role": "athlete",
+        "texturePath": "/assets/marbles/yodel/standard/texture.png"
       }
     ],
     "name": "Team Primary"
@@ -3271,7 +3430,8 @@
         },
         "name": "Astron",
         "rarity": 2,
-        "role": "athlete"
+        "role": "athlete",
+        "texturePath": "/assets/marbles/astron/standard/texture.png"
       },
       {
         "assets": [
@@ -3291,7 +3451,8 @@
         },
         "name": "Black Hole",
         "rarity": 3,
-        "role": "coach"
+        "role": "coach",
+        "texturePath": "/assets/marbles/black-hole/standard/texture.png"
       },
       {
         "assets": [
@@ -3311,7 +3472,8 @@
         },
         "name": "Celeste",
         "rarity": 1,
-        "role": "coach"
+        "role": "coach",
+        "texturePath": "/assets/marbles/celeste/standard/texture.png"
       },
       {
         "assets": [
@@ -3331,7 +3493,8 @@
         },
         "name": "Cosmo",
         "rarity": 2,
-        "role": "athlete"
+        "role": "athlete",
+        "texturePath": "/assets/marbles/cosmo/standard/texture.png"
       },
       {
         "assets": [
@@ -3351,7 +3514,8 @@
         },
         "name": "Pulsar",
         "rarity": 1,
-        "role": "athlete"
+        "role": "athlete",
+        "texturePath": "/assets/marbles/pulsar/standard/texture.png"
       },
       {
         "assets": [
@@ -3371,7 +3535,8 @@
         },
         "name": "Quasar",
         "rarity": 1,
-        "role": "athlete"
+        "role": "athlete",
+        "texturePath": "/assets/marbles/quasar/standard/texture.png"
       },
       {
         "assets": [
@@ -3391,7 +3556,8 @@
         },
         "name": "Starry",
         "rarity": 3,
-        "role": "athlete"
+        "role": "athlete",
+        "texturePath": "/assets/marbles/starry/standard/texture.png"
       }
     ],
     "name": "Team Galactic"
@@ -3418,7 +3584,8 @@
         },
         "name": "Azure",
         "rarity": 1,
-        "role": "athlete"
+        "role": "athlete",
+        "texturePath": "/assets/marbles/azure/standard/texture.png"
       },
       {
         "assets": [
@@ -3438,7 +3605,8 @@
         },
         "name": "Cerulean",
         "rarity": 3,
-        "role": "athlete"
+        "role": "athlete",
+        "texturePath": "/assets/marbles/cerulean/standard/texture.png"
       },
       {
         "assets": [
@@ -3458,7 +3626,8 @@
         },
         "name": "Dodger",
         "rarity": 1,
-        "role": "athlete"
+        "role": "athlete",
+        "texturePath": "/assets/marbles/dodger/standard/texture.png"
       },
       {
         "assets": [
@@ -3478,7 +3647,8 @@
         },
         "name": "Gnome",
         "rarity": 2,
-        "role": "athlete"
+        "role": "athlete",
+        "texturePath": "/assets/marbles/gnome/standard/texture.png"
       },
       {
         "assets": [
@@ -3498,7 +3668,8 @@
         },
         "name": "Lapis",
         "rarity": 1,
-        "role": "athlete"
+        "role": "athlete",
+        "texturePath": "/assets/marbles/lapis/standard/texture.png"
       },
       {
         "assets": [
@@ -3518,7 +3689,8 @@
         },
         "name": "Meepo",
         "rarity": 2,
-        "role": "athlete"
+        "role": "athlete",
+        "texturePath": "/assets/marbles/meepo/standard/texture.png"
       },
       {
         "assets": [
@@ -3538,7 +3710,8 @@
         },
         "name": "NIO 333",
         "rarity": 1,
-        "role": "athlete"
+        "role": "athlete",
+        "texturePath": "/assets/marbles/nio-333/standard/texture.png"
       },
       {
         "assets": [
@@ -3558,7 +3731,8 @@
         },
         "name": "Royal",
         "rarity": 3,
-        "role": "athlete"
+        "role": "athlete",
+        "texturePath": "/assets/marbles/royal/standard/texture.png"
       },
       {
         "assets": [
@@ -3578,7 +3752,8 @@
         },
         "name": "Sapphire",
         "rarity": 2,
-        "role": "coach"
+        "role": "coach",
+        "texturePath": "/assets/marbles/sapphire/standard/texture.png"
       }
     ],
     "name": "Kobalts"
@@ -3605,7 +3780,8 @@
         },
         "name": "Baldie",
         "rarity": 1,
-        "role": "athlete"
+        "role": "athlete",
+        "texturePath": "/assets/marbles/baldie/standard/texture.png"
       },
       {
         "assets": [
@@ -3625,7 +3801,8 @@
         },
         "name": "Parole",
         "rarity": 1,
-        "role": "athlete"
+        "role": "athlete",
+        "texturePath": "/assets/marbles/parole/standard/texture.png"
       }
     ],
     "name": "Green Gang"
@@ -3652,7 +3829,8 @@
         },
         "name": "Baloo",
         "rarity": 1,
-        "role": "athlete"
+        "role": "athlete",
+        "texturePath": "/assets/marbles/baloo/standard/texture.png"
       },
       {
         "assets": [
@@ -3672,7 +3850,8 @@
         },
         "name": "Dory",
         "rarity": 1,
-        "role": "athlete"
+        "role": "athlete",
+        "texturePath": "/assets/marbles/dory/standard/texture.png"
       },
       {
         "assets": [
@@ -3692,7 +3871,8 @@
         },
         "name": "Gonzo",
         "rarity": 1,
-        "role": "athlete"
+        "role": "athlete",
+        "texturePath": "/assets/marbles/gonzo/standard/texture.png"
       },
       {
         "assets": [
@@ -3712,7 +3892,8 @@
         },
         "name": "Mako",
         "rarity": 1,
-        "role": "athlete"
+        "role": "athlete",
+        "texturePath": "/assets/marbles/mako/standard/texture.png"
       }
     ],
     "name": "Bluefastics"
@@ -3739,7 +3920,8 @@
         },
         "name": "Barn",
         "rarity": 1,
-        "role": "athlete"
+        "role": "athlete",
+        "texturePath": "/assets/marbles/barn/standard/texture.png"
       },
       {
         "assets": [
@@ -3759,7 +3941,8 @@
         },
         "name": "Pygmy",
         "rarity": 1,
-        "role": "athlete"
+        "role": "athlete",
+        "texturePath": "/assets/marbles/pygmy/standard/texture.png"
       },
       {
         "assets": [
@@ -3779,7 +3962,8 @@
         },
         "name": "Scops",
         "rarity": 1,
-        "role": "coach"
+        "role": "coach",
+        "texturePath": "/assets/marbles/scops/standard/texture.png"
       },
       {
         "assets": [
@@ -3799,7 +3983,8 @@
         },
         "name": "Screech",
         "rarity": 1,
-        "role": "athlete"
+        "role": "athlete",
+        "texturePath": "/assets/marbles/screech/standard/texture.png"
       },
       {
         "assets": [
@@ -3819,7 +4004,8 @@
         },
         "name": "Specs",
         "rarity": 1,
-        "role": "athlete"
+        "role": "athlete",
+        "texturePath": "/assets/marbles/specs/standard/texture.png"
       },
       {
         "assets": [
@@ -3839,7 +4025,8 @@
         },
         "name": "Tawny",
         "rarity": 1,
-        "role": "athlete"
+        "role": "athlete",
+        "texturePath": "/assets/marbles/tawny/standard/texture.png"
       }
     ],
     "name": "Strixes"
@@ -3866,7 +4053,8 @@
         },
         "name": "Barry",
         "rarity": 1,
-        "role": "athlete"
+        "role": "athlete",
+        "texturePath": "/assets/marbles/barry/standard/texture.png"
       },
       {
         "assets": [
@@ -3886,7 +4074,8 @@
         },
         "name": "Berry",
         "rarity": 3,
-        "role": "coach"
+        "role": "coach",
+        "texturePath": "/assets/marbles/berry/standard/texture.png"
       },
       {
         "assets": [
@@ -3906,7 +4095,8 @@
         },
         "name": "Pi",
         "rarity": 1,
-        "role": "athlete"
+        "role": "athlete",
+        "texturePath": "/assets/marbles/pi/standard/texture.png"
       },
       {
         "assets": [
@@ -3926,7 +4116,8 @@
         },
         "name": "Razzy",
         "rarity": 3,
-        "role": "athlete"
+        "role": "athlete",
+        "texturePath": "/assets/marbles/razzy/standard/texture.png"
       },
       {
         "assets": [
@@ -3946,7 +4137,8 @@
         },
         "name": "Rezzy",
         "rarity": 3,
-        "role": "athlete"
+        "role": "athlete",
+        "texturePath": "/assets/marbles/rezzy/standard/texture.png"
       },
       {
         "assets": [
@@ -3966,7 +4158,8 @@
         },
         "name": "Rizzy",
         "rarity": 1,
-        "role": "athlete"
+        "role": "athlete",
+        "texturePath": "/assets/marbles/rizzy/standard/texture.png"
       },
       {
         "assets": [
@@ -3986,7 +4179,8 @@
         },
         "name": "Rozzy",
         "rarity": 2,
-        "role": "athlete"
+        "role": "athlete",
+        "texturePath": "/assets/marbles/rozzy/standard/texture.png"
       },
       {
         "assets": [
@@ -4006,7 +4200,8 @@
         },
         "name": "Ruzzy",
         "rarity": 2,
-        "role": "athlete"
+        "role": "athlete",
+        "texturePath": "/assets/marbles/ruzzy/standard/texture.png"
       }
     ],
     "name": "Raspberry Racers"
@@ -4033,7 +4228,8 @@
         },
         "name": "Bea",
         "rarity": 1,
-        "role": "athlete"
+        "role": "athlete",
+        "texturePath": "/assets/marbles/bea/standard/texture.png"
       },
       {
         "assets": [
@@ -4053,7 +4249,8 @@
         },
         "name": "Bomble",
         "rarity": 1,
-        "role": "athlete"
+        "role": "athlete",
+        "texturePath": "/assets/marbles/bomble/standard/texture.png"
       },
       {
         "assets": [
@@ -4073,7 +4270,8 @@
         },
         "name": "Bumble",
         "rarity": 2,
-        "role": "athlete"
+        "role": "athlete",
+        "texturePath": "/assets/marbles/bumble/standard/texture.png"
       },
       {
         "assets": [
@@ -4093,7 +4291,8 @@
         },
         "name": "Honey",
         "rarity": 2,
-        "role": "athlete"
+        "role": "athlete",
+        "texturePath": "/assets/marbles/honey/standard/texture.png"
       },
       {
         "assets": [
@@ -4113,7 +4312,8 @@
         },
         "name": "Nectar",
         "rarity": 1,
-        "role": "athlete"
+        "role": "athlete",
+        "texturePath": "/assets/marbles/nectar/standard/texture.png"
       },
       {
         "assets": [
@@ -4133,7 +4333,8 @@
         },
         "name": "Queen",
         "rarity": 2,
-        "role": "coach"
+        "role": "coach",
+        "texturePath": "/assets/marbles/queen/standard/texture.png"
       },
       {
         "assets": [
@@ -4153,7 +4354,8 @@
         },
         "name": "Swax",
         "rarity": 1,
-        "role": "athlete"
+        "role": "athlete",
+        "texturePath": "/assets/marbles/swax/standard/texture.png"
       }
     ],
     "name": "Bumblebees"
@@ -4180,7 +4382,8 @@
         },
         "name": "Billy",
         "rarity": 3,
-        "role": "athlete"
+        "role": "athlete",
+        "texturePath": "/assets/marbles/billy/standard/texture.png"
       },
       {
         "assets": [
@@ -4200,7 +4403,8 @@
         },
         "name": "Bombay",
         "rarity": 2,
-        "role": "coach"
+        "role": "coach",
+        "texturePath": "/assets/marbles/bombay/standard/texture.png"
       },
       {
         "assets": [
@@ -4220,7 +4424,8 @@
         },
         "name": "Ducky",
         "rarity": 2,
-        "role": "athlete"
+        "role": "athlete",
+        "texturePath": "/assets/marbles/ducky/standard/texture.png"
       },
       {
         "assets": [
@@ -4240,7 +4445,8 @@
         },
         "name": "Goose",
         "rarity": 1,
-        "role": "athlete"
+        "role": "athlete",
+        "texturePath": "/assets/marbles/goose/standard/texture.png"
       },
       {
         "assets": [
@@ -4260,7 +4466,8 @@
         },
         "name": "Honk",
         "rarity": 1,
-        "role": "athlete"
+        "role": "athlete",
+        "texturePath": "/assets/marbles/honk/standard/texture.png"
       },
       {
         "assets": [
@@ -4280,7 +4487,8 @@
         },
         "name": "Mallard",
         "rarity": 3,
-        "role": "athlete"
+        "role": "athlete",
+        "texturePath": "/assets/marbles/mallard/standard/texture.png"
       },
       {
         "assets": [
@@ -4300,7 +4508,8 @@
         },
         "name": "Quacky",
         "rarity": 3,
-        "role": "athlete"
+        "role": "athlete",
+        "texturePath": "/assets/marbles/quacky/standard/texture.png"
       }
     ],
     "name": "Green Ducks"
@@ -4327,7 +4536,8 @@
         },
         "name": "Bingo",
         "rarity": 1,
-        "role": "athlete"
+        "role": "athlete",
+        "texturePath": "/assets/marbles/bingo/standard/texture.png"
       },
       {
         "assets": [
@@ -4347,7 +4557,8 @@
         },
         "name": "Diego",
         "rarity": 1,
-        "role": "athlete"
+        "role": "athlete",
+        "texturePath": "/assets/marbles/diego/standard/texture.png"
       },
       {
         "assets": [
@@ -4367,7 +4578,8 @@
         },
         "name": "Gogo",
         "rarity": 1,
-        "role": "athlete"
+        "role": "athlete",
+        "texturePath": "/assets/marbles/gogo/standard/texture.png"
       },
       {
         "assets": [
@@ -4387,7 +4599,8 @@
         },
         "name": "Indie",
         "rarity": 1,
-        "role": "athlete"
+        "role": "athlete",
+        "texturePath": "/assets/marbles/indie/standard/texture.png"
       },
       {
         "assets": [
@@ -4407,7 +4620,8 @@
         },
         "name": "Mango",
         "rarity": 1,
-        "role": "athlete"
+        "role": "athlete",
+        "texturePath": "/assets/marbles/mango/standard/texture.png"
       },
       {
         "assets": [
@@ -4427,7 +4641,8 @@
         },
         "name": "Montoya",
         "rarity": 1,
-        "role": "athlete"
+        "role": "athlete",
+        "texturePath": "/assets/marbles/montoya/standard/texture.png"
       },
       {
         "assets": [
@@ -4447,7 +4662,8 @@
         },
         "name": "Ringo",
         "rarity": 2,
-        "role": "coach"
+        "role": "coach",
+        "texturePath": "/assets/marbles/ringo/standard/texture.png"
       }
     ],
     "name": "Indigo Stars"
@@ -4474,7 +4690,8 @@
         },
         "name": "Blade",
         "rarity": 1,
-        "role": "athlete"
+        "role": "athlete",
+        "texturePath": "/assets/marbles/blade/standard/texture.png"
       },
       {
         "assets": [
@@ -4494,7 +4711,8 @@
         },
         "name": "Meadow",
         "rarity": 1,
-        "role": "athlete"
+        "role": "athlete",
+        "texturePath": "/assets/marbles/meadow/standard/texture.png"
       }
     ],
     "name": "Graze Of Glory"
@@ -4521,7 +4739,8 @@
         },
         "name": "Blast",
         "rarity": 1,
-        "role": "athlete"
+        "role": "athlete",
+        "texturePath": "/assets/marbles/blast/standard/texture.png"
       },
       {
         "assets": [
@@ -4541,7 +4760,8 @@
         },
         "name": "Dwarf",
         "rarity": 1,
-        "role": "athlete"
+        "role": "athlete",
+        "texturePath": "/assets/marbles/dwarf/standard/texture.png"
       },
       {
         "assets": [
@@ -4561,7 +4781,8 @@
         },
         "name": "Orbit",
         "rarity": 1,
-        "role": "athlete"
+        "role": "athlete",
+        "texturePath": "/assets/marbles/orbit/standard/texture.png"
       },
       {
         "assets": [
@@ -4581,7 +4802,8 @@
         },
         "name": "Rocket",
         "rarity": 1,
-        "role": "coach"
+        "role": "coach",
+        "texturePath": "/assets/marbles/rocket/standard/texture.png"
       },
       {
         "assets": [
@@ -4601,7 +4823,8 @@
         },
         "name": "Saucer",
         "rarity": 1,
-        "role": "athlete"
+        "role": "athlete",
+        "texturePath": "/assets/marbles/saucer/standard/texture.png"
       },
       {
         "assets": [
@@ -4621,7 +4844,8 @@
         },
         "name": "Shuttle",
         "rarity": 1,
-        "role": "coach"
+        "role": "coach",
+        "texturePath": "/assets/marbles/shuttle/standard/texture.png"
       },
       {
         "assets": [
@@ -4641,7 +4865,8 @@
         },
         "name": "Sulfur",
         "rarity": 1,
-        "role": "athlete"
+        "role": "athlete",
+        "texturePath": "/assets/marbles/sulfur/standard/texture.png"
       }
     ],
     "name": "Purple Rockets"
@@ -4668,7 +4893,8 @@
         },
         "name": "Blaze",
         "rarity": 1,
-        "role": "athlete"
+        "role": "athlete",
+        "texturePath": "/assets/marbles/blaze/standard/texture.png"
       },
       {
         "assets": [
@@ -4688,7 +4914,8 @@
         },
         "name": "Eclipse",
         "rarity": 1,
-        "role": "coach"
+        "role": "coach",
+        "texturePath": "/assets/marbles/eclipse/standard/texture.png"
       },
       {
         "assets": [
@@ -4708,7 +4935,8 @@
         },
         "name": "Ember",
         "rarity": 1,
-        "role": "athlete"
+        "role": "athlete",
+        "texturePath": "/assets/marbles/ember/standard/texture.png"
       },
       {
         "assets": [
@@ -4728,7 +4956,8 @@
         },
         "name": "Flare",
         "rarity": 1,
-        "role": "athlete"
+        "role": "athlete",
+        "texturePath": "/assets/marbles/flare/standard/texture.png"
       },
       {
         "assets": [
@@ -4748,7 +4977,8 @@
         },
         "name": "Helios",
         "rarity": 1,
-        "role": "athlete"
+        "role": "athlete",
+        "texturePath": "/assets/marbles/helios/standard/texture.png"
       },
       {
         "assets": [
@@ -4768,7 +4998,8 @@
         },
         "name": "Radiance",
         "rarity": 2,
-        "role": "athlete"
+        "role": "athlete",
+        "texturePath": "/assets/marbles/radiance/standard/texture.png"
       },
       {
         "assets": [
@@ -4788,7 +5019,8 @@
         },
         "name": "Scorch",
         "rarity": 1,
-        "role": "athlete"
+        "role": "athlete",
+        "texturePath": "/assets/marbles/scorch/standard/texture.png"
       }
     ],
     "name": "Solar Flares"
@@ -4815,7 +5047,8 @@
         },
         "name": "Blimey",
         "rarity": 1,
-        "role": "athlete"
+        "role": "athlete",
+        "texturePath": "/assets/marbles/blimey/standard/texture.png"
       },
       {
         "assets": [
@@ -4835,7 +5068,8 @@
         },
         "name": "Goolime",
         "rarity": 1,
-        "role": "athlete"
+        "role": "athlete",
+        "texturePath": "/assets/marbles/goolime/standard/texture.png"
       },
       {
         "assets": [
@@ -4855,7 +5089,8 @@
         },
         "name": "Greg Woods",
         "rarity": 1,
-        "role": "athlete"
+        "role": "athlete",
+        "texturePath": "/assets/marbles/greg-woods/standard/texture.png"
       },
       {
         "assets": [
@@ -4875,7 +5110,8 @@
         },
         "name": "Jellime",
         "rarity": 1,
-        "role": "athlete"
+        "role": "athlete",
+        "texturePath": "/assets/marbles/jellime/standard/texture.png"
       },
       {
         "assets": [
@@ -4895,7 +5131,8 @@
         },
         "name": "Keylime",
         "rarity": 1,
-        "role": "coach"
+        "role": "coach",
+        "texturePath": "/assets/marbles/keylime/standard/texture.png"
       },
       {
         "assets": [
@@ -4915,7 +5152,8 @@
         },
         "name": "Lemonlime",
         "rarity": 1,
-        "role": "athlete"
+        "role": "athlete",
+        "texturePath": "/assets/marbles/lemonlime/standard/texture.png"
       },
       {
         "assets": [
@@ -4935,7 +5173,8 @@
         },
         "name": "Limelight",
         "rarity": 1,
-        "role": "coach"
+        "role": "coach",
+        "texturePath": "/assets/marbles/limelight/standard/texture.png"
       },
       {
         "assets": [
@@ -4955,7 +5194,8 @@
         },
         "name": "Limelime",
         "rarity": 1,
-        "role": "athlete"
+        "role": "athlete",
+        "texturePath": "/assets/marbles/limelime/standard/texture.png"
       },
       {
         "assets": [
@@ -4975,7 +5215,8 @@
         },
         "name": "Slimelime",
         "rarity": 1,
-        "role": "athlete"
+        "role": "athlete",
+        "texturePath": "/assets/marbles/slimelime/standard/texture.png"
       },
       {
         "assets": [
@@ -4995,7 +5236,8 @@
         },
         "name": "Sublime",
         "rarity": 2,
-        "role": "athlete"
+        "role": "athlete",
+        "texturePath": "/assets/marbles/sublime/standard/texture.png"
       },
       {
         "assets": [
@@ -5015,7 +5257,8 @@
         },
         "name": "Superball",
         "rarity": 3,
-        "role": "rally"
+        "role": "rally",
+        "texturePath": "/assets/marbles/superball/standard/texture.png"
       }
     ],
     "name": "Limers"
@@ -5042,7 +5285,8 @@
         },
         "name": "Blizzard",
         "rarity": 2,
-        "role": "coach"
+        "role": "coach",
+        "texturePath": "/assets/marbles/blizzard/standard/texture.png"
       },
       {
         "assets": [
@@ -5062,7 +5306,8 @@
         },
         "name": "Snow",
         "rarity": 1,
-        "role": "athlete"
+        "role": "athlete",
+        "texturePath": "/assets/marbles/snow/standard/texture.png"
       },
       {
         "assets": [
@@ -5082,7 +5327,8 @@
         },
         "name": "Snowblast",
         "rarity": 1,
-        "role": "athlete"
+        "role": "athlete",
+        "texturePath": "/assets/marbles/snowblast/standard/texture.png"
       },
       {
         "assets": [
@@ -5102,7 +5348,8 @@
         },
         "name": "Snowdrift",
         "rarity": 1,
-        "role": "athlete"
+        "role": "athlete",
+        "texturePath": "/assets/marbles/snowdrift/standard/texture.png"
       },
       {
         "assets": [
@@ -5122,7 +5369,8 @@
         },
         "name": "Snowfall",
         "rarity": 2,
-        "role": "athlete"
+        "role": "athlete",
+        "texturePath": "/assets/marbles/snowfall/standard/texture.png"
       },
       {
         "assets": [
@@ -5142,7 +5390,8 @@
         },
         "name": "Snowflake",
         "rarity": 1,
-        "role": "athlete"
+        "role": "athlete",
+        "texturePath": "/assets/marbles/snowflake/standard/texture.png"
       },
       {
         "assets": [
@@ -5162,7 +5411,8 @@
         },
         "name": "Snowstorm",
         "rarity": 2,
-        "role": "athlete"
+        "role": "athlete",
+        "texturePath": "/assets/marbles/snowstorm/standard/texture.png"
       },
       {
         "assets": [
@@ -5182,7 +5432,8 @@
         },
         "name": "Snowy",
         "rarity": 3,
-        "role": "athlete"
+        "role": "athlete",
+        "texturePath": "/assets/marbles/snowy/standard/texture.png"
       }
     ],
     "name": "Snowballs"
@@ -5209,7 +5460,8 @@
         },
         "name": "Blue Eye",
         "rarity": 3,
-        "role": "athlete"
+        "role": "athlete",
+        "texturePath": "/assets/marbles/blue-eye/standard/texture.png"
       },
       {
         "assets": [
@@ -5229,7 +5481,8 @@
         },
         "name": "Bullseye",
         "rarity": 1,
-        "role": "athlete"
+        "role": "athlete",
+        "texturePath": "/assets/marbles/bullseye/standard/texture.png"
       },
       {
         "assets": [
@@ -5249,7 +5502,8 @@
         },
         "name": "Cleocatra",
         "rarity": 1,
-        "role": "athlete"
+        "role": "athlete",
+        "texturePath": "/assets/marbles/cleocatra/standard/texture.png"
       },
       {
         "assets": [
@@ -5269,7 +5523,8 @@
         },
         "name": "Crazy Cat's Eye",
         "rarity": 1,
-        "role": "rally"
+        "role": "rally",
+        "texturePath": "/assets/marbles/crazy-cats-eye/standard/texture.png"
       },
       {
         "assets": [
@@ -5289,7 +5544,8 @@
         },
         "name": "Cyan Eye",
         "rarity": 1,
-        "role": "athlete"
+        "role": "athlete",
+        "texturePath": "/assets/marbles/cyan-eye/standard/texture.png"
       },
       {
         "assets": [
@@ -5309,7 +5565,8 @@
         },
         "name": "Green Eye",
         "rarity": 2,
-        "role": "athlete"
+        "role": "athlete",
+        "texturePath": "/assets/marbles/green-eye/standard/texture.png"
       },
       {
         "assets": [
@@ -5329,7 +5586,8 @@
         },
         "name": "Jelle Bakker",
         "rarity": 1,
-        "role": "athlete"
+        "role": "athlete",
+        "texturePath": "/assets/marbles/jelle-bakker/standard/texture.png"
       },
       {
         "assets": [
@@ -5349,7 +5607,8 @@
         },
         "name": "Red Eye",
         "rarity": 3,
-        "role": "athlete"
+        "role": "athlete",
+        "texturePath": "/assets/marbles/red-eye/standard/texture.png"
       },
       {
         "assets": [
@@ -5369,7 +5628,8 @@
         },
         "name": "White Eye",
         "rarity": 3,
-        "role": "coach"
+        "role": "coach",
+        "texturePath": "/assets/marbles/white-eye/standard/texture.png"
       },
       {
         "assets": [
@@ -5389,7 +5649,8 @@
         },
         "name": "Yellow Eye",
         "rarity": 2,
-        "role": "athlete"
+        "role": "athlete",
+        "texturePath": "/assets/marbles/yellow-eye/standard/texture.png"
       }
     ],
     "name": "Crazy Cat's Eyes"
@@ -5416,7 +5677,8 @@
         },
         "name": "Bolt",
         "rarity": 2,
-        "role": "athlete"
+        "role": "athlete",
+        "texturePath": "/assets/marbles/bolt/standard/texture.png"
       },
       {
         "assets": [
@@ -5436,7 +5698,8 @@
         },
         "name": "Bolta",
         "rarity": 2,
-        "role": "athlete"
+        "role": "athlete",
+        "texturePath": "/assets/marbles/bolta/standard/texture.png"
       },
       {
         "assets": [
@@ -5456,7 +5719,8 @@
         },
         "name": "Boltew",
         "rarity": 1,
-        "role": "athlete"
+        "role": "athlete",
+        "texturePath": "/assets/marbles/boltew/standard/texture.png"
       },
       {
         "assets": [
@@ -5476,7 +5740,8 @@
         },
         "name": "Bolto",
         "rarity": 2,
-        "role": "athlete"
+        "role": "athlete",
+        "texturePath": "/assets/marbles/bolto/standard/texture.png"
       },
       {
         "assets": [
@@ -5496,7 +5761,8 @@
         },
         "name": "Boltu",
         "rarity": 1,
-        "role": "athlete"
+        "role": "athlete",
+        "texturePath": "/assets/marbles/boltu/standard/texture.png"
       },
       {
         "assets": [
@@ -5516,7 +5782,8 @@
         },
         "name": "Bolty",
         "rarity": 1,
-        "role": "athlete"
+        "role": "athlete",
+        "texturePath": "/assets/marbles/bolty/standard/texture.png"
       },
       {
         "assets": [
@@ -5536,7 +5803,8 @@
         },
         "name": "Lightning",
         "rarity": 1,
-        "role": "athlete"
+        "role": "athlete",
+        "texturePath": "/assets/marbles/lightning/standard/texture.png"
       },
       {
         "assets": [
@@ -5556,7 +5824,8 @@
         },
         "name": "Shock",
         "rarity": 2,
-        "role": "athlete"
+        "role": "athlete",
+        "texturePath": "/assets/marbles/shock/standard/texture.png"
       },
       {
         "assets": [
@@ -5576,7 +5845,8 @@
         },
         "name": "Static",
         "rarity": 1,
-        "role": "athlete"
+        "role": "athlete",
+        "texturePath": "/assets/marbles/static/standard/texture.png"
       },
       {
         "assets": [
@@ -5596,7 +5866,8 @@
         },
         "name": "Thunder",
         "rarity": 1,
-        "role": "athlete"
+        "role": "athlete",
+        "texturePath": "/assets/marbles/thunder/standard/texture.png"
       },
       {
         "assets": [
@@ -5616,7 +5887,8 @@
         },
         "name": "Thunderstorm",
         "rarity": 1,
-        "role": "coach"
+        "role": "coach",
+        "texturePath": "/assets/marbles/thunderstorm/standard/texture.png"
       },
       {
         "assets": [
@@ -5636,7 +5908,8 @@
         },
         "name": "Wrath",
         "rarity": 1,
-        "role": "coach"
+        "role": "coach",
+        "texturePath": "/assets/marbles/wrath/standard/texture.png"
       },
       {
         "assets": [
@@ -5656,7 +5929,8 @@
         },
         "name": "Zap",
         "rarity": 1,
-        "role": "athlete"
+        "role": "athlete",
+        "texturePath": "/assets/marbles/zap/standard/texture.png"
       }
     ],
     "name": "Thunderbolts"
@@ -5683,7 +5957,8 @@
         },
         "name": "Bonbon",
         "rarity": 2,
-        "role": "athlete"
+        "role": "athlete",
+        "texturePath": "/assets/marbles/bonbon/standard/texture.png"
       },
       {
         "assets": [
@@ -5703,7 +5978,8 @@
         },
         "name": "Caramel",
         "rarity": 1,
-        "role": "athlete"
+        "role": "athlete",
+        "texturePath": "/assets/marbles/caramel/standard/texture.png"
       },
       {
         "assets": [
@@ -5723,7 +5999,8 @@
         },
         "name": "Choc",
         "rarity": 2,
-        "role": "athlete"
+        "role": "athlete",
+        "texturePath": "/assets/marbles/choc/standard/texture.png"
       },
       {
         "assets": [
@@ -5743,7 +6020,8 @@
         },
         "name": "Cocoa",
         "rarity": 1,
-        "role": "athlete"
+        "role": "athlete",
+        "texturePath": "/assets/marbles/cocoa/standard/texture.png"
       },
       {
         "assets": [
@@ -5763,7 +6041,8 @@
         },
         "name": "Fudge",
         "rarity": 1,
-        "role": "athlete"
+        "role": "athlete",
+        "texturePath": "/assets/marbles/fudge/standard/texture.png"
       },
       {
         "assets": [
@@ -5783,7 +6062,8 @@
         },
         "name": "Mocha",
         "rarity": 2,
-        "role": "athlete"
+        "role": "athlete",
+        "texturePath": "/assets/marbles/mocha/standard/texture.png"
       },
       {
         "assets": [
@@ -5803,7 +6083,8 @@
         },
         "name": "Truffle",
         "rarity": 1,
-        "role": "coach"
+        "role": "coach",
+        "texturePath": "/assets/marbles/truffle/standard/texture.png"
       }
     ],
     "name": "Chocolatiers"
@@ -5830,7 +6111,8 @@
         },
         "name": "Bounce",
         "rarity": 1,
-        "role": "athlete"
+        "role": "athlete",
+        "texturePath": "/assets/marbles/bounce/standard/texture.png"
       },
       {
         "assets": [
@@ -5850,7 +6132,8 @@
         },
         "name": "Hop",
         "rarity": 2,
-        "role": "athlete"
+        "role": "athlete",
+        "texturePath": "/assets/marbles/hop/standard/texture.png"
       },
       {
         "assets": [
@@ -5870,7 +6153,8 @@
         },
         "name": "Jump",
         "rarity": 1,
-        "role": "athlete"
+        "role": "athlete",
+        "texturePath": "/assets/marbles/jump/standard/texture.png"
       },
       {
         "assets": [
@@ -5890,7 +6174,8 @@
         },
         "name": "Leap",
         "rarity": 1,
-        "role": "athlete"
+        "role": "athlete",
+        "texturePath": "/assets/marbles/leap/standard/texture.png"
       },
       {
         "assets": [
@@ -5910,7 +6195,8 @@
         },
         "name": "Skip",
         "rarity": 1,
-        "role": "athlete"
+        "role": "athlete",
+        "texturePath": "/assets/marbles/skip/standard/texture.png"
       },
       {
         "assets": [
@@ -5930,7 +6216,8 @@
         },
         "name": "Tarzan",
         "rarity": 1,
-        "role": "coach"
+        "role": "coach",
+        "texturePath": "/assets/marbles/tarzan/standard/texture.png"
       }
     ],
     "name": "Jungle Jumpers"
@@ -5957,7 +6244,8 @@
         },
         "name": "Candy",
         "rarity": 1,
-        "role": "athlete"
+        "role": "athlete",
+        "texturePath": "/assets/marbles/candy/standard/texture.png"
       },
       {
         "assets": [
@@ -5977,7 +6265,8 @@
         },
         "name": "Gummy",
         "rarity": 1,
-        "role": "coach"
+        "role": "coach",
+        "texturePath": "/assets/marbles/gummy/standard/texture.png"
       },
       {
         "assets": [
@@ -5997,7 +6286,8 @@
         },
         "name": "Mouthful",
         "rarity": 1,
-        "role": "athlete"
+        "role": "athlete",
+        "texturePath": "/assets/marbles/mouthful/standard/texture.png"
       },
       {
         "assets": [
@@ -6017,7 +6307,8 @@
         },
         "name": "Sugar",
         "rarity": 1,
-        "role": "athlete"
+        "role": "athlete",
+        "texturePath": "/assets/marbles/sugar/standard/texture.png"
       },
       {
         "assets": [
@@ -6037,7 +6328,8 @@
         },
         "name": "Sweet",
         "rarity": 1,
-        "role": "athlete"
+        "role": "athlete",
+        "texturePath": "/assets/marbles/sweet/standard/texture.png"
       },
       {
         "assets": [
@@ -6057,7 +6349,8 @@
         },
         "name": "Taffy",
         "rarity": 1,
-        "role": "athlete"
+        "role": "athlete",
+        "texturePath": "/assets/marbles/taffy/standard/texture.png"
       },
       {
         "assets": [
@@ -6077,7 +6370,8 @@
         },
         "name": "Tidbit",
         "rarity": 1,
-        "role": "athlete"
+        "role": "athlete",
+        "texturePath": "/assets/marbles/tidbit/standard/texture.png"
       },
       {
         "assets": [
@@ -6097,7 +6391,8 @@
         },
         "name": "Tongue Twister",
         "rarity": 1,
-        "role": "athlete"
+        "role": "athlete",
+        "texturePath": "/assets/marbles/tongue-twister/standard/texture.png"
       }
     ],
     "name": "Jawbreakers"
@@ -6124,7 +6419,8 @@
         },
         "name": "Cell",
         "rarity": 1,
-        "role": "coach"
+        "role": "coach",
+        "texturePath": "/assets/marbles/cell/standard/texture.png"
       },
       {
         "assets": [
@@ -6144,7 +6440,8 @@
         },
         "name": "Ecto",
         "rarity": 1,
-        "role": "athlete"
+        "role": "athlete",
+        "texturePath": "/assets/marbles/ecto/standard/texture.png"
       },
       {
         "assets": [
@@ -6164,7 +6461,8 @@
         },
         "name": "Fearo",
         "rarity": 1,
-        "role": "athlete"
+        "role": "athlete",
+        "texturePath": "/assets/marbles/fearo/standard/texture.png"
       },
       {
         "assets": [
@@ -6184,7 +6482,8 @@
         },
         "name": "Ghosto",
         "rarity": 1,
-        "role": "athlete"
+        "role": "athlete",
+        "texturePath": "/assets/marbles/ghosto/standard/texture.png"
       },
       {
         "assets": [
@@ -6204,7 +6503,8 @@
         },
         "name": "Gloomo",
         "rarity": 2,
-        "role": "athlete"
+        "role": "athlete",
+        "texturePath": "/assets/marbles/gloomo/standard/texture.png"
       },
       {
         "assets": [
@@ -6224,7 +6524,8 @@
         },
         "name": "Phanto",
         "rarity": 1,
-        "role": "athlete"
+        "role": "athlete",
+        "texturePath": "/assets/marbles/phanto/standard/texture.png"
       }
     ],
     "name": "Team Plasma"
@@ -6251,7 +6552,8 @@
         },
         "name": "Clementin",
         "rarity": 3,
-        "role": "athlete"
+        "role": "athlete",
+        "texturePath": "/assets/marbles/clementin/standard/texture.png"
       },
       {
         "assets": [
@@ -6271,7 +6573,8 @@
         },
         "name": "Kinnowin",
         "rarity": 3,
-        "role": "athlete"
+        "role": "athlete",
+        "texturePath": "/assets/marbles/kinnowin/standard/texture.png"
       },
       {
         "assets": [
@@ -6291,7 +6594,8 @@
         },
         "name": "Mandarin",
         "rarity": 2,
-        "role": "athlete"
+        "role": "athlete",
+        "texturePath": "/assets/marbles/mandarin/standard/texture.png"
       },
       {
         "assets": [
@@ -6311,7 +6615,8 @@
         },
         "name": "Orangin",
         "rarity": 2,
-        "role": "athlete"
+        "role": "athlete",
+        "texturePath": "/assets/marbles/orangin/standard/texture.png"
       },
       {
         "assets": [
@@ -6331,7 +6636,8 @@
         },
         "name": "Rango",
         "rarity": 3,
-        "role": "coach"
+        "role": "coach",
+        "texturePath": "/assets/marbles/rango/standard/texture.png"
       },
       {
         "assets": [
@@ -6351,7 +6657,8 @@
         },
         "name": "Tangerin",
         "rarity": 1,
-        "role": "athlete"
+        "role": "athlete",
+        "texturePath": "/assets/marbles/tangerin/standard/texture.png"
       },
       {
         "assets": [
@@ -6371,7 +6678,8 @@
         },
         "name": "Tarocco",
         "rarity": 1,
-        "role": "athlete"
+        "role": "athlete",
+        "texturePath": "/assets/marbles/tarocco/standard/texture.png"
       }
     ],
     "name": "O'Rangers"
@@ -6398,7 +6706,8 @@
         },
         "name": "Cloudy",
         "rarity": 3,
-        "role": "athlete"
+        "role": "athlete",
+        "texturePath": "/assets/marbles/cloudy/standard/texture.png"
       },
       {
         "assets": [
@@ -6418,7 +6727,8 @@
         },
         "name": "Foggy",
         "rarity": 3,
-        "role": "athlete"
+        "role": "athlete",
+        "texturePath": "/assets/marbles/foggy/standard/texture.png"
       },
       {
         "assets": [
@@ -6438,7 +6748,8 @@
         },
         "name": "Hazy",
         "rarity": 3,
-        "role": "athlete"
+        "role": "athlete",
+        "texturePath": "/assets/marbles/hazy/standard/texture.png"
       },
       {
         "assets": [
@@ -6458,7 +6769,8 @@
         },
         "name": "Misty",
         "rarity": 2,
-        "role": "athlete"
+        "role": "athlete",
+        "texturePath": "/assets/marbles/misty/standard/texture.png"
       },
       {
         "assets": [
@@ -6478,7 +6790,8 @@
         },
         "name": "Murky",
         "rarity": 2,
-        "role": "athlete"
+        "role": "athlete",
+        "texturePath": "/assets/marbles/murky/standard/texture.png"
       },
       {
         "assets": [
@@ -6498,7 +6811,8 @@
         },
         "name": "Shade",
         "rarity": 1,
-        "role": "athlete"
+        "role": "athlete",
+        "texturePath": "/assets/marbles/shade/standard/texture.png"
       },
       {
         "assets": [
@@ -6518,7 +6832,8 @@
         },
         "name": "Smoggy",
         "rarity": 3,
-        "role": "athlete"
+        "role": "athlete",
+        "texturePath": "/assets/marbles/smoggy/standard/texture.png"
       },
       {
         "assets": [
@@ -6538,7 +6853,8 @@
         },
         "name": "Smokey",
         "rarity": 3,
-        "role": "coach"
+        "role": "coach",
+        "texturePath": "/assets/marbles/smokey/standard/texture.png"
       },
       {
         "assets": [
@@ -6558,7 +6874,8 @@
         },
         "name": "Yap",
         "rarity": 1,
-        "role": "athlete"
+        "role": "athlete",
+        "texturePath": "/assets/marbles/yap/standard/texture.png"
       }
     ],
     "name": "Hazers"
@@ -6585,7 +6902,8 @@
         },
         "name": "Crush",
         "rarity": 2,
-        "role": "athlete"
+        "role": "athlete",
+        "texturePath": "/assets/marbles/crush/standard/texture.png"
       },
       {
         "assets": [
@@ -6605,7 +6923,8 @@
         },
         "name": "Dash",
         "rarity": 1,
-        "role": "athlete"
+        "role": "athlete",
+        "texturePath": "/assets/marbles/dash/standard/texture.png"
       },
       {
         "assets": [
@@ -6625,7 +6944,8 @@
         },
         "name": "Frank",
         "rarity": 1,
-        "role": "athlete"
+        "role": "athlete",
+        "texturePath": "/assets/marbles/frank/standard/texture.png"
       },
       {
         "assets": [
@@ -6645,7 +6965,8 @@
         },
         "name": "Shelly",
         "rarity": 1,
-        "role": "athlete"
+        "role": "athlete",
+        "texturePath": "/assets/marbles/shelly/standard/texture.png"
       },
       {
         "assets": [
@@ -6665,7 +6986,8 @@
         },
         "name": "Splint",
         "rarity": 1,
-        "role": "coach"
+        "role": "coach",
+        "texturePath": "/assets/marbles/splint/standard/texture.png"
       },
       {
         "assets": [
@@ -6685,7 +7007,8 @@
         },
         "name": "Squirt",
         "rarity": 1,
-        "role": "athlete"
+        "role": "athlete",
+        "texturePath": "/assets/marbles/squirt/standard/texture.png"
       }
     ],
     "name": "Turtle Sliders"
@@ -6712,7 +7035,8 @@
         },
         "name": "Fairy",
         "rarity": 1,
-        "role": "athlete"
+        "role": "athlete",
+        "texturePath": "/assets/marbles/fairy/standard/texture.png"
       },
       {
         "assets": [
@@ -6732,7 +7056,8 @@
         },
         "name": "Glorby",
         "rarity": 1,
-        "role": "athlete"
+        "role": "athlete",
+        "texturePath": "/assets/marbles/glorby/standard/texture.png"
       },
       {
         "assets": [
@@ -6752,7 +7077,8 @@
         },
         "name": "Glordby",
         "rarity": 1,
-        "role": "athlete"
+        "role": "athlete",
+        "texturePath": "/assets/marbles/glordby/standard/texture.png"
       },
       {
         "assets": [
@@ -6772,7 +7098,8 @@
         },
         "name": "Goldby",
         "rarity": 1,
-        "role": "athlete"
+        "role": "athlete",
+        "texturePath": "/assets/marbles/goldby/standard/texture.png"
       },
       {
         "assets": [
@@ -6792,7 +7119,8 @@
         },
         "name": "Gorby",
         "rarity": 1,
-        "role": "athlete"
+        "role": "athlete",
+        "texturePath": "/assets/marbles/gorby/standard/texture.png"
       },
       {
         "assets": [
@@ -6812,7 +7140,8 @@
         },
         "name": "Orby",
         "rarity": 1,
-        "role": "athlete"
+        "role": "athlete",
+        "texturePath": "/assets/marbles/orby/standard/texture.png"
       },
       {
         "assets": [
@@ -6832,7 +7161,8 @@
         },
         "name": "Pixie",
         "rarity": 1,
-        "role": "athlete"
+        "role": "athlete",
+        "texturePath": "/assets/marbles/pixie/standard/texture.png"
       },
       {
         "assets": [
@@ -6852,7 +7182,8 @@
         },
         "name": "Spirit",
         "rarity": 1,
-        "role": "athlete"
+        "role": "athlete",
+        "texturePath": "/assets/marbles/spirit/standard/texture.png"
       },
       {
         "assets": [
@@ -6872,7 +7203,8 @@
         },
         "name": "Willo",
         "rarity": 1,
-        "role": "athlete"
+        "role": "athlete",
+        "texturePath": "/assets/marbles/willo/standard/texture.png"
       }
     ],
     "name": "Golden Orbs"
@@ -6899,7 +7231,8 @@
         },
         "name": "Frankie",
         "rarity": 1,
-        "role": "athlete"
+        "role": "athlete",
+        "texturePath": "/assets/marbles/frankie/standard/texture.png"
       },
       {
         "assets": [
@@ -6919,7 +7252,8 @@
         },
         "name": "Henrietta",
         "rarity": 1,
-        "role": "athlete"
+        "role": "athlete",
+        "texturePath": "/assets/marbles/henrietta/standard/texture.png"
       }
     ],
     "name": "The Freshers"
@@ -6946,7 +7280,8 @@
         },
         "name": "Giallo",
         "rarity": 1,
-        "role": "athlete"
+        "role": "athlete",
+        "texturePath": "/assets/marbles/giallo/standard/texture.png"
       },
       {
         "assets": [
@@ -6966,7 +7301,8 @@
         },
         "name": "Mellow",
         "rarity": 3,
-        "role": "coach"
+        "role": "coach",
+        "texturePath": "/assets/marbles/mellow/standard/texture.png"
       },
       {
         "assets": [
@@ -6986,7 +7322,8 @@
         },
         "name": "Yellah",
         "rarity": 2,
-        "role": "athlete"
+        "role": "athlete",
+        "texturePath": "/assets/marbles/yellah/standard/texture.png"
       },
       {
         "assets": [
@@ -7006,7 +7343,8 @@
         },
         "name": "Yeller",
         "rarity": 2,
-        "role": "athlete"
+        "role": "athlete",
+        "texturePath": "/assets/marbles/yeller/standard/texture.png"
       },
       {
         "assets": [
@@ -7026,7 +7364,8 @@
         },
         "name": "Yelley",
         "rarity": 1,
-        "role": "athlete"
+        "role": "athlete",
+        "texturePath": "/assets/marbles/yelley/standard/texture.png"
       },
       {
         "assets": [
@@ -7046,7 +7385,8 @@
         },
         "name": "Yellim",
         "rarity": 1,
-        "role": "athlete"
+        "role": "athlete",
+        "texturePath": "/assets/marbles/yellim/standard/texture.png"
       },
       {
         "assets": [
@@ -7066,7 +7406,8 @@
         },
         "name": "Yellow",
         "rarity": 3,
-        "role": "athlete"
+        "role": "athlete",
+        "texturePath": "/assets/marbles/yellow/standard/texture.png"
       },
       {
         "assets": [
@@ -7086,7 +7427,8 @@
         },
         "name": "Yellup",
         "rarity": 2,
-        "role": "athlete"
+        "role": "athlete",
+        "texturePath": "/assets/marbles/yellup/standard/texture.png"
       }
     ],
     "name": "Mellow Yellow"
@@ -7113,7 +7455,8 @@
         },
         "name": "Gleam",
         "rarity": 2,
-        "role": "coach"
+        "role": "coach",
+        "texturePath": "/assets/marbles/gleam/standard/texture.png"
       },
       {
         "assets": [
@@ -7133,7 +7476,8 @@
         },
         "name": "Glimmer",
         "rarity": 1,
-        "role": "athlete"
+        "role": "athlete",
+        "texturePath": "/assets/marbles/glimmer/standard/texture.png"
       },
       {
         "assets": [
@@ -7153,7 +7497,8 @@
         },
         "name": "Sheen",
         "rarity": 1,
-        "role": "athlete"
+        "role": "athlete",
+        "texturePath": "/assets/marbles/sheen/standard/texture.png"
       },
       {
         "assets": [
@@ -7173,7 +7518,8 @@
         },
         "name": "Shimmer",
         "rarity": 2,
-        "role": "athlete"
+        "role": "athlete",
+        "texturePath": "/assets/marbles/shimmer/standard/texture.png"
       },
       {
         "assets": [
@@ -7193,7 +7539,8 @@
         },
         "name": "Shiny",
         "rarity": 1,
-        "role": "athlete"
+        "role": "athlete",
+        "texturePath": "/assets/marbles/shiny/standard/texture.png"
       },
       {
         "assets": [
@@ -7213,7 +7560,8 @@
         },
         "name": "Sparkle",
         "rarity": 1,
-        "role": "athlete"
+        "role": "athlete",
+        "texturePath": "/assets/marbles/sparkle/standard/texture.png"
       },
       {
         "assets": [
@@ -7233,7 +7581,8 @@
         },
         "name": "Sterling",
         "rarity": 2,
-        "role": "athlete"
+        "role": "athlete",
+        "texturePath": "/assets/marbles/sterling/standard/texture.png"
       }
     ],
     "name": "Shining Swarm"
@@ -7260,7 +7609,8 @@
         },
         "name": "Hive",
         "rarity": 1,
-        "role": "athlete"
+        "role": "athlete",
+        "texturePath": "/assets/marbles/hive/standard/texture.png"
       },
       {
         "assets": [
@@ -7280,7 +7630,8 @@
         },
         "name": "Stinger",
         "rarity": 2,
-        "role": "athlete"
+        "role": "athlete",
+        "texturePath": "/assets/marbles/stinger/standard/texture.png"
       },
       {
         "assets": [
@@ -7300,7 +7651,8 @@
         },
         "name": "Swarm",
         "rarity": 1,
-        "role": "coach"
+        "role": "coach",
+        "texturePath": "/assets/marbles/swarm/standard/texture.png"
       },
       {
         "assets": [
@@ -7320,7 +7672,8 @@
         },
         "name": "Vespa",
         "rarity": 1,
-        "role": "athlete"
+        "role": "athlete",
+        "texturePath": "/assets/marbles/vespa/standard/texture.png"
       },
       {
         "assets": [
@@ -7340,7 +7693,8 @@
         },
         "name": "Wasp",
         "rarity": 1,
-        "role": "athlete"
+        "role": "athlete",
+        "texturePath": "/assets/marbles/wasp/standard/texture.png"
       },
       {
         "assets": [
@@ -7360,7 +7714,8 @@
         },
         "name": "Yellowjacket",
         "rarity": 1,
-        "role": "athlete"
+        "role": "athlete",
+        "texturePath": "/assets/marbles/yellowjacket/standard/texture.png"
       }
     ],
     "name": "Hornets"
@@ -7387,7 +7742,8 @@
         },
         "name": "Ivy",
         "rarity": 1,
-        "role": "athlete"
+        "role": "athlete",
+        "texturePath": "/assets/marbles/ivy/standard/texture.png"
       },
       {
         "assets": [
@@ -7407,7 +7763,8 @@
         },
         "name": "Leaf",
         "rarity": 1,
-        "role": "athlete"
+        "role": "athlete",
+        "texturePath": "/assets/marbles/leaf/standard/texture.png"
       },
       {
         "assets": [
@@ -7427,7 +7784,8 @@
         },
         "name": "Stem",
         "rarity": 1,
-        "role": "athlete"
+        "role": "athlete",
+        "texturePath": "/assets/marbles/stem/standard/texture.png"
       },
       {
         "assets": [
@@ -7447,7 +7805,8 @@
         },
         "name": "Trunk",
         "rarity": 1,
-        "role": "athlete"
+        "role": "athlete",
+        "texturePath": "/assets/marbles/trunk/standard/texture.png"
       },
       {
         "assets": [
@@ -7467,7 +7826,8 @@
         },
         "name": "Vine",
         "rarity": 1,
-        "role": "athlete"
+        "role": "athlete",
+        "texturePath": "/assets/marbles/vine/standard/texture.png"
       }
     ],
     "name": "Noxious Ivy"
@@ -7494,7 +7854,8 @@
         },
         "name": "Lantana",
         "rarity": 1,
-        "role": "athlete"
+        "role": "athlete",
+        "texturePath": "/assets/marbles/lantana/standard/texture.png"
       },
       {
         "assets": [
@@ -7514,7 +7875,8 @@
         },
         "name": "Madeira",
         "rarity": 1,
-        "role": "athlete"
+        "role": "athlete",
+        "texturePath": "/assets/marbles/madeira/standard/texture.png"
       },
       {
         "assets": [
@@ -7534,7 +7896,8 @@
         },
         "name": "Salvia",
         "rarity": 1,
-        "role": "athlete"
+        "role": "athlete",
+        "texturePath": "/assets/marbles/salvia/standard/texture.png"
       },
       {
         "assets": [
@@ -7554,7 +7917,8 @@
         },
         "name": "Vivid",
         "rarity": 1,
-        "role": "athlete"
+        "role": "athlete",
+        "texturePath": "/assets/marbles/vivid/standard/texture.png"
       }
     ],
     "name": "Valiant Violets"
@@ -7581,7 +7945,8 @@
         },
         "name": "M-Shakes",
         "rarity": 1,
-        "role": "athlete"
+        "role": "athlete",
+        "texturePath": "/assets/marbles/m-shakes/standard/texture.png"
       }
     ],
     "name": "Dairy Dash"
@@ -7608,7 +7973,8 @@
         },
         "name": "Memo",
         "rarity": 1,
-        "role": "athlete"
+        "role": "athlete",
+        "texturePath": "/assets/marbles/memo/standard/texture.png"
       },
       {
         "assets": [
@@ -7628,7 +7994,8 @@
         },
         "name": "Mimo",
         "rarity": 2,
-        "role": "athlete"
+        "role": "athlete",
+        "texturePath": "/assets/marbles/mimo/standard/texture.png"
       },
       {
         "assets": [
@@ -7648,7 +8015,8 @@
         },
         "name": "Mo",
         "rarity": 2,
-        "role": "athlete"
+        "role": "athlete",
+        "texturePath": "/assets/marbles/mo/standard/texture.png"
       },
       {
         "assets": [
@@ -7668,7 +8036,8 @@
         },
         "name": "Momo",
         "rarity": 3,
-        "role": "athlete"
+        "role": "athlete",
+        "texturePath": "/assets/marbles/momo/standard/texture.png"
       },
       {
         "assets": [
@@ -7688,7 +8057,8 @@
         },
         "name": "Momomo",
         "rarity": 2,
-        "role": "athlete"
+        "role": "athlete",
+        "texturePath": "/assets/marbles/momomo/standard/texture.png"
       },
       {
         "assets": [
@@ -7708,7 +8078,8 @@
         },
         "name": "Momomomo",
         "rarity": 2,
-        "role": "athlete"
+        "role": "athlete",
+        "texturePath": "/assets/marbles/momomomo/standard/texture.png"
       },
       {
         "assets": [
@@ -7728,7 +8099,8 @@
         },
         "name": "Momomomomo",
         "rarity": 2,
-        "role": "coach"
+        "role": "coach",
+        "texturePath": "/assets/marbles/momomomomo/standard/texture.png"
       }
     ],
     "name": "Team Momo"
@@ -7755,7 +8127,8 @@
         },
         "name": "Micky",
         "rarity": 1,
-        "role": "athlete"
+        "role": "athlete",
+        "texturePath": "/assets/marbles/micky/standard/texture.png"
       },
       {
         "assets": [
@@ -7775,7 +8148,8 @@
         },
         "name": "Mikey",
         "rarity": 1,
-        "role": "athlete"
+        "role": "athlete",
+        "texturePath": "/assets/marbles/mikey/standard/texture.png"
       }
     ],
     "name": "Milky Madness"
@@ -7802,7 +8176,8 @@
         },
         "name": "Minty Drizzel",
         "rarity": 2,
-        "role": "athlete"
+        "role": "athlete",
+        "texturePath": "/assets/marbles/minty-drizzel/standard/texture.png"
       },
       {
         "assets": [
@@ -7822,7 +8197,8 @@
         },
         "name": "Minty Flav",
         "rarity": 2,
-        "role": "athlete"
+        "role": "athlete",
+        "texturePath": "/assets/marbles/minty-flav/standard/texture.png"
       },
       {
         "assets": [
@@ -7842,7 +8218,8 @@
         },
         "name": "Minty Fresh",
         "rarity": 2,
-        "role": "athlete"
+        "role": "athlete",
+        "texturePath": "/assets/marbles/minty-fresh/standard/texture.png"
       },
       {
         "assets": [
@@ -7862,7 +8239,8 @@
         },
         "name": "Minty Hint",
         "rarity": 2,
-        "role": "coach"
+        "role": "coach",
+        "texturePath": "/assets/marbles/minty-hint/standard/texture.png"
       },
       {
         "assets": [
@@ -7882,7 +8260,8 @@
         },
         "name": "Minty Mint",
         "rarity": 1,
-        "role": "athlete"
+        "role": "athlete",
+        "texturePath": "/assets/marbles/minty-mint/standard/texture.png"
       },
       {
         "assets": [
@@ -7902,7 +8281,8 @@
         },
         "name": "Minty Swirl",
         "rarity": 2,
-        "role": "athlete"
+        "role": "athlete",
+        "texturePath": "/assets/marbles/minty-swirl/standard/texture.png"
       }
     ],
     "name": "Minty Maniacs"
@@ -7929,7 +8309,8 @@
         },
         "name": "Nix",
         "rarity": 1,
-        "role": "athlete"
+        "role": "athlete",
+        "texturePath": "/assets/marbles/nix/standard/texture.png"
       },
       {
         "assets": [
@@ -7949,7 +8330,8 @@
         },
         "name": "Nixy",
         "rarity": 1,
-        "role": "athlete"
+        "role": "athlete",
+        "texturePath": "/assets/marbles/nixy/standard/texture.png"
       },
       {
         "assets": [
@@ -7969,7 +8351,8 @@
         },
         "name": "Phoeny",
         "rarity": 1,
-        "role": "athlete"
+        "role": "athlete",
+        "texturePath": "/assets/marbles/phoeny/standard/texture.png"
       }
     ],
     "name": "Phoenix"
@@ -7996,7 +8379,8 @@
         },
         "name": "Palette",
         "rarity": 1,
-        "role": "coach"
+        "role": "coach",
+        "texturePath": "/assets/marbles/palette/standard/texture.png"
       }
     ],
     "name": "Primary"
@@ -8023,7 +8407,8 @@
         },
         "name": "Phee",
         "rarity": 1,
-        "role": "athlete"
+        "role": "athlete",
+        "texturePath": "/assets/marbles/phee/standard/texture.png"
       }
     ],
     "name": "Team Phoenix"
@@ -8050,7 +8435,8 @@
         },
         "name": "Pierce",
         "rarity": 1,
-        "role": "athlete"
+        "role": "athlete",
+        "texturePath": "/assets/marbles/pierce/standard/texture.png"
       }
     ],
     "name": "Team Purity"
@@ -8077,7 +8463,8 @@
         },
         "name": "Pinky Panther",
         "rarity": 2,
-        "role": "athlete"
+        "role": "athlete",
+        "texturePath": "/assets/marbles/pinky-panther/standard/texture.png"
       },
       {
         "assets": [
@@ -8097,7 +8484,8 @@
         },
         "name": "Pinky Promise",
         "rarity": 3,
-        "role": "athlete"
+        "role": "athlete",
+        "texturePath": "/assets/marbles/pinky-promise/standard/texture.png"
       },
       {
         "assets": [
@@ -8117,7 +8505,8 @@
         },
         "name": "Pinky Ring",
         "rarity": 1,
-        "role": "athlete"
+        "role": "athlete",
+        "texturePath": "/assets/marbles/pinky-ring/standard/texture.png"
       },
       {
         "assets": [
@@ -8137,7 +8526,8 @@
         },
         "name": "Pinky Rosa",
         "rarity": 2,
-        "role": "athlete"
+        "role": "athlete",
+        "texturePath": "/assets/marbles/pinky-rosa/standard/texture.png"
       },
       {
         "assets": [
@@ -8157,7 +8547,8 @@
         },
         "name": "Pinky Toe",
         "rarity": 2,
-        "role": "athlete"
+        "role": "athlete",
+        "texturePath": "/assets/marbles/pinky-toe/standard/texture.png"
       },
       {
         "assets": [
@@ -8177,7 +8568,8 @@
         },
         "name": "Pinky Winky",
         "rarity": 2,
-        "role": "athlete"
+        "role": "athlete",
+        "texturePath": "/assets/marbles/pinky-winky/standard/texture.png"
       },
       {
         "assets": [
@@ -8197,7 +8589,8 @@
         },
         "name": "Pinkydink",
         "rarity": 1,
-        "role": "athlete"
+        "role": "athlete",
+        "texturePath": "/assets/marbles/pinkydink/standard/texture.png"
       },
       {
         "assets": [
@@ -8217,7 +8610,8 @@
         },
         "name": "Roldo",
         "rarity": 1,
-        "role": "athlete"
+        "role": "athlete",
+        "texturePath": "/assets/marbles/roldo/standard/texture.png"
       }
     ],
     "name": "Pinkies"
@@ -8244,7 +8638,8 @@
         },
         "name": "Quickly",
         "rarity": 3,
-        "role": "coach"
+        "role": "coach",
+        "texturePath": "/assets/marbles/quickly/standard/texture.png"
       },
       {
         "assets": [
@@ -8264,7 +8659,8 @@
         },
         "name": "Rapidly",
         "rarity": 3,
-        "role": "athlete"
+        "role": "athlete",
+        "texturePath": "/assets/marbles/rapidly/standard/texture.png"
       },
       {
         "assets": [
@@ -8284,7 +8680,8 @@
         },
         "name": "Savvy",
         "rarity": 1,
-        "role": "athlete"
+        "role": "athlete",
+        "texturePath": "/assets/marbles/savvy/standard/texture.png"
       },
       {
         "assets": [
@@ -8304,7 +8701,8 @@
         },
         "name": "Speedy",
         "rarity": 3,
-        "role": "athlete"
+        "role": "athlete",
+        "texturePath": "/assets/marbles/speedy/standard/texture.png"
       },
       {
         "assets": [
@@ -8324,7 +8722,8 @@
         },
         "name": "Swifty",
         "rarity": 3,
-        "role": "athlete"
+        "role": "athlete",
+        "texturePath": "/assets/marbles/swifty/standard/texture.png"
       },
       {
         "assets": [
@@ -8344,7 +8743,8 @@
         },
         "name": "Velocity",
         "rarity": 2,
-        "role": "athlete"
+        "role": "athlete",
+        "texturePath": "/assets/marbles/velocity/standard/texture.png"
       },
       {
         "assets": [
@@ -8364,7 +8764,8 @@
         },
         "name": "Whizzy",
         "rarity": 2,
-        "role": "athlete"
+        "role": "athlete",
+        "texturePath": "/assets/marbles/whizzy/standard/texture.png"
       }
     ],
     "name": "Savage Speeders"
@@ -8391,7 +8792,8 @@
         },
         "name": "Rojo Cero",
         "rarity": 1,
-        "role": "coach"
+        "role": "coach",
+        "texturePath": "/assets/marbles/rojo-cero/standard/texture.png"
       },
       {
         "assets": [
@@ -8411,7 +8813,8 @@
         },
         "name": "Rojo Cinco",
         "rarity": 1,
-        "role": "athlete"
+        "role": "athlete",
+        "texturePath": "/assets/marbles/rojo-cinco/standard/texture.png"
       },
       {
         "assets": [
@@ -8431,7 +8834,8 @@
         },
         "name": "Rojo Cuatro",
         "rarity": 2,
-        "role": "athlete"
+        "role": "athlete",
+        "texturePath": "/assets/marbles/rojo-cuatro/standard/texture.png"
       },
       {
         "assets": [
@@ -8451,7 +8855,8 @@
         },
         "name": "Rojo Dos",
         "rarity": 2,
-        "role": "athlete"
+        "role": "athlete",
+        "texturePath": "/assets/marbles/rojo-dos/standard/texture.png"
       },
       {
         "assets": [
@@ -8471,7 +8876,8 @@
         },
         "name": "Rojo Macho",
         "rarity": 1,
-        "role": "athlete"
+        "role": "athlete",
+        "texturePath": "/assets/marbles/rojo-macho/standard/texture.png"
       },
       {
         "assets": [
@@ -8491,7 +8897,8 @@
         },
         "name": "Rojo Oro",
         "rarity": 3,
-        "role": "coach"
+        "role": "coach",
+        "texturePath": "/assets/marbles/rojo-oro/standard/texture.png"
       },
       {
         "assets": [
@@ -8511,7 +8918,8 @@
         },
         "name": "Rojo Tres",
         "rarity": 2,
-        "role": "athlete"
+        "role": "athlete",
+        "texturePath": "/assets/marbles/rojo-tres/standard/texture.png"
       },
       {
         "assets": [
@@ -8531,7 +8939,8 @@
         },
         "name": "Rojo Uno",
         "rarity": 2,
-        "role": "athlete"
+        "role": "athlete",
+        "texturePath": "/assets/marbles/rojo-uno/standard/texture.png"
       }
     ],
     "name": "Rojo Rollers"
@@ -8558,7 +8967,8 @@
         },
         "name": "Rolla",
         "rarity": 1,
-        "role": "athlete"
+        "role": "athlete",
+        "texturePath": "/assets/marbles/rolla/standard/texture.png"
       },
       {
         "assets": [
@@ -8578,7 +8988,8 @@
         },
         "name": "Rollew",
         "rarity": 1,
-        "role": "athlete"
+        "role": "athlete",
+        "texturePath": "/assets/marbles/rollew/standard/texture.png"
       },
       {
         "assets": [
@@ -8598,7 +9009,8 @@
         },
         "name": "Rollo",
         "rarity": 1,
-        "role": "athlete"
+        "role": "athlete",
+        "texturePath": "/assets/marbles/rollo/standard/texture.png"
       },
       {
         "assets": [
@@ -8618,7 +9030,8 @@
         },
         "name": "Rolly",
         "rarity": 1,
-        "role": "athlete"
+        "role": "athlete",
+        "texturePath": "/assets/marbles/rolly/standard/texture.png"
       }
     ],
     "name": "Ruby Rollers"
@@ -8645,7 +9058,8 @@
         },
         "name": "Shimmy",
         "rarity": 1,
-        "role": "athlete"
+        "role": "athlete",
+        "texturePath": "/assets/marbles/shimmy/standard/texture.png"
       }
     ],
     "name": "Semi-Skimmers"
