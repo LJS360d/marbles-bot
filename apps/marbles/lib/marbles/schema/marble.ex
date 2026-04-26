@@ -12,6 +12,7 @@ defmodule Marbles.Schema.Marble do
           role: role() | nil,
           rarity: integer() | nil,
           base_stats: map(),
+          texture_path: String.t() | nil,
           team_id: Ecto.UUID.t() | nil,
           team: Ecto.Association.NotLoaded.t() | map(),
           packs: Ecto.Association.NotLoaded.t() | [map()],
@@ -26,6 +27,7 @@ defmodule Marbles.Schema.Marble do
     field :edition, :string, default: "standard"
     field :role, Ecto.Enum, values: [:athlete, :coach, :support, :manager, :rally]
     field :rarity, :integer
+    field :texture_path, :string
 
     # Stats like %{"speed" => 50, "weight" => 70, "stamina" => 40}
     field :base_stats, :map, default: %{}
@@ -40,7 +42,7 @@ defmodule Marbles.Schema.Marble do
 
   def changeset(marble, attrs) do
     marble
-    |> cast(attrs, [:name, :edition, :role, :rarity, :base_stats, :team_id])
+    |> cast(attrs, [:name, :edition, :role, :rarity, :base_stats, :team_id, :texture_path])
     |> validate_required([:name, :role, :rarity, :base_stats])
   end
 end

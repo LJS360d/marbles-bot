@@ -38,6 +38,7 @@ defmodule Marbles.Repo.Migrations.CreateTables do
       add :rarity, :integer, null: false
       add :base_stats, :map, default: %{}
       add :team_id, references(:teams, type: :binary_id, on_delete: :nilify_all)
+      add :texture_path, :string
       timestamps()
     end
 

@@ -18,7 +18,7 @@ defmodule MarblesWeb do
   """
 
   def static_paths,
-    do: ~w(assets fonts images uploads favicon favicon.ico site.webmanifest robots.txt)
+    do: ~w(assets fonts images uploads favicon favicon.ico site.webmanifest robots.txt 3d)
 
   def router do
     quote do

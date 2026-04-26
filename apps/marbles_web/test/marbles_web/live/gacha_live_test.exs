@@ -8,8 +8,10 @@ defmodule MarblesWeb.GachaLiveTest do
 
   setup %{conn: conn} do
     team = create_team()
-    marble = create_marble(team, 1, "Live")
-    pack = create_pack([marble], 125)
+    m1 = create_marble(team, 1, "Live")
+    m2 = create_marble(team, 2, "Live")
+    m3 = create_marble(team, 3, "Live")
+    pack = create_pack([m1, m2, m3], 125)
     user = create_user("gacha-live-user")
 
     %{conn: conn, pack: pack, user: user}

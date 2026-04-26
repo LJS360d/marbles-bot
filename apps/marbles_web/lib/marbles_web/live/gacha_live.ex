@@ -245,7 +245,7 @@ defmodule MarblesWeb.GachaLive do
               </p>
             </div>
 
-            <div class="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+            <div class="grid gap-5 grid-cols-5">
               <article
                 :for={entry <- @latest_result.marbles}
                 id={"recap-marble-#{entry.marble.id}"}
@@ -495,12 +495,15 @@ defmodule MarblesWeb.GachaLive do
       "pack_name" => result.pack.name,
       "results" =>
         Enum.map(result.marbles, fn entry ->
+          texture_url = Assets.url_for_path(entry.marble.texture_path)
+
           %{
             "marble_id" => entry.marble.id,
             "name" => entry.marble.name,
             "rarity" => entry.marble.rarity,
             "duplicate" => entry.duplicate?,
-            "dust" => entry.dust
+            "dust" => entry.dust,
+            "texture_url" => texture_url
           }
         end)
     }

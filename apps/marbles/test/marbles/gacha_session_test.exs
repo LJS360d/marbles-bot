@@ -8,8 +8,9 @@ defmodule Marbles.GachaSessionTest do
     user = create_user("gacha-session-user")
     team = create_team()
     marble_one = create_marble(team, 1, "Starter")
+    marble_two = create_marble(team, 2, "Mid")
     marble_three = create_marble(team, 3, "Legend")
-    pack = create_pack([marble_one, marble_three], 100)
+    pack = create_pack([marble_one, marble_two, marble_three], 100)
 
     %{user: user, pack: pack, marble_one: marble_one, marble_three: marble_three}
   end
