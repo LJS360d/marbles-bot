@@ -61,8 +61,6 @@ RUN mkdir -p /app/data \
   && chown -R nobody:nogroup /app \
   && chmod +x /usr/local/bin/docker-entrypoint.sh
 
-USER nobody:nogroup
-
 ENV PHX_SERVER=true
 ENV ECTO_EDITOR=
 

@@ -99,12 +99,24 @@ if assets_base_url not in [nil, ""] do
 end
 
 if config_env() == :prod do
+  trim_env = fn key ->
+    case System.get_env(key) do
+      v when is_binary(v) -> String.trim(v)
+      _ -> ""
+    end
+  end
+
   database_path =
-    System.get_env("DATABASE_PATH") ||
-      raise """
-      environment variable DATABASE_PATH is required in production (SQLite file path).
-      Example: /app/data/marbles_prod.db — mount a Railway volume on /app/data and point here.
-      """
+    case trim_env.("DATABASE_PATH") do
+      "" ->
+        case trim_env.("RAILWAY_VOLUME_MOUNT_PATH") do
+          "" -> "/app/data/prod.db"
+          mount -> Path.join(mount, "prod.db")
+        end
+
+      path ->
+        path
+    end
 
   config :marbles, Marbles.Repo,
     database: database_path,
