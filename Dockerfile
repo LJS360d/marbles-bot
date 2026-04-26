@@ -1,4 +1,4 @@
-# Build stage: Elixir + Mix (hexpm tags: https://hub.docker.com/r/hexpm/elixir/tags — use -slim for smaller builds)
+# Build stage
 ARG ELIXIR_VERSION=1.19.5
 ARG OTP_VERSION=28.4
 ARG BUILDER_IMAGE="hexpm/elixir:${ELIXIR_VERSION}-erlang-${OTP_VERSION}-debian-bookworm-20260421-slim"
