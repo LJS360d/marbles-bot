@@ -1,12 +1,12 @@
 import * as THREE from "three";
-import { clone } from "three/examples/jsm/utils/SkeletonUtils.js";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
 
 const GACHA_SKIP_CONFIRM_KEY = "gachaSkipConfirm";
 
 const TRACK_GLB_URL = "/3d/tracks/savage_speedway_s1.glb";
 
-const MARBLE_HD_GLB_URL = "/3d/marble-high.glb";
+/** Textured sphere radius (matches dev sandbox style: native sphere + map). */
+const GACHA_MARBLE_RADIUS = 0.52;
 
 const rarityColor = (rarity) => {
   if (rarity >= 3) return 0xffc857;
@@ -43,6 +43,24 @@ const clearMaterialTextureRefs = (m) => {
       /* ignore */
     }
   }
+};
+
+const trackSpawnTopLeftWorld = (trackRoot, radius) => {
+  trackRoot.updateMatrixWorld(true);
+  const box = new THREE.Box3().setFromObject(trackRoot);
+  const margin = radius * 2.2;
+  const x = box.min.x + margin;
+  const z = box.max.z - margin;
+  const y = box.max.y + radius * 6 + 0.08;
+  return { x, y, z };
+};
+
+const trackRevealRestPoint = (trackRoot, radius) => {
+  trackRoot.updateMatrixWorld(true);
+  const box = new THREE.Box3().setFromObject(trackRoot);
+  const c = box.getCenter(new THREE.Vector3());
+  const y = Math.max(-0.35, box.min.y + radius * 2.2);
+  return new THREE.Vector3(c.x, y, c.z);
 };
 
 const GachaPage = {
@@ -82,8 +100,15 @@ const GachaCinematic = {
     this.stage = "idle";
     this.preloadGen = 0;
     this.textureCache = new Map();
-    this.marbleTemplateRoot = null;
+    this.revealPaused = false;
+    this.revealOverlayEl = null;
     this.resizeHandler = () => this.resizeRenderer();
+    this._onRevealAdvance = (e) => {
+      if (this.stage !== "reveal" || !this.revealPaused) return;
+      e.preventDefault();
+      e.stopPropagation();
+      this.advanceRevealOnClick();
+    };
     this.introActive = false;
     this.introSegment = null;
     this.introStartedAt = 0;
@@ -105,6 +130,8 @@ const GachaCinematic = {
     this.textureLoader.setCrossOrigin("anonymous");
 
     this.setupScene();
+    this.ensureRevealStyles();
+    this.el.addEventListener("click", this._onRevealAdvance);
     window.addEventListener("resize", this.resizeHandler);
 
     this.handleEvent("gacha_animation_start", (payload) => {
@@ -119,25 +146,65 @@ const GachaCinematic = {
   destroyed() {
     this.clearTimers();
     this.preloadGen += 1;
+    this.disposeCinematicResources();
+    window.removeEventListener("resize", this.resizeHandler);
+    this.el.removeEventListener("click", this._onRevealAdvance);
+  },
+
+  disposeCinematicResources() {
     this.introActive = false;
     this.introSegment = null;
     this.marbleMotion = null;
-    if (this.animationFrame) cancelAnimationFrame(this.animationFrame);
-
-    window.removeEventListener("resize", this.resizeHandler);
-
+    this.revealPaused = false;
+    if (this.animationFrame) {
+      cancelAnimationFrame(this.animationFrame);
+      this.animationFrame = null;
+    }
+    if (this.marbleRoot && this.scene) {
+      this.disposeObject3D(this.marbleRoot, { keepTextures: true });
+    }
+    this.marbleRoot = null;
+    if (this.trackRoot && this.scene) {
+      this.disposeObject3D(this.trackRoot);
+    }
+    this.trackRoot = null;
+    this.disposeTextureCache();
+    this.hideRevealOverlay(true);
+    this.removeRevealStyles();
+    this.hideLoadingOverlay(true);
+    this.disposeSceneRemainder();
     if (this.renderer) {
       this.renderer.dispose();
       if (this.renderer.domElement.parentNode === this.el) {
         this.el.removeChild(this.renderer.domElement);
       }
+      this.renderer = null;
     }
+    this.scene = null;
+    this.camera = null;
+    this.webglReady = false;
+  },
 
-    this.disposeObject3D(this.marbleRoot, { keepTextures: true });
-    this.disposeObject3D(this.trackRoot);
-    this.disposeTextureCache();
-    this.disposeMarbleTemplate();
-    this.hideLoadingOverlay(true);
+  removeRevealStyles() {
+    const st = this.el.querySelector("[data-gacha-reveal-styles]");
+    if (st) st.remove();
+  },
+
+  disposeSceneRemainder() {
+    if (!this.scene) return;
+    this.scene.traverse((obj) => {
+      if (obj.geometry) {
+        obj.geometry.dispose();
+      }
+      if (obj.material) {
+        const mats = Array.isArray(obj.material) ? obj.material : [obj.material];
+        mats.forEach((m) => {
+          if (m && m.map) m.map.dispose();
+          m?.dispose?.();
+        });
+      }
+    });
+    this.scene.clear();
   },
 
   ensureLoadingOverlay() {
@@ -182,24 +249,126 @@ const GachaCinematic = {
     this.textureCache.clear();
   },
 
-  disposeMarbleTemplate() {
-    if (!this.marbleTemplateRoot) return;
-    this.marbleTemplateRoot.traverse((child) => {
-      if (child.isMesh) {
-        child.geometry?.dispose?.();
-        const mat = child.material;
-        if (Array.isArray(mat)) {
-          mat.forEach((m) => {
-            m.map?.dispose?.();
-            m?.dispose?.();
-          });
-        } else {
-          mat.map?.dispose?.();
-          mat?.dispose?.();
-        }
+  ensureRevealStyles() {
+    if (this.el.querySelector("[data-gacha-reveal-styles]")) return;
+    const style = document.createElement("style");
+    style.dataset.gachaRevealStyles = "";
+    style.textContent = `
+      @keyframes gacha-reveal-pop {
+        0% { opacity: 0; transform: scale(0.82) translateY(12px); filter: blur(10px); }
+        55% { opacity: 1; transform: scale(1.05) translateY(0); filter: blur(0); }
+        100% { opacity: 1; transform: scale(1) translateY(0); filter: blur(0); }
       }
+      @keyframes gacha-reveal-glow {
+        0%, 100% { text-shadow: 0 0 8px rgba(255,255,255,0.35), 0 0 24px rgba(99,102,241,0.45); }
+        50% { text-shadow: 0 0 16px rgba(255,255,255,0.55), 0 0 40px rgba(99,102,241,0.65); }
+      }
+      @keyframes gacha-reveal-shimmer {
+        0% { transform: translateX(-100%); opacity: 0; }
+        20% { opacity: 0.9; }
+        100% { transform: translateX(200%); opacity: 0; }
+      }
+    `;
+    this.el.appendChild(style);
+  },
+
+  ensureRevealOverlay() {
+    if (this.revealOverlayEl) return;
+    const wrap = document.createElement("div");
+    wrap.dataset.gachaRevealOverlay = "";
+    wrap.className =
+      "pointer-events-none absolute inset-0 z-20 flex flex-col items-center justify-center gap-3 p-6 opacity-0 transition-opacity duration-500 bg-transparent";
+    wrap.innerHTML = `
+      <div class="relative max-w-lg text-center">
+        <div
+          class="pointer-events-none absolute inset-x-0 top-1/2 h-px -translate-y-6 overflow-hidden rounded-full opacity-70"
+          aria-hidden="true"
+        >
+          <div
+            data-gacha-reveal-shimmer
+            class="h-full w-1/3 bg-gradient-to-r from-transparent via-white/80 to-transparent"
+            style="animation: gacha-reveal-shimmer 2.2s ease-in-out infinite;"
+          ></div>
+        </div>
+        <p
+          data-gacha-reveal-name
+          class="relative text-3xl font-bold tracking-tight text-white sm:text-4xl"
+          style="animation: gacha-reveal-pop 0.65s cubic-bezier(0.22, 1, 0.36, 1) both, gacha-reveal-glow 2.4s ease-in-out infinite;"
+        ></p>
+        <p
+          data-gacha-reveal-rarity
+          class="relative mt-2 text-lg font-semibold tracking-wide sm:text-xl"
+        ></p>
+      </div>
+    `;
+    this.el.appendChild(wrap);
+    this.revealOverlayEl = wrap;
+    this.revealNameEl = wrap.querySelector("[data-gacha-reveal-name]");
+    this.revealRarityEl = wrap.querySelector("[data-gacha-reveal-rarity]");
+  },
+
+  hideRevealOverlay(forceRemove = false) {
+    this.revealPaused = false;
+    if (!this.revealOverlayEl) return;
+    this.revealOverlayEl.classList.add("pointer-events-none", "opacity-0");
+    this.revealOverlayEl.classList.remove(
+      "pointer-events-auto",
+      "cursor-pointer",
+    );
+    if (forceRemove) {
+      this.revealOverlayEl.remove();
+      this.revealOverlayEl = null;
+      this.revealNameEl = null;
+      this.revealRarityEl = null;
+    }
+  },
+
+  rarityLabelClass(rarity) {
+    const r = Number(rarity) || 1;
+    if (r >= 3)
+      return "text-amber-300 drop-shadow-[0_0_12px_rgba(251,191,36,0.55)]";
+    if (r === 2)
+      return "text-sky-300 drop-shadow-[0_0_12px_rgba(125,211,252,0.5)]";
+    return "text-slate-200 drop-shadow-[0_0_8px_rgba(255,255,255,0.25)]";
+  },
+
+  showRevealOverlay(entry) {
+    this.ensureRevealOverlay();
+    const name = entry?.name || "Marble";
+    const rarity = Number(entry?.rarity) || 1;
+    const stars = "★".repeat(Math.min(5, Math.max(1, rarity)));
+    this.revealNameEl.textContent = name;
+    this.revealRarityEl.textContent = `${stars}  Rarity ${rarity}`;
+    this.revealRarityEl.className = `relative mt-2 text-lg font-semibold tracking-wide sm:text-xl ${this.rarityLabelClass(rarity)}`;
+    const ra = this.revealRarityEl;
+    ra.style.animation = "none";
+    void ra.offsetWidth;
+    ra.style.animation =
+      "gacha-reveal-pop 0.72s cubic-bezier(0.22, 1, 0.36, 1) 0.08s both";
+    const nm = this.revealNameEl;
+    nm.style.animation = "none";
+    void nm.offsetWidth;
+    nm.style.animation =
+      "gacha-reveal-pop 0.65s cubic-bezier(0.22, 1, 0.36, 1) both, gacha-reveal-glow 2.4s ease-in-out infinite";
+    this.revealOverlayEl.classList.remove("pointer-events-none", "opacity-0");
+    this.revealOverlayEl.classList.add("pointer-events-auto", "cursor-pointer");
+    this.pushEvent("gacha_animation_progress", {
+      phase: "reveal",
+      index: this.currentIndex + 1,
+      total: this.results.length,
     });
-    this.marbleTemplateRoot = null;
+  },
+
+  advanceRevealOnClick() {
+    if (this.stage !== "reveal" || !this.revealPaused) return;
+    this.hideRevealOverlay();
+    this.currentIndex += 1;
+    if (this.currentIndex >= this.results.length) {
+      this.complete();
+      return;
+    }
+    const entry = this.results[this.currentIndex];
+    this.showMarble(entry, this.currentIndex);
   },
 
   setupScene() {
@@ -257,6 +426,10 @@ const GachaCinematic = {
   },
 
   renderLoop() {
+    if (!this.renderer || !this.scene || !this.camera) {
+      this.animationFrame = null;
+      return;
+    }
     this.animationFrame = requestAnimationFrame(() => this.renderLoop());
 
     if (this.introActive) {
@@ -278,9 +451,13 @@ const GachaCinematic = {
       this.marbleRoot.rotation.z = 0.42 * Math.sin(t * Math.PI * 1.5);
       this.marbleRoot.rotation.y += 0.055;
       if (t >= 1) {
+        this.marbleRoot.position.copy(this.marbleMotion.rest);
+        this.marbleRoot.rotation.set(0, 0, 0);
         this.marbleMotion = null;
+        this.revealPaused = true;
+        this.showRevealOverlay(this.currentRevealEntry);
       }
-    } else if (this.marbleRoot && !this.introActive) {
+    } else if (this.marbleRoot && !this.introActive && !this.revealPaused) {
       this.marbleRoot.rotation.y += 0.018;
       this.marbleRoot.rotation.x += 0.008;
     }
@@ -332,16 +509,21 @@ const GachaCinematic = {
     this.introActive = false;
     this.introSegment = null;
     this.marbleMotion = null;
+    this.revealPaused = false;
+    this.hideRevealOverlay(true);
     this.currentPayload = payload;
     this.results = payload.results || [];
     this.currentIndex = 0;
     this.stage = "loading";
 
+    if (!this.renderer || !this.scene || !this.camera) {
+      this.setupScene();
+    }
+
     this.disposeObject3D(this.marbleRoot, { keepTextures: true });
     this.marbleRoot = null;
 
     this.disposeTextureCache();
-    this.disposeMarbleTemplate();
 
     this.disposeObject3D(this.trackRoot);
     this.trackRoot = null;
@@ -383,9 +565,6 @@ const GachaCinematic = {
     const results = payload.results || [];
 
     await this.loadTrackGltfPromise(gen);
-    if (gen !== this.preloadGen) return;
-
-    await this.loadMarbleTemplatePromise(gen);
     if (gen !== this.preloadGen) return;
 
     const urls = [
@@ -442,40 +621,6 @@ const GachaCinematic = {
     });
   },
 
-  loadMarbleTemplatePromise(gen) {
-    return new Promise((resolve, reject) => {
-      this.gltfLoader.load(
-        MARBLE_HD_GLB_URL,
-        (gltf) => {
-          if (gen !== this.preloadGen) {
-            gltf.scene.traverse((child) => {
-              if (child.isMesh) {
-                child.geometry?.dispose?.();
-                const mat = child.material;
-                if (Array.isArray(mat)) {
-                  mat.forEach((m) => {
-                    m.map?.dispose?.();
-                    m?.dispose?.();
-                  });
-                } else {
-                  mat.map?.dispose?.();
-                  mat?.dispose?.();
-                }
-              }
-            });
-            resolve();
-            return;
-          }
-          const root = gltf.scene;
-          this.marbleTemplateRoot = root;
-          resolve();
-        },
-        undefined,
-        () => resolve(),
-      );
-    });
-  },
-
   ensureTextureCached(url, gen) {
     const key = canonicalTextureUrl(url);
     if (!key || this.textureCache.has(key)) {
@@ -503,7 +648,7 @@ const GachaCinematic = {
 
   configureMarbleTexture(tex) {
     tex.colorSpace = THREE.SRGBColorSpace;
-    tex.flipY = false;
+    tex.flipY = true;
     tex.wrapS = THREE.ClampToEdgeWrapping;
     tex.wrapT = THREE.ClampToEdgeWrapping;
     tex.minFilter = THREE.LinearMipmapLinearFilter;
@@ -547,187 +692,108 @@ const GachaCinematic = {
 
   runReveal() {
     this.stage = "reveal";
+    this.revealPaused = false;
+    this.hideRevealOverlay();
     this.pushEvent("gacha_animation_progress", {
       phase: "reveal",
       index: 0,
       total: this.results.length,
     });
-
-    const interval = window.setInterval(() => {
-      if (this.currentIndex >= this.results.length) {
-        this.clearTimers();
-        this.complete();
-        return;
-      }
-
-      const entry = this.results[this.currentIndex];
-      const idx = this.currentIndex;
-      this.showMarble(entry, idx);
-      this.currentIndex += 1;
-
-      this.pushEvent("gacha_animation_progress", {
-        phase: "reveal",
-        index: this.currentIndex,
-        total: this.results.length,
-      });
-    }, 700);
-
-    this.activeTimers.push(interval);
+    if (this.results.length === 0) {
+      this.complete();
+      return;
+    }
+    this.currentIndex = 0;
+    this.showMarble(this.results[0], 0);
   },
 
   showMarble(entry, _resultIndex) {
     if (!this.webglReady) return;
 
+    this.revealPaused = false;
+    this.hideRevealOverlay();
+    this.currentRevealEntry = entry;
+
     this.disposeObject3D(this.marbleRoot, { keepTextures: true });
     this.marbleRoot = null;
     this.marbleMotion = null;
 
-    if (!this.marbleTemplateRoot) {
-      this.showMarbleFallbackSphere(entry);
-      return;
+    const radius = GACHA_MARBLE_RADIUS;
+    const url = canonicalTextureUrl(textureUrlFromResult(entry));
+    const cached = url && this.textureCache.get(url);
+
+    let material;
+    if (cached) {
+      material = new THREE.MeshBasicMaterial({
+        map: cached,
+        color: 0xffffff,
+      });
+    } else {
+      material = new THREE.MeshStandardMaterial({
+        color: rarityColor(entry.rarity || 1),
+        metalness: 0.5,
+        roughness: 0.35,
+        emissive: rarityColor(entry.rarity || 1),
+        emissiveIntensity: 0.14,
+      });
     }
 
-    const root = clone(this.marbleTemplateRoot);
-    this.cloneMarbleMaterialInstances(root);
-    this.fitMarbleToScene(root, 1.35);
-    this.scene.add(root);
-    this.marbleRoot = root;
+    const mesh = new THREE.Mesh(
+      new THREE.SphereGeometry(radius, 40, 40),
+      material,
+    );
 
-    const url = canonicalTextureUrl(textureUrlFromResult(entry));
-    let tex = url && this.textureCache.get(url);
-    if (tex) {
-      this.applyTextureToMarbleRoot(root, tex);
-    } else if (url) {
+    if (url && !cached) {
       this.textureLoader.load(
         url,
         (loaded) => {
           this.configureMarbleTexture(loaded);
           this.textureCache.set(url, loaded);
-          if (this.marbleRoot !== root) {
+          if (this.marbleRoot !== mesh) {
             loaded.dispose();
             return;
           }
-          this.applyTextureToMarbleRoot(root, loaded);
+          const prev = mesh.material;
+          mesh.material = new THREE.MeshBasicMaterial({
+            map: loaded,
+            color: 0xffffff,
+          });
+          if (prev && typeof prev.dispose === "function") {
+            prev.dispose();
+          }
         },
         undefined,
         () => {},
       );
     }
 
-    this.startMarbleMotion(root);
-  },
-
-  cloneMarbleMaterialInstances(root) {
-    root.traverse((o) => {
-      if (!o.isMesh || !o.material) return;
-      if (Array.isArray(o.material)) {
-        o.material = o.material.map((m) => m.clone());
-      } else {
-        o.material = o.material.clone();
-      }
-    });
-  },
-
-  applyTextureToMarbleRoot(root, tex) {
-    const materialName = (m) => (m.name || "").trim().toLowerCase();
-
-    const applyGlass = (m) => {
-      m.map = tex;
-      m.transparent = true;
-      m.opacity = 1;
-      m.alphaTest = 0.01;
-      m.needsUpdate = true;
-    };
-
-    const applyDiffuse = (m) => {
-      m.map = tex;
-      m.needsUpdate = true;
-    };
-
-    root.traverse((c) => {
-      if (!c.isMesh || !c.material) return;
-      const mats = Array.isArray(c.material) ? c.material : [c.material];
-      mats.forEach((m) => {
-        const n = materialName(m);
-        if (n === "glass") {
-          applyGlass(m);
-        } else if (
-          n === "colormap" ||
-          n.includes("diffuse") ||
-          n.includes("color") ||
-          n === "base"
-        ) {
-          applyDiffuse(m);
-        }
-      });
-    });
-
-    let hit = false;
-    root.traverse((c) => {
-      if (!c.isMesh || !c.material) return;
-      const mats = Array.isArray(c.material) ? c.material : [c.material];
-      for (const m of mats) {
-        if (m.map === tex) {
-          hit = true;
-          return;
-        }
-      }
-    });
-
-    if (hit) return;
-
-    root.traverse((c) => {
-      if (!c.isMesh || !c.material || hit) return;
-      const mats = Array.isArray(c.material) ? c.material : [c.material];
-      for (const m of mats) {
-        if (m.isMeshPhysicalMaterial || m.isMeshStandardMaterial) {
-          applyGlass(m);
-          hit = true;
-          return;
-        }
-      }
-    });
-  },
-
-  startMarbleMotion(root) {
-    const spawn = new THREE.Vector3(4.1, 1.55, -2.35);
-    const rest = new THREE.Vector3(0, 0.28, 0);
-    root.position.copy(spawn);
-    this.marbleMotion = { spawn, rest, t0: performance.now(), duration: 520 };
-  },
-
-  fitMarbleToScene(root, targetMaxDim) {
-    root.updateMatrixWorld(true);
-    const box = new THREE.Box3().setFromObject(root);
-    const size = box.getSize(new THREE.Vector3());
-    const m = Math.max(size.x, size.y, size.z, 0.001);
-    const s = targetMaxDim / m;
-    root.scale.setScalar(s);
-    root.updateMatrixWorld(true);
-    const b2 = new THREE.Box3().setFromObject(root);
-    const c = b2.getCenter(new THREE.Vector3());
-    root.position.sub(c);
-  },
-
-  showMarbleFallbackSphere(entry) {
-    const geometry = new THREE.SphereGeometry(0.9, 40, 40);
-    const material = new THREE.MeshStandardMaterial({
-      color: rarityColor(entry.rarity || 1),
-      metalness: 0.75,
-      roughness: 0.2,
-      emissive: rarityColor(entry.rarity || 1),
-      emissiveIntensity: 0.12,
-    });
-    const mesh = new THREE.Mesh(geometry, material);
     this.scene.add(mesh);
     this.marbleRoot = mesh;
     this.startMarbleMotion(mesh);
   },
 
+  startMarbleMotion(root) {
+    const radius = GACHA_MARBLE_RADIUS;
+    let spawn;
+    let rest;
+    if (this.trackRoot) {
+      const a = trackSpawnTopLeftWorld(this.trackRoot, radius);
+      spawn = new THREE.Vector3(a.x, a.y, a.z);
+      rest = trackRevealRestPoint(this.trackRoot, radius);
+    } else {
+      spawn = new THREE.Vector3(4.1, 1.55, -2.35);
+      rest = new THREE.Vector3(0, 0.28, 0);
+    }
+    root.position.copy(spawn);
+    this.marbleMotion = { spawn, rest, t0: performance.now(), duration: 560 };
+  },
+
   disposeObject3D(obj, opts = {}) {
     if (!obj) return;
     const keepTextures = opts.keepTextures === true;
-    this.scene.remove(obj);
+    if (this.scene) {
+      this.scene.remove(obj);
+    }
     obj.traverse((child) => {
       if (child.isMesh) {
         child.geometry?.dispose?.();
@@ -756,19 +822,9 @@ const GachaCinematic = {
   finishEarly() {
     if (!this.currentPayload) return;
 
-    if (this.stage === "loading") {
-      this.preloadGen += 1;
-      this.hideLoadingOverlay();
-      this.clearTimers();
-      this.complete();
-      return;
-    }
-
-    this.introActive = false;
-    this.introSegment = null;
+    this.preloadGen += 1;
     this.clearTimers();
-    this.camera.position.copy(this.finalCameraPosition);
-    this.camera.lookAt(this.introLookAt);
+    this.disposeCinematicResources();
     this.complete();
   },
 
@@ -776,6 +832,8 @@ const GachaCinematic = {
     this.introActive = false;
     this.introSegment = null;
     this.stage = "done";
+    this.revealPaused = false;
+    this.hideRevealOverlay(true);
     this.pushEvent("gacha_animation_done", {});
   },
 

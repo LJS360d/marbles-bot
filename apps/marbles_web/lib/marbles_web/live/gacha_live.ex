@@ -242,13 +242,13 @@ defmodule MarblesWeb.GachaLive do
       <section
         :if={@animation_phase in [:running, :recap]}
         id="gacha-cinematic-overlay"
-        class="fixed inset-0 z-60"
+        class="fixed inset-0 z-60 isolate"
       >
         <div
           id="gacha-cinematic"
           phx-hook="GachaCinematic"
           phx-update="ignore"
-          class="relative h-full w-full bg-black"
+          class="relative z-0 h-full w-full bg-black"
         >
         </div>
 
@@ -257,17 +257,24 @@ defmodule MarblesWeb.GachaLive do
           id="gacha-animation-skip"
           type="button"
           phx-click="skip_animation"
-          class="absolute right-5 top-5 rounded-lg border border-white/30 bg-black/40 px-3 py-2 text-xs font-semibold text-white backdrop-blur transition-colors hover:border-white/60 hover:bg-black/60"
+          class={[
+            "absolute right-5 top-5 z-100 flex items-center gap-1.5 rounded-lg border border-white/35",
+            "bg-black/45 px-3 py-2 text-xs font-semibold text-white backdrop-blur-md",
+            "transition-colors hover:border-white/70 hover:bg-black/65"
+          ]}
         >
-          Skip
+          <.icon name="hero-forward" class="size-4 shrink-0 text-white" /> Skip
         </button>
 
         <div
           :if={@animation_phase == :recap and @latest_result}
           id="gacha-recap-overlay"
-          class="absolute inset-0 flex items-center justify-center bg-black/35 p-4 sm:p-6"
+          class="absolute inset-0 z-40 flex items-center justify-center bg-transparent p-4 sm:p-6"
         >
-          <div class="w-full max-w-5xl max-h-full overflow-y-auto rounded-2xl border border-base-300 bg-base-100 p-5 shadow-2xl sm:p-6 space-y-4">
+          <div class={[
+            "w-full max-w-5xl max-h-full overflow-y-auto space-y-4 rounded-2xl border border-white/20",
+            "bg-transparent p-5 shadow-none backdrop-blur-md sm:p-6"
+          ]}>
             <div class="flex items-center justify-between gap-3">
               <h3 class="text-xl font-semibold">Recap</h3>
               <p class="text-sm text-base-content/70">
@@ -275,11 +282,11 @@ defmodule MarblesWeb.GachaLive do
               </p>
             </div>
 
-            <div class="grid gap-5 grid-cols-5">
+            <div class="grid grid-cols-5 gap-5">
               <article
                 :for={entry <- @latest_result.marbles}
                 id={"recap-marble-#{entry.marble.id}"}
-                class="rounded-xl border border-base-300 bg-base-50 p-3"
+                class="rounded-xl border border-white/15 bg-transparent p-3 backdrop-blur-sm"
               >
                 <div class="flex items-center justify-between">
                   <p class="font-medium">{entry.marble.name}</p>

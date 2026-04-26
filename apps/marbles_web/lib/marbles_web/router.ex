@@ -115,6 +115,15 @@ defmodule MarblesWeb.Router do
     # as long as you are also using SSL (which you should anyway).
     import Phoenix.LiveDashboard.Router
 
+    scope "/dev", MarblesWeb do
+      pipe_through [:browser, :auth]
+
+      live_session :dev_sandbox,
+        on_mount: [{MarblesWeb.Live.AuthHooks, :assign_current_user}] do
+        live "/sandbox", Dev.SandboxLive, :index
+      end
+    end
+
     scope "/dev" do
       pipe_through :browser
 
