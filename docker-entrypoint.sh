@@ -1,6 +1,12 @@
 #!/bin/sh
 set -e
-db_path="${DATABASE_PATH:-/app/data/marbles_prod.db}"
+if [ -n "$DATABASE_PATH" ]; then
+  db_path="$DATABASE_PATH"
+elif [ -n "$RAILWAY_VOLUME_MOUNT_PATH" ]; then
+  db_path="${RAILWAY_VOLUME_MOUNT_PATH%/}/marbles_prod.db"
+else
+  db_path="/app/data/marbles_prod.db"
+fi
 db_dir="$(dirname "$db_path")"
 mkdir -p "$db_dir"
 
