@@ -3,10 +3,10 @@ defmodule Marbles.Economy.Shop do
 
   import Ecto.Query
   alias Marbles.Economy.Currency
+  alias Marbles.Economy.Wallet
   alias Marbles.Repo
   alias Marbles.Schema.{UserEffect, ShopItem}
   alias Marbles.Analytics
-  alias Marbles.Accounts
 
   @type product_id :: String.t()
 
@@ -200,22 +200,11 @@ defmodule Marbles.Economy.Shop do
 
       true ->
         case Repo.transaction(fn ->
-               user = Accounts.get_user!(user_id)
-               wallet = Accounts.wallet(user_id)
-
-               cond do
-                 wallet.coins < product.coin ->
-                   Repo.rollback(:insufficient_coins)
-
-                 wallet.dust < product.dust ->
-                   Repo.rollback(:insufficient_dust)
-
-                 true ->
-                   :ok
+               case Wallet.debit(user_id, %{coins: product.coin, dust: product.dust}) do
+                 :ok -> :ok
+                 {:error, :insufficient_coins} -> Repo.rollback(:insufficient_coins)
+                 {:error, :insufficient_dust} -> Repo.rollback(:insufficient_dust)
                end
-
-               if product.coin > 0, do: {:ok, _} = Accounts.update_currency(user, -product.coin)
-               if product.dust > 0, do: {:ok, _} = Accounts.update_dust(user, -product.dust)
 
                now = DateTime.utc_now()
                existing = active_product_effect(user_id, product.id, now)

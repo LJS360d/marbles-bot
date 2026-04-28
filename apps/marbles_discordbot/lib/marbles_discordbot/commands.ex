@@ -5,6 +5,7 @@ defmodule MarblesDiscordbot.Commands do
   alias Marbles.Economy.{Shop, Upgrades}
   require Logger
 
+  @spec commands() :: [map()]
   def commands do
     packs_choices =
       Catalog.list_active_packs(Date.utc_today(), :name)
@@ -77,14 +78,7 @@ defmodule MarblesDiscordbot.Commands do
         name: "collection",
         description: "See your marbles collection",
         type: 1,
-        options: [
-          %{
-            type: ApplicationCommandOptionType.user(),
-            name: "user",
-            description: "Optional target user",
-            required: false
-          }
-        ]
+        options: [optional_user_option()]
       },
       %{
         name: "packs",
@@ -110,27 +104,13 @@ defmodule MarblesDiscordbot.Commands do
         name: "profile",
         description: "Show a user profile (wallet, collection, boosts, mines)",
         type: 1,
-        options: [
-          %{
-            type: ApplicationCommandOptionType.user(),
-            name: "user",
-            description: "Optional target user",
-            required: false
-          }
-        ]
+        options: [optional_user_option()]
       },
       %{
         name: "boosts",
         description: "Show active boosts",
         type: 1,
-        options: [
-          %{
-            type: ApplicationCommandOptionType.user(),
-            name: "user",
-            description: "Optional target user",
-            required: false
-          }
-        ]
+        options: [optional_user_option()]
       },
       %{
         name: "leaderboard",
@@ -161,29 +141,13 @@ defmodule MarblesDiscordbot.Commands do
             type: ApplicationCommandOptionType.sub_command(),
             name: "add",
             description: "Add a marble you own (exact name, case-insensitive)",
-            options: [
-              %{
-                type: ApplicationCommandOptionType.string(),
-                name: "marble",
-                description: "Marble name",
-                required: true,
-                autocomplete: true
-              }
-            ]
+            options: [required_marble_name_option()]
           },
           %{
             type: ApplicationCommandOptionType.sub_command(),
             name: "remove",
             description: "Remove a roster marble by name",
-            options: [
-              %{
-                type: ApplicationCommandOptionType.string(),
-                name: "marble",
-                description: "Marble name",
-                required: true,
-                autocomplete: true
-              }
-            ]
+            options: [required_marble_name_option()]
           },
           %{
             type: ApplicationCommandOptionType.sub_command(),
@@ -253,6 +217,28 @@ defmodule MarblesDiscordbot.Commands do
     ]
   end
 
+  @spec optional_user_option() :: map()
+  defp optional_user_option do
+    %{
+      type: ApplicationCommandOptionType.user(),
+      name: "user",
+      description: "Optional target user",
+      required: false
+    }
+  end
+
+  @spec required_marble_name_option() :: map()
+  defp required_marble_name_option do
+    %{
+      type: ApplicationCommandOptionType.string(),
+      name: "marble",
+      description: "Marble name",
+      required: true,
+      autocomplete: true
+    }
+  end
+
+  @spec needs_resync?([map()], [map()]) :: boolean()
   defp needs_resync?(remote, local) do
     if length(remote) != length(local) do
       true
@@ -270,6 +256,7 @@ defmodule MarblesDiscordbot.Commands do
     end
   end
 
+  @spec sync() :: :ok
   def sync do
     case ApplicationCommand.global_commands() do
       {:ok, remote_commands} ->
@@ -292,6 +279,7 @@ defmodule MarblesDiscordbot.Commands do
     end
   end
 
+  @spec sync_force() :: {:ok, any()} | {:error, any()}
   def sync_force do
     ApplicationCommand.bulk_overwrite_global_commands(commands())
   end

@@ -5,6 +5,8 @@ defmodule MarblesDiscordbot.Consumers.Component do
   alias Marbles.{Catalog, Accounts, Collection, GachaSession, IntegerDisplay, PackPullRules}
   alias MarblesDiscordbot.Embeds
   alias MarblesDiscordbot.Components
+  alias MarblesDiscordbot.InteractionParser
+  alias MarblesDiscordbot.InteractionResponse
   alias MarblesDiscordbot.{PullButtons, PullSession}
   require Logger
 
@@ -56,7 +58,8 @@ defmodule MarblesDiscordbot.Consumers.Component do
   end
 
   defp handle_component(i, "packs_prev_" <> rest) do
-    {page, session_sid} = parse_packs_page_session(rest, i)
+    clicker_id = to_string((i.user || i.member.user).id)
+    {page, session_sid} = InteractionParser.parse_pack_page_session(rest, clicker_id)
     packs = Catalog.list_active_packs(Date.utc_today(), :newest)
     new_page = max(0, page - 1)
     pack = Enum.at(packs, new_page)
@@ -72,7 +75,8 @@ defmodule MarblesDiscordbot.Consumers.Component do
   end
 
   defp handle_component(i, "packs_next_" <> rest) do
-    {page, session_sid} = parse_packs_page_session(rest, i)
+    clicker_id = to_string((i.user || i.member.user).id)
+    {page, session_sid} = InteractionParser.parse_pack_page_session(rest, clicker_id)
     packs = Catalog.list_active_packs(Date.utc_today(), :newest)
     new_page = min(length(packs) - 1, page + 1)
     pack = Enum.at(packs, new_page)
@@ -126,46 +130,45 @@ defmodule MarblesDiscordbot.Consumers.Component do
   end
 
   defp handle_component(i, "coll_prev_" <> rest) do
-    [page_str, sort_str] = String.split(rest, "_", parts: 2)
-    page = String.to_integer(page_str)
-    sort = sort_atom(String.trim_leading(sort_str, ":"))
-    user = i.user || i.member.user
+    case InteractionParser.parse_collection_page_sort(rest) do
+      {:ok, %{page: page, sort_key: sort_key}} ->
+        sort = sort_atom(sort_key)
+        user = i.user || i.member.user
+        {:ok, user_record} = PullSession.ensure_discord_user(user.id, user.username)
+        new_page = max(1, page - 1)
 
-    {:ok, user_record} =
-      Accounts.ensure_user(%{
-        platform_id: to_string(user.id),
-        platform: "discord",
-        username: user.username
-      })
+        {items, total} =
+          Collection.list_user_inventory(user_record.id, page: new_page, sort: sort)
 
-    {items, total} =
-      Collection.list_user_inventory(user_record.id, page: max(1, page - 1), sort: sort)
+        embed = Embeds.collection_embed(items, new_page, total, sort, user)
+        components = Components.collection_components(new_page, total, sort)
+        %{type: 7, data: %{embeds: [embed], components: components}}
 
-    embed = Embeds.collection_embed(items, max(1, page - 1), total, sort, user)
-    components = Components.collection_components(max(1, page - 1), total, sort)
-    %{type: 7, data: %{embeds: [embed], components: components}}
+      :error ->
+        InteractionResponse.ephemeral("Invalid collection navigation payload.")
+    end
   end
 
   defp handle_component(i, "coll_next_" <> rest) do
-    [page_str, sort_str] = String.split(rest, "_", parts: 2)
-    page = String.to_integer(page_str)
-    sort = sort_atom(String.trim_leading(sort_str, ":"))
-    user = i.user || i.member.user
+    case InteractionParser.parse_collection_page_sort(rest) do
+      {:ok, %{page: page, sort_key: sort_key}} ->
+        sort = sort_atom(sort_key)
+        user = i.user || i.member.user
+        {:ok, user_record} = PullSession.ensure_discord_user(user.id, user.username)
+        {_, total} = Collection.list_user_inventory(user_record.id, page: 1, sort: sort)
+        max_page = max(1, div(total - 1, @collection_per_page) + 1)
+        new_page = min(max_page, page + 1)
 
-    {:ok, user_record} =
-      Accounts.ensure_user(%{
-        platform_id: to_string(user.id),
-        platform: "discord",
-        username: user.username
-      })
+        {items, total} =
+          Collection.list_user_inventory(user_record.id, page: new_page, sort: sort)
 
-    {_, total} = Collection.list_user_inventory(user_record.id, page: 1, sort: sort)
-    max_page = max(1, div(total - 1, @collection_per_page) + 1)
-    new_page = min(max_page, page + 1)
-    {items, total} = Collection.list_user_inventory(user_record.id, page: new_page, sort: sort)
-    embed = Embeds.collection_embed(items, new_page, total, sort, user)
-    components = Components.collection_components(new_page, total, sort)
-    %{type: 7, data: %{embeds: [embed], components: components}}
+        embed = Embeds.collection_embed(items, new_page, total, sort, user)
+        components = Components.collection_components(new_page, total, sort)
+        %{type: 7, data: %{embeds: [embed], components: components}}
+
+      :error ->
+        InteractionResponse.ephemeral("Invalid collection navigation payload.")
+    end
   end
 
   defp handle_component(i, "coll_sort_rarity_1"),
@@ -192,13 +195,6 @@ defmodule MarblesDiscordbot.Consumers.Component do
 
       true ->
         :continue
-    end
-  end
-
-  defp parse_packs_page_session(rest, i) do
-    case String.split(rest, "_", parts: 2) do
-      [p, sid] -> {String.to_integer(p), sid}
-      [p] -> {String.to_integer(p), to_string((i.user || i.member.user).id)}
     end
   end
 

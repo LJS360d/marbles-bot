@@ -19,6 +19,7 @@ defmodule MarblesDiscordbot.Consumers.Interaction do
 
   alias Marbles.Economy.{Currency, MineRoster, Upgrades, Shop, Effects}
   alias MarblesDiscordbot.{Components, DiscordUsername, Embeds, PullSession}
+  alias MarblesDiscordbot.InteractionResponse
   require Logger
 
   def handle_event({:INTERACTION_CREATE, %Interaction{} = i, _ws_state})
@@ -244,14 +245,7 @@ defmodule MarblesDiscordbot.Consumers.Interaction do
   end
 
   defp handle_autocomplete("mines", i) do
-    user = i.user || i.member.user
-
-    {:ok, ur} =
-      Accounts.ensure_user(%{
-        platform_id: to_string(user.id),
-        platform: "discord",
-        username: user.username
-      })
+    {:ok, ur} = ensure_discord_user(i)
 
     {sub, _opts} = first_subcommand(i)
     focused = focused_option(i.data.options || [])
@@ -305,7 +299,7 @@ defmodule MarblesDiscordbot.Consumers.Interaction do
         process_spawnrate_set(i, sub_opts || [])
 
       _ ->
-        %{type: 4, data: %{content: "Unknown subcommand."}, ephemeral: true}
+        InteractionResponse.ephemeral("Unknown subcommand.")
     end
   end
 
@@ -431,13 +425,7 @@ defmodule MarblesDiscordbot.Consumers.Interaction do
           if tgt.internal_user do
             tgt.internal_user
           else
-            {:ok, me} =
-              Accounts.ensure_user(%{
-                platform_id: to_string(user.id),
-                platform: "discord",
-                username: user.username
-              })
-
+            {:ok, me} = ensure_discord_user(i)
             me
           end
 
@@ -463,14 +451,7 @@ defmodule MarblesDiscordbot.Consumers.Interaction do
   end
 
   def handle_command("daily", i) do
-    user = i.user || i.member.user
-
-    {:ok, user_record} =
-      Accounts.ensure_user(%{
-        platform_id: to_string(user.id),
-        platform: "discord",
-        username: user.username
-      })
+    {:ok, user_record} = ensure_discord_user(i)
 
     case Daily.claim_daily(user_record.id) do
       {:ok, m} ->
@@ -531,14 +512,7 @@ defmodule MarblesDiscordbot.Consumers.Interaction do
   end
 
   def handle_command("balance", i) do
-    user = i.user || i.member.user
-
-    {:ok, ur} =
-      Accounts.ensure_user(%{
-        platform_id: to_string(user.id),
-        platform: "discord",
-        username: user.username
-      })
+    {:ok, ur} = ensure_discord_user(i)
 
     dust = ur.dust
 
@@ -556,19 +530,11 @@ defmodule MarblesDiscordbot.Consumers.Interaction do
         %{type: 4, data: %{content: "That user does not have a profile."}}
 
       true ->
-        user = i.user || i.member.user
-
         internal =
           if tgt.internal_user do
             tgt.internal_user
           else
-            {:ok, me} =
-              Accounts.ensure_user(%{
-                platform_id: to_string(user.id),
-                platform: "discord",
-                username: user.username
-              })
-
+            {:ok, me} = ensure_discord_user(i)
             me
           end
 
@@ -645,19 +611,11 @@ defmodule MarblesDiscordbot.Consumers.Interaction do
     if is_nil(tgt.internal_user) and get_option(i.data.options, "user") != nil do
       %{type: 4, data: %{content: "That user is not in the system yet."}}
     else
-      user = i.user || i.member.user
-
       internal =
         if tgt.internal_user do
           tgt.internal_user
         else
-          {:ok, me} =
-            Accounts.ensure_user(%{
-              platform_id: to_string(user.id),
-              platform: "discord",
-              username: user.username
-            })
-
+          {:ok, me} = ensure_discord_user(i)
           me
         end
 
@@ -711,14 +669,7 @@ defmodule MarblesDiscordbot.Consumers.Interaction do
   end
 
   def handle_command("mines", i) do
-    user = i.user || i.member.user
-
-    {:ok, ur} =
-      Accounts.ensure_user(%{
-        platform_id: to_string(user.id),
-        platform: "discord",
-        username: user.username
-      })
+    {:ok, ur} = ensure_discord_user(i)
 
     {sub, opts} = first_subcommand(i)
 
@@ -816,14 +767,7 @@ defmodule MarblesDiscordbot.Consumers.Interaction do
   end
 
   def handle_command("upgrades", i) do
-    user = i.user || i.member.user
-
-    {:ok, ur} =
-      Accounts.ensure_user(%{
-        platform_id: to_string(user.id),
-        platform: "discord",
-        username: user.username
-      })
+    {:ok, ur} = ensure_discord_user(i)
 
     {sub, opts} = first_subcommand(i)
 
@@ -890,14 +834,7 @@ defmodule MarblesDiscordbot.Consumers.Interaction do
   end
 
   def handle_command("shop", i) do
-    user = i.user || i.member.user
-
-    {:ok, ur} =
-      Accounts.ensure_user(%{
-        platform_id: to_string(user.id),
-        platform: "discord",
-        username: user.username
-      })
+    {:ok, ur} = ensure_discord_user(i)
 
     {sub, opts} = first_subcommand(i)
 
@@ -994,6 +931,12 @@ defmodule MarblesDiscordbot.Consumers.Interaction do
 
   def handle_command(_, _), do: nil
 
+  @spec ensure_discord_user(Interaction.t()) :: {:ok, map()} | {:error, term()}
+  defp ensure_discord_user(%Interaction{} = interaction) do
+    user = interaction.user || interaction.member.user
+    PullSession.ensure_discord_user(user.id, user.username)
+  end
+
   def handle_channels_list(%Interaction{guild_id: guild_id} = _i) do
     if is_nil(guild_id) do
       %{
@@ -1035,10 +978,7 @@ defmodule MarblesDiscordbot.Consumers.Interaction do
 
     cond do
       is_nil(i.guild_id) ->
-        %{
-          type: 4,
-          data: %{content: "This command can only be used in a text channel.", ephemeral: true}
-        }
+        InteractionResponse.ephemeral("This command can only be used in a text channel.")
 
       is_nil(rate_opt) ->
         current = (Guilds.get_channel(channel_id) || %{spawn_rate: 0}).spawn_rate

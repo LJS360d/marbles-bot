@@ -2,18 +2,26 @@ defmodule MarblesWeb.Plugs.Auth do
   import Plug.Conn
   import Phoenix.Controller
   use MarblesWeb, :verified_routes
-  alias Marbles.Accounts
 
+  @spec init(term()) :: term()
   def init(opts), do: opts
 
-  def call(conn, _opts) do
-    user_id = get_session(conn, :user_id)
-    user = if user_id, do: Accounts.get_user(user_id), else: nil
-    assign(conn, :current_user, user)
+  @spec call(Plug.Conn.t(), term()) :: Plug.Conn.t()
+  def call(conn, opts) do
+    user = conn |> get_session(:user_id) |> MarblesWeb.Authz.fetch_current_user()
+    conn = assign(conn, :current_user, user)
+
+    case opts do
+      :require_user -> require_user(conn, opts)
+      :require_owner -> require_owner(conn, opts)
+      :require_server_admin_or_owner -> require_server_admin_or_owner(conn, opts)
+      _ -> conn
+    end
   end
 
+  @spec require_user(Plug.Conn.t(), term()) :: Plug.Conn.t()
   def require_user(conn, _opts) do
-    if conn.assigns[:current_user] do
+    if MarblesWeb.Authz.authorize(conn.assigns[:current_user], :user) == :ok do
       conn
     else
       conn
@@ -23,10 +31,9 @@ defmodule MarblesWeb.Plugs.Auth do
     end
   end
 
+  @spec require_owner(Plug.Conn.t(), term()) :: Plug.Conn.t()
   def require_owner(conn, _opts) do
-    user = conn.assigns[:current_user]
-
-    if owner?(user) do
+    if MarblesWeb.Authz.authorize(conn.assigns[:current_user], :owner) == :ok do
       conn
     else
       conn
@@ -36,10 +43,9 @@ defmodule MarblesWeb.Plugs.Auth do
     end
   end
 
+  @spec require_server_admin_or_owner(Plug.Conn.t(), term()) :: Plug.Conn.t()
   def require_server_admin_or_owner(conn, _opts) do
-    user = conn.assigns[:current_user]
-
-    if user && (user.role == :server_admin || owner?(user)) do
+    if MarblesWeb.Authz.authorize(conn.assigns[:current_user], :server_admin_or_owner) == :ok do
       conn
     else
       conn
@@ -48,7 +54,4 @@ defmodule MarblesWeb.Plugs.Auth do
       |> halt()
     end
   end
-
-  defp owner?(nil), do: false
-  defp owner?(user), do: user.role == :owner
 end

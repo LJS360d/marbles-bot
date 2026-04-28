@@ -4,8 +4,8 @@ defmodule Marbles.SpawnCatch do
   alias Marbles.Repo
   alias Marbles.Schema.{CaughtSpawn, Marble}
   alias Marbles.Analytics
-  alias Marbles.{Accounts, Collection}
-  alias Marbles.Economy.{SpawnRewards, Upgrades}
+  alias Marbles.{Collection}
+  alias Marbles.Economy.{SpawnRewards, Upgrades, Wallet}
 
   @spec collect(String.t(), Ecto.UUID.t(), Marble.t(), float()) ::
           {:ok,
@@ -38,19 +38,12 @@ defmodule Marbles.SpawnCatch do
                end
            end
 
-           user = Accounts.get_user!(user_id)
            luck = Upgrades.spawn_luck_bonus(user_id)
 
            %{coins: coins, dust: dust} =
              SpawnRewards.roll_claim_resources(spawn_rate, marble.rarity || 1, luck)
 
-           if coins > 0 do
-             {:ok, _} = Accounts.update_currency(user, coins)
-           end
-
-           if dust > 0 do
-             {:ok, _} = Accounts.update_dust(user, dust)
-           end
+           :ok = Wallet.credit(user_id, %{coins: coins, dust: dust})
 
            template =
              Collection.acquire_marble_template(user_id, marble.id, meta: %{source: "spawn"})

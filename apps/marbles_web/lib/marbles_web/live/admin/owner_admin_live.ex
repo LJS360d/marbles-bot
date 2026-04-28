@@ -1,13 +1,11 @@
 defmodule MarblesWeb.Admin.OwnerAdminLive do
   use MarblesWeb, :live_view
   alias Marbles.Analytics
+  alias Marbles.Analytics.AdminDashboard
   alias Marbles.Guilds
-  alias Marbles.Accounts
-  alias Marbles.Catalog
-  alias Marbles.Repo
-  alias Marbles.Schema.Marble
 
   @impl true
+  @spec mount(map(), map(), Phoenix.LiveView.Socket.t()) :: {:ok, Phoenix.LiveView.Socket.t()}
   def mount(params, _session, socket) do
     Phoenix.PubSub.subscribe(Marbles.PubSub, "admin_dashboard")
 
@@ -25,6 +23,8 @@ defmodule MarblesWeb.Admin.OwnerAdminLive do
   end
 
   @impl true
+  @spec handle_params(map(), String.t(), Phoenix.LiveView.Socket.t()) ::
+          {:noreply, Phoenix.LiveView.Socket.t()}
   def handle_params(params, _uri, socket) do
     sort = params["guilds_sort"] || socket.assigns[:guilds_insights_sort] || "channels_desc"
 
@@ -54,29 +54,21 @@ defmodule MarblesWeb.Admin.OwnerAdminLive do
   end
 
   @impl true
+  @spec handle_info(:tick_memory, Phoenix.LiveView.Socket.t()) ::
+          {:noreply, Phoenix.LiveView.Socket.t()}
   def handle_info(:tick_memory, socket) do
     if socket.assigns[:memory_insights_enabled] do
       Process.send_after(self(), :tick_memory, 5_000)
     end
 
-    memory = :erlang.memory()
-    total_mem = memory[:total] || 0
-    beam_total_mb = div(total_mem, 1024 * 1024)
-
-    memory_breakdown = %{
-      beam_total_mb: beam_total_mb,
-      process_mb: div(memory[:processes] || 0, 1024 * 1024),
-      atom_mb: div(memory[:atom] || 0, 1024 * 1024),
-      binary_mb: div(memory[:binary] || 0, 1024 * 1024),
-      code_mb: div(memory[:code] || 0, 1024 * 1024),
-      ets_mb: div(memory[:ets] || 0, 1024 * 1024),
-      system_mb: div(memory[:system] || 0, 1024 * 1024)
-    }
+    memory_breakdown = AdminDashboard.memory_breakdown(:erlang.memory())
 
     {:noreply, assign(socket, :memory_breakdown, memory_breakdown)}
   end
 
   @impl true
+  @spec handle_info({:admin_dashboard, :stats_updated}, Phoenix.LiveView.Socket.t()) ::
+          {:noreply, Phoenix.LiveView.Socket.t()}
   def handle_info({:admin_dashboard, :stats_updated}, socket) do
     pulls_today = Analytics.pulls_today()
     spawns_today = Analytics.spawns_today()
@@ -90,6 +82,8 @@ defmodule MarblesWeb.Admin.OwnerAdminLive do
   end
 
   @impl true
+  @spec handle_event(String.t(), map(), Phoenix.LiveView.Socket.t()) ::
+          {:noreply, Phoenix.LiveView.Socket.t()}
   def handle_event("toggle_memory_insights", _params, socket) do
     enabled = !socket.assigns[:memory_insights_enabled]
 
@@ -124,27 +118,9 @@ defmodule MarblesWeb.Admin.OwnerAdminLive do
     {:noreply, push_patch(socket, to: ~p"/admin/owner?guilds_sort=#{sort}&guilds_page=1")}
   end
 
+  @spec load_dashboard(Phoenix.LiveView.Socket.t()) :: Phoenix.LiveView.Socket.t()
   defp load_dashboard(socket) do
-    memory = :erlang.memory()
-    total_mem = memory[:total] || 0
-    guilds_count = Analytics.guilds_count()
-    {_users, users_total} = Accounts.list_users(per_page: 1)
-    pulls_today = Analytics.pulls_today()
-    spawns_today = Analytics.spawns_today()
-    marbles_count = Repo.aggregate(Marble, :count, :id)
-    packs_count = Catalog.list_all_packs() |> length()
-    teams_count = Catalog.list_teams() |> length()
-    max_events = max(pulls_today + spawns_today, 1)
-
-    memory_breakdown = %{
-      beam_total_mb: div(total_mem, 1024 * 1024),
-      process_mb: div(memory[:processes] || 0, 1024 * 1024),
-      atom_mb: div(memory[:atom] || 0, 1024 * 1024),
-      binary_mb: div(memory[:binary] || 0, 1024 * 1024),
-      code_mb: div(memory[:code] || 0, 1024 * 1024),
-      ets_mb: div(memory[:ets] || 0, 1024 * 1024),
-      system_mb: div(memory[:system] || 0, 1024 * 1024)
-    }
+    snapshot = AdminDashboard.snapshot()
 
     {guilds_insights, guilds_insights_total} =
       Guilds.list_guilds_insights(
@@ -154,15 +130,15 @@ defmodule MarblesWeb.Admin.OwnerAdminLive do
       )
 
     socket
-    |> assign(:memory_breakdown, memory_breakdown)
-    |> assign(:guilds_count, guilds_count)
-    |> assign(:users_count, users_total)
-    |> assign(:pulls_today, pulls_today)
-    |> assign(:spawns_today, spawns_today)
-    |> assign(:marbles_count, marbles_count)
-    |> assign(:packs_count, packs_count)
-    |> assign(:teams_count, teams_count)
-    |> assign(:max_events, max_events)
+    |> assign(:memory_breakdown, snapshot.memory_breakdown)
+    |> assign(:guilds_count, snapshot.guilds_count)
+    |> assign(:users_count, snapshot.users_count)
+    |> assign(:pulls_today, snapshot.pulls_today)
+    |> assign(:spawns_today, snapshot.spawns_today)
+    |> assign(:marbles_count, snapshot.marbles_count)
+    |> assign(:packs_count, snapshot.packs_count)
+    |> assign(:teams_count, snapshot.teams_count)
+    |> assign(:max_events, snapshot.max_events)
     |> assign(:guilds_insights, guilds_insights)
     |> assign(:guilds_insights_total, guilds_insights_total)
     |> assign(:guilds_insights_sort, socket.assigns[:guilds_insights_sort] || "channels_desc")

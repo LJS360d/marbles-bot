@@ -1,34 +1,19 @@
 defmodule MarblesWeb.Api.Owner.StatsController do
   use MarblesWeb, :controller
-  alias Marbles.Analytics
-  alias Marbles.Guilds
-  alias Marbles.Accounts
-  alias Marbles.Repo
-  alias Marbles.Schema.{Marble, Pack}
 
+  @spec index(Plug.Conn.t(), map()) :: Plug.Conn.t()
   def index(conn, _params) do
-    memory = :erlang.memory() |> Enum.into(%{}, fn {k, v} -> {to_string(k), v} end)
-    guilds_count = Analytics.guilds_count()
-    guilds_with_channels = Guilds.list_guilds_with_channel_count()
-    {_users, users_total} = Accounts.list_users(per_page: 1)
-    users_count = users_total
-    marbles_count = Repo.aggregate(Marble, :count, :id)
-    packs_count = Repo.aggregate(Pack, :count, :id)
-    pulls_today = Analytics.pulls_today()
-    spawns_today = Analytics.spawns_today()
+    snapshot = Marbles.Analytics.AdminDashboard.snapshot()
 
     json(conn, %{
-      memory: memory,
-      guilds_count: guilds_count,
-      users_count: users_count,
-      marbles_count: marbles_count,
-      packs_count: packs_count,
-      pulls_today: pulls_today,
-      spawns_today: spawns_today,
-      guilds:
-        Enum.map(guilds_with_channels, fn {g, ch_count} ->
-          %{id: g.id, name: g.name, channel_count: ch_count}
-        end)
+      memory: snapshot.memory,
+      guilds_count: snapshot.guilds_count,
+      users_count: snapshot.users_count,
+      marbles_count: snapshot.marbles_count,
+      packs_count: snapshot.packs_count,
+      pulls_today: snapshot.pulls_today,
+      spawns_today: snapshot.spawns_today,
+      guilds: snapshot.guilds
     })
   end
 end

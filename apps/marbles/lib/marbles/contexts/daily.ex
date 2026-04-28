@@ -9,7 +9,7 @@ defmodule Marbles.Daily do
   alias Marbles.Economy.Mining
   alias Marbles.Economy.Experience
   alias Marbles.Economy.Effects
-  alias Marbles.Accounts
+  alias Marbles.Economy.Wallet
 
   @base_coins 100
   @streak_multiplier 10
@@ -74,8 +74,10 @@ defmodule Marbles.Daily do
       mining_xp_breakdown = grant_mining_xp(user_id, mining.breakdown, mining.seconds)
       mining_xp_total = Enum.reduce(mining_xp_breakdown, 0, fn row, acc -> acc + row.xp end)
 
-      user = Accounts.get_user!(user_id)
-      {:ok, _} = Accounts.update_currency(user, total_coins)
+      case Wallet.credit(user_id, %{coins: total_coins}) do
+        :ok -> :ok
+        {:error, reason} -> Repo.rollback(reason)
+      end
 
       _updated_streak =
         streak_record
