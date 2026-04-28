@@ -24,10 +24,15 @@ defmodule MarblesWeb.GachaLive do
       |> assign(:latest_result, nil)
       |> assign(:last_pull_kind, nil)
       |> assign(:packs, [])
+      |> assign(:now_utc, DateTime.utc_now())
       |> assign(:wallet_currency, nil)
       |> assign(:confirm_form, to_form(%{"skip_confirm" => false}, as: :confirm))
 
-    {:ok, refresh_packs(socket)}
+    socket = refresh_packs(socket)
+
+    if connected?(socket), do: Process.send_after(self(), :pack_countdown_tick, 1000)
+
+    {:ok, socket}
   end
 
   @impl true
@@ -133,6 +138,12 @@ defmodule MarblesWeb.GachaLive do
   end
 
   @impl true
+  def handle_info(:pack_countdown_tick, socket) do
+    if connected?(socket), do: Process.send_after(self(), :pack_countdown_tick, 1000)
+    {:noreply, assign(socket, :now_utc, DateTime.utc_now())}
+  end
+
+  @impl true
   def render(assigns) do
     selected_pack = selected_pack(assigns)
     quote_one = selected_pack && selected_pack.quote_one
@@ -209,6 +220,9 @@ defmodule MarblesWeb.GachaLive do
               <p class="line-clamp-3 text-sm text-base-content/70">
                 {pack_data.pack.description || "No description available."}
               </p>
+              <p class="text-xs font-medium text-base-content/60">
+                {pack_availability_label(pack_data.pack, @now_utc)}
+              </p>
             </button>
           </article>
         </section>
@@ -234,7 +248,6 @@ defmodule MarblesWeb.GachaLive do
               <li :for={line <- @pity_lines} class="bg-base-300/30 px-3 py-2 rounded-xl">{line}</li>
             </ul>
           </div>
-
           <div class="grid gap-3 sm:grid-cols-2">
             <button
               id="gacha-pull-one"
@@ -653,4 +666,45 @@ defmodule MarblesWeb.GachaLive do
         end)
     }
   end
+
+  @spec pack_availability_label(map(), DateTime.t()) :: String.t()
+  defp pack_availability_label(pack, now_utc) do
+    case Map.get(pack, :end_date) do
+      nil ->
+        "Permanent"
+
+      %Date{} = end_date ->
+        end_datetime = DateTime.new!(end_date, ~T[23:59:59], "Etc/UTC")
+        remaining_sec = DateTime.diff(end_datetime, now_utc, :second)
+
+        cond do
+          remaining_sec <= 0 ->
+            "Expired"
+
+          true ->
+            "Ends in " <> format_remaining(remaining_sec)
+        end
+    end
+  end
+
+  @spec format_remaining(non_neg_integer()) :: String.t()
+  defp format_remaining(seconds) when is_integer(seconds) and seconds >= 0 do
+    days = div(seconds, 86_400)
+    hours = div(rem(seconds, 86_400), 3600)
+    minutes = div(rem(seconds, 3600), 60)
+    secs = rem(seconds, 60)
+
+    [
+      days > 0 && "#{days}d",
+      "#{pad2(hours)}h",
+      "#{pad2(minutes)}m",
+      "#{pad2(secs)}s"
+    ]
+    |> Enum.reject(&is_boolean/1)
+    |> Enum.join(" ")
+  end
+
+  @spec pad2(non_neg_integer()) :: String.t()
+  defp pad2(value) when is_integer(value) and value < 10, do: "0#{value}"
+  defp pad2(value) when is_integer(value), do: Integer.to_string(value)
 end
