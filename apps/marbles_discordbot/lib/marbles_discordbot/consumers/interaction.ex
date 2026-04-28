@@ -540,7 +540,7 @@ defmodule MarblesDiscordbot.Consumers.Interaction do
         username: user.username
       })
 
-    dust = ur.dust || 0
+    dust = ur.dust
 
     content =
       "**Wallet**\n#{Embeds.currency_line(ur.currency)} · **#{IntegerDisplay.format(dust)}** #{Currency.dust_emoji()}"
@@ -627,7 +627,7 @@ defmodule MarblesDiscordbot.Consumers.Interaction do
           |> Embed.put_title(title)
           |> Embed.put_description(
             "**#{IntegerDisplay.format(internal.currency)}** #{Currency.coin_emoji()}\n" <>
-              "**#{IntegerDisplay.format(internal.dust || 0)}** #{Currency.dust_emoji()}\n" <>
+              "**#{IntegerDisplay.format(internal.dust)}** #{Currency.dust_emoji()}\n" <>
               "Owned marbles: **#{IntegerDisplay.format(total_collection)}**\n" <>
               "#{streak_line}\n" <>
               "Mine roster:\n#{roster_text}\n\n" <>
@@ -878,7 +878,7 @@ defmodule MarblesDiscordbot.Consumers.Interaction do
               type: 4,
               data: %{
                 content:
-                  "Not enough dust. Needed **#{need_text}** #{Currency.dust_emoji()}, you have **#{IntegerDisplay.format(ur.dust || 0)}** #{Currency.dust_emoji()}.",
+                  "Not enough dust. Needed **#{need_text}** #{Currency.dust_emoji()}, you have **#{IntegerDisplay.format(ur.dust)}** #{Currency.dust_emoji()}.",
                 flags: 64
               }
             }
@@ -977,7 +977,7 @@ defmodule MarblesDiscordbot.Consumers.Interaction do
               type: 4,
               data: %{
                 content:
-                  "Not enough dust. Needed **#{need_text}** #{Currency.dust_emoji()}, you have **#{IntegerDisplay.format(ur.dust || 0)}** #{Currency.dust_emoji()}.",
+                  "Not enough dust. Needed **#{need_text}** #{Currency.dust_emoji()}, you have **#{IntegerDisplay.format(ur.dust)}** #{Currency.dust_emoji()}.",
                 flags: 64
               }
             }

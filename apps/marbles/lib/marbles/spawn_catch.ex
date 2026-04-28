@@ -2,7 +2,7 @@ defmodule Marbles.SpawnCatch do
   @moduledoc false
 
   alias Marbles.Repo
-  alias Marbles.Schema.{CaughtSpawn, User, Marble}
+  alias Marbles.Schema.{CaughtSpawn, Marble}
   alias Marbles.Analytics
   alias Marbles.{Accounts, Collection}
   alias Marbles.Economy.{SpawnRewards, Upgrades}
@@ -38,7 +38,7 @@ defmodule Marbles.SpawnCatch do
                end
            end
 
-           user = Repo.get!(User, user_id)
+           user = Accounts.get_user!(user_id)
            luck = Upgrades.spawn_luck_bonus(user_id)
 
            %{coins: coins, dust: dust} =

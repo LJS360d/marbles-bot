@@ -22,8 +22,8 @@ defmodule Marbles.Schema.User do
 
   schema "users" do
     field :display_name, :string
-    field :currency, :integer, default: 0
-    field :dust, :integer, default: 0
+    field :currency, :integer, virtual: true, default: 0
+    field :dust, :integer, virtual: true, default: 0
     field :mine_roster, :map, default: %{}
     field :role, Ecto.Enum, values: [:regular, :server_admin, :owner], default: :regular
 
@@ -41,14 +41,10 @@ defmodule Marbles.Schema.User do
     user
     |> cast(attrs, [
       :display_name,
-      :currency,
-      :dust,
       :mine_roster,
       :role,
       :last_marble_id
     ])
     |> validate_required([])
-    |> validate_number(:currency, greater_than_or_equal_to: 0)
-    |> validate_number(:dust, greater_than_or_equal_to: 0)
   end
 end

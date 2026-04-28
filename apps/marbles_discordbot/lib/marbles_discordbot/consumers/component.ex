@@ -2,8 +2,7 @@ defmodule MarblesDiscordbot.Consumers.Component do
   use Nostrum.Consumer
   alias Nostrum.Struct.{Interaction, Embed}
   alias Nostrum.Api
-  alias Marbles.{Catalog, Accounts, Collection, GachaSession, IntegerDisplay, PackPullRules, Repo}
-  alias Marbles.Schema.User
+  alias Marbles.{Catalog, Accounts, Collection, GachaSession, IntegerDisplay, PackPullRules}
   alias MarblesDiscordbot.Embeds
   alias MarblesDiscordbot.Components
   alias MarblesDiscordbot.{PullButtons, PullSession}
@@ -431,7 +430,7 @@ defmodule MarblesDiscordbot.Consumers.Component do
       :ok
   end
 
-  defp reload_user!(user_id), do: Repo.get!(User, user_id)
+  defp reload_user!(user_id), do: Accounts.get_user!(user_id)
 
   defp insufficient_followup_text(needed, have, label) do
     "You need **#{IntegerDisplay.format(needed)}** coins for #{label}. You have #{IntegerDisplay.format(have)}."

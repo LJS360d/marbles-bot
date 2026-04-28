@@ -12,7 +12,16 @@ import Config
 # Configure Mix tasks and generators
 config :marbles,
   ecto_repos: [Marbles.Repo],
-  analytics_adapter: Marbles.Analytics.SQLAdapter
+  analytics_adapter: Marbles.Analytics.SQLAdapter,
+  pull_item_rewards: [
+    %{
+      trigger: %{kind: "duplicate_rarity_at_least", min_rarity: 3},
+      pull_kinds: ["one", "ten"],
+      rewards: [
+        %{item_type: "material", item_id: "marble_core", quantity: 1}
+      ]
+    }
+  ]
 
 # Configure the mailer
 #

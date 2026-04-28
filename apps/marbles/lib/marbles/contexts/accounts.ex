@@ -1,15 +1,16 @@
 defmodule Marbles.Accounts do
+  alias Marbles.Inventory
   alias Marbles.Repo
-  alias Marbles.Schema.{User, UserIdentity, UserRaceStat}
+  alias Marbles.Schema.{User, UserIdentity, UserInventory, UserRaceStat}
   import Ecto.Query
 
   @spec get_user!(Ecto.UUID.t()) :: User.t()
-  def get_user!(id), do: Repo.get!(User, id) |> Repo.preload(:identities)
+  def get_user!(id), do: Repo.get!(User, id) |> Repo.preload(:identities) |> with_wallet()
 
   def get_user(id) when is_integer(id) do
     case Repo.get(User, id) do
       nil -> nil
-      u -> Repo.preload(u, :identities)
+      u -> Repo.preload(u, :identities) |> with_wallet()
     end
   end
 
@@ -18,13 +19,13 @@ defmodule Marbles.Accounts do
       {int, ""} ->
         case Repo.get(User, int) do
           nil -> nil
-          u -> Repo.preload(u, :identities)
+          u -> Repo.preload(u, :identities) |> with_wallet()
         end
 
       _ ->
         case Repo.get(User, id) do
           nil -> nil
-          u -> Repo.preload(u, :identities)
+          u -> Repo.preload(u, :identities) |> with_wallet()
         end
     end
   end
@@ -40,7 +41,7 @@ defmodule Marbles.Accounts do
     )
     |> Repo.one()
     |> case do
-      %UserIdentity{user: user} -> user
+      %UserIdentity{user: user} -> with_wallet(user)
       nil -> nil
     end
   end
@@ -72,15 +73,17 @@ defmodule Marbles.Accounts do
           |> UserIdentity.changeset(Map.merge(identity_attrs, %{user_id: user.id}))
           |> Repo.insert!()
 
+          :ok = Inventory.ensure_default_currency_entries(user.id)
+
           user
         end)
         |> case do
-          {:ok, user} -> {:ok, Repo.preload(user, :identities)}
+          {:ok, user} -> {:ok, Repo.preload(user, :identities) |> with_wallet()}
           {:error, _} = err -> err
         end
 
       %UserIdentity{user: user} ->
-        {:ok, Repo.preload(user, :identities)}
+        {:ok, Repo.preload(user, :identities) |> with_wallet()}
     end
   end
 
@@ -99,12 +102,20 @@ defmodule Marbles.Accounts do
     order = normalize_user_order(Keyword.get(opts, :order))
     q = Keyword.get(opts, :q, "") |> to_string() |> String.trim()
 
-    base = from(u in User, as: :u, preload: :identities)
+    base = from(u in User, as: :u)
     base = apply_user_search(base, q)
     total = Repo.aggregate(base, :count, :id)
-    ordered = apply_user_order(base, sort, order)
+
+    ordered =
+      from(u in base,
+        left_join: w in subquery(wallet_subquery()),
+        on: w.user_id == u.id,
+        preload: :identities
+      )
+      |> apply_user_order(sort, order)
+
     users = ordered |> offset(^offset) |> limit(^per) |> Repo.all()
-    {users, total}
+    {with_wallet_many(users), total}
   end
 
   defp normalize_user_sort(nil), do: :inserted_at
@@ -151,27 +162,38 @@ defmodule Marbles.Accounts do
     |> String.replace("_", "")
   end
 
-  defp apply_user_order(query, :inserted_at, :asc), do: order_by(query, [u], asc: u.inserted_at)
-  defp apply_user_order(query, :inserted_at, :desc), do: order_by(query, [u], desc: u.inserted_at)
+  defp apply_user_order(query, :inserted_at, :asc),
+    do: order_by(query, [u, _w], asc: u.inserted_at)
+
+  defp apply_user_order(query, :inserted_at, :desc),
+    do: order_by(query, [u, _w], desc: u.inserted_at)
 
   defp apply_user_order(query, :display_name, :asc),
-    do: order_by(query, [u], asc_nulls_last: u.display_name)
+    do: order_by(query, [u, _w], asc_nulls_last: u.display_name)
 
   defp apply_user_order(query, :display_name, :desc),
-    do: order_by(query, [u], desc_nulls_last: u.display_name)
+    do: order_by(query, [u, _w], desc_nulls_last: u.display_name)
 
-  defp apply_user_order(query, :currency, :asc), do: order_by(query, [u], asc: u.currency)
-  defp apply_user_order(query, :currency, :desc), do: order_by(query, [u], desc: u.currency)
-  defp apply_user_order(query, :dust, :asc), do: order_by(query, [u], asc: u.dust)
-  defp apply_user_order(query, :dust, :desc), do: order_by(query, [u], desc: u.dust)
-  defp apply_user_order(query, :role, :asc), do: order_by(query, [u], asc: u.role)
-  defp apply_user_order(query, :role, :desc), do: order_by(query, [u], desc: u.role)
+  defp apply_user_order(query, :currency, :asc),
+    do: order_by(query, [_u, w], asc: coalesce(w.coins, 0))
+
+  defp apply_user_order(query, :currency, :desc),
+    do: order_by(query, [_u, w], desc: coalesce(w.coins, 0))
+
+  defp apply_user_order(query, :dust, :asc),
+    do: order_by(query, [_u, w], asc: coalesce(w.dust, 0))
+
+  defp apply_user_order(query, :dust, :desc),
+    do: order_by(query, [_u, w], desc: coalesce(w.dust, 0))
+
+  defp apply_user_order(query, :role, :asc), do: order_by(query, [u, _w], asc: u.role)
+  defp apply_user_order(query, :role, :desc), do: order_by(query, [u, _w], desc: u.role)
 
   def primary_display_name(%User{} = user) do
     if user.display_name && user.display_name != "" do
       user.display_name
     else
-      case List.first(user.identities || []) do
+      case List.first(identities_list(user)) do
         %{username: u} when is_binary(u) -> u
         _ -> "User"
       end
@@ -179,9 +201,10 @@ defmodule Marbles.Accounts do
   end
 
   def identity_username(%User{} = user, platform) do
-    user = Repo.preload(user, :identities)
+    user = Repo.preload(user, :identities) |> with_wallet()
+    identities = identities_list(user)
 
-    case Enum.find(user.identities || [], &(&1.platform == platform)) do
+    case Enum.find(identities, &(&1.platform == platform)) do
       %{username: u} -> u
       _ -> primary_display_name(user)
     end
@@ -215,18 +238,87 @@ defmodule Marbles.Accounts do
     |> Repo.update()
   end
 
-  def update_currency(user, amount) do
-    user
-    |> User.changeset(%{currency: user.currency + amount})
-    |> Repo.update()
+  @spec currency_balance(Ecto.UUID.t()) :: non_neg_integer()
+  def currency_balance(user_id) when is_binary(user_id) do
+    Inventory.get_currency_balance(user_id, :coins)
   end
 
-  @spec update_dust(Marbles.Schema.User.t(), integer()) ::
-          {:ok, Marbles.Schema.User.t()} | {:error, Ecto.Changeset.t()}
-  def update_dust(user, amount) do
-    user
-    |> User.changeset(%{dust: user.dust + amount})
-    |> Repo.update()
+  @spec dust_balance(Ecto.UUID.t()) :: non_neg_integer()
+  def dust_balance(user_id) when is_binary(user_id) do
+    Inventory.get_currency_balance(user_id, :dust)
+  end
+
+  @spec wallet(Ecto.UUID.t()) :: %{coins: non_neg_integer(), dust: non_neg_integer()}
+  def wallet(user_id) when is_binary(user_id) do
+    :ok = Inventory.ensure_default_currency_entries(user_id)
+    Inventory.get_currency_balances(user_id)
+  end
+
+  @spec set_wallet_balances(Ecto.UUID.t(), non_neg_integer(), non_neg_integer()) ::
+          {:ok, %{coins: non_neg_integer(), dust: non_neg_integer()}}
+          | {:error, :insufficient_quantity | :invalid_quantity}
+  def set_wallet_balances(user_id, coins, dust)
+      when is_binary(user_id) and is_integer(coins) and coins >= 0 and is_integer(dust) and
+             dust >= 0 do
+    :ok = Inventory.ensure_default_currency_entries(user_id)
+    {coins_type, coins_id} = Inventory.currency_item_key(:coins)
+    {dust_type, dust_id} = Inventory.currency_item_key(:dust)
+
+    Repo.transaction(fn ->
+      case Inventory.set_item_quantity(user_id, coins_type, coins_id, coins, %{
+             "source" => "owner_admin"
+           }) do
+        {:ok, _} -> :ok
+        {:error, reason} -> Repo.rollback(reason)
+      end
+
+      case Inventory.set_item_quantity(user_id, dust_type, dust_id, dust, %{
+             "source" => "owner_admin"
+           }) do
+        {:ok, _} -> :ok
+        {:error, reason} -> Repo.rollback(reason)
+      end
+
+      wallet(user_id)
+    end)
+    |> case do
+      {:ok, balances} -> {:ok, balances}
+      {:error, reason} -> {:error, reason}
+    end
+  end
+
+  @spec update_currency(User.t(), integer()) ::
+          {:ok, User.t()} | {:error, :insufficient_currency | :invalid_quantity}
+  def update_currency(%User{} = user, amount) when is_integer(amount) do
+    {item_type, item_id} = Inventory.currency_item_key(:coins)
+
+    case Inventory.change_item_quantity(user.id, item_type, item_id, amount) do
+      {:ok, _} ->
+        {:ok, with_wallet(user)}
+
+      {:error, :insufficient_quantity} ->
+        {:error, :insufficient_currency}
+
+      {:error, :invalid_quantity} ->
+        {:error, :invalid_quantity}
+    end
+  end
+
+  @spec update_dust(User.t(), integer()) ::
+          {:ok, User.t()} | {:error, :insufficient_dust | :invalid_quantity}
+  def update_dust(%User{} = user, amount) when is_integer(amount) do
+    {item_type, item_id} = Inventory.currency_item_key(:dust)
+
+    case Inventory.change_item_quantity(user.id, item_type, item_id, amount) do
+      {:ok, _} ->
+        {:ok, with_wallet(user)}
+
+      {:error, :insufficient_quantity} ->
+        {:error, :insufficient_dust}
+
+      {:error, :invalid_quantity} ->
+        {:error, :invalid_quantity}
+    end
   end
 
   def set_role(user, role) when role in [:regular, :server_admin, :owner] do
@@ -234,4 +326,49 @@ defmodule Marbles.Accounts do
     |> User.changeset(%{role: role})
     |> Repo.update()
   end
+
+  @spec wallet_subquery() :: Ecto.Query.t()
+  defp wallet_subquery do
+    from(ui in UserInventory,
+      where: ui.item_type == ^Inventory.currency_item_type(),
+      group_by: ui.user_id,
+      select: %{
+        user_id: ui.user_id,
+        coins:
+          fragment(
+            "SUM(CASE WHEN ? = ? THEN ? ELSE 0 END)",
+            ui.item_id,
+            ^Inventory.coins_item_id(),
+            ui.quantity
+          ),
+        dust:
+          fragment(
+            "SUM(CASE WHEN ? = ? THEN ? ELSE 0 END)",
+            ui.item_id,
+            ^Inventory.dust_item_id(),
+            ui.quantity
+          )
+      }
+    )
+  end
+
+  @spec with_wallet_many([User.t()]) :: [User.t()]
+  defp with_wallet_many(users) when is_list(users) do
+    balances = Inventory.currency_balances_for_users(Enum.map(users, & &1.id))
+
+    Enum.map(users, fn user ->
+      wallet = Map.get(balances, user.id, %{coins: 0, dust: 0})
+      %{user | currency: wallet.coins, dust: wallet.dust}
+    end)
+  end
+
+  @spec with_wallet(User.t()) :: User.t()
+  defp with_wallet(%User{} = user) do
+    wallet = wallet(user.id)
+    %{user | currency: wallet.coins, dust: wallet.dust}
+  end
+
+  @spec identities_list(User.t()) :: [map()]
+  defp identities_list(%User{identities: identities}) when is_list(identities), do: identities
+  defp identities_list(_), do: []
 end

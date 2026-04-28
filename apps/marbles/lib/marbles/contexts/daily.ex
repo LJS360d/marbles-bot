@@ -4,11 +4,12 @@ defmodule Marbles.Daily do
   """
 
   alias Marbles.Repo
-  alias Marbles.Schema.{UserDailyStreak, User, UserMarble}
+  alias Marbles.Schema.{UserDailyStreak, UserMarble}
   alias Marbles.Analytics
   alias Marbles.Economy.Mining
   alias Marbles.Economy.Experience
   alias Marbles.Economy.Effects
+  alias Marbles.Accounts
 
   @base_coins 100
   @streak_multiplier 10
@@ -73,8 +74,8 @@ defmodule Marbles.Daily do
       mining_xp_breakdown = grant_mining_xp(user_id, mining.breakdown, mining.seconds)
       mining_xp_total = Enum.reduce(mining_xp_breakdown, 0, fn row, acc -> acc + row.xp end)
 
-      user = Repo.get!(User, user_id)
-      {:ok, _} = Marbles.Accounts.update_currency(user, total_coins)
+      user = Accounts.get_user!(user_id)
+      {:ok, _} = Accounts.update_currency(user, total_coins)
 
       _updated_streak =
         streak_record

@@ -4,7 +4,7 @@ defmodule Marbles.Economy.Shop do
   import Ecto.Query
   alias Marbles.Economy.Currency
   alias Marbles.Repo
-  alias Marbles.Schema.{User, UserEffect, ShopItem}
+  alias Marbles.Schema.{UserEffect, ShopItem}
   alias Marbles.Analytics
   alias Marbles.Accounts
 
@@ -200,13 +200,14 @@ defmodule Marbles.Economy.Shop do
 
       true ->
         case Repo.transaction(fn ->
-               user = Repo.get!(User, user_id)
+               user = Accounts.get_user!(user_id)
+               wallet = Accounts.wallet(user_id)
 
                cond do
-                 user.currency < product.coin ->
+                 wallet.coins < product.coin ->
                    Repo.rollback(:insufficient_coins)
 
-                 user.dust < product.dust ->
+                 wallet.dust < product.dust ->
                    Repo.rollback(:insufficient_dust)
 
                  true ->

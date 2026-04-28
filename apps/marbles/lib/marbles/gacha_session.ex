@@ -1,5 +1,15 @@
 defmodule Marbles.GachaSession do
-  alias Marbles.{Accounts, Catalog, Collection, Gacha, PackPullRules, Repo}
+  alias Marbles.{
+    Accounts,
+    Catalog,
+    Collection,
+    Gacha,
+    Inventory,
+    PackPullRules,
+    PullItemRewards,
+    Repo
+  }
+
   alias Marbles.Schema.{Marble, Pack, User}
 
   @type pull_kind :: :one | :ten
@@ -19,7 +29,8 @@ defmodule Marbles.GachaSession do
   @type marble_result :: %{
           marble: Marble.t(),
           duplicate?: boolean(),
-          dust: non_neg_integer()
+          dust: non_neg_integer(),
+          item_rewards: [map()]
         }
   @type execute_response :: %{
           pack: Pack.t(),
@@ -28,7 +39,8 @@ defmodule Marbles.GachaSession do
           currency_before: non_neg_integer(),
           currency_after: non_neg_integer(),
           marbles: [marble_result()],
-          total_dust: non_neg_integer()
+          total_dust: non_neg_integer(),
+          total_item_rewards: [map()]
         }
   @type execute_opt ::
           {:source, String.t()} | {:guild_id, String.t() | nil} | {:analytics_meta, map()}
@@ -56,13 +68,14 @@ defmodule Marbles.GachaSession do
          {:ok, pack} <- active_pack(pack_id),
          %User{} = user <- Accounts.get_user(user_id) do
       quote = quote_for_kind(user.id, pack, pull_kind)
+      coins_before = Accounts.currency_balance(user.id)
 
       {:ok,
        %{
          pack: pack,
          quote: quote,
-         currency_before: user.currency,
-         currency_after: max(user.currency - quote.final_price, 0)
+         currency_before: coins_before,
+         currency_after: max(coins_before - quote.final_price, 0)
        }}
     else
       nil -> {:error, :user_not_found}
@@ -86,10 +99,10 @@ defmodule Marbles.GachaSession do
       case Repo.transaction(fn ->
              locked_user = lock_user!(user_id)
              quote = quote_for_kind(locked_user.id, pack, pull_kind)
+             currency_before = Accounts.currency_balance(locked_user.id)
 
-             if locked_user.currency < quote.final_price do
-               Repo.rollback({:insufficient_currency, quote.final_price, locked_user.currency})
-             end
+             if currency_before < quote.final_price,
+               do: Repo.rollback({:insufficient_currency, quote.final_price, currency_before})
 
              marbles =
                pull_marbles!(
@@ -102,24 +115,34 @@ defmodule Marbles.GachaSession do
                )
 
              if quote.final_price > 0 do
-               {:ok, _} = Accounts.update_currency(locked_user, -quote.final_price)
+               case Accounts.update_currency(locked_user, -quote.final_price) do
+                 {:ok, _} ->
+                   :ok
+
+                 {:error, :insufficient_currency} ->
+                   Repo.rollback({:insufficient_currency, quote.final_price, currency_before})
+
+                 {:error, _reason} ->
+                   Repo.rollback({:insufficient_currency, quote.final_price, currency_before})
+               end
              end
 
              commit_pull_rules!(locked_user.id, pack.id, pull_kind, quote)
 
-             {marble_results, total_dust} =
+             {marble_results, total_dust, total_item_rewards} =
                acquire_marbles(locked_user.id, pack.id, pull_kind, source, marbles)
 
-             user_after = Repo.get!(User, locked_user.id)
+             currency_after = Accounts.currency_balance(locked_user.id)
 
              %{
                pack: pack,
                pull_kind: pull_kind,
                quote: quote,
-               currency_before: locked_user.currency,
-               currency_after: user_after.currency,
+               currency_before: currency_before,
+               currency_after: currency_after,
                marbles: marble_results,
-               total_dust: total_dust
+               total_dust: total_dust,
+               total_item_rewards: total_item_rewards
              }
            end) do
         {:ok, result} ->
@@ -248,22 +271,46 @@ defmodule Marbles.GachaSession do
   end
 
   @spec acquire_marbles(Ecto.UUID.t(), Ecto.UUID.t(), pull_kind(), String.t(), [Marble.t()]) ::
-          {[marble_result()], non_neg_integer()}
+          {[marble_result()], non_neg_integer(), [map()]}
   defp acquire_marbles(user_id, pack_id, pull_kind, source, marbles) do
-    Enum.map_reduce(marbles, 0, fn marble, dust_total ->
-      meta = %{
-        "source" => source,
-        "pack_id" => pack_id,
-        "pull_kind" => Atom.to_string(pull_kind)
-      }
+    {results, dust_total, reward_rows} =
+      Enum.reduce(marbles, {[], 0, []}, fn marble, {acc_rows, acc_dust, acc_rewards} ->
+        meta = %{
+          "source" => source,
+          "pack_id" => pack_id,
+          "pull_kind" => Atom.to_string(pull_kind)
+        }
 
-      case Collection.acquire_marble_template(user_id, marble.id, meta: meta) do
-        {:new, _user_marble} ->
-          {%{marble: marble, duplicate?: false, dust: 0}, dust_total}
+        case Collection.acquire_marble_template(user_id, marble.id, meta: meta) do
+          {:new, _user_marble} ->
+            rewards = apply_pull_rewards(user_id, pack_id, pull_kind, marble.rarity || 1, false)
+            row = %{marble: marble, duplicate?: false, dust: 0, item_rewards: rewards}
+            {[row | acc_rows], acc_dust, rewards ++ acc_rewards}
 
-        {:duplicate, dust, _user_marble} ->
-          {%{marble: marble, duplicate?: true, dust: dust}, dust_total + dust}
-      end
-    end)
+          {:duplicate, dust, _user_marble} ->
+            rewards = apply_pull_rewards(user_id, pack_id, pull_kind, marble.rarity || 1, true)
+            row = %{marble: marble, duplicate?: true, dust: dust, item_rewards: rewards}
+            {[row | acc_rows], acc_dust + dust, rewards ++ acc_rewards}
+        end
+      end)
+
+    {Enum.reverse(results), dust_total, Enum.reverse(reward_rows)}
+  end
+
+  @spec apply_pull_rewards(Ecto.UUID.t(), Ecto.UUID.t(), pull_kind(), pos_integer(), boolean()) ::
+          [map()]
+  defp apply_pull_rewards(user_id, pack_id, pull_kind, rarity, duplicate?) do
+    rewards =
+      PullItemRewards.rewards_for_pull(%{
+        duplicate?: duplicate?,
+        rarity: rarity,
+        pull_kind: pull_kind,
+        pack_id: pack_id
+      })
+
+    case Inventory.grant_rewards(user_id, rewards) do
+      {:ok, _} -> rewards
+      {:error, _} -> []
+    end
   end
 end

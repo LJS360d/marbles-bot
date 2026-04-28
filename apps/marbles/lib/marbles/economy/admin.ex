@@ -2,8 +2,18 @@ defmodule Marbles.Economy.Admin do
   @moduledoc false
 
   import Ecto.Query
+  alias Marbles.Inventory
   alias Marbles.Repo
-  alias Marbles.Schema.{ShopItem, UserDailyStreak, UserEffect, UserIdentity, UserUpgrade}
+
+  alias Marbles.Schema.{
+    ShopItem,
+    UserDailyStreak,
+    UserEffect,
+    UserIdentity,
+    UserInventory,
+    UserUpgrade
+  }
+
   alias Marbles.Economy.Shop
 
   @spec list_shop_items() :: [map()]
@@ -48,9 +58,12 @@ defmodule Marbles.Economy.Admin do
   def list_user_cooldowns(page \\ 1, per_page \\ 20)
       when is_integer(page) and page > 0 and is_integer(per_page) and per_page > 0 do
     offset = (page - 1) * per_page
+    wallet = wallet_subquery()
 
     users_q =
       from(u in Marbles.Schema.User,
+        left_join: w in subquery(wallet),
+        on: w.user_id == u.id,
         left_join: i in UserIdentity,
         on: i.user_id == u.id and i.platform == "discord",
         left_join: d in UserDailyStreak,
@@ -59,8 +72,8 @@ defmodule Marbles.Economy.Admin do
         select: %{
           id: u.id,
           username: coalesce(i.username, u.display_name),
-          currency: u.currency,
-          dust: u.dust,
+          currency: coalesce(w.coins, 0),
+          dust: coalesce(w.dust, 0),
           last_daily_at: d.last_claimed_at,
           streak: d.current_streak
         }
@@ -179,4 +192,29 @@ defmodule Marbles.Economy.Admin do
   defp present?(nil), do: false
   defp present?(v) when is_binary(v), do: String.trim(v) != ""
   defp present?(_), do: true
+
+  @spec wallet_subquery() :: Ecto.Query.t()
+  defp wallet_subquery do
+    from(ui in UserInventory,
+      where: ui.item_type == ^Inventory.currency_item_type(),
+      group_by: ui.user_id,
+      select: %{
+        user_id: ui.user_id,
+        coins:
+          fragment(
+            "SUM(CASE WHEN ? = ? THEN ? ELSE 0 END)",
+            ui.item_id,
+            ^Inventory.coins_item_id(),
+            ui.quantity
+          ),
+        dust:
+          fragment(
+            "SUM(CASE WHEN ? = ? THEN ? ELSE 0 END)",
+            ui.item_id,
+            ^Inventory.dust_item_id(),
+            ui.quantity
+          )
+      }
+    )
+  end
 end

@@ -351,7 +351,9 @@ defmodule MarblesWeb.GachaLive do
                 </div>
                 <div class="flex items-center justify-between">
                   <p class="font-medium">{entry.marble.name}</p>
-                  <span class="text-xs text-base-content/70">{rarity_stars(entry.marble.rarity)}</span>
+                  <span class="text-xs text-base-content/70">
+                    {rarity_stars(entry.marble.rarity)}
+                  </span>
                 </div>
                 <p class="text-xs text-base-content/60">
                   {if entry.duplicate?,

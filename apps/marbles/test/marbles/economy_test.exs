@@ -2,7 +2,7 @@ defmodule Marbles.EconomyTest do
   use Marbles.DataCase, async: true
 
   alias Marbles.Repo
-  alias Marbles.Schema.{User, Marble, Team}
+  alias Marbles.Schema.{Marble, Team}
   alias Marbles.{Accounts, Collection}
   alias Marbles.Economy.{SpawnRewards, Mining, Upgrades, Admin}
   alias Marbles.Schema.UserDailyStreak
@@ -39,7 +39,7 @@ defmodule Marbles.EconomyTest do
     assert {:new, _} = Collection.acquire_marble_template(user.id, marble.id)
     assert {:duplicate, dust, _} = Collection.acquire_marble_template(user.id, marble.id)
     assert dust > 0
-    assert Repo.get!(User, user.id).dust == dust
+    assert Accounts.dust_balance(user.id) == dust
   end
 
   test "high spawn rate usually pays zero coins", %{marble: marble} do
@@ -91,6 +91,6 @@ defmodule Marbles.EconomyTest do
   test "upgrade buy deducts dust", %{user: user} do
     {:ok, u} = Accounts.update_dust(user, 500)
     assert {:ok, %{new_level: 1}} = Upgrades.buy(u.id, "mine_yield")
-    assert Repo.get!(User, u.id).dust < 500
+    assert Accounts.dust_balance(u.id) < 500
   end
 end

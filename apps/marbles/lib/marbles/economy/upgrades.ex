@@ -3,7 +3,7 @@ defmodule Marbles.Economy.Upgrades do
 
   alias Marbles.Economy.Currency
   alias Marbles.Repo
-  alias Marbles.Schema.{User, UserUpgrade}
+  alias Marbles.Schema.UserUpgrade
   alias Marbles.Accounts
 
   @type upgrade_key :: String.t()
@@ -86,9 +86,9 @@ defmodule Marbles.Economy.Upgrades do
         cost = Enum.at(defn.costs, cur)
 
         case Repo.transaction(fn ->
-               user = Repo.get!(User, user_id)
+               user = Accounts.get_user!(user_id)
 
-               if user.dust < cost do
+               if Accounts.dust_balance(user.id) < cost do
                  Repo.rollback(:insufficient_dust)
                end
 

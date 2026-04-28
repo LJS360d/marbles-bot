@@ -13,7 +13,8 @@ defmodule MarblesWeb.Dev.SandboxLive do
   Used by the dev sandbox so the client only receives textured rows for physics preview.
   """
   @spec pick_textured_marbles_for_sandbox([Marble.t()], pos_integer()) :: [Marble.t()]
-  def pick_textured_marbles_for_sandbox(marbles, limit) when is_list(marbles) and is_integer(limit) and limit > 0 do
+  def pick_textured_marbles_for_sandbox(marbles, limit)
+      when is_list(marbles) and is_integer(limit) and limit > 0 do
     marbles
     |> Enum.filter(fn m -> Assets.marble_texture_url(m) != nil end)
     |> Enum.take(limit)
@@ -68,7 +69,7 @@ defmodule MarblesWeb.Dev.SandboxLive do
           phx-hook="DevSandbox"
           phx-update="ignore"
           data-marbles-b64={@marbles_b64}
-          class="relative w-full min-h-[320px] h-[50svh] border-b border-base-300 bg-black md:h-[calc(100dvh-12rem)] md:min-h-[480px] md:border-b-0 md:border-r"
+          class="relative w-full min-h-80 h-[50svh] border-b border-base-300 bg-black md:h-[calc(100dvh-12rem)] md:min-h-[480px] md:border-b-0 md:border-r"
         >
         </div>
         <div class="overflow-y-auto p-4 text-sm space-y-3">

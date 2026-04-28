@@ -1,7 +1,7 @@
 # Collection operations
 defmodule Marbles.Collection do
   alias Marbles.Repo
-  alias Marbles.Schema.{UserMarble, Marble, User}
+  alias Marbles.Schema.{UserMarble, Marble}
   alias Marbles.Accounts
   import Ecto.Query
 
@@ -51,8 +51,7 @@ defmodule Marbles.Collection do
     case Repo.get_by(UserMarble, user_id: user_id, marble_id: marble_id) do
       %UserMarble{} = existing ->
         dust = Marbles.Economy.Dust.amount_for_duplicate(marble.rarity || 1, user_id)
-        user = Repo.get!(User, user_id)
-        {:ok, _} = Accounts.update_dust(user, dust)
+        {:ok, _} = Accounts.update_dust(Accounts.get_user!(user_id), dust)
         {:duplicate, dust, existing}
 
       nil ->
@@ -69,8 +68,7 @@ defmodule Marbles.Collection do
           {:error, _} ->
             existing = Repo.get_by!(UserMarble, user_id: user_id, marble_id: marble_id)
             dust = Marbles.Economy.Dust.amount_for_duplicate(marble.rarity || 1, user_id)
-            user = Repo.get!(User, user_id)
-            {:ok, _} = Accounts.update_dust(user, dust)
+            {:ok, _} = Accounts.update_dust(Accounts.get_user!(user_id), dust)
             {:duplicate, dust, existing}
         end
     end

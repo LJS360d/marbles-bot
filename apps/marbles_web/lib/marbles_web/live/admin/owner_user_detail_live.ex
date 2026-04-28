@@ -2,6 +2,7 @@ defmodule MarblesWeb.Admin.OwnerUserDetailLive do
   use MarblesWeb, :live_view
   alias Marbles.Accounts
   alias Marbles.Collection
+  alias Marbles.Inventory
   alias Marbles.Economy.Admin, as: EconomyAdmin
   alias Marbles.Economy.Upgrades
   alias Marbles.Economy.Mining
@@ -24,6 +25,21 @@ defmodule MarblesWeb.Admin.OwnerUserDetailLive do
        {"User", nil}
      ])
      |> assign(:wide, true)}
+  end
+
+  @impl true
+  def handle_event("set_wallet", %{"wallet" => params}, socket) do
+    user = socket.assigns.user
+    coins = parse_non_neg_with_default(params["coins"], user.currency || 0)
+    dust = parse_non_neg_with_default(params["dust"], user.dust || 0)
+
+    case Accounts.set_wallet_balances(user.id, coins, dust) do
+      {:ok, _} ->
+        {:noreply, socket |> put_flash(:info, "Wallet updated.") |> load_user(user.id)}
+
+      {:error, _} ->
+        {:noreply, put_flash(socket, :error, "Could not update wallet.")}
+    end
   end
 
   @impl true
@@ -139,6 +155,12 @@ defmodule MarblesWeb.Admin.OwnerUserDetailLive do
     effects = EconomyAdmin.list_user_effects(user.id)
     mine = Mining.compute_coins(user.id, Mining.max_accrual_seconds(user.id))
     {:ok, roster_entries} = MineRoster.view(user.id)
+    inventory_items = Inventory.list_user_items(user.id)
+
+    {currency_items, non_currency_items} =
+      Enum.split_with(inventory_items, fn item ->
+        item.item_type == Inventory.currency_item_type()
+      end)
 
     streak =
       case Marbles.Repo.get_by(Marbles.Schema.UserDailyStreak, user_id: user.id) do
@@ -164,6 +186,8 @@ defmodule MarblesWeb.Admin.OwnerUserDetailLive do
     |> assign(:effect_options, effect_options)
     |> assign(:mine_preview, mine)
     |> assign(:roster_entries, roster_entries)
+    |> assign(:currency_items, currency_items)
+    |> assign(:inventory_items, non_currency_items)
     |> assign(:breadcrumbs, breadcrumbs)
   end
 
@@ -276,7 +300,7 @@ defmodule MarblesWeb.Admin.OwnerUserDetailLive do
           </div>
         </div>
 
-        <section class="rounded-xl border border-base-300 bg-base-200 p-4">
+        <section id="owner-user-inventory" class="rounded-xl border border-base-300 bg-base-200 p-4">
           <h2 class="text-lg font-semibold">Race stats</h2>
           <.form
             for={%{}}
@@ -366,6 +390,64 @@ defmodule MarblesWeb.Admin.OwnerUserDetailLive do
               Roster: {Enum.join(Enum.map(@roster_entries, &MarbleLabel.owned_line/1), ", ")}
             </span>
           </p>
+        </section>
+
+        <section class="rounded-xl border border-base-300 bg-base-200 p-4">
+          <h2 class="text-lg font-semibold">Inventory</h2>
+          <.form
+            for={%{}}
+            as={:wallet}
+            id="set-wallet-form"
+            phx-submit="set_wallet"
+            class="mt-3 grid grid-cols-1 gap-3 rounded-lg border border-base-300 bg-base-100 p-3 sm:grid-cols-2"
+          >
+            <.input
+              name="wallet[coins]"
+              type="number"
+              min="0"
+              label={"Coins #{Currency.coin_emoji()}"}
+              value={@user.currency || 0}
+            />
+            <.input
+              name="wallet[dust]"
+              type="number"
+              min="0"
+              label={"Dust #{Currency.dust_emoji()}"}
+              value={@user.dust || 0}
+            />
+            <div class="sm:col-span-2">
+              <button type="submit" class="btn btn-primary btn-sm">Set wallet</button>
+            </div>
+          </.form>
+          <div class="mt-3 grid gap-3 sm:grid-cols-2">
+            <article class="rounded-lg border border-base-300 bg-base-100 p-3">
+              <p class="text-xs font-medium uppercase tracking-wide text-base-content/60">
+                Currencies
+              </p>
+              <ul class="mt-2 space-y-1.5 text-sm">
+                <li :for={item <- @currency_items} class="flex items-center justify-between gap-2">
+                  <span class="font-medium">{item.item_id}</span>
+                  <span class="tabular-nums">{IntegerDisplay.format(item.quantity || 0)}</span>
+                </li>
+                <li :if={empty_list?(@currency_items)} class="text-base-content/60">
+                  No currencies.
+                </li>
+              </ul>
+            </article>
+            <article class="rounded-lg border border-base-300 bg-base-100 p-3">
+              <p class="text-xs font-medium uppercase tracking-wide text-base-content/60">Items</p>
+              <ul class="mt-2 space-y-1.5 text-sm">
+                <li :for={item <- @inventory_items} class="flex items-center justify-between gap-2">
+                  <span class="truncate">
+                    <span class="font-medium">{item.item_id}</span>
+                    <span class="text-base-content/60">({item.item_type})</span>
+                  </span>
+                  <span class="tabular-nums">{IntegerDisplay.format(item.quantity || 0)}</span>
+                </li>
+                <li :if={empty_list?(@inventory_items)} class="text-base-content/60">No items.</li>
+              </ul>
+            </article>
+          </div>
         </section>
 
         <section class="rounded-xl border border-base-300 bg-base-200 p-4">

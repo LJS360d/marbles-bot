@@ -1,8 +1,8 @@
 defmodule Marbles.GachaSessionTest do
   use Marbles.DataCase, async: false
 
-  alias Marbles.{Accounts, GachaSession, Repo}
-  alias Marbles.Schema.{Marble, Pack, PackPullRule, Team, User, UserPackPullRuleState}
+  alias Marbles.{Accounts, GachaSession, Inventory, Repo}
+  alias Marbles.Schema.{Marble, Pack, PackPullRule, Team, UserPackPullRuleState}
 
   setup do
     user = create_user("gacha-session-user")
@@ -27,13 +27,13 @@ defmodule Marbles.GachaSessionTest do
   end
 
   test "execute_pull returns insufficient currency without mutation", %{user: user, pack: pack} do
-    {:ok, _} = Accounts.update_currency(user, -user.currency)
-    user = Repo.get!(User, user.id)
+    {:ok, _} = Accounts.update_currency(user, -Accounts.currency_balance(user.id))
+    user = Accounts.get_user!(user.id)
 
     assert {:error, {:insufficient_currency, 100, 0}} =
              GachaSession.execute_pull(user.id, pack.id, :one)
 
-    assert Repo.get!(User, user.id).currency == 0
+    assert Accounts.currency_balance(user.id) == 0
   end
 
   test "execute_pull respects pity state and yields guaranteed rarity", %{
@@ -56,13 +56,25 @@ defmodule Marbles.GachaSessionTest do
     assert entry.marble.id == marble_three.id
   end
 
+  test "duplicate 3-star pull grants configured item reward", %{
+    user: user,
+    marble_three: marble_three
+  } do
+    three_star_only_pack = create_pack([marble_three], 100)
+
+    assert {:ok, _} = GachaSession.execute_pull(user.id, three_star_only_pack.id, :one)
+    assert {:ok, _} = GachaSession.execute_pull(user.id, three_star_only_pack.id, :one)
+
+    assert Inventory.get_item_quantity(user.id, "material", "marble_core") == 1
+  end
+
   test "execute_pull rolls back cleanly when pull pool is empty", %{user: user} do
     empty_pack = create_pack([], 150)
-    before_currency = Repo.get!(User, user.id).currency
+    before_currency = Accounts.currency_balance(user.id)
 
     assert {:error, :pull_failed} = GachaSession.execute_pull(user.id, empty_pack.id, :one)
 
-    assert Repo.get!(User, user.id).currency == before_currency
+    assert Accounts.currency_balance(user.id) == before_currency
   end
 
   defp create_user(prefix) do

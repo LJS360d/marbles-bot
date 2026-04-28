@@ -45,8 +45,6 @@ defmodule Marbles.Repo.Migrations.CreateTables do
     create table(:users, primary_key: false) do
       add :id, :binary_id, primary_key: true
       add :display_name, :string
-      add :currency, :integer, default: 0
-      add :dust, :integer, default: 0, null: false
       add :mine_roster, :map, default: %{}, null: false
       add :role, :string, null: false, default: "regular"
       add :last_marble_id, references(:marbles, type: :binary_id, on_delete: :nilify_all)
@@ -232,8 +230,10 @@ defmodule Marbles.Repo.Migrations.CreateTables do
       timestamps()
     end
 
+    create unique_index(:user_inventory, [:user_id, :item_type, :item_id])
     create index(:user_inventory, [:user_id])
     create index(:user_inventory, [:user_id, :item_type])
+    create index(:user_inventory, [:user_id, :item_id], where: "item_type = 'currency'")
 
     create table(:analytics_events, primary_key: false) do
       add :id, :binary_id, primary_key: true
