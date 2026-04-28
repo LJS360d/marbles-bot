@@ -269,11 +269,11 @@ defmodule MarblesWeb.GachaLive do
         <div
           :if={@animation_phase == :recap and @latest_result}
           id="gacha-recap-overlay"
-          class="absolute inset-0 z-40 flex items-center justify-center bg-transparent p-4 sm:p-6"
+          class="absolute inset-0 z-40 flex items-center justify-center bg-base-100/25 p-4 sm:p-6"
         >
           <div class={[
-            "w-full max-w-5xl max-h-full overflow-y-auto space-y-4 rounded-2xl border border-white/20",
-            "bg-transparent p-5 shadow-none backdrop-blur-md sm:p-6"
+            "w-full max-w-5xl max-h-full overflow-y-auto space-y-4 rounded-2xl border",
+            "border-base-300/80 bg-base-100/88 text-base-content p-5 shadow-2xl backdrop-blur-md sm:p-6"
           ]}>
             <div class="flex items-center justify-between gap-3">
               <h3 class="text-xl font-semibold">Recap</h3>
@@ -286,7 +286,7 @@ defmodule MarblesWeb.GachaLive do
               <article
                 :for={entry <- @latest_result.marbles}
                 id={"recap-marble-#{entry.marble.id}"}
-                class="rounded-xl border border-white/15 bg-transparent p-3 backdrop-blur-sm"
+                class="rounded-xl border border-base-300/70 bg-base-200/55 p-3 backdrop-blur-sm"
               >
                 <div class="flex items-center justify-between">
                   <p class="font-medium">{entry.marble.name}</p>
@@ -548,6 +548,11 @@ defmodule MarblesWeb.GachaLive do
       "results" =>
         Enum.map(result.marbles, fn entry ->
           texture_url = Assets.marble_texture_url(entry.marble)
+          team_logo_url =
+            case entry.marble.team do
+              %{logo_path: path} when is_binary(path) and path != "" -> Assets.url_for_path(path)
+              _ -> nil
+            end
 
           %{
             "marble_id" => entry.marble.id,
@@ -555,7 +560,8 @@ defmodule MarblesWeb.GachaLive do
             "rarity" => entry.marble.rarity,
             "duplicate" => entry.duplicate?,
             "dust" => entry.dust,
-            "texture_url" => texture_url
+            "texture_url" => texture_url,
+            "team_logo_url" => team_logo_url
           }
         end)
     }
