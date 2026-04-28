@@ -117,8 +117,13 @@ defmodule Marbles.Catalog do
   defp apply_marble_search(query, ""), do: query
 
   defp apply_marble_search(query, q) do
-    term = "%" <> admin_search_fragment(q) <> "%"
-    from([m, t] in query, where: ilike(m.name, ^term) or ilike(m.edition, ^term))
+    term = "%" <> (q |> admin_search_fragment() |> String.downcase()) <> "%"
+
+    from([m, t] in query,
+      where:
+        fragment("LOWER(?) LIKE ?", m.name, ^term) or
+          fragment("LOWER(?) LIKE ?", m.edition, ^term)
+    )
   end
 
   defp admin_search_fragment(q) do
@@ -211,8 +216,8 @@ defmodule Marbles.Catalog do
   defp apply_pack_search(query, ""), do: query
 
   defp apply_pack_search(query, q) do
-    term = "%" <> admin_search_fragment(q) <> "%"
-    from(p in query, where: ilike(p.name, ^term))
+    term = "%" <> (q |> admin_search_fragment() |> String.downcase()) <> "%"
+    from(p in query, where: fragment("LOWER(?) LIKE ?", p.name, ^term))
   end
 
   defp apply_pack_order(query, :name, :asc), do: order_by(query, [p], asc: p.name)

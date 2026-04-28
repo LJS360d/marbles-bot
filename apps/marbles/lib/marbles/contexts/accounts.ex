@@ -142,14 +142,16 @@ defmodule Marbles.Accounts do
   defp apply_user_search(query, ""), do: query
 
   defp apply_user_search(query, q) do
-    term = "%" <> admin_search_fragment(q) <> "%"
+    term = "%" <> (q |> admin_search_fragment() |> String.downcase()) <> "%"
 
     from(u in query,
       where:
-        ilike(u.display_name, ^term) or
+        fragment("LOWER(?) LIKE ?", u.display_name, ^term) or
           exists(
             from(i in UserIdentity,
-              where: i.user_id == parent_as(:u).id and ilike(i.username, ^term)
+              where:
+                i.user_id == parent_as(:u).id and
+                  fragment("LOWER(?) LIKE ?", i.username, ^term)
             )
           )
     )
