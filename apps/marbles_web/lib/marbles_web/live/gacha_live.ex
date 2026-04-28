@@ -1,7 +1,7 @@
 defmodule MarblesWeb.GachaLive do
   use MarblesWeb, :live_view
 
-  alias Marbles.Assets
+  alias Marbles.{Accounts, Assets}
   alias Marbles.GachaSession
   alias Marbles.IntegerDisplay
   alias Marbles.Economy.Currency
@@ -23,15 +23,22 @@ defmodule MarblesWeb.GachaLive do
       |> assign(:animation_progress, %{index: 0, total: 0, phase: "idle"})
       |> assign(:latest_result, nil)
       |> assign(:last_pull_kind, nil)
+      |> assign(:packs, [])
+      |> assign(:wallet_currency, nil)
       |> assign(:confirm_form, to_form(%{"skip_confirm" => false}, as: :confirm))
-      |> stream_configure(:packs, dom_id: &"pack-#{&1.pack.id}")
 
     {:ok, refresh_packs(socket)}
   end
 
   @impl true
   def handle_event("select_pack", %{"pack_id" => pack_id}, socket) do
-    {:noreply, assign(socket, :selected_pack_id, pack_id)}
+    selected_pack_id =
+      case Enum.find(socket.assigns.packs, fn p -> to_string(p.pack.id) == to_string(pack_id) end) do
+        %{pack: %{id: id}} -> id
+        _ -> socket.assigns.selected_pack_id
+      end
+
+    {:noreply, assign(socket, :selected_pack_id, selected_pack_id)}
   end
 
   def handle_event("pull", %{"kind" => kind}, socket) do
@@ -152,19 +159,32 @@ defmodule MarblesWeb.GachaLive do
     <Layouts.header current_user={@current_user} />
     <Layouts.app flash={@flash} current_scope={@current_scope} show_login_modal={@show_login_modal}>
       <div id="gacha-page" phx-hook="GachaPage" class="space-y-6">
+        <section class="flex items-center justify-end">
+          <div
+            :if={is_integer(@wallet_currency)}
+            id="gacha-wallet-badge"
+            class="inline-flex items-center gap-2 rounded-full border border-primary/35 bg-base-100/95 px-4 py-2 text-sm font-semibold shadow-md"
+          >
+            <span class="text-base-content/70">Wallet</span>
+            <span class="text-primary">
+              {IntegerDisplay.format(@wallet_currency)} {@coin}
+            </span>
+          </div>
+        </section>
+
         <section
           id="gacha-pack-carousel"
-          phx-update="stream"
           class="grid gap-4 md:grid-cols-2 xl:grid-cols-3"
         >
           <article
-            :for={{dom_id, pack_data} <- @streams.packs}
-            id={dom_id}
+            :for={pack_data <- @packs}
+            id={"pack-#{pack_data.pack.id}"}
             class={[
-              "group rounded-2xl border bg-base-100 p-5 shadow-sm transition-all",
-              @selected_pack_id == pack_data.pack.id &&
+              "group rounded-2xl border bg-base-100 p-5 shadow-sm transition-colors",
+              pack_selected?(@selected_pack_id, pack_data.pack.id) &&
                 "border-primary shadow-lg shadow-primary/10 ring-1 ring-primary/40",
-              @selected_pack_id != pack_data.pack.id && "border-base-300 hover:border-primary/50"
+              !pack_selected?(@selected_pack_id, pack_data.pack.id) &&
+                "border-base-300 hover:border-primary/50"
             ]}
           >
             <button
@@ -172,7 +192,13 @@ defmodule MarblesWeb.GachaLive do
               type="button"
               phx-click="select_pack"
               phx-value-pack_id={pack_data.pack.id}
-              class="w-full space-y-3 text-left"
+              data-selected={pack_selected?(@selected_pack_id, pack_data.pack.id)}
+              aria-pressed={pack_selected?(@selected_pack_id, pack_data.pack.id)}
+              class={[
+                "w-full space-y-3 text-left rounded-xl outline-none",
+                "focus-visible:ring-2 focus-visible:ring-primary/55 focus-visible:ring-offset-2",
+                "focus-visible:ring-offset-base-100"
+              ]}
             >
               <div class="flex items-center justify-between">
                 <h2 class="text-lg font-medium">{pack_data.pack.name}</h2>
@@ -269,16 +295,15 @@ defmodule MarblesWeb.GachaLive do
         <div
           :if={@animation_phase == :recap and @latest_result}
           id="gacha-recap-overlay"
-          class="absolute inset-0 z-40 flex items-center justify-center bg-base-100/25 p-4 sm:p-6"
+          class="absolute inset-0 z-40 flex items-center justify-center bg-base-100/35 p-4 sm:p-6"
         >
           <div class={[
-            "w-full max-w-5xl max-h-full overflow-y-auto space-y-4 rounded-2xl border",
-            "border-base-300/80 bg-base-100/88 text-base-content p-5 shadow-2xl backdrop-blur-md sm:p-6"
+            "w-full max-w-5xl max-h-full overflow-y-auto space-y-5 rounded-2xl border",
+            "border-primary/20 bg-base-100/90 text-base-content p-5 shadow-2xl backdrop-blur-md sm:p-6"
           ]}>
-            <div class="flex items-center justify-between gap-3">
-              <h3 class="text-xl font-semibold">Recap</h3>
-              <p class="text-sm text-base-content/70">
-                Total dust: {IntegerDisplay.format(@latest_result.total_dust)} {Currency.dust_emoji()}
+            <div class="flex items-center justify-end gap-3">
+              <p class="text-sm font-semibold text-primary">
+                + {IntegerDisplay.format(@latest_result.total_dust)} {Currency.dust_emoji()}
               </p>
             </div>
 
@@ -286,11 +311,47 @@ defmodule MarblesWeb.GachaLive do
               <article
                 :for={entry <- @latest_result.marbles}
                 id={"recap-marble-#{entry.marble.id}"}
-                class="rounded-xl border border-base-300/70 bg-base-200/55 p-3 backdrop-blur-sm"
+                class={[
+                  "relative overflow-hidden rounded-xl border border-base-300/70 bg-base-200/55 p-3 backdrop-blur-sm",
+                  entry.marble.rarity == 2 &&
+                    "border-sky-300/55 bg-linear-to-br from-sky-100/65 via-cyan-50/55 to-base-100 shadow-[0_0_16px_rgba(56,189,248,0.24)]",
+                  entry.marble.rarity >= 3 &&
+                    "border-amber-300/60 bg-linear-to-br from-amber-100/70 via-amber-50/60 to-base-100 shadow-[0_0_20px_rgba(251,191,36,0.28)]"
+                ]}
               >
+                <div
+                  :if={entry.marble.rarity == 2}
+                  class="pointer-events-none absolute inset-0"
+                >
+                  <span class="absolute right-3 top-3 text-sky-300 animate-pulse">✧</span>
+                  <span
+                    class="absolute left-4 bottom-4 text-cyan-300 animate-pulse"
+                    style="animation-delay: 220ms;"
+                  >
+                    ✧
+                  </span>
+                </div>
+                <div
+                  :if={entry.marble.rarity >= 3}
+                  class="pointer-events-none absolute inset-0"
+                >
+                  <span class="absolute left-3 top-3 text-amber-300 animate-ping">✦</span>
+                  <span
+                    class="absolute right-4 top-6 text-yellow-300 animate-ping"
+                    style="animation-delay: 180ms;"
+                  >
+                    ✦
+                  </span>
+                  <span
+                    class="absolute bottom-3 left-1/2 -translate-x-1/2 text-amber-400 animate-ping"
+                    style="animation-delay: 320ms;"
+                  >
+                    ✦
+                  </span>
+                </div>
                 <div class="flex items-center justify-between">
                   <p class="font-medium">{entry.marble.name}</p>
-                  <span class="text-xs text-base-content/70">★{entry.marble.rarity}</span>
+                  <span class="text-xs text-base-content/70">{rarity_stars(entry.marble.rarity)}</span>
                 </div>
                 <p class="text-xs text-base-content/60">
                   {if entry.duplicate?,
@@ -305,7 +366,7 @@ defmodule MarblesWeb.GachaLive do
                 id="gacha-pull-again"
                 type="button"
                 phx-click="pull_again"
-                class="rounded-xl bg-primary px-4 py-2 text-sm font-medium text-primary-content hover:brightness-105"
+                class="rounded-xl bg-primary px-6 py-3 text-base font-semibold text-primary-content hover:brightness-105"
               >
                 Pull again
               </button>
@@ -313,7 +374,7 @@ defmodule MarblesWeb.GachaLive do
                 id="gacha-back-to-packs"
                 type="button"
                 phx-click="back_to_packs"
-                class="rounded-xl border border-base-300 px-4 py-2 text-sm font-medium hover:border-primary"
+                class="rounded-xl border border-base-300 px-6 py-3 text-base font-semibold hover:border-primary"
               >
                 Back to packs
               </button>
@@ -490,16 +551,33 @@ defmodule MarblesWeb.GachaLive do
     end
   end
 
+  defp pack_selected?(selected_id, pack_id) do
+    not is_nil(selected_id) and to_string(selected_id) == to_string(pack_id)
+  end
+
   defp refresh_packs(socket) do
-    user_id = socket.assigns.current_user && socket.assigns.current_user.id
+    current_user = socket.assigns.current_user
+    user_id = current_user && current_user.id
+
+    wallet_currency =
+      if user_id do
+        case Accounts.get_user(user_id) do
+          %{currency: currency} when is_integer(currency) -> currency
+          _ -> nil
+        end
+      else
+        nil
+      end
+
     packs = GachaSession.list_pullable_packs_for_web(user_id)
     lookup = Map.new(packs, &{&1.pack.id, &1})
     selected_pack_id = keep_selected_pack(socket.assigns.selected_pack_id, packs)
 
     socket
+    |> assign(:packs, packs)
     |> assign(:packs_lookup, lookup)
     |> assign(:selected_pack_id, selected_pack_id)
-    |> stream(:packs, packs, reset: true)
+    |> assign(:wallet_currency, wallet_currency)
   end
 
   defp keep_selected_pack(nil, [first | _]), do: first.pack.id
@@ -541,6 +619,12 @@ defmodule MarblesWeb.GachaLive do
   defp pull_price_label(%{final_price: final_price}, coin),
     do: "(#{IntegerDisplay.format(final_price)} #{coin})"
 
+  defp rarity_stars(rarity) when is_integer(rarity) and rarity > 0 do
+    String.duplicate("⭐", rarity)
+  end
+
+  defp rarity_stars(_), do: "⭐"
+
   defp animation_payload(result) do
     %{
       "pull_kind" => Atom.to_string(result.pull_kind),
@@ -548,6 +632,7 @@ defmodule MarblesWeb.GachaLive do
       "results" =>
         Enum.map(result.marbles, fn entry ->
           texture_url = Assets.marble_texture_url(entry.marble)
+
           team_logo_url =
             case entry.marble.team do
               %{logo_path: path} when is_binary(path) and path != "" -> Assets.url_for_path(path)

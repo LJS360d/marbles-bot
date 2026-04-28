@@ -545,7 +545,7 @@ defmodule MarblesWeb.Admin.OwnerPackBuilderLive do
             <button
               type="button"
               phx-click="open_file_picker"
-              class="btn btn-outline border-base-content/20 btn-md gap-1.5 mt-3.5 rounded-l-none"
+              class="btn btn-outline border-base-content/20 btn-md gap-1.5 mt-[25px] rounded-l-none"
             >
               <.icon name="hero-folder-open" class="w-4 h-4" /> Browse
             </button>
