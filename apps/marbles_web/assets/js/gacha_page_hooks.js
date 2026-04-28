@@ -52,7 +52,11 @@ const textureUrlFromResult = (entry) => entry?.texture_url || entry?.textureUrl 
 const canonicalTextureUrl = (url) => {
   if (!url || typeof url !== "string") return null;
   try {
-    return new URL(url, window.location.href).href;
+    const resolved = new URL(url, window.location.href).href;
+    if (typeof window.__marblesDiscordRemapUrl === "function") {
+      return window.__marblesDiscordRemapUrl(resolved);
+    }
+    return resolved;
   } catch {
     return url;
   }
@@ -1328,7 +1332,7 @@ const GachaCinematic = {
     const teamLogo = entry?.team_logo_url || entry?.teamLogoUrl || null;
     if (logo) {
       if (teamLogo) {
-        logo.src = teamLogo;
+        logo.src = canonicalTextureUrl(teamLogo) || teamLogo;
         logo.classList.remove("hidden");
       } else {
         logo.removeAttribute("src");

@@ -1,5 +1,5 @@
 <Layouts.app flash={@flash} current_scope={nil}>
-  <div class="animated-gradient min-h-screen flex flex-col p-4">
+  <div id="home-page" class="animated-gradient min-h-screen flex flex-col p-4">
     <div class="flex flex-1 flex-col items-center justify-center min-h-0 w-full">
       <div class="backdrop-blur-lg bg-white/10 dark:bg-black/10 rounded-2xl shadow-2xl border border-white/20 w-full max-w-6xl overflow-hidden">
         <!-- Event Banner Section (Conditional) -->
@@ -30,8 +30,7 @@
             <div class="flex flex-col sm:flex-row gap-4 mb-8 w-full max-w-md">
               <.link
                 class="btn btn-primary btn-lg rounded-full px-8 flex-1 glow-primary hover:scale-105 transition-transform"
-                href={if @current_user, do: "/races/quick", else: "#"}
-                onclick={unless @current_user, do: "showLoginModal(); return false;"}
+                href={if @current_user, do: "/gacha", else: "/login"}
               >
                 <span class="flex items-center gap-2">
                   <.icon name="hero-bolt" class="size-5" /> Quick Race
@@ -39,8 +38,7 @@
               </.link>
               <.link
                 class="btn btn-secondary btn-lg rounded-full px-8 flex-1 hover:scale-105 transition-transform"
-                href={if @current_user, do: "/gacha", else: "#"}
-                onclick={unless @current_user, do: "showLoginModal(); return false;"}
+                href={if @current_user, do: "/gacha", else: "/login"}
               >
                 <span class="flex items-center gap-2">
                   <.icon name="hero-gift" class="size-5" /> Get Marbles

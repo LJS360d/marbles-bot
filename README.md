@@ -45,6 +45,44 @@ iex -S mix
 
 Web UI runs at [http://localhost:4000](http://localhost:4000).
 
+## Discord Activities local testing (`cloudflared`)
+
+Discord Embedded Activities require a public HTTPS URL. Local `localhost` is not enough.
+
+### Prerequisites
+
+- Install `cloudflared` locally.
+- Start the web app on port `4000`.
+- Add activity env keys in local `.env`:
+  - `DISCORD_ACTIVITY_ENABLED=true`
+  - `DISCORD_ACTIVITY_CLIENT_ID=<discord_application_id>`
+  - `DISCORD_ACTIVITY_CLIENT_SECRET=<discord_client_secret>`
+  - `DISCORD_ACTIVITY_REDIRECT_URI=https://<public-host>/discord/activity/callback`
+  - `DISCORD_ACTIVITY_ALLOWED_ORIGINS=https://discord.com,https://ptb.discord.com,https://canary.discord.com`
+  - `DISCORD_ACTIVITY_SESSION_SAME_SITE=None`
+
+### Start tunnel
+
+```bash
+cloudflared tunnel --url http://localhost:4000
+```
+
+Use the generated `https://<random>.trycloudflare.com` host as `<public-host>`.
+
+### Discord Developer Portal values (required)
+
+- **OAuth2 Redirect URIs**
+  - `https://<public-host>/auth/discord/callback`
+  - `https://<public-host>/discord/activity/callback`
+- **Embedded App / Activity Launch URL**
+  - `https://<public-host>/activities/pulling`
+- **Allowed origins/domains**
+  - `https://discord.com`
+  - `https://ptb.discord.com`
+  - `https://canary.discord.com`
+
+When the `trycloudflare.com` hostname changes, update Portal URLs and `DISCORD_ACTIVITY_REDIRECT_URI` to the new host.
+
 ## Configuration
 
 Use `.env.example` as source of truth for env keys.

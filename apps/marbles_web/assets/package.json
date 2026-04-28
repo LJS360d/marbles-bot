@@ -1,6 +1,7 @@
 {
   "name": "marbles_web_assets",
   "dependencies": {
+    "@discord/embedded-app-sdk": "^2.4.1",
     "cannon-es": "^0.20.0",
     "tailwindcss": "^4.2.1",
     "three": "^0.184.0"

@@ -7,8 +7,7 @@ defmodule MarblesWeb.Endpoint do
   @session_options [
     store: :cookie,
     key: "_marbles_web_key",
-    signing_salt: "TukZAPav",
-    same_site: "Lax"
+    signing_salt: "TukZAPav"
   ]
 
   socket "/live", Phoenix.LiveView.Socket,
@@ -50,6 +49,6 @@ defmodule MarblesWeb.Endpoint do
 
   plug Plug.MethodOverride
   plug Plug.Head
-  plug Plug.Session, @session_options
+  plug MarblesWeb.Plugs.RuntimeSession, @session_options
   plug MarblesWeb.Router
 end

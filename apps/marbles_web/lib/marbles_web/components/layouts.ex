@@ -34,17 +34,41 @@ defmodule MarblesWeb.Layouts do
   def app(assigns) do
     breadcrumbs = Map.get(assigns, :breadcrumbs, [])
     assigns = assign(assigns, :breadcrumbs, breadcrumbs)
+    discord_activity = Application.get_env(:marbles_web, :discord_activity, [])
+
+    discord_activity_url_mappings =
+      discord_activity
+      |> Keyword.get(:url_mappings, [])
+      |> Jason.encode!()
 
     container_width =
       if Map.get(assigns, :current_scope, nil) == nil,
         do: [],
         else: ["mx-auto", "max-w-2xl", "md:max-w-7xl", "p-4"]
 
-    assigns = assign(assigns, :container_width, container_width)
+    assigns =
+      assigns
+      |> assign(:container_width, container_width)
+      |> assign(:discord_activity_enabled, Keyword.get(discord_activity, :enabled, false))
+      |> assign(:discord_activity_client_id, Keyword.get(discord_activity, :client_id))
+      |> assign(:discord_activity_redirect_uri, Keyword.get(discord_activity, :redirect_uri))
+      |> assign(:discord_activity_url_mappings, discord_activity_url_mappings)
 
     ~H"""
     <main class="min-h-svh">
       <div class={["space-y-4", @container_width]}>
+        <div
+          :if={@discord_activity_enabled}
+          id="discord-embedded-auth-bootstrap"
+          data-enabled="true"
+          data-client-id={@discord_activity_client_id || ""}
+          data-auth-endpoint={~p"/api/discord/activity/exchange"}
+          data-redirect-uri={@discord_activity_redirect_uri || ""}
+          data-url-mappings={@discord_activity_url_mappings}
+          class="hidden"
+        >
+        </div>
+
         <.breadcrumbs items={@breadcrumbs} />
         {render_slot(@inner_block)}
       </div>

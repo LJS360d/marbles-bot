@@ -46,10 +46,106 @@ config :ueberauth, Ueberauth.Strategy.Discord.OAuth,
   client_secret: System.get_env("DISCORD_OAUTH_CLIENT_SECRET")
 
 owner_platform_ids = System.get_env("OWNER_USER_IDS", "") |> String.split(",", trim: true)
+
+discord_server_invite =
+  System.get_env("DISCORD_SERVER_INVITE_URL") || System.get_env("DISCORD_SERVER_INVITE")
+
+discord_bot_invite =
+  System.get_env("DISCORD_BOT_INVITE_URL") || System.get_env("DISCORD_BOT_INVITE")
+
+discord_activity_enabled =
+  System.get_env("DISCORD_ACTIVITY_ENABLED", "false")
+  |> String.downcase()
+  |> Kernel.==("true")
+
+discord_activity_allowed_origins =
+  System.get_env(
+    "DISCORD_ACTIVITY_ALLOWED_ORIGINS",
+    "https://discord.com,https://ptb.discord.com,https://canary.discord.com"
+  )
+  |> String.split(",", trim: true)
+
+discord_activity_url_mappings =
+  System.get_env("DISCORD_ACTIVITY_URL_MAPPINGS", "")
+  |> String.split(",", trim: true)
+  |> Enum.reduce([], fn entry, acc ->
+    case String.split(entry, "=", parts: 2) do
+      [prefix, target] ->
+        normalized_prefix =
+          case String.trim(prefix) do
+            "" -> nil
+            value -> if String.starts_with?(value, "/"), do: value, else: "/" <> value
+          end
+
+        normalized_target =
+          case String.trim(target) do
+            "" ->
+              nil
+
+            value ->
+              value
+              |> String.replace_prefix("https://", "")
+              |> String.replace_prefix("http://", "")
+              |> String.trim_leading("/")
+          end
+
+        if normalized_prefix && normalized_target do
+          [%{prefix: normalized_prefix, target: normalized_target} | acc]
+        else
+          acc
+        end
+
+      _ ->
+        acc
+    end
+  end)
+  |> Enum.reverse()
+
+discord_activity_session_same_site =
+  case System.get_env("DISCORD_ACTIVITY_SESSION_SAME_SITE") do
+    value when is_binary(value) and value != "" -> value
+    _ -> if(discord_activity_enabled, do: "None", else: "Lax")
+  end
+
+discord_activity_session_secure =
+  case System.get_env("DISCORD_ACTIVITY_SESSION_SECURE") do
+    value when is_binary(value) ->
+      case String.downcase(String.trim(value)) do
+        "true" -> true
+        "false" -> false
+        _ -> discord_activity_session_same_site == "None"
+      end
+
+    _ ->
+      discord_activity_session_same_site == "None"
+  end
+
+discord_activity_client_id =
+  System.get_env("DISCORD_ACTIVITY_CLIENT_ID") || System.get_env("DISCORD_OAUTH_CLIENT_ID")
+
+discord_activity_client_secret =
+  System.get_env("DISCORD_ACTIVITY_CLIENT_SECRET") ||
+    System.get_env("DISCORD_OAUTH_CLIENT_SECRET")
+
+discord_activity_redirect_uri = System.get_env("DISCORD_ACTIVITY_REDIRECT_URI")
+
+config :marbles_web, :discord_activity,
+  enabled: discord_activity_enabled,
+  client_id: discord_activity_client_id,
+  client_secret: discord_activity_client_secret,
+  redirect_uri: discord_activity_redirect_uri,
+  allowed_origins: discord_activity_allowed_origins,
+  url_mappings: discord_activity_url_mappings,
+  session_same_site: discord_activity_session_same_site,
+  session_secure: discord_activity_session_secure,
+  public_key: System.get_env("DISCORD_PUBLIC_KEY")
+
 config :marbles_web, :owner_platform_ids, owner_platform_ids
-config :marbles_web, :discord_server_invite, System.get_env("DISCORD_SERVER_INVITE_URL")
-config :marbles_web, :discord_bot_invite, System.get_env("DISCORD_BOT_INVITE_URL")
+config :marbles_web, :discord_server_invite, discord_server_invite
+config :marbles_web, :discord_bot_invite, discord_bot_invite
 config :marbles, :owner_platform_ids, owner_platform_ids
+config :marbles, :discord_server_invite, discord_server_invite
+config :marbles, :discord_bot_invite, discord_bot_invite
 
 assets_base_url = System.get_env("ASSETS_BASE_URL")
 

@@ -14,6 +14,10 @@ defmodule MarblesWeb.Router do
     plug MarblesWeb.Plugs.Auth
   end
 
+  pipeline :activity_embed do
+    plug MarblesWeb.Plugs.ActivityEmbedHeaders
+  end
+
   pipeline :require_user do
     plug MarblesWeb.Plugs.Auth, :require_user
   end
@@ -39,7 +43,7 @@ defmodule MarblesWeb.Router do
   end
 
   scope "/", MarblesWeb do
-    pipe_through [:browser, :auth]
+    pipe_through [:browser, :auth, :activity_embed]
 
     get "/", PageController, :home
     get "/privacy-policy", PageController, :privacy_policy
@@ -53,6 +57,12 @@ defmodule MarblesWeb.Router do
       on_mount: [{MarblesWeb.Live.AuthHooks, :assign_current_user}] do
       live "/gacha", GachaLive, :index
     end
+  end
+
+  scope "/api/discord/activity", MarblesWeb.Discord do
+    pipe_through [:api, :auth]
+
+    post "/exchange", ActivityAuthController, :exchange
   end
 
   scope "/admin", MarblesWeb.Admin do

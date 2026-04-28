@@ -27,6 +27,7 @@ import topbar from "../vendor/topbar";
 import OwnerAdminMemoryInsights from "./owner_admin_memory_insights.js";
 import { GachaPage, GachaCinematic } from "./gacha_page_hooks.js";
 import { DevSandbox } from "./dev_sandbox_hook.js";
+import { bootstrapDiscordEmbeddedAuth, initializeDiscordUrlMappings } from "./discord_activity_hook.js";
 
 const csrfToken = document
   .querySelector("meta[name='csrf-token']")
@@ -48,6 +49,8 @@ topbar.config({ barColors: { 0: "#29d" }, shadowColor: "rgba(0, 0, 0, .3)" });
 window.addEventListener("phx:page-loading-start", (_info) => topbar.show(300));
 window.addEventListener("phx:page-loading-stop", (_info) => topbar.hide());
 
+initializeDiscordUrlMappings();
+
 // connect if there are any LiveViews on the page
 liveSocket.connect();
 
@@ -56,6 +59,7 @@ liveSocket.connect();
 // >> liveSocket.enableLatencySim(1000)  // enabled for duration of browser session
 // >> liveSocket.disableLatencySim()
 window.liveSocket = liveSocket;
+bootstrapDiscordEmbeddedAuth(liveSocket);
 
 // Set random gradient colors for the animated background
 function getRandomColor() {
