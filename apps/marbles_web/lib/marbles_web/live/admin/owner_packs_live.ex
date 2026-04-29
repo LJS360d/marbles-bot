@@ -112,6 +112,37 @@ defmodule MarblesWeb.Admin.OwnerPacksLive do
      )}
   end
 
+  @impl true
+  def handle_event("delete_pack", %{"id" => id}, socket) do
+    pack = Packs.get_pack!(id)
+
+    case Packs.delete_pack(pack) do
+      {:ok, _} ->
+        socket =
+          socket
+          |> put_flash(:info, "Pack deleted.")
+          |> load_packs()
+
+        if socket.assigns.page > socket.assigns.total_pages do
+          {:noreply,
+           push_patch(socket,
+             to:
+               query_path(socket.assigns.packs_base, %{
+                 page: socket.assigns.total_pages,
+                 sort: socket.assigns.sort,
+                 order: socket.assigns.order,
+                 q: socket.assigns.q
+               })
+           )}
+        else
+          {:noreply, socket}
+        end
+
+      {:error, _} ->
+        {:noreply, put_flash(socket, :error, "Could not delete pack.")}
+    end
+  end
+
   defp parse_page(nil, default), do: default
 
   defp parse_page(s, default) when is_binary(s) do
@@ -190,7 +221,7 @@ defmodule MarblesWeb.Admin.OwnerPacksLive do
                   order={@order}
                   q={@q}
                 />
-                <th class="w-0">Edit</th>
+                <th class="w-0"></th>
               </tr>
             </thead>
             <tbody>
@@ -218,12 +249,23 @@ defmodule MarblesWeb.Admin.OwnerPacksLive do
                 <td>{pack_status(pack)}</td>
                 <td>{length(pack.marbles || [])}</td>
                 <td>
-                  <.link
-                    navigate={~p"/admin/owner/packs/#{pack.id}/edit"}
-                    class="btn btn-ghost btn-xs"
-                  >
-                    Edit
-                  </.link>
+                  <div class="flex items-center gap-1">
+                    <.link
+                      navigate={~p"/admin/owner/packs/#{pack.id}/edit"}
+                      class="btn btn-ghost btn-xs"
+                    >
+                      Edit
+                    </.link>
+                    <button
+                      type="button"
+                      phx-click="delete_pack"
+                      phx-value-id={pack.id}
+                      data-confirm="Delete this pack?"
+                      class="btn btn-error btn-outline btn-xs"
+                    >
+                      Delete
+                    </button>
+                  </div>
                 </td>
               </tr>
             </tbody>

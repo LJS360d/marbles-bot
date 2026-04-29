@@ -71,7 +71,7 @@ defmodule MarblesWeb.Admin.OwnerTeamsLive do
                 <th>Name</th>
                 <th>Logo path</th>
                 <th>Color</th>
-                <th class="w-0">Edit</th>
+                <th class="w-0"></th>
               </tr>
             </thead>
             <tbody>

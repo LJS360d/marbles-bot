@@ -208,7 +208,7 @@ defmodule MarblesWeb.Admin.OwnerMarblesLive do
                   order={@order}
                   q={@q}
                 />
-                <th class="w-0">Edit</th>
+                <th class="w-0"></th>
               </tr>
             </thead>
             <tbody>
