@@ -72,6 +72,157 @@ const clearMaterialTextureRefs = (m) => {
   }
 };
 
+function applyMarbleTextureSettings(tex) {
+  tex.colorSpace = THREE.SRGBColorSpace;
+  tex.flipY = true;
+  tex.wrapS = THREE.ClampToEdgeWrapping;
+  tex.wrapT = THREE.ClampToEdgeWrapping;
+  tex.minFilter = THREE.LinearMipmapLinearFilter;
+  tex.magFilter = THREE.LinearFilter;
+  tex.generateMipmaps = true;
+}
+
+function isAtlasTexture(texture) {
+  const w = texture?.image?.width || 0;
+  const h = texture?.image?.height || 0;
+  return h > 0 && w >= h * 1.9;
+}
+
+function atlasToEquirect(texture, cacheKey, mappedTextureCache) {
+  const hit = mappedTextureCache.get(cacheKey);
+  if (hit) return hit;
+
+  const srcImage = texture?.image;
+  const sw = srcImage?.width || 0;
+  const sh = srcImage?.height || 0;
+  if (sw <= 0 || sh <= 0) return texture;
+
+  const srcCanvas = document.createElement("canvas");
+  srcCanvas.width = sw;
+  srcCanvas.height = sh;
+  const srcCtx = srcCanvas.getContext("2d", { willReadFrequently: true });
+  srcCtx.drawImage(srcImage, 0, 0, sw, sh);
+  const srcData = srcCtx.getImageData(0, 0, sw, sh).data;
+
+  const outCanvas = document.createElement("canvas");
+  outCanvas.width = sw;
+  outCanvas.height = sh;
+  const outCtx = outCanvas.getContext("2d");
+  const outImage = outCtx.createImageData(sw, sh);
+  const out = outImage.data;
+
+  const r = sh * 0.5;
+  const safeR = Math.max(2, r - 4);
+  const cy = sh * 0.5;
+  const frontCx = sw * 0.25;
+  const backCx = sw * 0.75;
+
+  const sample = (sx, sy) => {
+    const ix = Math.max(0, Math.min(sw - 1, Math.round(sx)));
+    const iy = Math.max(0, Math.min(sh - 1, Math.round(sy)));
+    const i = (iy * sw + ix) * 4;
+    return [srcData[i], srcData[i + 1], srcData[i + 2], srcData[i + 3]];
+  };
+
+  for (let y = 0; y < sh; y += 1) {
+    const v = (y + 0.5) / sh;
+    const lat = (0.5 - v) * Math.PI;
+    const sinLat = Math.sin(lat);
+    const cosLat = Math.cos(lat);
+
+    for (let x = 0; x < sw; x += 1) {
+      const u = (x + 0.5) / sw;
+      const lon = (u - 0.5) * Math.PI * 2.0;
+      const nx = Math.sin(lon) * cosLat;
+      const ny = sinLat;
+      const nz = Math.cos(lon) * cosLat;
+
+      let cx = frontCx;
+      let localX = nx;
+      if (nz < 0.0) {
+        cx = backCx;
+        localX = -nx;
+      }
+
+      let sx = cx + localX * safeR;
+      let sy = cy - ny * safeR;
+      let dx = sx - cx;
+      let dy = sy - cy;
+      const d2 = dx * dx + dy * dy;
+      const di = (y * sw + x) * 4;
+
+      if (d2 > safeR * safeR) {
+        const invLen = 1.0 / Math.sqrt(d2);
+        dx = dx * invLen * safeR;
+        dy = dy * invLen * safeR;
+        sx = cx + dx;
+        sy = cy + dy;
+      }
+
+      let [pr, pg, pb, pa] = sample(sx, sy);
+      if (pa < 32) {
+        const sx2 = cx + localX * Math.max(1, safeR - 8);
+        const sy2 = cy - ny * Math.max(1, safeR - 8);
+        [pr, pg, pb, pa] = sample(sx2, sy2);
+      }
+      out[di + 0] = pr;
+      out[di + 1] = pg;
+      out[di + 2] = pb;
+      out[di + 3] = 255;
+    }
+  }
+
+  const seamBand = Math.max(4, Math.floor(sw / 256));
+  for (let y = 0; y < sh; y += 1) {
+    const i0 = (y * sw + 0) * 4;
+    const i1 = (y * sw + (sw - 1)) * 4;
+    const avg = [
+      ((out[i0 + 0] + out[i1 + 0]) * 0.5) | 0,
+      ((out[i0 + 1] + out[i1 + 1]) * 0.5) | 0,
+      ((out[i0 + 2] + out[i1 + 2]) * 0.5) | 0,
+      ((out[i0 + 3] + out[i1 + 3]) * 0.5) | 0,
+    ];
+    for (let k = 0; k < 4; k += 1) {
+      out[i0 + k] = avg[k];
+      out[i1 + k] = avg[k];
+    }
+
+    for (let b = 1; b <= seamBand; b += 1) {
+      const t = b / (seamBand + 1);
+      const il = (y * sw + b) * 4;
+      const ir = (y * sw + (sw - 1 - b)) * 4;
+      for (let k = 0; k < 4; k += 1) {
+        out[il + k] = (out[il + k] * (1 - t) + avg[k] * t) | 0;
+        out[ir + k] = (out[ir + k] * (1 - t) + avg[k] * t) | 0;
+      }
+    }
+  }
+
+  outCtx.putImageData(outImage, 0, 0);
+  const mapped = new THREE.CanvasTexture(outCanvas);
+  applyMarbleTextureSettings(mapped);
+  mapped.wrapS = THREE.RepeatWrapping;
+  mapped.wrapT = THREE.ClampToEdgeWrapping;
+  mappedTextureCache.set(cacheKey, mapped);
+  return mapped;
+}
+
+function buildMarbleMaterial(texture, cacheKey, mappedTextureCache) {
+  if (isAtlasTexture(texture)) {
+    const mapped = atlasToEquirect(texture, cacheKey, mappedTextureCache);
+    return new THREE.MeshBasicMaterial({
+      map: mapped,
+      color: 0xffffff,
+      transparent: false,
+    });
+  }
+  return new THREE.MeshBasicMaterial({
+    map: texture,
+    color: 0xffffff,
+    transparent: true,
+  });
+}
+
 const GachaPage = {
   mounted() {
     const saved = window.localStorage.getItem(GACHA_SKIP_CONFIRM_KEY) === "true";
@@ -108,6 +259,7 @@ const GachaCinematic = {
     this.stage = "idle";
     this.preloadGen = 0;
     this.textureCache = new Map();
+    this.mappedTextureCache = new Map();
     this.revealPaused = false;
     this.revealOverlayEl = null;
     this.legendaryOverlayEl = null;
@@ -269,6 +421,12 @@ const GachaCinematic = {
       tex.dispose();
     }
     this.textureCache.clear();
+    if (this.mappedTextureCache) {
+      for (const tex of this.mappedTextureCache.values()) {
+        tex.dispose();
+      }
+      this.mappedTextureCache.clear();
+    }
   },
 
   ensureRevealStyles() {
@@ -746,7 +904,7 @@ const GachaCinematic = {
             resolve();
             return;
           }
-          this.configureMarbleTexture(tex);
+          applyMarbleTextureSettings(tex);
           this.textureCache.set(key, tex);
           resolve();
         },
@@ -754,16 +912,6 @@ const GachaCinematic = {
         () => resolve(),
       );
     });
-  },
-
-  configureMarbleTexture(tex) {
-    tex.colorSpace = THREE.SRGBColorSpace;
-    tex.flipY = true;
-    tex.wrapS = THREE.ClampToEdgeWrapping;
-    tex.wrapT = THREE.ClampToEdgeWrapping;
-    tex.minFilter = THREE.LinearMipmapLinearFilter;
-    tex.magFilter = THREE.LinearFilter;
-    tex.generateMipmaps = true;
   },
 
   fitTrackToScene(root) {
@@ -1125,10 +1273,7 @@ const GachaCinematic = {
 
     let material;
     if (cached) {
-      material = new THREE.MeshBasicMaterial({
-        map: cached,
-        color: 0xffffff,
-      });
+      material = buildMarbleMaterial(cached, url, this.mappedTextureCache);
     } else {
       material = new THREE.MeshStandardMaterial({
         color: rarityColor(entry.rarity || 1),
@@ -1145,17 +1290,14 @@ const GachaCinematic = {
       this.textureLoader.load(
         url,
         (loaded) => {
-          this.configureMarbleTexture(loaded);
-          this.textureCache.set(url, loaded);
           if (this.marbleRoot !== mesh) {
             loaded.dispose();
             return;
           }
+          applyMarbleTextureSettings(loaded);
+          this.textureCache.set(url, loaded);
           const prev = mesh.material;
-          mesh.material = new THREE.MeshBasicMaterial({
-            map: loaded,
-            color: 0xffffff,
-          });
+          mesh.material = buildMarbleMaterial(loaded, url, this.mappedTextureCache);
           if (prev && typeof prev.dispose === "function") {
             prev.dispose();
           }
