@@ -1,6 +1,7 @@
 defmodule MarblesDiscordbot.Commands do
   alias Nostrum.Api.ApplicationCommand
   alias Nostrum.Constants.ApplicationCommandOptionType
+  alias Nostrum.Constants.ApplicationCommandType
   alias Marbles.Catalog
   alias Marbles.Economy.{Shop, Upgrades}
   require Logger
@@ -238,21 +239,31 @@ defmodule MarblesDiscordbot.Commands do
     }
   end
 
+  @spec command_type(map()) :: pos_integer()
+  defp command_type(cmd), do: Map.get(cmd, :type, ApplicationCommandType.chat_input())
+
+  @spec remote_chat_input_commands([map()]) :: [map()]
+  defp remote_chat_input_commands(remote) do
+    Enum.reject(remote, &(command_type(&1) == ApplicationCommandType.primary_entry_point()))
+  end
+
+  @spec entry_point_payloads_from_remote([map()]) :: [map()]
+  defp entry_point_payloads_from_remote(remote) do
+    remote
+    |> Enum.filter(&(command_type(&1) == ApplicationCommandType.primary_entry_point()))
+    |> Enum.map(&Map.drop(&1, [:id, :version, :application_id, :guild_id]))
+  end
+
   @spec needs_resync?([map()], [map()]) :: boolean()
   defp needs_resync?(remote, local) do
-    if length(remote) != length(local) do
-      true
-    else
-      local_names = local |> Enum.map(& &1.name) |> Enum.sort()
-      remote_names = remote |> Enum.map(& &1.name) |> Enum.sort()
+    remote_chat = remote_chat_input_commands(remote)
+    remote_names = remote_chat |> Enum.map(& &1.name) |> Enum.sort()
+    local_names = local |> Enum.map(& &1.name) |> Enum.sort()
 
-      if local_names != remote_names do
-        true
-      end
-
-      # TODO better diffing
-
-      false
+    cond do
+      length(remote_chat) != length(local) -> true
+      remote_names != local_names -> true
+      true -> false
     end
   end
 
@@ -281,6 +292,15 @@ defmodule MarblesDiscordbot.Commands do
 
   @spec sync_force() :: {:ok, any()} | {:error, any()}
   def sync_force do
-    ApplicationCommand.bulk_overwrite_global_commands(commands())
+    local = commands()
+
+    case ApplicationCommand.global_commands() do
+      {:ok, remote} ->
+        merged = local ++ entry_point_payloads_from_remote(remote)
+        ApplicationCommand.bulk_overwrite_global_commands(merged)
+
+      {:error, _} = err ->
+        err
+    end
   end
 end
