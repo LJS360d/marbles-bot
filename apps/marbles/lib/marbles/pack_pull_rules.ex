@@ -489,7 +489,14 @@ defmodule Marbles.PackPullRules do
 
       true ->
         suffix = countdown_suffix_1x(pack, user_id, rules)
-        base = "Pull x1 #{fmt_int(cost)}#{coin}"
+
+        base =
+          if cost == 0 do
+            "Pull x1 FREE"
+          else
+            "Pull x1 #{fmt_int(cost)}#{coin}"
+          end
+
         truncate_btn(if suffix != "", do: base <> " " <> suffix, else: base)
     end
   end
@@ -511,7 +518,14 @@ defmodule Marbles.PackPullRules do
 
       true ->
         suffix = countdown_suffix_10x(pack, user_id, rules)
-        b = "Pull x10 #{fmt_int(base_p)}#{coin}"
+
+        b =
+          if base_p == 0 do
+            "Pull x10 FREE"
+          else
+            "Pull x10 #{fmt_int(base_p)}#{coin}"
+          end
+
         truncate_btn(if suffix != "", do: b <> " " <> suffix, else: b)
     end
   end

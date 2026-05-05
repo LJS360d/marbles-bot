@@ -36,7 +36,7 @@ defmodule MarblesDiscordbot.Embeds do
 
     dup_note =
       if pull_dust > 0 do
-        "\nDuplicates on last pull: **+#{IntegerDisplay.format(pull_dust)}** " <>
+        "\nDuplicates: **+#{IntegerDisplay.format(pull_dust)}** " <>
           Currency.dust_emoji()
       else
         ""
