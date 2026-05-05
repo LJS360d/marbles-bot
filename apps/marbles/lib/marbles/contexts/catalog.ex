@@ -1,6 +1,11 @@
-# Read-only operations
 defmodule Marbles.Catalog do
-  alias Marbles.Repo
+  @moduledoc """
+  Catalog data: teams, marbles, packs, and admin listing queries.
+
+  Mutations for teams and marbles live here alongside read APIs.
+  """
+
+  alias Marbles.{AdminListing, Repo, SqlLike}
   alias Marbles.Schema.{Team, Marble, Pack}
   import Ecto.Query
 
@@ -70,12 +75,10 @@ defmodule Marbles.Catalog do
 
   @spec list_marbles(keyword()) :: {[Marble.t()], non_neg_integer()}
   def list_marbles(opts \\ []) do
-    page = Keyword.get(opts, :page, 1) |> max(1)
-    per = Keyword.get(opts, :per_page, 25)
-    offset = (page - 1) * per
+    {_page, per, offset} = AdminListing.page_bounds(opts, 25)
     sort = normalize_marble_sort(Keyword.get(opts, :sort))
     order = normalize_marble_order(Keyword.get(opts, :order))
-    q = Keyword.get(opts, :q, "") |> to_string() |> String.trim()
+    q = AdminListing.trimmed_query(opts)
 
     base =
       from(m in Marble,
@@ -117,20 +120,13 @@ defmodule Marbles.Catalog do
   defp apply_marble_search(query, ""), do: query
 
   defp apply_marble_search(query, q) do
-    term = "%" <> (q |> admin_search_fragment() |> String.downcase()) <> "%"
+    term = "%" <> (q |> SqlLike.escape_like_fragment() |> String.downcase()) <> "%"
 
     from([m, t] in query,
       where:
         fragment("LOWER(?) LIKE ?", m.name, ^term) or
           fragment("LOWER(?) LIKE ?", m.edition, ^term)
     )
-  end
-
-  defp admin_search_fragment(q) do
-    q
-    |> String.replace("\\", "")
-    |> String.replace("%", "")
-    |> String.replace("_", "")
   end
 
   defp apply_marble_order(query, :name, :asc), do: order_by(query, [m], asc: m.name)
@@ -177,12 +173,10 @@ defmodule Marbles.Catalog do
 
   @spec list_packs(keyword()) :: {[%Pack{}], non_neg_integer()}
   def list_packs(opts \\ []) do
-    page = Keyword.get(opts, :page, 1) |> max(1)
-    per = Keyword.get(opts, :per_page, 25)
-    offset = (page - 1) * per
+    {_page, per, offset} = AdminListing.page_bounds(opts, 25)
     sort = normalize_pack_sort(Keyword.get(opts, :sort))
     order = normalize_pack_order(Keyword.get(opts, :order))
-    q = Keyword.get(opts, :q, "") |> to_string() |> String.trim()
+    q = AdminListing.trimmed_query(opts)
 
     base = from(p in Pack, as: :p, preload: [:marbles])
     base = apply_pack_search(base, q)
@@ -216,7 +210,7 @@ defmodule Marbles.Catalog do
   defp apply_pack_search(query, ""), do: query
 
   defp apply_pack_search(query, q) do
-    term = "%" <> (q |> admin_search_fragment() |> String.downcase()) <> "%"
+    term = "%" <> (q |> SqlLike.escape_like_fragment() |> String.downcase()) <> "%"
     from(p in query, where: fragment("LOWER(?) LIKE ?", p.name, ^term))
   end
 

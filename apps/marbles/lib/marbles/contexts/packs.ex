@@ -4,52 +4,57 @@ defmodule Marbles.Packs do
   alias Marbles.{Catalog, PackPullRules}
   import Ecto.Query
 
+  @spec broadcast_commands_resync() :: :ok
   def broadcast_commands_resync do
     Phoenix.PubSub.broadcast(Marbles.PubSub, "commands_resync", :resync)
   end
 
+  @spec create_pack(map()) :: {:ok, Pack.t()} | {:error, Ecto.Changeset.t()}
   def create_pack(attrs \\ %{}) do
-    case %Pack{}
-         |> Pack.changeset(attrs)
-         |> Repo.insert() do
-      {:ok, _pack} = result ->
-        broadcast_commands_resync()
-        result
-
-      error ->
-        error
-    end
+    %Pack{}
+    |> Pack.changeset(attrs)
+    |> Repo.insert()
+    |> broadcast_on_success()
   end
 
+  @spec update_pack(Pack.t(), map()) :: {:ok, Pack.t()} | {:error, Ecto.Changeset.t()}
   def update_pack(%Pack{} = pack, attrs) do
-    case pack
-         |> Pack.changeset(attrs)
-         |> Repo.update() do
-      {:ok, _} = result ->
-        broadcast_commands_resync()
-        result
-
-      error ->
-        error
-    end
+    pack
+    |> Pack.changeset(attrs)
+    |> Repo.update()
+    |> broadcast_on_success()
   end
 
+  @spec delete_pack(Pack.t()) :: {:ok, Pack.t()} | {:error, Ecto.Changeset.t()}
   def delete_pack(%Pack{} = pack) do
-    case Repo.delete(pack) do
-      {:ok, _} = result ->
-        broadcast_commands_resync()
-        result
-
-      error ->
-        error
-    end
+    pack
+    |> Repo.delete()
+    |> broadcast_on_success()
   end
 
+  @spec broadcast_on_success({:ok, Pack.t()} | {:error, Ecto.Changeset.t()}) ::
+          {:ok, Pack.t()} | {:error, Ecto.Changeset.t()}
+  defp broadcast_on_success({:ok, _} = result) do
+    _ = broadcast_commands_resync()
+    result
+  end
+
+  defp broadcast_on_success({:error, _} = err), do: err
+
+  @spec get_pack!(Ecto.UUID.t()) :: Pack.t()
   def get_pack!(id), do: Repo.get!(Pack, id) |> Repo.preload([:marbles, :pull_rules])
+
+  @spec list_active_packs(Date.t()) :: [Pack.t()]
   def list_active_packs(as_of \\ Date.utc_today()), do: Catalog.list_active_packs(as_of)
+
+  @spec list_all_packs(keyword()) :: [Pack.t()]
   def list_all_packs(opts \\ []), do: Catalog.list_all_packs(opts)
+
+  @spec list_packs(keyword()) :: {[Pack.t()], non_neg_integer()}
   def list_packs(opts \\ []), do: Catalog.list_packs(opts)
 
+  @spec set_pack_marbles(Pack.t(), [Ecto.UUID.t()]) ::
+          {:ok, Pack.t()} | {:error, Ecto.Changeset.t()}
   def set_pack_marbles(%Pack{} = pack, marble_ids) when is_list(marble_ids) do
     marbles = Repo.all(from(m in Marble, where: m.id in ^marble_ids))
     pack = Repo.preload(pack, :marbles)
@@ -60,6 +65,8 @@ defmodule Marbles.Packs do
     |> Repo.update()
   end
 
+  @spec save_pack_complete(Pack.t() | nil, map(), [Ecto.UUID.t()], [map()]) ::
+          {:ok, Pack.t()} | {:error, Ecto.Changeset.t()} | {:error, {:rules, String.t()}}
   def save_pack_complete(maybe_pack, pack_params, marble_ids, rule_rows)
       when is_list(marble_ids) and is_list(rule_rows) do
     rule_rows =

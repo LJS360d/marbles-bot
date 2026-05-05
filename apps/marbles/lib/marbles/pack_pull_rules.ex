@@ -50,8 +50,26 @@ defmodule Marbles.PackPullRules do
     end
   end
 
-  def commit_pity_after_marble!(user_id, pack_id, marble_rarity) when is_integer(marble_rarity) do
+  @spec commit_pity_after_marble!(Ecto.UUID.t(), Pack.t() | Ecto.UUID.t(), pos_integer()) :: :ok
+  def commit_pity_after_marble!(user_id, %Pack{} = pack, marble_rarity)
+      when is_binary(user_id) and is_integer(marble_rarity) do
+    pack =
+      case pack.pull_rules do
+        %Ecto.Association.NotLoaded{} -> Repo.preload(pack, :pull_rules)
+        _ -> pack
+      end
+
+    do_commit_pity_after_marble(user_id, pack, marble_rarity)
+  end
+
+  def commit_pity_after_marble!(user_id, pack_id, marble_rarity)
+      when is_binary(user_id) and is_binary(pack_id) and is_integer(marble_rarity) do
     pack = Repo.get!(Pack, pack_id) |> Repo.preload(:pull_rules)
+    do_commit_pity_after_marble(user_id, pack, marble_rarity)
+  end
+
+  @spec do_commit_pity_after_marble(Ecto.UUID.t(), Pack.t(), pos_integer()) :: :ok
+  defp do_commit_pity_after_marble(user_id, pack, marble_rarity) do
     rules = pity_rules_active(pack)
 
     if rules == [] do

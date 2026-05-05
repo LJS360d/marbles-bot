@@ -96,64 +96,55 @@ defmodule Marbles.GachaSession do
       guild_id = Keyword.get(opts, :guild_id)
       analytics_meta = Keyword.get(opts, :analytics_meta, %{})
 
-      case Repo.transaction(fn ->
-             locked_user = lock_user!(user_id)
-             quote = quote_for_kind(locked_user.id, pack, pull_kind)
-             currency_before = Accounts.currency_balance(locked_user.id)
+      Repo.transaction(fn ->
+        locked_user = fetch_user!(user_id)
+        quote = quote_for_kind(locked_user.id, pack, pull_kind)
+        currency_before = Accounts.currency_balance(locked_user.id)
 
-             if currency_before < quote.final_price,
-               do: Repo.rollback({:insufficient_currency, quote.final_price, currency_before})
+        if currency_before < quote.final_price,
+          do: Repo.rollback({:insufficient_currency, quote.final_price, currency_before})
 
-             marbles =
-               pull_marbles!(
-                 pack,
-                 locked_user,
-                 pull_kind,
-                 guild_id,
-                 source,
-                 analytics_meta
-               )
+        marbles =
+          pull_marbles!(
+            pack,
+            locked_user,
+            pull_kind,
+            guild_id,
+            source,
+            analytics_meta
+          )
 
-             if quote.final_price > 0 do
-               case Accounts.update_currency(locked_user, -quote.final_price) do
-                 {:ok, _} ->
-                   :ok
+        if quote.final_price > 0 do
+          case Accounts.update_currency(locked_user, -quote.final_price) do
+            {:ok, _} ->
+              :ok
 
-                 {:error, :insufficient_currency} ->
-                   Repo.rollback({:insufficient_currency, quote.final_price, currency_before})
+            {:error, :insufficient_currency} ->
+              Repo.rollback({:insufficient_currency, quote.final_price, currency_before})
 
-                 {:error, _reason} ->
-                   Repo.rollback({:insufficient_currency, quote.final_price, currency_before})
-               end
-             end
+            {:error, _reason} ->
+              Repo.rollback({:insufficient_currency, quote.final_price, currency_before})
+          end
+        end
 
-             commit_pull_rules!(locked_user.id, pack.id, pull_kind, quote)
+        commit_pull_rules!(locked_user.id, pack.id, pull_kind, quote)
 
-             {marble_results, total_dust, total_item_rewards} =
-               acquire_marbles(locked_user.id, pack.id, pull_kind, source, marbles)
+        {marble_results, total_dust, total_item_rewards} =
+          acquire_marbles(locked_user.id, pack.id, pull_kind, source, marbles)
 
-             currency_after = Accounts.currency_balance(locked_user.id)
+        currency_after = Accounts.currency_balance(locked_user.id)
 
-             %{
-               pack: pack,
-               pull_kind: pull_kind,
-               quote: quote,
-               currency_before: currency_before,
-               currency_after: currency_after,
-               marbles: marble_results,
-               total_dust: total_dust,
-               total_item_rewards: total_item_rewards
-             }
-           end) do
-        {:ok, result} ->
-          {:ok, result}
-
-        {:error, {:insufficient_currency, _, _} = reason} ->
-          {:error, reason}
-
-        {:error, reason} ->
-          {:error, reason}
-      end
+        %{
+          pack: pack,
+          pull_kind: pull_kind,
+          quote: quote,
+          currency_before: currency_before,
+          currency_after: currency_after,
+          marbles: marble_results,
+          total_dust: total_dust,
+          total_item_rewards: total_item_rewards
+        }
+      end)
     else
       nil -> {:error, :user_not_found}
       {:error, reason} -> {:error, reason}
@@ -208,8 +199,8 @@ defmodule Marbles.GachaSession do
   defp quote_for_kind(user_id, pack, :one), do: PackPullRules.quote_one(user_id, pack)
   defp quote_for_kind(user_id, pack, :ten), do: PackPullRules.quote_ten(user_id, pack)
 
-  @spec lock_user!(Ecto.UUID.t()) :: User.t()
-  defp lock_user!(user_id) do
+  @spec fetch_user!(Ecto.UUID.t()) :: User.t()
+  defp fetch_user!(user_id) do
     Repo.get!(User, user_id)
   end
 
@@ -225,7 +216,7 @@ defmodule Marbles.GachaSession do
 
         case Gacha.pull_from_pack(pack.id, user.id, guild_id, pull_opts) do
           {:ok, marble} ->
-            PackPullRules.commit_pity_after_marble!(user.id, pack.id, marble.rarity)
+            PackPullRules.commit_pity_after_marble!(user.id, pack, marble.rarity)
             {:cont, [marble | acc]}
 
           {:error, _} ->

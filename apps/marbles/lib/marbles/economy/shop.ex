@@ -51,9 +51,12 @@ defmodule Marbles.Economy.Shop do
 
   @spec products() :: [map()]
   def products do
-    overrides =
-      Repo.all(ShopItem)
-      |> Map.new(fn row -> {row.id, row} end)
+    build_product_catalog(Repo.all(ShopItem))
+  end
+
+  @spec build_product_catalog([ShopItem.t()]) :: [map()]
+  defp build_product_catalog(shop_rows) when is_list(shop_rows) do
+    overrides = Map.new(shop_rows, &{&1.id, &1})
 
     default_products()
     |> Enum.reduce([], fn product, acc ->
@@ -61,35 +64,39 @@ defmodule Marbles.Economy.Shop do
       enabled = if(row, do: row.enabled, else: true)
 
       if enabled do
-        updated = %{
-          product
-          | name:
-              if(row && present?(row.label_override), do: row.label_override, else: product.name),
-            coin: if(row && is_integer(row.coin_price), do: row.coin_price, else: product.coin),
-            dust: if(row && is_integer(row.dust_price), do: row.dust_price, else: product.dust),
-            duration_sec:
-              if(row && is_integer(row.duration_sec),
-                do: row.duration_sec,
-                else: product.duration_sec
-              ),
-            limit_count:
-              if(row && is_integer(row.limit_count),
-                do: row.limit_count,
-                else: product.limit_count
-              ),
-            limit_period_unit:
-              if(row && present?(row.limit_period_unit),
-                do: row.limit_period_unit,
-                else: product.limit_period_unit
-              )
-        }
-
-        [updated | acc]
+        [merge_shop_overrides(product, row) | acc]
       else
         acc
       end
     end)
     |> Enum.reverse()
+  end
+
+  @spec merge_shop_overrides(map(), ShopItem.t() | nil) :: map()
+  defp merge_shop_overrides(product, row) do
+    %{
+      product
+      | name: shop_field(row, :label_override, product.name, &present?/1),
+        coin: shop_field(row, :coin_price, product.coin, &is_integer/1),
+        dust: shop_field(row, :dust_price, product.dust, &is_integer/1),
+        duration_sec: shop_field(row, :duration_sec, product.duration_sec, &is_integer/1),
+        limit_count: shop_field(row, :limit_count, product.limit_count, &is_integer/1),
+        limit_period_unit:
+          shop_field(row, :limit_period_unit, product.limit_period_unit, &present?/1)
+    }
+  end
+
+  @spec shop_field(ShopItem.t() | nil, atom(), term(), (term() -> boolean())) :: term()
+  defp shop_field(nil, _field, default, _predicate), do: default
+
+  defp shop_field(row, field, default, predicate) do
+    v = Map.fetch!(row, field)
+
+    if predicate.(v) do
+      v
+    else
+      default
+    end
   end
 
   @spec valid_product?(product_id()) :: boolean()

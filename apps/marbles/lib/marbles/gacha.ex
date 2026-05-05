@@ -1,5 +1,6 @@
 defmodule Marbles.Gacha do
-  alias Marbles.{Catalog, Analytics}
+  alias Marbles.{Analytics, Catalog}
+  alias Marbles.Schema.Marble
   require Logger
 
   @weights %{
@@ -8,23 +9,14 @@ defmodule Marbles.Gacha do
     3 => 5
   }
 
+  @spec pull_from_pack(Ecto.UUID.t(), Ecto.UUID.t(), String.t() | nil, keyword()) ::
+          {:ok, Marble.t()} | {:error, :empty_pool}
   def pull_from_pack(pack_id, user_id, guild_id, opts \\ []) do
     analytics_meta = Keyword.get(opts, :analytics_meta, %{})
 
     case do_pull_from_pack(pack_id, opts) do
       {:ok, {marble, _}} ->
-        Analytics.record_pull(
-          guild_id,
-          user_id,
-          Map.merge(
-            %{
-              "pack_id" => to_string(pack_id),
-              "marble_id" => to_string(marble.id)
-            },
-            analytics_meta
-          )
-        )
-
+        record_pull_analytics(guild_id, user_id, pack_id, marble, analytics_meta)
         {:ok, marble}
 
       other ->
@@ -32,6 +24,8 @@ defmodule Marbles.Gacha do
     end
   end
 
+  @spec pull_10_from_pack(Ecto.UUID.t(), Ecto.UUID.t(), String.t() | nil, keyword()) ::
+          {:ok, [Marble.t()]} | {:error, :empty_pool}
   def pull_10_from_pack(pack_id, user_id, guild_id, opts \\ []) do
     all_min = Keyword.get(opts, :all_min_rarity)
     first_min = Keyword.get(opts, :first_min_rarity)
@@ -49,18 +43,7 @@ defmodule Marbles.Gacha do
 
         case do_pull_from_pack(pack_id, min_rarity: min_r) do
           {:ok, {marble, _}} ->
-            Analytics.record_pull(
-              guild_id,
-              user_id,
-              Map.merge(
-                %{
-                  "pack_id" => to_string(pack_id),
-                  "marble_id" => to_string(marble.id)
-                },
-                analytics_meta
-              )
-            )
-
+            record_pull_analytics(guild_id, user_id, pack_id, marble, analytics_meta)
             {:cont, [marble | acc]}
 
           {:error, _} = e ->
@@ -74,8 +57,23 @@ defmodule Marbles.Gacha do
     end
   end
 
+  @spec pick_rarity() :: pos_integer()
   def pick_rarity do
     weighted_pick(@weights)
+  end
+
+  @spec record_pull_analytics(String.t() | nil, Ecto.UUID.t(), Ecto.UUID.t(), Marble.t(), map()) ::
+          :ok | {:error, term()}
+  defp record_pull_analytics(guild_id, user_id, pack_id, %Marble{} = marble, meta)
+       when is_map(meta) do
+    Analytics.record_pull(
+      guild_id,
+      user_id,
+      Map.merge(
+        %{"pack_id" => to_string(pack_id), "marble_id" => to_string(marble.id)},
+        meta
+      )
+    )
   end
 
   defp weighted_pick(weights) when is_map(weights) do
@@ -89,6 +87,8 @@ defmodule Marbles.Gacha do
     end)
   end
 
+  @spec spawn_marble(String.t() | nil, String.t() | nil) ::
+          {:ok, Marble.t()} | {:error, :empty_pool}
   def spawn_marble(guild_id, channel_id) do
     case do_spawn_marble() do
       {:ok, spawned} ->

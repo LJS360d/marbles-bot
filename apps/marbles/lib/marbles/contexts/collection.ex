@@ -1,18 +1,17 @@
-# Collection operations
 defmodule Marbles.Collection do
-  alias Marbles.Repo
+  alias Marbles.{Accounts, AdminListing, Repo}
   alias Marbles.Schema.{UserMarble, Marble}
-  alias Marbles.Accounts
   import Ecto.Query
 
   @per_page 10
+
+  @spec per_page() :: pos_integer()
   def per_page, do: @per_page
 
+  @spec list_user_inventory(Ecto.UUID.t(), keyword()) :: {[UserMarble.t()], non_neg_integer()}
   def list_user_inventory(user_id, opts \\ []) do
     sort = Keyword.get(opts, :sort, :rarity_level_name)
-    page = Keyword.get(opts, :page, 1)
-    per = Keyword.get(opts, :per_page, @per_page)
-    offset = (max(1, page) - 1) * per
+    {_page, per, offset} = AdminListing.page_bounds(opts, @per_page)
 
     base =
       from(um in UserMarble,
@@ -50,9 +49,7 @@ defmodule Marbles.Collection do
 
     case Repo.get_by(UserMarble, user_id: user_id, marble_id: marble_id) do
       %UserMarble{} = existing ->
-        dust = Marbles.Economy.Dust.amount_for_duplicate(marble.rarity || 1, user_id)
-        {:ok, _} = Accounts.update_dust(Accounts.get_user!(user_id), dust)
-        {:duplicate, dust, existing}
+        duplicate_from_marble(user_id, marble, existing)
 
       nil ->
         case %UserMarble{}
@@ -67,11 +64,17 @@ defmodule Marbles.Collection do
 
           {:error, _} ->
             existing = Repo.get_by!(UserMarble, user_id: user_id, marble_id: marble_id)
-            dust = Marbles.Economy.Dust.amount_for_duplicate(marble.rarity || 1, user_id)
-            {:ok, _} = Accounts.update_dust(Accounts.get_user!(user_id), dust)
-            {:duplicate, dust, existing}
+            duplicate_from_marble(user_id, marble, existing)
         end
     end
+  end
+
+  @spec duplicate_from_marble(Ecto.UUID.t(), Marble.t(), UserMarble.t()) ::
+          {:duplicate, pos_integer(), UserMarble.t()}
+  defp duplicate_from_marble(user_id, %Marble{} = marble, %UserMarble{} = existing) do
+    dust = Marbles.Economy.Dust.amount_for_duplicate(marble.rarity || 1, user_id)
+    {:ok, _} = Accounts.update_dust(Accounts.get_user!(user_id), dust)
+    {:duplicate, dust, existing}
   end
 
   @spec add_marble_to_collection(Ecto.UUID.t(), Ecto.UUID.t(), map()) ::
@@ -83,6 +86,7 @@ defmodule Marbles.Collection do
     end
   end
 
+  @spec get_user_marble!(Ecto.UUID.t(), Ecto.UUID.t()) :: UserMarble.t()
   def get_user_marble!(user_id, user_marble_id) do
     Repo.get_by!(UserMarble, id: user_marble_id, user_id: user_id)
     |> Repo.preload(marble: [:team, :assets])

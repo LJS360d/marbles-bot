@@ -1,6 +1,5 @@
 defmodule Marbles.Accounts do
-  alias Marbles.Inventory
-  alias Marbles.Repo
+  alias Marbles.{AdminListing, Inventory, Repo, SqlLike}
   alias Marbles.Schema.{User, UserIdentity, UserInventory, UserRaceStat}
   import Ecto.Query
 
@@ -10,27 +9,29 @@ defmodule Marbles.Accounts do
   def get_user(id) when is_integer(id) do
     case Repo.get(User, id) do
       nil -> nil
-      u -> Repo.preload(u, :identities) |> with_wallet()
+      u -> preload_user_with_wallet(u)
     end
   end
 
   def get_user(id) when is_binary(id) and id != "" do
-    case Integer.parse(id) do
-      {int, ""} ->
-        case Repo.get(User, int) do
-          nil -> nil
-          u -> Repo.preload(u, :identities) |> with_wallet()
-        end
+    pk =
+      case Integer.parse(id) do
+        {int, ""} -> int
+        _ -> id
+      end
 
-      _ ->
-        case Repo.get(User, id) do
-          nil -> nil
-          u -> Repo.preload(u, :identities) |> with_wallet()
-        end
+    case Repo.get(User, pk) do
+      nil -> nil
+      u -> preload_user_with_wallet(u)
     end
   end
 
   def get_user(_), do: nil
+
+  @spec preload_user_with_wallet(User.t()) :: User.t()
+  defp preload_user_with_wallet(%User{} = u) do
+    u |> Repo.preload(:identities) |> with_wallet()
+  end
 
   def get_user_by_platform(platform_id, platform \\ "discord") do
     from(i in UserIdentity,
@@ -95,12 +96,10 @@ defmodule Marbles.Accounts do
 
   @spec list_users(keyword()) :: {[User.t()], non_neg_integer()}
   def list_users(opts \\ []) do
-    page = Keyword.get(opts, :page, 1) |> max(1)
-    per = Keyword.get(opts, :per_page, 20)
-    offset = (page - 1) * per
+    {_page, per, offset} = AdminListing.page_bounds(opts, 20)
     sort = normalize_user_sort(Keyword.get(opts, :sort))
     order = normalize_user_order(Keyword.get(opts, :order))
-    q = Keyword.get(opts, :q, "") |> to_string() |> String.trim()
+    q = AdminListing.trimmed_query(opts)
 
     base = from(u in User, as: :u)
     base = apply_user_search(base, q)
@@ -142,7 +141,7 @@ defmodule Marbles.Accounts do
   defp apply_user_search(query, ""), do: query
 
   defp apply_user_search(query, q) do
-    term = "%" <> (q |> admin_search_fragment() |> String.downcase()) <> "%"
+    term = "%" <> (q |> SqlLike.escape_like_fragment() |> String.downcase()) <> "%"
 
     from(u in query,
       where:
@@ -155,13 +154,6 @@ defmodule Marbles.Accounts do
             )
           )
     )
-  end
-
-  defp admin_search_fragment(q) do
-    q
-    |> String.replace("\\", "")
-    |> String.replace("%", "")
-    |> String.replace("_", "")
   end
 
   defp apply_user_order(query, :inserted_at, :asc),

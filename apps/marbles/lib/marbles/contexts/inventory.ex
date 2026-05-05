@@ -149,7 +149,7 @@ defmodule Marbles.Inventory do
   end
 
   @spec grant_item(Ecto.UUID.t(), item_type(), item_id(), pos_integer(), map()) ::
-          {:ok, quantity()} | {:error, :invalid_quantity}
+          {:ok, quantity()} | {:error, :invalid_quantity | Ecto.Changeset.t()}
   def grant_item(user_id, item_type, item_id, quantity, meta \\ %{})
       when is_binary(user_id) and is_binary(item_type) and is_binary(item_id) do
     if is_integer(quantity) and quantity > 0 do
@@ -161,14 +161,15 @@ defmodule Marbles.Inventory do
         meta: meta
       }
 
-      %UserInventory{}
-      |> UserInventory.changeset(attrs)
-      |> Repo.insert(
-        on_conflict: [inc: [quantity: quantity]],
-        conflict_target: [:user_id, :item_type, :item_id]
-      )
-
-      {:ok, get_item_quantity(user_id, item_type, item_id)}
+      case %UserInventory{}
+           |> UserInventory.changeset(attrs)
+           |> Repo.insert(
+             on_conflict: [inc: [quantity: quantity]],
+             conflict_target: [:user_id, :item_type, :item_id]
+           ) do
+        {:ok, _} -> {:ok, get_item_quantity(user_id, item_type, item_id)}
+        {:error, %Ecto.Changeset{} = cs} -> {:error, cs}
+      end
     else
       {:error, :invalid_quantity}
     end
@@ -198,7 +199,8 @@ defmodule Marbles.Inventory do
   end
 
   @spec change_item_quantity(Ecto.UUID.t(), item_type(), item_id(), integer(), map()) ::
-          {:ok, quantity()} | {:error, :insufficient_quantity | :invalid_quantity}
+          {:ok, quantity()}
+          | {:error, :insufficient_quantity | :invalid_quantity | Ecto.Changeset.t()}
   def change_item_quantity(user_id, item_type, item_id, delta, meta \\ %{})
       when is_binary(user_id) and is_binary(item_type) and is_binary(item_id) and
              is_integer(delta) do
@@ -210,7 +212,8 @@ defmodule Marbles.Inventory do
   end
 
   @spec set_item_quantity(Ecto.UUID.t(), item_type(), item_id(), non_neg_integer(), map()) ::
-          {:ok, quantity()} | {:error, :insufficient_quantity | :invalid_quantity}
+          {:ok, quantity()}
+          | {:error, :insufficient_quantity | :invalid_quantity | Ecto.Changeset.t()}
   def set_item_quantity(user_id, item_type, item_id, desired, meta \\ %{})
       when is_binary(user_id) and is_binary(item_type) and is_binary(item_id) and
              is_integer(desired) and
@@ -220,7 +223,8 @@ defmodule Marbles.Inventory do
   end
 
   @spec grant_rewards(Ecto.UUID.t(), [item_reward()]) ::
-          {:ok, %{optional(item_key()) => quantity()}} | {:error, :invalid_quantity}
+          {:ok, %{optional(item_key()) => quantity()}}
+          | {:error, :invalid_quantity | Ecto.Changeset.t()}
   def grant_rewards(user_id, rewards) when is_binary(user_id) and is_list(rewards) do
     Enum.reduce_while(rewards, {:ok, %{}}, fn reward, {:ok, acc} ->
       item_type = Map.get(reward, :item_type) || Map.get(reward, "item_type")
@@ -234,6 +238,9 @@ defmodule Marbles.Inventory do
 
         {:error, :invalid_quantity} ->
           {:halt, {:error, :invalid_quantity}}
+
+        {:error, %Ecto.Changeset{}} = err ->
+          {:halt, err}
       end
     end)
   end
