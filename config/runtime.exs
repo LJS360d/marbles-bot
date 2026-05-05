@@ -58,6 +58,26 @@ discord_activity_enabled =
   |> String.downcase()
   |> Kernel.==("true")
 
+discord_activity_entry_command_name =
+  case System.get_env("DISCORD_ACTIVITY_ENTRY_COMMAND_NAME") do
+    value when is_binary(value) ->
+      trimmed = String.trim(value)
+      if trimmed != "", do: trimmed, else: "play"
+
+    _ ->
+      "play"
+  end
+
+discord_activity_entry_command_description =
+  case System.get_env("DISCORD_ACTIVITY_ENTRY_COMMAND_DESCRIPTION") do
+    value when is_binary(value) ->
+      trimmed = String.trim(value)
+      if trimmed != "", do: trimmed, else: "Open the Marbles embedded activity"
+
+    _ ->
+      "Open the Marbles embedded activity"
+  end
+
 discord_activity_allowed_origins =
   System.get_env(
     "DISCORD_ACTIVITY_ALLOWED_ORIGINS",
@@ -139,6 +159,11 @@ config :marbles_web, :discord_activity,
   session_same_site: discord_activity_session_same_site,
   session_secure: discord_activity_session_secure,
   public_key: System.get_env("DISCORD_PUBLIC_KEY")
+
+config :marbles_discordbot, :discord_activity,
+  enabled: discord_activity_enabled,
+  entry_command_name: discord_activity_entry_command_name,
+  entry_command_description: discord_activity_entry_command_description
 
 config :marbles_web, :owner_platform_ids, owner_platform_ids
 config :marbles_web, :discord_server_invite, discord_server_invite

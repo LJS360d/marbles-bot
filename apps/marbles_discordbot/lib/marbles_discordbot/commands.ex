@@ -12,6 +12,7 @@ defmodule MarblesDiscordbot.Commands do
       Catalog.list_active_packs(Date.utc_today(), :name)
       |> Enum.map(fn pack -> %{name: pack.name, value: to_string(pack.id)} end)
 
+    chat_input_commands =
     [
       %{
         name: "pull",
@@ -216,6 +217,37 @@ defmodule MarblesDiscordbot.Commands do
         ]
       }
     ]
+
+    discord_activity_commands() ++ chat_input_commands
+  end
+
+  @discord_launch_activity_handler 2
+
+  @spec discord_activity_commands() :: [map()]
+  defp discord_activity_commands do
+    discord_activity =
+      Application.get_env(:marbles_discordbot, :discord_activity, []) |> Keyword.get(:enabled, false)
+
+    if discord_activity do
+      name =
+        Application.get_env(:marbles_discordbot, :discord_activity, [])
+        |> Keyword.get(:entry_command_name, "play")
+
+      description =
+        Application.get_env(:marbles_discordbot, :discord_activity, [])
+        |> Keyword.get(:entry_command_description, "Open the Marbles embedded activity")
+
+      [
+        %{
+          type: ApplicationCommandType.primary_entry_point(),
+          name: name,
+          description: description,
+          handler: @discord_launch_activity_handler
+        }
+      ]
+    else
+      []
+    end
   end
 
   @spec optional_user_option() :: map()
@@ -240,29 +272,85 @@ defmodule MarblesDiscordbot.Commands do
   end
 
   @spec command_type(map()) :: pos_integer()
-  defp command_type(cmd), do: Map.get(cmd, :type, ApplicationCommandType.chat_input())
+  defp command_type(cmd) when is_map(cmd) do
+    raw = Map.get(cmd, :type, Map.get(cmd, "type", ApplicationCommandType.chat_input()))
+
+    cond do
+      is_integer(raw) -> raw
+      is_binary(raw) ->
+        case Integer.parse(String.trim(raw)) do
+          {int, ""} -> int
+          _ -> ApplicationCommandType.chat_input()
+        end
+
+      true ->
+        ApplicationCommandType.chat_input()
+    end
+  end
+
+  defp command_type(_), do: ApplicationCommandType.chat_input()
 
   @spec remote_chat_input_commands([map()]) :: [map()]
   defp remote_chat_input_commands(remote) do
     Enum.reject(remote, &(command_type(&1) == ApplicationCommandType.primary_entry_point()))
   end
 
-  @spec entry_point_payloads_from_remote([map()]) :: [map()]
-  defp entry_point_payloads_from_remote(remote) do
-    remote
-    |> Enum.filter(&(command_type(&1) == ApplicationCommandType.primary_entry_point()))
-    |> Enum.map(&Map.drop(&1, [:id, :version, :application_id, :guild_id]))
+  @spec entry_point_signature(map()) ::
+          {String.t(), pos_integer(), String.t(), pos_integer() | nil}
+  defp entry_point_signature(cmd) when is_map(cmd) do
+    name = Map.get(cmd, :name) || Map.get(cmd, "name") || ""
+    desc = Map.get(cmd, :description) || Map.get(cmd, "description") || ""
+
+    handler =
+      case Map.get(cmd, :handler, Map.get(cmd, "handler")) do
+        int when is_integer(int) ->
+          int
+
+        bin when is_binary(bin) ->
+          case Integer.parse(String.trim(bin)) do
+            {int, ""} -> int
+            _ -> nil
+          end
+
+        _ ->
+          nil
+      end
+
+    {name, command_type(cmd), desc, handler}
   end
 
   @spec needs_resync?([map()], [map()]) :: boolean()
   defp needs_resync?(remote, local) do
     remote_chat = remote_chat_input_commands(remote)
-    remote_names = remote_chat |> Enum.map(& &1.name) |> Enum.sort()
-    local_names = local |> Enum.map(& &1.name) |> Enum.sort()
+    remote_chat_names =
+      remote_chat
+      |> Enum.map(fn cmd -> Map.get(cmd, :name) || Map.get(cmd, "name") end)
+      |> Enum.reject(&(&1 in [nil, ""]))
+      |> Enum.sort()
+
+    local_chat = Enum.reject(local, &(command_type(&1) == ApplicationCommandType.primary_entry_point()))
+    local_chat_names = local_chat |> Enum.map(& &1.name) |> Enum.sort()
+
+    remote_entry_points =
+      remote |> Enum.filter(&(command_type(&1) == ApplicationCommandType.primary_entry_point()))
+
+    local_entry_points =
+      local |> Enum.filter(&(command_type(&1) == ApplicationCommandType.primary_entry_point()))
+
+    remote_entry_sigs =
+      remote_entry_points
+      |> Enum.map(&entry_point_signature/1)
+      |> Enum.sort()
+
+    local_entry_sigs =
+      local_entry_points
+      |> Enum.map(&entry_point_signature/1)
+      |> Enum.sort()
 
     cond do
-      length(remote_chat) != length(local) -> true
-      remote_names != local_names -> true
+      length(remote_chat) != length(local_chat) -> true
+      remote_chat_names != local_chat_names -> true
+      remote_entry_sigs != local_entry_sigs -> true
       true -> false
     end
   end
@@ -296,7 +384,32 @@ defmodule MarblesDiscordbot.Commands do
 
     case ApplicationCommand.global_commands() do
       {:ok, remote} ->
-        merged = local ++ entry_point_payloads_from_remote(remote)
+        activity_enabled =
+          Application.get_env(:marbles_discordbot, :discord_activity, [])
+          |> Keyword.get(:enabled, false)
+
+        merged =
+          if activity_enabled do
+            local_entry_names =
+              local
+              |> Enum.filter(&(command_type(&1) == ApplicationCommandType.primary_entry_point()))
+              |> Enum.map(& &1.name)
+              |> MapSet.new()
+
+            preserved_remote_entry_points =
+              remote
+              |> Enum.filter(&(command_type(&1) == ApplicationCommandType.primary_entry_point()))
+              |> Enum.reject(fn cmd ->
+                name = Map.get(cmd, :name) || Map.get(cmd, "name")
+                name && MapSet.member?(local_entry_names, name)
+              end)
+              |> Enum.map(&Map.drop(&1, [:id, :version, :application_id, :guild_id]))
+
+            local ++ preserved_remote_entry_points
+          else
+            local
+          end
+
         ApplicationCommand.bulk_overwrite_global_commands(merged)
 
       {:error, _} = err ->
