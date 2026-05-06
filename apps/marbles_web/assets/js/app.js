@@ -26,6 +26,7 @@ import { hooks as colocatedHooks } from "phoenix-colocated/marbles_web";
 import topbar from "../vendor/topbar";
 import OwnerAdminMemoryInsights from "./owner_admin_memory_insights.js";
 import { GachaPage, GachaCinematic } from "./gacha_page_hooks.js";
+import { GachaCinematicV2 } from "./gacha_cinematic_v2.js";
 import { DevSandbox } from "./dev_sandbox_hook.js";
 import { bootstrapDiscordEmbeddedAuth, initializeDiscordUrlMappings } from "./discord_activity_hook.js";
 
@@ -39,6 +40,7 @@ const liveSocket = new LiveSocket("/live", Socket, {
     OwnerAdminMemoryInsights,
     GachaPage,
     GachaCinematic,
+    GachaCinematicV2,
     DevSandbox,
     ...colocatedHooks,
   },
