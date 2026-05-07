@@ -13,7 +13,7 @@ import {
   applyMarbleTextureSettings,
   buildMarbleMaterial,
 } from "./gacha_cinematic_shared.js";
-import { buildRaceLightsTimeline } from "./gacha_cinematic_v2_race_lights.js";
+import { buildRaceLightsTimeline } from "./gacha_cinematic_race_lights.js";
 
 const {
   Scene,
@@ -42,7 +42,7 @@ const distanceRatioAccel = (t) => {
 /**
  * GSAP gacha cinematic (WebGLRenderer). Race lights timeline lives in a small module.
  */
-const GachaCinematicV2 = {
+const GachaCinematic = {
   mounted() {
     this.webglReady = false;
     this.animationFrame = null;
@@ -658,7 +658,7 @@ const GachaCinematicV2 = {
       const teamLogo = entry?.team_logo_url || entry?.teamLogoUrl || null;
       if (logo) {
         if (teamLogo) {
-          logo.src = teamLogo;
+          logo.src = canonicalTextureUrl(teamLogo) || teamLogo;
           logo.classList.remove("hidden");
         } else {
           logo.removeAttribute("src");
@@ -1013,4 +1013,4 @@ const GachaCinematicV2 = {
   },
 };
 
-export { GachaCinematicV2 };
+export { GachaCinematic };

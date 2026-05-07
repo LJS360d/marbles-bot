@@ -33,7 +33,11 @@ export const textureUrlFromResult = (entry) => entry?.texture_url || entry?.text
 export const canonicalTextureUrl = (url) => {
   if (!url || typeof url !== "string") return null;
   try {
-    return new URL(url, window.location.href).href;
+    const absoluteUrl = new URL(url, window.location.href).href;
+    if (typeof window.__marblesDiscordRemapUrl === "function") {
+      return window.__marblesDiscordRemapUrl(absoluteUrl) || absoluteUrl;
+    }
+    return absoluteUrl;
   } catch {
     return url;
   }

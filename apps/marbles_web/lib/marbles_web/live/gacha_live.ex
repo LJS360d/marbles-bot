@@ -285,7 +285,7 @@ defmodule MarblesWeb.GachaLive do
       >
         <div
           id="gacha-cinematic"
-          phx-hook="GachaCinematicV2"
+          phx-hook="GachaCinematic"
           phx-update="ignore"
           class="relative z-0 h-full w-full bg-black"
         >

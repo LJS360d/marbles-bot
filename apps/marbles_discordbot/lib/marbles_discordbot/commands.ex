@@ -13,210 +13,210 @@ defmodule MarblesDiscordbot.Commands do
       |> Enum.map(fn pack -> %{name: pack.name, value: to_string(pack.id)} end)
 
     chat_input_commands =
-    [
-      %{
-        name: "pull",
-        description: "Pull a random marble from a pack",
-        options: [
-          %{
-            type: ApplicationCommandOptionType.string(),
-            name: "pack",
-            description: "The pack you want to pull from",
-            required: true,
-            choices: packs_choices
-          }
-        ]
-      },
-      %{
-        name: "trade",
-        description: "Trade with another user",
-        # Guild-only
-        dm_permission: false,
-        options: [
-          %{
-            type: ApplicationCommandOptionType.user(),
-            name: "target",
-            description: "The user you want to trade with",
-            required: true
-          }
-        ]
-      },
-      %{
-        name: "spawnrate",
-        description: "Manage marble spawn rates",
-        dm_permission: false,
-        options: [
-          # Subcommand 1: View all
-          %{
-            type: ApplicationCommandOptionType.sub_command(),
-            name: "list",
-            description: "List spawn rates for all visible channels"
-          },
-          # Subcommand 2: Set rates
-          %{
-            type: ApplicationCommandOptionType.sub_command(),
-            name: "set",
-            description: "Set the spawn rate for specific channels",
-            options: [
-              %{
-                type: ApplicationCommandOptionType.number(),
-                name: "rate",
-                description: "The rate in % (0-100)",
-                required: true,
-                min_value: 0.0,
-                max_value: 100.0
-              },
-              %{
-                type: ApplicationCommandOptionType.channel(),
-                name: "channel",
-                description: "Optional: Specific channel to update (defaults to current)",
-                required: false
-              }
-            ]
-          }
-        ]
-      },
-      %{
-        name: "collection",
-        description: "See your marbles collection",
-        type: 1,
-        options: [optional_user_option()]
-      },
-      %{
-        name: "packs",
-        description: "Show currently available packs",
-        type: 1
-      },
-      %{
-        name: "analytics",
-        description: "Show analytics about the bot",
-        type: 1
-      },
-      %{
-        name: "daily",
-        description: "Claim your daily reward and build your streak",
-        type: 1
-      },
-      %{
-        name: "balance",
-        description: "Show your coins, dust, and mine roster",
-        type: 1
-      },
-      %{
-        name: "profile",
-        description: "Show a user profile (wallet, collection, boosts, mines)",
-        type: 1,
-        options: [optional_user_option()]
-      },
-      %{
-        name: "boosts",
-        description: "Show active boosts",
-        type: 1,
-        options: [optional_user_option()]
-      },
-      %{
-        name: "leaderboard",
-        description: "Show top players",
-        options: [
-          %{
-            type: ApplicationCommandOptionType.string(),
-            name: "kind",
-            description: "Leaderboard to show",
-            required: false,
-            choices: [
-              %{name: "Coins", value: "coins"},
-              %{name: "Collection size", value: "collection"}
-            ]
-          }
-        ]
-      },
-      %{
-        name: "mines",
-        description: "Manage marbles assigned to passive coin mining",
-        options: [
-          %{
-            type: ApplicationCommandOptionType.sub_command(),
-            name: "view",
-            description: "Show roster"
-          },
-          %{
-            type: ApplicationCommandOptionType.sub_command(),
-            name: "add",
-            description: "Add a marble you own (exact name, case-insensitive)",
-            options: [required_marble_name_option()]
-          },
-          %{
-            type: ApplicationCommandOptionType.sub_command(),
-            name: "remove",
-            description: "Remove a roster marble by name",
-            options: [required_marble_name_option()]
-          },
-          %{
-            type: ApplicationCommandOptionType.sub_command(),
-            name: "clear",
-            description: "Clear roster"
-          }
-        ]
-      },
-      %{
-        name: "upgrades",
-        description: "Spend dust on permanent account upgrades",
-        options: [
-          %{
-            type: ApplicationCommandOptionType.sub_command(),
-            name: "view",
-            description: "List upgrades"
-          },
-          %{
-            type: ApplicationCommandOptionType.sub_command(),
-            name: "buy",
-            description: "Buy the next level of an upgrade (costs dust)",
-            options: [
-              %{
-                type: ApplicationCommandOptionType.string(),
-                name: "upgrade",
-                description: "Upgrade to buy",
-                required: true,
-                choices:
-                  Upgrades.definitions()
-                  |> Enum.map(fn {k, v} ->
-                    %{name: String.slice(v.title, 0, 100), value: k}
-                  end)
-              }
-            ]
-          }
-        ]
-      },
-      %{
-        name: "shop",
-        description: "Buy items and temporary boosts",
-        options: [
-          %{
-            type: ApplicationCommandOptionType.sub_command(),
-            name: "list",
-            description: "List offers"
-          },
-          %{
-            type: ApplicationCommandOptionType.sub_command(),
-            name: "buy",
-            description: "Buy an item or boost",
-            options: [
-              %{
-                type: ApplicationCommandOptionType.string(),
-                name: "product",
-                description: "Product id",
-                required: true,
-                choices:
-                  Shop.products()
-                  |> Enum.map(fn p ->
-                    %{name: String.slice(p.name, 0, 100), value: p.id}
-                  end)
-              }
-            ]
-          }
-        ]
-      }
-    ]
+      [
+        %{
+          name: "pull",
+          description: "Pull a random marble from a pack",
+          options: [
+            %{
+              type: ApplicationCommandOptionType.string(),
+              name: "pack",
+              description: "The pack you want to pull from",
+              required: true,
+              choices: packs_choices
+            }
+          ]
+        },
+        %{
+          name: "trade",
+          description: "Trade with another user",
+          # Guild-only
+          dm_permission: false,
+          options: [
+            %{
+              type: ApplicationCommandOptionType.user(),
+              name: "target",
+              description: "The user you want to trade with",
+              required: true
+            }
+          ]
+        },
+        %{
+          name: "spawnrate",
+          description: "Manage marble spawn rates",
+          dm_permission: false,
+          options: [
+            # Subcommand 1: View all
+            %{
+              type: ApplicationCommandOptionType.sub_command(),
+              name: "list",
+              description: "List spawn rates for all visible channels"
+            },
+            # Subcommand 2: Set rates
+            %{
+              type: ApplicationCommandOptionType.sub_command(),
+              name: "set",
+              description: "Set the spawn rate for specific channels",
+              options: [
+                %{
+                  type: ApplicationCommandOptionType.number(),
+                  name: "rate",
+                  description: "The rate in % (0-100)",
+                  required: true,
+                  min_value: 0.0,
+                  max_value: 100.0
+                },
+                %{
+                  type: ApplicationCommandOptionType.channel(),
+                  name: "channel",
+                  description: "Optional: Specific channel to update (defaults to current)",
+                  required: false
+                }
+              ]
+            }
+          ]
+        },
+        %{
+          name: "collection",
+          description: "See your marbles collection",
+          type: 1,
+          options: [optional_user_option()]
+        },
+        %{
+          name: "packs",
+          description: "Show currently available packs",
+          type: 1
+        },
+        %{
+          name: "analytics",
+          description: "Show analytics about the bot",
+          type: 1
+        },
+        %{
+          name: "daily",
+          description: "Claim your daily reward and build your streak",
+          type: 1
+        },
+        %{
+          name: "balance",
+          description: "Show your coins, dust, and mine roster",
+          type: 1
+        },
+        %{
+          name: "profile",
+          description: "Show a user profile (wallet, collection, boosts, mines)",
+          type: 1,
+          options: [optional_user_option()]
+        },
+        %{
+          name: "boosts",
+          description: "Show active boosts",
+          type: 1,
+          options: [optional_user_option()]
+        },
+        %{
+          name: "leaderboard",
+          description: "Show top players",
+          options: [
+            %{
+              type: ApplicationCommandOptionType.string(),
+              name: "kind",
+              description: "Leaderboard to show",
+              required: false,
+              choices: [
+                %{name: "Coins", value: "coins"},
+                %{name: "Collection size", value: "collection"}
+              ]
+            }
+          ]
+        },
+        %{
+          name: "mines",
+          description: "Manage marbles assigned to passive coin mining",
+          options: [
+            %{
+              type: ApplicationCommandOptionType.sub_command(),
+              name: "view",
+              description: "Show roster"
+            },
+            %{
+              type: ApplicationCommandOptionType.sub_command(),
+              name: "add",
+              description: "Add a marble you own (exact name, case-insensitive)",
+              options: [required_marble_name_option()]
+            },
+            %{
+              type: ApplicationCommandOptionType.sub_command(),
+              name: "remove",
+              description: "Remove a roster marble by name",
+              options: [required_marble_name_option()]
+            },
+            %{
+              type: ApplicationCommandOptionType.sub_command(),
+              name: "clear",
+              description: "Clear roster"
+            }
+          ]
+        },
+        %{
+          name: "upgrades",
+          description: "Spend dust on permanent account upgrades",
+          options: [
+            %{
+              type: ApplicationCommandOptionType.sub_command(),
+              name: "view",
+              description: "List upgrades"
+            },
+            %{
+              type: ApplicationCommandOptionType.sub_command(),
+              name: "buy",
+              description: "Buy the next level of an upgrade (costs dust)",
+              options: [
+                %{
+                  type: ApplicationCommandOptionType.string(),
+                  name: "upgrade",
+                  description: "Upgrade to buy",
+                  required: true,
+                  choices:
+                    Upgrades.definitions()
+                    |> Enum.map(fn {k, v} ->
+                      %{name: String.slice(v.title, 0, 100), value: k}
+                    end)
+                }
+              ]
+            }
+          ]
+        },
+        %{
+          name: "shop",
+          description: "Buy items and temporary boosts",
+          options: [
+            %{
+              type: ApplicationCommandOptionType.sub_command(),
+              name: "list",
+              description: "List offers"
+            },
+            %{
+              type: ApplicationCommandOptionType.sub_command(),
+              name: "buy",
+              description: "Buy an item or boost",
+              options: [
+                %{
+                  type: ApplicationCommandOptionType.string(),
+                  name: "product",
+                  description: "Product id",
+                  required: true,
+                  choices:
+                    Shop.products()
+                    |> Enum.map(fn p ->
+                      %{name: String.slice(p.name, 0, 100), value: p.id}
+                    end)
+                }
+              ]
+            }
+          ]
+        }
+      ]
 
     discord_activity_commands() ++ chat_input_commands
   end
@@ -226,7 +226,8 @@ defmodule MarblesDiscordbot.Commands do
   @spec discord_activity_commands() :: [map()]
   defp discord_activity_commands do
     discord_activity =
-      Application.get_env(:marbles_discordbot, :discord_activity, []) |> Keyword.get(:enabled, false)
+      Application.get_env(:marbles_discordbot, :discord_activity, [])
+      |> Keyword.get(:enabled, false)
 
     if discord_activity do
       name =
@@ -276,7 +277,9 @@ defmodule MarblesDiscordbot.Commands do
     raw = Map.get(cmd, :type, Map.get(cmd, "type", ApplicationCommandType.chat_input()))
 
     cond do
-      is_integer(raw) -> raw
+      is_integer(raw) ->
+        raw
+
       is_binary(raw) ->
         case Integer.parse(String.trim(raw)) do
           {int, ""} -> int
@@ -322,13 +325,16 @@ defmodule MarblesDiscordbot.Commands do
   @spec needs_resync?([map()], [map()]) :: boolean()
   defp needs_resync?(remote, local) do
     remote_chat = remote_chat_input_commands(remote)
+
     remote_chat_names =
       remote_chat
       |> Enum.map(fn cmd -> Map.get(cmd, :name) || Map.get(cmd, "name") end)
       |> Enum.reject(&(&1 in [nil, ""]))
       |> Enum.sort()
 
-    local_chat = Enum.reject(local, &(command_type(&1) == ApplicationCommandType.primary_entry_point()))
+    local_chat =
+      Enum.reject(local, &(command_type(&1) == ApplicationCommandType.primary_entry_point()))
+
     local_chat_names = local_chat |> Enum.map(& &1.name) |> Enum.sort()
 
     remote_entry_points =

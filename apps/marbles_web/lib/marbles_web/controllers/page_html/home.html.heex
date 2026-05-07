@@ -54,19 +54,20 @@
               >
                 <.icon name="hero-calendar" class="size-4" /> Calendar
               </.link>
-              <!-- Discord buttons will be conditionally rendered when env vars are set -->
-              <button
+              <a
                 :if={!is_nil(@discord_server_invite)}
+                href={@discord_server_invite}
                 class="btn btn-outline btn-sm rounded-full px-4"
               >
                 <.icon name="hero-chat-bubble-left-right" class="size-4" /> Discord Server
-              </button>
-              <button
+              </a>
+              <a
                 :if={!is_nil(@discord_bot_invite)}
+                href={@discord_bot_invite}
                 class="btn btn-outline btn-sm rounded-full px-4"
               >
                 <.icon name="hero-plus" class="size-4" /> Invite Bot
-              </button>
+              </a>
             </div>
             
 <!-- Authentication Section -->
