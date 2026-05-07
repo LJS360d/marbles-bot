@@ -386,40 +386,26 @@ defmodule MarblesDiscordbot.Commands do
 
   @spec sync_force() :: {:ok, any()} | {:error, any()}
   def sync_force do
-    local = commands()
+    commands()
+    |> ensure_single_primary_entry_point()
+    |> ApplicationCommand.bulk_overwrite_global_commands()
+  end
 
-    case ApplicationCommand.global_commands() do
-      {:ok, remote} ->
-        activity_enabled =
-          Application.get_env(:marbles_discordbot, :discord_activity, [])
-          |> Keyword.get(:enabled, false)
+  @spec ensure_single_primary_entry_point([map()]) :: [map()]
+  defp ensure_single_primary_entry_point(commands) do
+    {entry_points, non_entry_points} =
+      Enum.split_with(commands, &(command_type(&1) == ApplicationCommandType.primary_entry_point()))
 
-        merged =
-          if activity_enabled do
-            local_entry_names =
-              local
-              |> Enum.filter(&(command_type(&1) == ApplicationCommandType.primary_entry_point()))
-              |> Enum.map(& &1.name)
-              |> MapSet.new()
+    case entry_points do
+      [] ->
+        non_entry_points
 
-            preserved_remote_entry_points =
-              remote
-              |> Enum.filter(&(command_type(&1) == ApplicationCommandType.primary_entry_point()))
-              |> Enum.reject(fn cmd ->
-                name = Map.get(cmd, :name) || Map.get(cmd, "name")
-                name && MapSet.member?(local_entry_names, name)
-              end)
-              |> Enum.map(&Map.drop(&1, [:id, :version, :application_id, :guild_id]))
+      [single] ->
+        [single | non_entry_points]
 
-            local ++ preserved_remote_entry_points
-          else
-            local
-          end
-
-        ApplicationCommand.bulk_overwrite_global_commands(merged)
-
-      {:error, _} = err ->
-        err
+      [first | _rest] ->
+        Logger.warning("Multiple primary entry points configured locally; keeping only the first.")
+        [first | non_entry_points]
     end
   end
 end
