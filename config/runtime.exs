@@ -275,11 +275,24 @@ if config_env() == :prod do
         end
       end)
 
+    check_origin =
+      if discord_activity_enabled do
+        host_origin =
+          case public_hostname do
+            h when is_binary(h) and h != "" -> ["//" <> h]
+            _ -> []
+          end
+
+        host_origin ++ ["//*.discordsays.com"]
+      else
+        :conn
+      end
+
     endpoint_opts = [
       http: [ip: {0, 0, 0, 0, 0, 0, 0, 0}],
       secret_key_base: secret_key_base,
       server: true,
-      check_origin: :conn
+      check_origin: check_origin
     ]
 
     endpoint_opts =

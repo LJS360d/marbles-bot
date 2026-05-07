@@ -394,7 +394,10 @@ defmodule MarblesDiscordbot.Commands do
   @spec ensure_single_primary_entry_point([map()]) :: [map()]
   defp ensure_single_primary_entry_point(commands) do
     {entry_points, non_entry_points} =
-      Enum.split_with(commands, &(command_type(&1) == ApplicationCommandType.primary_entry_point()))
+      Enum.split_with(
+        commands,
+        &(command_type(&1) == ApplicationCommandType.primary_entry_point())
+      )
 
     case entry_points do
       [] ->
@@ -404,7 +407,10 @@ defmodule MarblesDiscordbot.Commands do
         [single | non_entry_points]
 
       [first | _rest] ->
-        Logger.warning("Multiple primary entry points configured locally; keeping only the first.")
+        Logger.warning(
+          "Multiple primary entry points configured locally; keeping only the first."
+        )
+
         [first | non_entry_points]
     end
   end
