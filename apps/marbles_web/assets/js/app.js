@@ -27,6 +27,8 @@ import topbar from "../vendor/topbar";
 import OwnerAdminMemoryInsights from "./owner_admin_memory_insights.js";
 import { GachaPage, GachaCinematic } from "./gacha_page_hook.js";
 import { DevSandbox } from "./dev_sandbox_hook.js";
+import RaceRenderer from "./race_renderer_hook.js";
+import RaceDock from "./race_dock_hook.js";
 import { bootstrapDiscordEmbeddedAuth, initializeDiscordUrlMappings } from "./discord_activity_hook.js";
 
 const csrfToken = document
@@ -40,6 +42,8 @@ const liveSocket = new LiveSocket("/live", Socket, {
     GachaPage,
     GachaCinematic,
     DevSandbox,
+    RaceRenderer,
+    RaceDock,
     ...colocatedHooks,
   },
 });

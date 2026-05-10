@@ -37,5 +37,10 @@
   </head>
   <body>
     {@inner_content}
+    {live_render(@conn, MarblesWeb.RaceDockLive,
+      id: "race-dock-live",
+      sticky: true,
+      session: %{"user_id" => @conn.assigns[:current_user] && @conn.assigns.current_user.id}
+    )}
   </body>
 </html>

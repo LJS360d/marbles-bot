@@ -18,6 +18,7 @@ defmodule Marbles.Schema.Marble do
           packs: Ecto.Association.NotLoaded.t() | [map()],
           user_marbles: Ecto.Association.NotLoaded.t() | [map()],
           assets: Ecto.Association.NotLoaded.t() | [map()],
+          abilities: Ecto.Association.NotLoaded.t() | [map()],
           inserted_at: NaiveDateTime.t() | nil,
           updated_at: NaiveDateTime.t() | nil
         }
@@ -36,6 +37,7 @@ defmodule Marbles.Schema.Marble do
     many_to_many :packs, Marbles.Schema.Pack, join_through: "pack_contents"
     has_many :user_marbles, Marbles.Schema.UserMarble
     has_many :assets, Marbles.Schema.MarbleAsset
+    has_many :abilities, Marbles.Schema.MarbleAbility
 
     timestamps()
   end

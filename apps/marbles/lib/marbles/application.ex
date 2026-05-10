@@ -12,9 +12,8 @@ defmodule Marbles.Application do
       {Ecto.Migrator,
        repos: Application.fetch_env!(:marbles, :ecto_repos), skip: skip_migrations?()},
       {DNSCluster, query: Application.get_env(:marbles, :dns_cluster_query) || :ignore},
-      {Phoenix.PubSub, name: Marbles.PubSub}
-      # Start a worker by calling: Marbles.Worker.start_link(arg)
-      # {Marbles.Worker, arg}
+      {Phoenix.PubSub, name: Marbles.PubSub},
+      Marbles.Racing.Supervisor
     ]
 
     Supervisor.start_link(children, strategy: :one_for_one, name: Marbles.Supervisor)

@@ -45,7 +45,6 @@ defmodule MarblesWeb.Router do
   scope "/", MarblesWeb do
     pipe_through [:browser, :auth, :activity_embed]
 
-    get "/", PageController, :home
     get "/privacy-policy", PageController, :privacy_policy
     get "/terms-of-service", PageController, :terms_of_service
     get "/login", AuthController, :login_page
@@ -55,7 +54,16 @@ defmodule MarblesWeb.Router do
 
     live_session :public_pages,
       on_mount: [{MarblesWeb.Live.AuthHooks, :assign_current_user}] do
+      live "/", HomeLive, :index
       live "/gacha", GachaLive, :index
+      live "/calendar", CalendarLive, :index
+      live "/events/:id", EventLive, :show
+      live "/race/:id", RaceLive, :show
+    end
+
+    live_session :authed_pages,
+      on_mount: [{MarblesWeb.Live.AuthHooks, :assign_current_user}] do
+      live "/roster", RosterLive, :index
     end
   end
 
@@ -96,6 +104,9 @@ defmodule MarblesWeb.Router do
       live "/teams/:id/edit", OwnerTeamEditLive, :edit
       live "/economy", OwnerEconomyLive, :index
       live "/shop-items", OwnerShopItemsLive, :index
+      live "/events", OwnerEventsLive, :index
+      live "/events/new", OwnerEventEditLive, :new
+      live "/events/:id/edit", OwnerEventEditLive, :edit
     end
 
     live_session :owner_guilds,

@@ -19,6 +19,19 @@ defmodule Marbles.Schema.EventRegistration do
     timestamps()
   end
 
+  @type t :: %__MODULE__{
+          id: Ecto.UUID.t() | nil,
+          status: :registered | :checked_in | :disqualified | :withdrawn | nil,
+          final_position: integer() | nil,
+          payout: integer() | nil,
+          event_id: Ecto.UUID.t() | nil,
+          user_id: Ecto.UUID.t() | nil,
+          event: Ecto.Association.NotLoaded.t() | Marbles.Schema.Event.t() | nil,
+          user: Ecto.Association.NotLoaded.t() | Marbles.Schema.User.t() | nil,
+          inserted_at: NaiveDateTime.t() | nil,
+          updated_at: NaiveDateTime.t() | nil
+        }
+
   def changeset(event_registration, attrs) do
     event_registration
     |> cast(attrs, [:event_id, :user_id, :status, :final_position, :payout])

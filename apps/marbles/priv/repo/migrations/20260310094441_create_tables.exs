@@ -296,6 +296,7 @@ defmodule Marbles.Repo.Migrations.CreateTables do
 
     create table(:race_tracks, primary_key: false) do
       add :id, :binary_id, primary_key: true
+      add :slug, :string, null: false
       add :name, :string, null: false
       add :description, :text
       add :track_model_path, :string
@@ -303,10 +304,130 @@ defmodule Marbles.Repo.Migrations.CreateTables do
       add :start_positions, :map, default: %{}
       add :checkpoints, :map, default: %{}
       add :finish_line, :map, default: %{}
+      add :length_meters, :float, default: 1000.0
+      add :laps, :integer, default: 1
+      add :grid_size, :integer, default: 24
+      add :weather_bias, :map, default: %{}
       add :difficulty, :integer, default: 1
       add :max_players, :integer, default: 100
       add :active, :boolean, default: true
       timestamps()
     end
+
+    create unique_index(:race_tracks, [:slug])
+
+    create table(:user_squad_unlocks, primary_key: false) do
+      add :id, :binary_id, primary_key: true
+      add :user_id, references(:users, type: :binary_id, on_delete: :delete_all), null: false
+      add :max_slots, :integer, null: false, default: 1
+      timestamps()
+    end
+
+    create unique_index(:user_squad_unlocks, [:user_id])
+
+    create table(:user_squads, primary_key: false) do
+      add :id, :binary_id, primary_key: true
+      add :user_id, references(:users, type: :binary_id, on_delete: :delete_all), null: false
+      add :name, :string, null: false
+      add :slot_index, :integer, null: false, default: 0
+      timestamps()
+    end
+
+    create index(:user_squads, [:user_id])
+    create unique_index(:user_squads, [:user_id, :slot_index])
+
+    create table(:user_squad_slots, primary_key: false) do
+      add :id, :binary_id, primary_key: true
+
+      add :squad_id, references(:user_squads, type: :binary_id, on_delete: :delete_all),
+        null: false
+
+      add :role, :string, null: false
+
+      add :user_marble_id, references(:user_marbles, type: :binary_id, on_delete: :delete_all),
+        null: false
+
+      timestamps()
+    end
+
+    create index(:user_squad_slots, [:squad_id])
+    create unique_index(:user_squad_slots, [:squad_id, :role])
+    create index(:user_squad_slots, [:user_marble_id])
+
+    create table(:marble_abilities, primary_key: false) do
+      add :id, :binary_id, primary_key: true
+      add :marble_id, references(:marbles, type: :binary_id, on_delete: :delete_all), null: false
+      add :ability_key, :string, null: false
+      timestamps()
+    end
+
+    create index(:marble_abilities, [:marble_id])
+    create unique_index(:marble_abilities, [:marble_id, :ability_key])
+
+    create table(:race_instances, primary_key: false) do
+      add :id, :binary_id, primary_key: true
+      add :race_type, :string, null: false, default: "quick"
+      add :event_id, references(:events, type: :binary_id, on_delete: :nilify_all)
+      add :pool_id, :binary_id
+      add :track_slug, :string, null: false
+      add :weather_key, :string, null: false
+      add :seed, :integer, null: false
+      add :status, :string, null: false, default: "pending"
+      add :pot_coins, :integer, null: false, default: 0
+      add :started_at, :utc_datetime_usec
+      add :finished_at, :utc_datetime_usec
+      add :meta, :map, default: %{}
+      timestamps()
+    end
+
+    create index(:race_instances, [:race_type, :inserted_at])
+    create index(:race_instances, [:event_id])
+    create index(:race_instances, [:status])
+
+    create table(:race_participants, primary_key: false) do
+      add :id, :binary_id, primary_key: true
+
+      add :race_id, references(:race_instances, type: :binary_id, on_delete: :delete_all),
+        null: false
+
+      add :user_id, references(:users, type: :binary_id, on_delete: :delete_all), null: false
+      add :squad_id, references(:user_squads, type: :binary_id, on_delete: :nilify_all)
+      add :final_position, :integer
+      add :elo_before, :integer
+      add :elo_after, :integer
+      add :wage_coins, :integer, null: false, default: 0
+      add :payout_coins, :integer, null: false, default: 0
+      add :stats, :map, default: %{}
+      timestamps()
+    end
+
+    create index(:race_participants, [:race_id])
+    create index(:race_participants, [:user_id])
+    create unique_index(:race_participants, [:race_id, :user_id])
+
+    create table(:race_replays, primary_key: false) do
+      add :id, :binary_id, primary_key: true
+
+      add :race_id, references(:race_instances, type: :binary_id, on_delete: :delete_all),
+        null: false
+
+      add :version, :integer, null: false, default: 1
+      add :payload, :text, null: false
+      add :inserted_at, :utc_datetime_usec, null: false, default: fragment("CURRENT_TIMESTAMP")
+    end
+
+    create unique_index(:race_replays, [:race_id])
+
+    create table(:race_event_pools, primary_key: false) do
+      add :id, :binary_id, primary_key: true
+      add :event_id, references(:events, type: :binary_id, on_delete: :delete_all), null: false
+      add :pool_index, :integer, null: false
+      add :status, :string, null: false, default: "pending"
+      add :race_id, references(:race_instances, type: :binary_id, on_delete: :nilify_all)
+      timestamps()
+    end
+
+    create index(:race_event_pools, [:event_id])
+    create unique_index(:race_event_pools, [:event_id, :pool_index])
   end
 end

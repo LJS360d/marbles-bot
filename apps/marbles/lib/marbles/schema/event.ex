@@ -24,6 +24,21 @@ defmodule Marbles.Schema.Event do
     timestamps()
   end
 
+  @type t :: %__MODULE__{
+          id: Ecto.UUID.t() | nil,
+          name: String.t() | nil,
+          description: String.t() | nil,
+          start_time: DateTime.t() | nil,
+          end_time: DateTime.t() | nil,
+          banner_path: String.t() | nil,
+          event_type: :scheduled_race | :tournament | :special_event | nil,
+          config: map() | nil,
+          active: boolean() | nil,
+          registrations: Ecto.Association.NotLoaded.t() | [Marbles.Schema.EventRegistration.t()],
+          inserted_at: NaiveDateTime.t() | nil,
+          updated_at: NaiveDateTime.t() | nil
+        }
+
   def changeset(event, attrs) do
     event
     |> cast(attrs, [
