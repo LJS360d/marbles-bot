@@ -41,10 +41,10 @@ defmodule MarblesWeb.MarbleComponents do
     <div
       :if={@show && @marble}
       id={@id}
-      class="fixed inset-0 z-[100] flex items-center justify-center p-4"
+      class="fixed inset-0 z-100 flex items-center justify-center p-4"
     >
       <div class="absolute inset-0 bg-base-content/50 backdrop-blur-sm" phx-click={@on_close} />
-      <div class="relative z-[101] w-full max-w-lg rounded-2xl border border-base-300 bg-base-100 p-5 shadow-2xl space-y-4">
+      <div class="relative z-101 w-full max-w-lg rounded-2xl border border-base-300 bg-base-100 p-5 shadow-2xl space-y-4">
         <header class="flex items-start justify-between gap-3">
           <div>
             <h3 class="text-lg font-bold">{@marble.name}</h3>

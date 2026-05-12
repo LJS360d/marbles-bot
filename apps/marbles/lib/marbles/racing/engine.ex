@@ -403,7 +403,8 @@ defmodule Marbles.Racing.Engine do
 
   defp finalize(state) do
     summary = State.summary(state)
-    Replay.persist(state)
+    # TODO: fix persistence of replays
+    # Replay.persist(state)
     PS.broadcast(PubSub, topic(state.race_id), {:finished, summary})
     notify_parent(state, summary)
   end

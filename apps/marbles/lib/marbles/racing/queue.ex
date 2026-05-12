@@ -93,7 +93,6 @@ defmodule Marbles.Racing.Queue do
     end
 
     Process.send_after(self(), :tick, cfg.tick_ms)
-    schedule_bot_tick(bf)
 
     {:ok,
      %{
@@ -150,6 +149,11 @@ defmodule Marbles.Racing.Queue do
       state = put_entry(state, entry, broadcast_user: true)
       broadcast_stats(state)
 
+      # TODO dynamically figure out the bracket to use instead of hardcoding 10
+      if Map.get(state.brackets, 10) |> length() == 1 do
+        BotFill.config() |> schedule_bot_tick()
+      end
+
       {:reply, :ok, attempt_match(state)}
     else
       {:error, _} = err -> {:reply, err, state}
@@ -171,11 +175,17 @@ defmodule Marbles.Racing.Queue do
   end
 
   def handle_info(:bot_tick, state) do
-    bf = BotFill.config()
-    schedule_bot_tick(bf)
     bot_accounts = BotFill.load_accounts()
     state = %{state | bot_accounts: bot_accounts}
     state = maybe_inject_bots(state)
+
+    bf = BotFill.config()
+
+    # TODO figure out the bracket to use instead of hardcoding 10
+    if Map.get(state.brackets, 10) |> length() < bf.target_party do
+      schedule_bot_tick(bf)
+    end
+
     broadcast_stats(state)
     {:noreply, attempt_match(state)}
   end
@@ -227,9 +237,6 @@ defmodule Marbles.Racing.Queue do
                 {st, inj}
 
               n >= cfg.target_party ->
-                {st, inj}
-
-              now - Map.get(inj, bucket, 0) < cfg.interval_ms ->
                 {st, inj}
 
               true ->
