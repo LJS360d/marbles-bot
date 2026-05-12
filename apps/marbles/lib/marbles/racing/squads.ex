@@ -4,7 +4,7 @@ defmodule Marbles.Racing.Squads do
 
   A squad is a named roster: 3 racer slots + 1 coach slot, drawn from a
   user's `UserMarble` collection. Each user has a soft cap of squad slots
-  determined by `Marbles.Schema.UserSquadUnlock.max_slots` (default 1).
+  determined by `Marbles.Schema.UserSquadUnlock.max_slots` (default 3 on unlock).
   """
 
   import Ecto.Query
@@ -24,7 +24,7 @@ defmodule Marbles.Racing.Squads do
 
       nil ->
         %UserSquadUnlock{}
-        |> UserSquadUnlock.changeset(%{user_id: user_id, max_slots: 1})
+        |> UserSquadUnlock.changeset(%{user_id: user_id, max_slots: 3})
         |> Repo.insert!()
     end
   end

@@ -15,6 +15,34 @@ defmodule Marbles.Daily do
   @streak_multiplier 10
   @max_coins 500
 
+  @spec claim_status(Ecto.UUID.t()) :: %{
+          claimable: boolean(),
+          seconds_until: non_neg_integer()
+        }
+  def claim_status(user_id) when is_binary(user_id) do
+    now = DateTime.utc_now()
+    today = DateTime.to_date(now)
+
+    case Repo.get_by(UserDailyStreak, user_id: user_id) do
+      %{last_claimed_at: %DateTime{} = at} ->
+        if Date.compare(DateTime.to_date(at), today) == :eq do
+          next_midnight =
+            at
+            |> DateTime.to_date()
+            |> Date.add(1)
+            |> DateTime.new!(~T[00:00:00.000000], "Etc/UTC")
+
+          sec = DateTime.diff(next_midnight, now, :second) |> max(0)
+          %{claimable: false, seconds_until: sec}
+        else
+          %{claimable: true, seconds_until: 0}
+        end
+
+      _ ->
+        %{claimable: true, seconds_until: 0}
+    end
+  end
+
   @doc """
   Claims the daily reward for the given user.
 

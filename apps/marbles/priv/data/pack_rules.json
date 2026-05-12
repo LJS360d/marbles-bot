@@ -6,6 +6,13 @@
       {
         "effect_type": "discount",
         "discount_percent": 100,
+        "trigger_type": "lifetime_uses",
+        "lifetime_max_uses": 5,
+        "scope": "10x_only"
+      },
+      {
+        "effect_type": "discount",
+        "discount_percent": 100,
         "trigger_type": "period_once",
         "period_unit": "day",
         "scope": "1x_only"

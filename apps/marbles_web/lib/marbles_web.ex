@@ -87,6 +87,7 @@ defmodule MarblesWeb do
       import Phoenix.HTML
       # Core UI components
       import MarblesWeb.CoreComponents
+      import MarblesWeb.MarbleComponents
       import MarblesWeb.AdminGuildsTable, only: [guild_servers_table: 1]
 
       import MarblesWeb.AdminTable,

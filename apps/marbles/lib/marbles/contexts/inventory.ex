@@ -33,9 +33,16 @@ defmodule Marbles.Inventory do
   def currency_item_key(:coins), do: {@currency_item_type, @coins_item_id}
   def currency_item_key(:dust), do: {@currency_item_type, @dust_item_id}
 
+  @spec starter_coins() :: non_neg_integer()
+  def starter_coins do
+    Application.get_env(:marbles, __MODULE__, [])
+    |> Keyword.get(:starter_coins, 1000)
+  end
+
   @spec ensure_default_currency_entries(Ecto.UUID.t()) :: :ok
   def ensure_default_currency_entries(user_id) when is_binary(user_id) do
     now = NaiveDateTime.utc_now() |> NaiveDateTime.truncate(:second)
+    coins0 = starter_coins()
 
     rows = [
       %{
@@ -43,7 +50,7 @@ defmodule Marbles.Inventory do
         user_id: user_id,
         item_type: @currency_item_type,
         item_id: @coins_item_id,
-        quantity: 0,
+        quantity: coins0,
         meta: %{},
         inserted_at: now,
         updated_at: now

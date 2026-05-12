@@ -1,6 +1,20 @@
 alias Marbles.Schema.Pack
 alias Marbles.Repo
-alias Marbles.Schema.{Team, Marble, MarbleAsset, PackPullRule}
+
+alias Marbles.Schema.{
+  Team,
+  Marble,
+  MarbleAsset,
+  PackPullRule,
+  RaceQueueBot,
+  User,
+  UserMarble,
+  UserRaceStat,
+  UserSquad
+}
+
+alias Marbles.{Inventory, Racing.Squads}
+alias Marbles.Economy.Wallet
 alias Marbles.PackPullRules
 import Ecto.Query
 require Logger
@@ -202,3 +216,109 @@ if File.exists?(rules_file) do
 else
   Logger.info("pack_rules.json not found, skipping pull rules seed.")
 end
+
+if Repo.aggregate(RaceQueueBot, :count, :id) > 0 do
+  Logger.info("race_queue_bots already seeded, skipping.")
+else
+  athletes =
+    from(m in Marble, where: m.role == :athlete, order_by: [asc: m.name], limit: 3)
+    |> Repo.all()
+
+  coach =
+    from(m in Marble, where: m.role == :coach, order_by: [asc: m.name], limit: 1)
+    |> Repo.one()
+
+  cond do
+    length(athletes) < 3 ->
+      Logger.warning("Need ≥3 athlete marbles to seed race_queue_bots; skipping.")
+
+    coach == nil ->
+      Logger.warning("Need a coach marble to seed race_queue_bots; skipping.")
+
+    true ->
+      Enum.each(1..8, fn i ->
+        {:ok, user} =
+          %User{}
+          |> User.changeset(%{display_name: "Race Bot #{i}"})
+          |> Repo.insert()
+
+        :ok = Inventory.ensure_default_currency_entries(user.id)
+        :ok = Wallet.credit(user.id, %{coins: 1_000_000})
+
+        %UserRaceStat{}
+        |> UserRaceStat.changeset(%{user_id: user.id, elo: 1000})
+        |> Repo.insert!()
+
+        _unlock = Squads.ensure_unlock(user.id)
+
+        racer_ums =
+          Enum.map(athletes, fn marble ->
+            %UserMarble{}
+            |> UserMarble.changeset(%{user_id: user.id, marble_id: marble.id, level: 1})
+            |> Repo.insert!()
+          end)
+
+        coach_um =
+          %UserMarble{}
+          |> UserMarble.changeset(%{user_id: user.id, marble_id: coach.id, level: 1})
+          |> Repo.insert!()
+
+        [r1, r2, r3] = Enum.map(racer_ums, & &1.id)
+
+        {:ok, squad} =
+          Squads.upsert(user.id, 0, "Bot Squad #{i}", %{
+            racer_1: r1,
+            racer_2: r2,
+            racer_3: r3,
+            coach: coach_um.id
+          })
+
+        %RaceQueueBot{}
+        |> RaceQueueBot.changeset(%{
+          user_id: user.id,
+          squad_id: squad.id,
+          label: "queue-bot-#{i}"
+        })
+        |> Repo.insert!()
+      end)
+
+      Logger.info("Seeded 8 race_queue_bots for low-ELO matchmaking.")
+  end
+end
+
+# Orphan repair: users named like seed bots may exist without `race_queue_bots` rows
+# (partial seed, manual creation, or a wiped link table). Queue matchmaking only
+# reads this table — mine_roster is irrelevant here.
+bot_like_users =
+  from(u in User, where: like(u.display_name, "Race Bot%"), order_by: [asc: u.display_name])
+  |> Repo.all()
+
+Enum.each(bot_like_users, fn user ->
+  squad = Repo.get_by(UserSquad, user_id: user.id, slot_index: 0)
+
+  cond do
+    squad == nil ->
+      Logger.warning(
+        "User #{user.display_name} matches queue-bot naming but has no squad at slot_index 0; cannot add race_queue_bots row."
+      )
+
+    Repo.get_by(RaceQueueBot, user_id: user.id) ->
+      :ok
+
+    true ->
+      safe_label =
+        (user.display_name || "bot")
+        |> String.replace(~r/\s+/, "-")
+        |> String.replace(~r/[^A-Za-z0-9_-]/, "")
+
+      %RaceQueueBot{}
+      |> RaceQueueBot.changeset(%{
+        user_id: user.id,
+        squad_id: squad.id,
+        label: "queue-backfill-#{safe_label}"
+      })
+      |> Repo.insert!()
+
+      Logger.info("Backfilled race_queue_bots for #{user.display_name}.")
+  end
+end)

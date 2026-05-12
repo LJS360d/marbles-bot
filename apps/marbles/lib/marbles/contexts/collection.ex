@@ -18,7 +18,7 @@ defmodule Marbles.Collection do
         where: um.user_id == ^user_id,
         join: m in Marble,
         on: um.marble_id == m.id,
-        preload: [marble: [:team, :assets]]
+        preload: [marble: [:team, :assets, :abilities]]
       )
 
     ordered =

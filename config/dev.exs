@@ -74,6 +74,8 @@ config :marbles,
        :assets_base_url,
        System.get_env("ASSETS_BASE_URL") || "http://127.0.0.1:4000/uploads"
 
+config :marbles, Marbles.Racing.Queue.BotFill, interval_ms: 5_000
+
 # Initialize plugs at runtime for faster development compilation
 config :phoenix, :plug_init_mode, :runtime
 

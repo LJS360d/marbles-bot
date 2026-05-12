@@ -37,17 +37,40 @@ defmodule MarblesWeb.RaceDockLive do
       socket
       |> assign(:current_user, user)
       |> assign_initial_state(user)
-
-    if user && connected?(socket) do
-      PubSub.subscribe(Marbles.PubSub, Queue.public_topic())
-      PubSub.subscribe(Marbles.PubSub, Queue.user_topic(user.id))
-
-      if socket.assigns.race do
-        PubSub.subscribe(Marbles.PubSub, Engine.topic(socket.assigns.race.race_id))
-      end
-    end
+      |> subscribe_dock_topics()
 
     {:ok, socket, layout: false}
+  end
+
+  defp subscribe_dock_topics(socket) do
+    user = socket.assigns.current_user
+
+    cond do
+      not connected?(socket) ->
+        assign(socket, :dock_topics_subscribed?, false)
+
+      user == nil ->
+        assign(socket, :dock_topics_subscribed?, false)
+
+      socket.assigns[:dock_topics_subscribed?] == true ->
+        socket
+
+      true ->
+        PubSub.subscribe(Marbles.PubSub, Queue.public_topic())
+        PubSub.subscribe(Marbles.PubSub, Queue.user_topic(user.id))
+
+        socket =
+          case socket.assigns.race do
+            %{race_id: rid} ->
+              PubSub.subscribe(Marbles.PubSub, Engine.topic(rid))
+              socket
+
+            _ ->
+              socket
+          end
+
+        assign(socket, :dock_topics_subscribed?, true)
+    end
   end
 
   defp assign_initial_state(socket, nil) do
@@ -65,6 +88,7 @@ defmodule MarblesWeb.RaceDockLive do
     |> assign(:collapsed, false)
     |> assign(:queued_at, nil)
     |> assign(:race, nil)
+    |> assign(:dock_topics_subscribed?, false)
   end
 
   defp assign_initial_state(socket, user) do
@@ -102,6 +126,7 @@ defmodule MarblesWeb.RaceDockLive do
     |> assign(:collapsed, false)
     |> assign(:queued_at, queued_at)
     |> assign(:race, race)
+    |> assign(:dock_topics_subscribed?, false)
   end
 
   defp refresh_wallet(%{assigns: %{current_user: nil}} = socket), do: socket
@@ -119,10 +144,10 @@ defmodule MarblesWeb.RaceDockLive do
       race_id ->
         case Engine.pot_snapshot(race_id) do
           {:ok, %{pot_coins: pot}} ->
-            %{race_id: race_id, pot: pot, leaderboard: [], finished?: false}
+            %{race_id: race_id, pot: pot, leaderboard: [], finished?: false, started?: false}
 
           _ ->
-            %{race_id: race_id, pot: 0, leaderboard: [], finished?: false}
+            %{race_id: race_id, pot: 0, leaderboard: [], finished?: false, started?: false}
         end
     end
   end
@@ -173,7 +198,10 @@ defmodule MarblesWeb.RaceDockLive do
      socket
      |> assign(:state, :in_race)
      |> assign(:queued_at, nil)
-     |> assign(:race, %{race_id: race_id, pot: 0, leaderboard: [], finished?: false})
+     |> assign(
+       :race,
+       %{race_id: race_id, pot: 0, leaderboard: [], finished?: false, started?: false}
+     )
      |> refresh_wallet()}
   end
 
@@ -183,7 +211,12 @@ defmodule MarblesWeb.RaceDockLive do
         {:noreply, socket}
 
       race ->
-        {:noreply, assign(socket, :race, Map.put(race, :pot, setup[:pot_coins] || race.pot))}
+        race =
+          race
+          |> Map.put(:pot, setup[:pot_coins] || race.pot)
+          |> Map.put(:started?, true)
+
+        {:noreply, assign(socket, :race, race)}
     end
   end
 
@@ -195,7 +228,13 @@ defmodule MarblesWeb.RaceDockLive do
       race ->
         leaderboard = leaderboard_from_frames(frames)
         socket = push_event(socket, "race:frames", %{frames: frames})
-        {:noreply, assign(socket, :race, Map.put(race, :leaderboard, leaderboard))}
+
+        race =
+          race
+          |> Map.put(:leaderboard, leaderboard)
+          |> Map.put(:started?, true)
+
+        {:noreply, assign(socket, :race, race)}
     end
   end
 
@@ -240,11 +279,26 @@ defmodule MarblesWeb.RaceDockLive do
         {:noreply, put_flash(socket, :error, "Not enough coins for this wage.")}
 
       true ->
+        socket = subscribe_dock_topics(socket)
+
         case Racing.enqueue_quick_race(user.id, socket.assigns.selected_squad_id,
                wage: socket.assigns.wage
              ) do
-          :ok -> {:noreply, socket}
-          {:error, reason} -> {:noreply, put_flash(socket, :error, queue_error(reason))}
+          :ok ->
+            now = System.monotonic_time(:millisecond)
+            stats = Racing.queue_stats()
+            step = max(stats.bracket_step, 1)
+            bracket = div(socket.assigns.elo, step)
+
+            {:noreply,
+             socket
+             |> assign(:state, :queued)
+             |> assign(:queued_at, now)
+             |> assign(:bracket, bracket)
+             |> assign(:stats, stats)}
+
+          {:error, reason} ->
+            {:noreply, put_flash(socket, :error, queue_error(reason))}
         end
     end
   end
@@ -298,6 +352,7 @@ defmodule MarblesWeb.RaceDockLive do
       |> assign(:visible, true)
       |> assign(:collapsed, false)
       |> refresh_wallet()
+      |> subscribe_dock_topics()
 
     {:noreply, socket}
   end
@@ -560,7 +615,11 @@ defmodule MarblesWeb.RaceDockLive do
         </ol>
       </div>
 
-      <form phx-change="wage_more" class="flex items-center gap-2">
+      <form
+        :if={not Map.get(@race, :started?, false)}
+        phx-change="wage_more"
+        class="flex items-center gap-2"
+      >
         <input
           type="number"
           name="amount"

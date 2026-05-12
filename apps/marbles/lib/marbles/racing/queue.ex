@@ -20,6 +20,7 @@ defmodule Marbles.Racing.Queue do
 
   alias Marbles.Repo
   alias Marbles.Racing.{Squads, Tracks, Weather}
+  alias Marbles.Racing.Queue.BotFill
   alias Marbles.Racing.Engine.{Setup, Supervisor}
   alias Marbles.Schema.{RaceInstance, RaceParticipant, UserRaceStat}
   alias Marbles.Economy.Wallet
@@ -60,23 +61,56 @@ defmodule Marbles.Racing.Queue do
   defmodule Entry do
     @moduledoc false
     @enforce_keys [:user_id, :squad_id, :elo, :wage, :joined_at]
-    defstruct [:user_id, :squad_id, :elo, :wage, :joined_at]
+    defstruct [:user_id, :squad_id, :elo, :wage, :joined_at, bot: false]
 
     @type t :: %__MODULE__{
             user_id: Ecto.UUID.t(),
             squad_id: Ecto.UUID.t(),
             elo: integer(),
             wage: non_neg_integer(),
-            joined_at: integer()
+            joined_at: integer(),
+            bot: boolean()
           }
   end
 
   @impl true
   def init(_opts) do
     cfg = config()
+    bot_accounts = BotFill.load_accounts()
+    bf = BotFill.config()
+
+    cond do
+      bf.enabled && bot_accounts == [] ->
+        Logger.warning(
+          "Quick queue bot fill is on but race_queue_bots has no rows (run seeds from apps/marbles, or link bot users in that table). Ecto logs [] only for bind params, not row count."
+        )
+
+      bf.enabled ->
+        Logger.info("Quick queue bot fill: #{length(bot_accounts)} bot account(s) loaded.")
+
+      true ->
+        :ok
+    end
+
     Process.send_after(self(), :tick, cfg.tick_ms)
-    {:ok, %{brackets: %{}, by_user: %{}, recent_starts: [], config: cfg}}
+    schedule_bot_tick(bf)
+
+    {:ok,
+     %{
+       brackets: %{},
+       by_user: %{},
+       recent_starts: [],
+       config: cfg,
+       bot_accounts: bot_accounts,
+       bot_injected_at: %{}
+     }}
   end
+
+  defp schedule_bot_tick(%{enabled: true, interval_ms: ms}) when is_integer(ms) and ms > 0 do
+    Process.send_after(self(), :bot_tick, ms)
+  end
+
+  defp schedule_bot_tick(_), do: :ok
 
   @impl true
   def handle_call({:enqueue, user_id, squad_id, opts}, _from, state) do
@@ -113,14 +147,8 @@ defmodule Marbles.Racing.Queue do
         joined_at: System.monotonic_time(:millisecond)
       }
 
-      state = put_entry(state, entry)
+      state = put_entry(state, entry, broadcast_user: true)
       broadcast_stats(state)
-
-      PS.broadcast(
-        Marbles.PubSub,
-        user_topic(user_id),
-        {:queued, %{bracket: bracket_of(elo, state)}}
-      )
 
       {:reply, :ok, attempt_match(state)}
     else
@@ -139,6 +167,16 @@ defmodule Marbles.Racing.Queue do
   @impl true
   def handle_info(:tick, state) do
     Process.send_after(self(), :tick, state.config.tick_ms)
+    {:noreply, attempt_match(state)}
+  end
+
+  def handle_info(:bot_tick, state) do
+    bf = BotFill.config()
+    schedule_bot_tick(bf)
+    bot_accounts = BotFill.load_accounts()
+    state = %{state | bot_accounts: bot_accounts}
+    state = maybe_inject_bots(state)
+    broadcast_stats(state)
     {:noreply, attempt_match(state)}
   end
 
@@ -162,10 +200,101 @@ defmodule Marbles.Racing.Queue do
 
   defp bracket_of(elo, state), do: div(elo, state.config.bracket_step)
 
-  defp put_entry(state, %Entry{} = entry) do
+  defp maybe_inject_bots(state) do
+    cfg = BotFill.config()
+    bot_accounts = Map.get(state, :bot_accounts, [])
+
+    if cfg.enabled == false or bot_accounts == [] do
+      state
+    else
+      now = System.monotonic_time(:millisecond)
+      last_map = Map.get(state, :bot_injected_at, %{})
+
+      state.brackets
+      |> Map.keys()
+      |> Enum.sort()
+      |> Enum.reduce({state, last_map}, fn bucket, {st, inj} ->
+        cond do
+          bucket > cfg.low_elo_max_bucket ->
+            {st, inj}
+
+          true ->
+            entries = Map.get(st.brackets, bucket, [])
+            n = length(entries)
+
+            cond do
+              n == 0 ->
+                {st, inj}
+
+              n >= cfg.target_party ->
+                {st, inj}
+
+              now - Map.get(inj, bucket, 0) < cfg.interval_ms ->
+                {st, inj}
+
+              true ->
+                case pick_free_bot(bot_accounts, st.by_user) do
+                  nil ->
+                    {st, inj}
+
+                  acc ->
+                    wage = average_human_wage(entries, st.config.base_wage)
+                    elo = bucket * st.config.bracket_step + div(st.config.bracket_step, 2)
+
+                    entry = %Entry{
+                      user_id: acc.user_id,
+                      squad_id: acc.squad_id,
+                      elo: elo,
+                      wage: wage,
+                      joined_at: now,
+                      bot: true
+                    }
+
+                    st = put_entry(st, entry, broadcast_user: false)
+                    inj = Map.put(inj, bucket, now)
+                    {st, inj}
+                end
+            end
+        end
+      end)
+      |> then(fn {st, inj} -> %{st | bot_injected_at: inj} end)
+    end
+  end
+
+  defp average_human_wage(entries, base) do
+    humans = Enum.reject(entries, & &1.bot)
+
+    case humans do
+      [] ->
+        base
+
+      list ->
+        trunc(Enum.sum(Enum.map(list, & &1.wage)) / length(list))
+    end
+    |> max(1)
+  end
+
+  defp pick_free_bot(accounts, by_user) do
+    taken = Map.keys(by_user) |> MapSet.new()
+
+    Enum.find_value(accounts, fn acc ->
+      if MapSet.member?(taken, acc.user_id), do: nil, else: acc
+    end)
+  end
+
+  defp put_entry(state, %Entry{} = entry, opts) do
     bucket = bracket_of(entry.elo, state)
     brackets = Map.update(state.brackets, bucket, [entry], &(&1 ++ [entry]))
     by_user = Map.put(state.by_user, entry.user_id, %{entry: entry, bracket: bucket})
+
+    if Keyword.get(opts, :broadcast_user, true) and entry.bot != true do
+      PS.broadcast(
+        Marbles.PubSub,
+        user_topic(entry.user_id),
+        {:queued, %{bracket: bucket}}
+      )
+    end
+
     %{state | brackets: brackets, by_user: by_user}
   end
 
@@ -248,8 +377,7 @@ defmodule Marbles.Racing.Queue do
 
     cond do
       length(paid) < state.config.min_party ->
-        # Refund the ones we just debited and bail; they remain in queue.
-        Enum.each(paid, fn e -> Wallet.credit(e.user_id, %{coins: e.wage}) end)
+        refund_human_wages(paid)
         state
 
       true ->
@@ -267,25 +395,34 @@ defmodule Marbles.Racing.Queue do
 
               {:error, reason} ->
                 Logger.error("Failed to start race: #{inspect(reason)}")
-                # Refund debited players since the race didn't start.
-                Enum.each(paid, fn e -> Wallet.credit(e.user_id, %{coins: e.wage}) end)
+                refund_human_wages(paid)
                 state
             end
 
           {:error, reason} ->
             Logger.warning("Could not build race setup: #{inspect(reason)}")
-            Enum.each(paid, fn e -> Wallet.credit(e.user_id, %{coins: e.wage}) end)
+            refund_human_wages(paid)
             state
         end
     end
   end
 
+  defp refund_human_wages(paid) do
+    Enum.each(paid, fn %Entry{} = e ->
+      if not e.bot, do: Wallet.credit(e.user_id, %{coins: e.wage})
+    end)
+  end
+
   @spec collect_wages([Entry.t()]) :: {[Entry.t()], [Entry.t()]}
   defp collect_wages(entries) do
     Enum.reduce(entries, {[], []}, fn %Entry{} = e, {paid, broke} ->
-      case Wallet.debit(e.user_id, %{coins: e.wage}) do
-        :ok -> {[e | paid], broke}
-        {:error, _} -> {paid, [e | broke]}
+      if e.bot do
+        {[e | paid], broke}
+      else
+        case Wallet.debit(e.user_id, %{coins: e.wage}) do
+          :ok -> {[e | paid], broke}
+          {:error, _} -> {paid, [e | broke]}
+        end
       end
     end)
     |> then(fn {paid, broke} -> {Enum.reverse(paid), Enum.reverse(broke)} end)
@@ -406,8 +543,10 @@ defmodule Marbles.Racing.Queue do
   end
 
   defp broadcast_matches(race_id, entries) do
-    Enum.each(entries, fn e ->
-      PS.broadcast(Marbles.PubSub, user_topic(e.user_id), {:matched, race_id})
+    Enum.each(entries, fn %Entry{} = e ->
+      if not e.bot do
+        PS.broadcast(Marbles.PubSub, user_topic(e.user_id), {:matched, race_id})
+      end
     end)
   end
 

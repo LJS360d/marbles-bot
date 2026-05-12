@@ -1,12 +1,14 @@
 defmodule MarblesWeb.HomeLive do
   @moduledoc """
-  Redesigned landing page. Gacha-game feel: minimal copy, two large
-  primary CTAs (Quick Race, Calendar), live queue strip, featured event,
-  featured pack.
+  Landing page: queue strip, featured content, wallet and daily for signed-in users.
   """
 
+  alias Marbles.Economy.Currency
   use MarblesWeb, :live_view
 
+  alias Marbles.Daily
+  alias Marbles.Economy.MineRoster
+  alias Marbles.Economy.Wallet
   alias Marbles.Packs
   alias Marbles.Racing
   alias Marbles.Racing.{Events, Queue}
@@ -21,15 +23,64 @@ defmodule MarblesWeb.HomeLive do
       PubSub.subscribe(Marbles.PubSub, Events.Runner.public_topic())
     end
 
-    {:ok,
-     socket
-     |> assign(:page_title, "Marbles")
-     |> assign(:current_scope, nil)
-     |> assign(:show_login_modal, false)
-     |> assign(:queue_stats, Racing.queue_stats())
-     |> assign(:featured_event, fetch_featured_event())
-     |> assign(:featured_pack, fetch_featured_pack())
-     |> assign(:user_elo, fetch_user_elo(socket.assigns[:current_user]))}
+    user = socket.assigns[:current_user]
+
+    socket =
+      socket
+      |> assign(:page_title, "Marbles")
+      |> assign(:current_scope, nil)
+      |> assign(:show_login_modal, false)
+      |> assign(:queue_stats, Racing.queue_stats())
+      |> assign(:featured_event, fetch_featured_event())
+      |> assign(:featured_pack, fetch_featured_pack())
+      |> assign(:user_elo, fetch_user_elo(user))
+      |> assign_user_dashboard(user)
+
+    {:ok, socket}
+  end
+
+  defp assign_user_dashboard(socket, nil) do
+    socket
+    |> assign(:wallet, nil)
+    |> assign(:daily_status, %{claimable: false, seconds_until: 0})
+    |> assign(:mine_marbles, [])
+  end
+
+  defp assign_user_dashboard(socket, user) do
+    socket
+    |> assign(:wallet, Wallet.balances(user.id))
+    |> assign(:daily_status, Daily.claim_status(user.id))
+    |> assign(:mine_marbles, MineRoster.list_assigned_user_marbles(user.id))
+  end
+
+  @impl true
+  def handle_event("claim_daily", _params, socket) do
+    user = socket.assigns.current_user
+
+    cond do
+      user == nil ->
+        {:noreply, put_flash(socket, :error, "Sign in to claim.")}
+
+      not socket.assigns.daily_status.claimable ->
+        {:noreply, put_flash(socket, :error, "Daily already claimed.")}
+
+      true ->
+        case Daily.claim_daily(user.id) do
+          {:ok, result} ->
+            {:noreply,
+             socket
+             |> put_flash(
+               :info,
+               "Claimed #{result.coins} coins · streak #{result.streak} (mining #{result.mining_coins})."
+             )
+             |> assign(:wallet, Wallet.balances(user.id))
+             |> assign(:daily_status, Daily.claim_status(user.id))
+             |> assign(:mine_marbles, MineRoster.list_assigned_user_marbles(user.id))}
+
+          {:error, reason} when is_binary(reason) ->
+            {:noreply, put_flash(socket, :error, reason)}
+        end
+    end
   end
 
   @impl true
@@ -70,6 +121,19 @@ defmodule MarblesWeb.HomeLive do
   defp user_bracket(nil, _step), do: nil
   defp user_bracket(elo, step), do: div(elo, step)
 
+  defp fmt_eta(sec) when sec <= 0, do: "now"
+
+  defp fmt_eta(sec) when sec < 3600 do
+    m = div(sec, 60)
+    "#{m}m"
+  end
+
+  defp fmt_eta(sec) do
+    h = div(sec, 3600)
+    m = div(rem(sec, 3600), 60)
+    "#{h}h #{m}m"
+  end
+
   @impl true
   def render(assigns) do
     ~H"""
@@ -90,6 +154,78 @@ defmodule MarblesWeb.HomeLive do
               <span class="size-3 rounded-full bg-secondary/80 animate-pulse" />
             </div>
           </header>
+
+          <%= if @current_user && @wallet do %>
+            <div
+              id="home-wallet-strip"
+              class="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-base-300 bg-base-100/70 px-4 py-3 backdrop-blur"
+            >
+              <div class="flex flex-wrap items-center gap-4 text-sm">
+                <span class="text-base-content/60">Wallet</span>
+                <span class="font-mono font-semibold text-primary">
+                  {@wallet.coins}
+                  <span class="text-xs font-normal text-base-content/60">
+                    {Currency.coin_emoji()}
+                  </span>
+                </span>
+                <span class="font-mono font-semibold text-secondary">
+                  {@wallet.dust}
+                  <span class="text-xs font-normal text-base-content/60">
+                    {Currency.dust_emoji()}
+                  </span>
+                </span>
+              </div>
+            </div>
+
+            <div class="grid gap-6 lg:grid-cols-2">
+              <section class="rounded-3xl border border-base-300 bg-base-100/60 p-6 backdrop-blur space-y-3">
+                <h2 class="text-sm font-semibold uppercase tracking-wider text-base-content/60">
+                  Daily reward
+                </h2>
+                <%= if @daily_status.claimable do %>
+                  <p class="text-sm text-base-content/70">
+                    Claim your streak bonus and mining payout.
+                  </p>
+                  <button
+                    type="button"
+                    phx-click="claim_daily"
+                    id="home-claim-daily"
+                    class="btn btn-primary btn-sm rounded-full"
+                  >
+                    Claim daily
+                  </button>
+                <% else %>
+                  <p class="text-sm text-base-content/70">
+                    Next claim in
+                    <span class="font-mono font-semibold">
+                      {fmt_eta(@daily_status.seconds_until)}
+                    </span>
+                  </p>
+                <% end %>
+              </section>
+
+              <section class="rounded-3xl border border-base-300 bg-base-100/60 p-6 backdrop-blur space-y-3">
+                <h2 class="text-sm font-semibold uppercase tracking-wider text-base-content/60">
+                  Mining roster
+                </h2>
+                <%= if @mine_marbles == [] do %>
+                  <p class="text-sm text-base-content/70">
+                    No marbles assigned. Add them from your
+                    <.link navigate={~p"/roster"} class="link">roster →</.link>
+                  </p>
+                <% else %>
+                  <ul class="space-y-2 text-sm">
+                    <li :for={um <- @mine_marbles} class="flex items-center justify-between gap-2">
+                      <span class="font-medium truncate">{um.marble.name}</span>
+                      <span class="text-xs text-base-content/60 font-mono">
+                        Lv.{um.level} · ★{um.marble.rarity}
+                      </span>
+                    </li>
+                  </ul>
+                <% end %>
+              </section>
+            </div>
+          <% end %>
 
           <div class="grid gap-6 md:grid-cols-2">
             <.cta_button

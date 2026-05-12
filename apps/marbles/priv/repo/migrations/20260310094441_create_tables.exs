@@ -319,7 +319,7 @@ defmodule Marbles.Repo.Migrations.CreateTables do
     create table(:user_squad_unlocks, primary_key: false) do
       add :id, :binary_id, primary_key: true
       add :user_id, references(:users, type: :binary_id, on_delete: :delete_all), null: false
-      add :max_slots, :integer, null: false, default: 1
+      add :max_slots, :integer, null: false, default: 3
       timestamps()
     end
 
@@ -353,6 +353,19 @@ defmodule Marbles.Repo.Migrations.CreateTables do
     create index(:user_squad_slots, [:squad_id])
     create unique_index(:user_squad_slots, [:squad_id, :role])
     create index(:user_squad_slots, [:user_marble_id])
+
+    create table(:race_queue_bots, primary_key: false) do
+      add :id, :binary_id, primary_key: true
+      add :user_id, references(:users, type: :binary_id, on_delete: :delete_all), null: false
+      add :label, :string
+
+      add :squad_id, references(:user_squads, type: :binary_id, on_delete: :delete_all),
+        null: false
+
+      timestamps()
+    end
+
+    create unique_index(:race_queue_bots, [:user_id])
 
     create table(:marble_abilities, primary_key: false) do
       add :id, :binary_id, primary_key: true

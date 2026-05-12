@@ -23,6 +23,16 @@ config :marbles,
     }
   ]
 
+config :marbles, Marbles.Inventory, starter_coins: 1000
+
+# Bracket index = div(elo, queue bracket_step). Default ELO 1000 → bucket 10, so
+# low_elo_max_bucket must be >= 10 or starters never receive queue bots.
+config :marbles, Marbles.Racing.Queue.BotFill,
+  enabled: true,
+  interval_ms: 120_000,
+  low_elo_max_bucket: 20,
+  target_party: 4
+
 # Configure the mailer
 #
 # By default it uses the "Local" adapter which stores the emails

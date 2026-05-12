@@ -25,6 +25,31 @@ defmodule Marbles.Economy.MineRoster do
     if user, do: {:ok, describe_roster(user_id, user.mine_roster)}, else: {:error, :not_found}
   end
 
+  @spec list_assigned_user_marbles(Ecto.UUID.t()) :: [UserMarble.t()]
+  def list_assigned_user_marbles(user_id) when is_binary(user_id) do
+    case Repo.get(User, user_id) do
+      nil ->
+        []
+
+      user ->
+        ids = slot_ids(user.mine_roster)
+
+        if ids == [] do
+          []
+        else
+          rows =
+            from(um in UserMarble,
+              where: um.user_id == ^user_id and um.id in ^ids,
+              preload: [marble: [:team, :abilities]]
+            )
+            |> Repo.all()
+            |> Map.new(&{&1.id, &1})
+
+          Enum.map(ids, &Map.get(rows, &1)) |> Enum.reject(&is_nil/1)
+        end
+    end
+  end
+
   defp describe_roster(user_id, roster) do
     ids = slot_ids(roster)
 
@@ -130,6 +155,50 @@ defmodule Marbles.Economy.MineRoster do
           {:ok, _} = Accounts.update_user(user, %{mine_roster: %{"slots" => new_ids}})
           {:ok, %{removed: id, slots: length(new_ids)}}
       end
+    end
+  end
+
+  @spec add_user_marble(Ecto.UUID.t(), Ecto.UUID.t()) ::
+          {:ok, %{added: Ecto.UUID.t(), slots: pos_integer()}}
+          | {:error, :not_found | :roster_full | :already_in_roster}
+  def add_user_marble(user_id, user_marble_id)
+      when is_binary(user_id) and is_binary(user_marble_id) do
+    user = Repo.get!(User, user_id)
+    ids = slot_ids(user.mine_roster)
+
+    cond do
+      length(ids) >= @max_slots ->
+        {:error, :roster_full}
+
+      user_marble_id in ids ->
+        {:error, :already_in_roster}
+
+      true ->
+        case Repo.get_by(UserMarble, id: user_marble_id, user_id: user_id) do
+          nil ->
+            {:error, :not_found}
+
+          _ ->
+            new_roster = %{"slots" => ids ++ [user_marble_id]}
+            {:ok, _} = Accounts.update_user(user, %{mine_roster: new_roster})
+            {:ok, %{added: user_marble_id, slots: length(ids) + 1}}
+        end
+    end
+  end
+
+  @spec remove_user_marble(Ecto.UUID.t(), Ecto.UUID.t()) ::
+          {:ok, %{removed: Ecto.UUID.t(), slots: non_neg_integer()}} | {:error, :not_found}
+  def remove_user_marble(user_id, user_marble_id)
+      when is_binary(user_id) and is_binary(user_marble_id) do
+    user = Repo.get!(User, user_id)
+    ids = slot_ids(user.mine_roster)
+
+    if user_marble_id in ids do
+      new_ids = Enum.reject(ids, &(&1 == user_marble_id))
+      {:ok, _} = Accounts.update_user(user, %{mine_roster: %{"slots" => new_ids}})
+      {:ok, %{removed: user_marble_id, slots: length(new_ids)}}
+    else
+      {:error, :not_found}
     end
   end
 
