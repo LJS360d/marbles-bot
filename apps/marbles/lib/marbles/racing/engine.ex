@@ -18,7 +18,7 @@ defmodule Marbles.Racing.Engine do
   require Logger
 
   alias Marbles.PubSub
-  alias Marbles.Racing.{Abilities, Replay}
+  alias Marbles.Racing.Abilities
   alias Marbles.Racing.Engine.{Registry, Setup, State}
   alias Marbles.Racing.Abilities.TeamSignature
   alias Phoenix.PubSub, as: PS

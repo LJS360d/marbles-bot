@@ -184,16 +184,15 @@ defmodule MarblesWeb.HomeLive do
                 </h2>
                 <%= if @daily_status.claimable do %>
                   <p class="text-sm text-base-content/70">
-                    Claim your streak bonus and mining payout.
+                    Play Plinko to claim your streak bonus and mining payout.
                   </p>
-                  <button
-                    type="button"
-                    phx-click="claim_daily"
+                  <.link
+                    navigate={~p"/daily"}
                     id="home-claim-daily"
                     class="btn btn-primary btn-sm rounded-full"
                   >
-                    Claim daily
-                  </button>
+                    Play Plinko →
+                  </.link>
                 <% else %>
                   <p class="text-sm text-base-content/70">
                     Next claim in

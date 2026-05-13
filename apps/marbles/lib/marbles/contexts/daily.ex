@@ -10,6 +10,7 @@ defmodule Marbles.Daily do
   alias Marbles.Economy.Experience
   alias Marbles.Economy.Effects
   alias Marbles.Economy.Wallet
+  alias Marbles.Plinko
 
   @base_coins 100
   @streak_multiplier 10
@@ -98,8 +99,13 @@ defmodule Marbles.Daily do
       prev_claim_at = streak_record.last_claimed_at
       accrual_seconds = Mining.accrual_seconds(prev_claim_at, now, user_id)
       mining = Mining.compute_coins(user_id, accrual_seconds)
-      total_coins = streak_coins + mining.coins
-      mining_xp_breakdown = grant_mining_xp(user_id, mining.breakdown, mining.seconds)
+
+      plinko = Plinko.roll(user_id)
+      total_coins = trunc((streak_coins + mining.coins) * plinko.slot.coin_mult)
+
+      mining_xp_breakdown =
+        grant_mining_xp(user_id, mining.breakdown, mining.seconds, plinko.slot.xp_mult)
+
       mining_xp_total = Enum.reduce(mining_xp_breakdown, 0, fn row, acc -> acc + row.xp end)
 
       case Wallet.credit(user_id, %{coins: total_coins}) do
@@ -126,7 +132,9 @@ defmodule Marbles.Daily do
           "mining_seconds" => mining.seconds,
           "mining_roster_size" => mining.roster_size,
           "mining_xp_total" => mining_xp_total,
-          "total_coins" => total_coins
+          "total_coins" => total_coins,
+          "plinko_slot" => plinko.slot.id,
+          "plinko_coin_mult" => plinko.slot.coin_mult
         })
 
       _ =
@@ -148,12 +156,14 @@ defmodule Marbles.Daily do
         mining_xp_total: mining_xp_total,
         mining_xp_breakdown: mining_xp_breakdown,
         streak: new_streak,
-        items: items
+        items: items,
+        plinko_slot: plinko.slot,
+        plinko_marble: plinko.marble
       }
     end)
   end
 
-  defp grant_mining_xp(user_id, breakdown, mining_seconds) do
+  defp grant_mining_xp(user_id, breakdown, mining_seconds, plinko_xp_mult) do
     xp_bonus_pct = Effects.exp_gain_bonus_percent(user_id)
     hours = max(0.0, mining_seconds / 3600.0)
 
@@ -163,7 +173,7 @@ defmodule Marbles.Daily do
       level = max(1, Map.get(row, :level, 1))
       xp_rate_per_hour = 10.0 + level * 1.2 + rarity * 4.0
       base_xp = max(0, trunc(hours * xp_rate_per_hour))
-      gained_xp = max(0, trunc(base_xp * (100 + xp_bonus_pct) / 100.0))
+      gained_xp = max(0, trunc(base_xp * (100 + xp_bonus_pct) / 100.0 * plinko_xp_mult))
       user_marble_id = Map.get(row, :user_marble_id)
 
       cond do

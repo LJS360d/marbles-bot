@@ -55,6 +55,7 @@ defmodule MarblesWeb.Router do
     live_session :public_pages,
       on_mount: [{MarblesWeb.Live.AuthHooks, :assign_current_user}] do
       live "/", HomeLive, :index
+      live "/daily", PlinkoLive, :index
       live "/gacha", GachaLive, :index
       live "/calendar", CalendarLive, :index
       live "/events/:id", EventLive, :show

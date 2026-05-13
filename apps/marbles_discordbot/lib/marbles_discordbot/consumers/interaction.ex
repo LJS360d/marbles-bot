@@ -496,8 +496,29 @@ defmodule MarblesDiscordbot.Consumers.Interaction do
             ""
           end
 
+        plinko_line =
+          case m.plinko_slot do
+            %{label: label, xp_mult: xp_mult} ->
+              marble_name =
+                case m.plinko_marble do
+                  %{marble: %{name: name}} -> " · **#{name}** dropped"
+                  _ -> ""
+                end
+
+              xp_bonus =
+                if xp_mult > 1.0,
+                  do: " · +#{trunc((xp_mult - 1.0) * 100)}% XP",
+                  else: ""
+
+              "🎰 Plinko: **#{label}**#{marble_name}#{xp_bonus}"
+
+            _ ->
+              ""
+          end
+
         content =
           "You claimed your daily reward!\n" <>
+            if(plinko_line == "", do: "", else: plinko_line <> "\n") <>
             "Streak bonus: **#{IntegerDisplay.format(m.streak_coins)}** #{Currency.coin_emoji()} · Streak **#{IntegerDisplay.format(m.streak)}** days.\n" <>
             mining_line <>
             if(xp_line == "", do: "", else: "\n" <> xp_line) <>

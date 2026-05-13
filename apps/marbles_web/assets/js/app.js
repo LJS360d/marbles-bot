@@ -30,6 +30,7 @@ import { DevSandbox } from "./dev_sandbox_hook.js";
 import RaceRenderer from "./race_renderer_hook.js";
 import RaceDock from "./race_dock_hook.js";
 import { MarblePreview } from "./marble_preview_hook.js";
+import { PlinkoScene } from "./plinko_hook.js";
 import { bootstrapDiscordEmbeddedAuth, initializeDiscordUrlMappings } from "./discord_activity_hook.js";
 
 const csrfToken = document
@@ -46,6 +47,7 @@ const liveSocket = new LiveSocket("/live", Socket, {
     RaceRenderer,
     RaceDock,
     MarblePreview,
+    PlinkoScene,
     ...colocatedHooks,
   },
 });
