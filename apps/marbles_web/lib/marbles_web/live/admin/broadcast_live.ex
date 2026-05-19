@@ -1,4 +1,4 @@
-defmodule MarblesWeb.BroadcastLive do
+defmodule MarblesWeb.Admin.BroadcastLive do
   use MarblesWeb, :live_view
   alias Marbles.Broadcast
   alias Marbles.Guilds
@@ -10,7 +10,8 @@ defmodule MarblesWeb.BroadcastLive do
     {:ok,
      socket
      |> assign(:page_title, "Broadcast")
-     |> assign(:current_scope, :broadcast)
+     |> assign(:current_scope, :owner_broadcast)
+     |> assign(:breadcrumbs, [{"Owner", ~p"/admin/owner"}, {"Broadcast", nil}])
      |> assign(:wide, true)
      |> assign(:message, "")
      |> assign(:target, "all")
@@ -75,10 +76,11 @@ defmodule MarblesWeb.BroadcastLive do
   @impl true
   def render(assigns) do
     ~H"""
-    <Layouts.header current_user={@current_user} />
     <Layouts.app
       flash={@flash}
+      current_user={@current_user}
       current_scope={@current_scope}
+      breadcrumbs={@breadcrumbs}
     >
       <div class="space-y-6">
         <h1 class="text-2xl font-semibold">Broadcast</h1>

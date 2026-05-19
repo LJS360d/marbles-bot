@@ -3,10 +3,10 @@ defmodule Marbles.Economy.MineRoster do
 
   import Ecto.Query
   alias Marbles.Repo
-  alias Marbles.Schema.{User, UserMarble, Marble}
-  alias Marbles.Accounts
+  alias Marbles.Schema.{Marble, UserMarble, UserSquad, UserSquadSlot}
 
   @max_slots 5
+
   @type autocomplete_choice :: %{
           name: String.t(),
           level: non_neg_integer(),
@@ -19,67 +19,41 @@ defmodule Marbles.Economy.MineRoster do
           rarity: pos_integer()
         }
 
-  @spec view(Ecto.UUID.t()) :: {:ok, [roster_entry()]} | {:error, term()}
-  def view(user_id) do
-    user = Repo.get(User, user_id)
-    if user, do: {:ok, describe_roster(user_id, user.mine_roster)}, else: {:error, :not_found}
+  @spec view(Ecto.UUID.t()) :: {:ok, [roster_entry()]}
+  def view(user_id) when is_binary(user_id) do
+    case get_mine_squad(user_id) do
+      nil ->
+        {:ok, []}
+
+      squad ->
+        entries =
+          Enum.map(squad.slots, fn slot ->
+            um = slot.user_marble
+            m = um.marble
+            %{name: m.name, level: um.level || 1, rarity: m.rarity || 1}
+          end)
+
+        {:ok, entries}
+    end
   end
 
   @spec list_assigned_user_marbles(Ecto.UUID.t()) :: [UserMarble.t()]
   def list_assigned_user_marbles(user_id) when is_binary(user_id) do
-    case Repo.get(User, user_id) do
+    case get_mine_squad(user_id) do
       nil ->
         []
 
-      user ->
-        ids = slot_ids(user.mine_roster)
-
-        if ids == [] do
-          []
-        else
-          rows =
-            from(um in UserMarble,
-              where: um.user_id == ^user_id and um.id in ^ids,
-              preload: [marble: [:team, :abilities]]
-            )
-            |> Repo.all()
-            |> Map.new(&{&1.id, &1})
-
-          Enum.map(ids, &Map.get(rows, &1)) |> Enum.reject(&is_nil/1)
-        end
+      squad ->
+        Enum.map(squad.slots, & &1.user_marble)
     end
   end
 
-  defp describe_roster(user_id, roster) do
-    ids = slot_ids(roster)
-
-    rows =
-      if ids == [] do
-        %{}
-      else
-        from(um in UserMarble,
-          join: m in Marble,
-          on: m.id == um.marble_id,
-          where: um.user_id == ^user_id and um.id in ^ids,
-          select: {
-            um.id,
-            %{
-              name: m.name,
-              level: fragment("coalesce(?, 1)", um.level),
-              rarity: fragment("coalesce(?, 1)", m.rarity)
-            }
-          }
-        )
-        |> Repo.all()
-        |> Map.new()
-      end
-
-    Enum.map(ids, fn id ->
-      case Map.get(rows, id) do
-        %{name: n, level: lv, rarity: r} -> %{name: n, level: lv, rarity: r}
-        _ -> %{name: "(missing)", level: 1, rarity: 1}
-      end
-    end)
+  @spec list_assigned_user_marble_ids(Ecto.UUID.t()) :: [Ecto.UUID.t()]
+  def list_assigned_user_marble_ids(user_id) when is_binary(user_id) do
+    case get_mine_squad(user_id) do
+      nil -> []
+      squad -> Enum.map(squad.slots, & &1.user_marble_id)
+    end
   end
 
   @spec add_by_marble_name(Ecto.UUID.t(), String.t()) ::
@@ -90,36 +64,19 @@ defmodule Marbles.Economy.MineRoster do
     if name == "" do
       {:error, :invalid_name}
     else
-      user = Repo.get!(User, user_id)
-      ids = slot_ids(user.mine_roster)
+      um =
+        from(um in UserMarble,
+          join: m in Marble,
+          on: m.id == um.marble_id,
+          where: um.user_id == ^user_id,
+          where: fragment("LOWER(?) = LOWER(?)", m.name, ^name),
+          limit: 1
+        )
+        |> Repo.one()
 
-      if length(ids) >= @max_slots do
-        {:error, :roster_full}
-      else
-        um =
-          from(um in UserMarble,
-            join: m in Marble,
-            on: m.id == um.marble_id,
-            where: um.user_id == ^user_id,
-            where: fragment("LOWER(?) = LOWER(?)", m.name, ^name),
-            select: um,
-            limit: 1
-          )
-          |> Repo.one()
-
-        case um do
-          nil ->
-            {:error, :not_found}
-
-          %{id: id} ->
-            if id in ids do
-              {:error, :already_in_roster}
-            else
-              new_roster = %{"slots" => ids ++ [id]}
-              {:ok, _} = Accounts.update_user(user, %{mine_roster: new_roster})
-              {:ok, %{added: id, slots: length(ids) + 1}}
-            end
-        end
+      case um do
+        nil -> {:error, :not_found}
+        %{id: id} -> add_user_marble(user_id, id)
       end
     end
   end
@@ -132,8 +89,7 @@ defmodule Marbles.Economy.MineRoster do
     if name == "" do
       {:error, :invalid_name}
     else
-      user = Repo.get!(User, user_id)
-      ids = slot_ids(user.mine_roster)
+      ids = list_assigned_user_marble_ids(user_id)
 
       remove_id =
         from(um in UserMarble,
@@ -147,13 +103,8 @@ defmodule Marbles.Economy.MineRoster do
         |> Repo.one()
 
       case remove_id do
-        nil ->
-          {:error, :not_found}
-
-        id ->
-          new_ids = Enum.reject(ids, &(&1 == id))
-          {:ok, _} = Accounts.update_user(user, %{mine_roster: %{"slots" => new_ids}})
-          {:ok, %{removed: id, slots: length(new_ids)}}
+        nil -> {:error, :not_found}
+        id -> remove_user_marble(user_id, id)
       end
     end
   end
@@ -163,8 +114,7 @@ defmodule Marbles.Economy.MineRoster do
           | {:error, :not_found | :roster_full | :already_in_roster}
   def add_user_marble(user_id, user_marble_id)
       when is_binary(user_id) and is_binary(user_marble_id) do
-    user = Repo.get!(User, user_id)
-    ids = slot_ids(user.mine_roster)
+    ids = list_assigned_user_marble_ids(user_id)
 
     cond do
       length(ids) >= @max_slots ->
@@ -173,16 +123,22 @@ defmodule Marbles.Economy.MineRoster do
       user_marble_id in ids ->
         {:error, :already_in_roster}
 
-      true ->
-        case Repo.get_by(UserMarble, id: user_marble_id, user_id: user_id) do
-          nil ->
-            {:error, :not_found}
+      Repo.get_by(UserMarble, id: user_marble_id, user_id: user_id) == nil ->
+        {:error, :not_found}
 
-          _ ->
-            new_roster = %{"slots" => ids ++ [user_marble_id]}
-            {:ok, _} = Accounts.update_user(user, %{mine_roster: new_roster})
-            {:ok, %{added: user_marble_id, slots: length(ids) + 1}}
-        end
+      true ->
+        squad = get_or_create_mine_squad(user_id)
+        position = length(ids)
+
+        %UserSquadSlot{}
+        |> UserSquadSlot.mine_slot_changeset(%{
+          squad_id: squad.id,
+          user_marble_id: user_marble_id,
+          position: position
+        })
+        |> Repo.insert!()
+
+        {:ok, %{added: user_marble_id, slots: position + 1}}
     end
   end
 
@@ -190,29 +146,41 @@ defmodule Marbles.Economy.MineRoster do
           {:ok, %{removed: Ecto.UUID.t(), slots: non_neg_integer()}} | {:error, :not_found}
   def remove_user_marble(user_id, user_marble_id)
       when is_binary(user_id) and is_binary(user_marble_id) do
-    user = Repo.get!(User, user_id)
-    ids = slot_ids(user.mine_roster)
+    case get_mine_squad(user_id) do
+      nil ->
+        {:error, :not_found}
 
-    if user_marble_id in ids do
-      new_ids = Enum.reject(ids, &(&1 == user_marble_id))
-      {:ok, _} = Accounts.update_user(user, %{mine_roster: %{"slots" => new_ids}})
-      {:ok, %{removed: user_marble_id, slots: length(new_ids)}}
-    else
-      {:error, :not_found}
+      squad ->
+        slot = Enum.find(squad.slots, &(&1.user_marble_id == user_marble_id))
+
+        case slot do
+          nil ->
+            {:error, :not_found}
+
+          %UserSquadSlot{} = s ->
+            Repo.delete!(s)
+            reindex_slots(squad.id)
+            remaining = list_assigned_user_marble_ids(user_id)
+            {:ok, %{removed: user_marble_id, slots: length(remaining)}}
+        end
     end
   end
 
   @spec clear(Ecto.UUID.t()) :: {:ok, map()}
-  def clear(user_id) do
-    user = Repo.get!(User, user_id)
-    {:ok, _} = Accounts.update_user(user, %{mine_roster: %{"slots" => []}})
-    {:ok, %{slots: 0}}
+  def clear(user_id) when is_binary(user_id) do
+    case get_mine_squad(user_id) do
+      nil ->
+        {:ok, %{slots: 0}}
+
+      squad ->
+        Repo.delete_all(from(s in UserSquadSlot, where: s.squad_id == ^squad.id))
+        {:ok, %{slots: 0}}
+    end
   end
 
   @spec autocomplete_owned(Ecto.UUID.t(), String.t()) :: [autocomplete_choice()]
   def autocomplete_owned(user_id, query \\ "") when is_binary(user_id) and is_binary(query) do
-    user = Repo.get!(User, user_id)
-    roster_ids = slot_ids(user.mine_roster)
+    roster_ids = list_assigned_user_marble_ids(user_id)
     q = String.downcase(String.trim(query))
 
     base =
@@ -234,20 +202,19 @@ defmodule Marbles.Economy.MineRoster do
 
     rows
     |> Repo.all()
-    |> uniq_autocomplete_choices_by_name()
+    |> uniq_by_name()
     |> Enum.take(25)
   end
 
   @spec autocomplete_roster(Ecto.UUID.t(), String.t()) :: [autocomplete_choice()]
   def autocomplete_roster(user_id, query \\ "") when is_binary(user_id) and is_binary(query) do
-    user = Repo.get!(User, user_id)
-    ids = slot_ids(user.mine_roster)
+    ids = list_assigned_user_marble_ids(user_id)
     q = String.downcase(String.trim(query))
 
     if ids == [] do
       []
     else
-      roster_rows =
+      rows =
         from(um in UserMarble,
           join: m in Marble,
           on: m.id == um.marble_id,
@@ -258,17 +225,65 @@ defmodule Marbles.Economy.MineRoster do
         |> Map.new()
 
       ids
-      |> Enum.map(&Map.get(roster_rows, &1))
+      |> Enum.map(&Map.get(rows, &1))
       |> Enum.reject(&is_nil/1)
       |> Enum.filter(fn %{name: name} ->
-        q == "" || String.contains?(String.downcase(name), q)
+        q == "" or String.contains?(String.downcase(name), q)
       end)
-      |> uniq_autocomplete_choices_by_name()
+      |> uniq_by_name()
       |> Enum.take(25)
     end
   end
 
-  defp uniq_autocomplete_choices_by_name(choices) do
+  # Returns mine squad with slots preloaded (ordered by position), or nil.
+  @spec get_mine_squad(Ecto.UUID.t()) :: UserSquad.t() | nil
+  def get_mine_squad(user_id) when is_binary(user_id) do
+    slots_q =
+      from(s in UserSquadSlot,
+        order_by: [asc: s.position],
+        preload: [user_marble: [marble: [:team, :abilities]]]
+      )
+
+    Repo.one(
+      from(sq in UserSquad,
+        where: sq.user_id == ^user_id and sq.purpose == :mine,
+        preload: [slots: ^slots_q]
+      )
+    )
+  end
+
+  defp get_or_create_mine_squad(user_id) do
+    case get_mine_squad(user_id) do
+      %UserSquad{} = squad ->
+        squad
+
+      nil ->
+        %UserSquad{}
+        |> UserSquad.mine_changeset(%{user_id: user_id, name: "Mine Roster"})
+        |> Repo.insert!()
+    end
+  end
+
+  # After a removal, compact slot positions to 0..N-1 order.
+  defp reindex_slots(squad_id) do
+    slots =
+      from(s in UserSquadSlot,
+        where: s.squad_id == ^squad_id,
+        order_by: [asc: s.position]
+      )
+      |> Repo.all()
+
+    Enum.each(Enum.with_index(slots), fn {slot, idx} ->
+      if slot.position != idx do
+        Repo.update_all(
+          from(s in UserSquadSlot, where: s.id == ^slot.id),
+          set: [position: idx]
+        )
+      end
+    end)
+  end
+
+  defp uniq_by_name(choices) do
     {acc, _seen} =
       Enum.reduce(choices, {[], MapSet.new()}, fn choice, {list, seen} ->
         if MapSet.member?(seen, choice.name) do
@@ -279,18 +294,5 @@ defmodule Marbles.Economy.MineRoster do
       end)
 
     Enum.reverse(acc)
-  end
-
-  defp slot_ids(roster) do
-    roster = roster || %{}
-    raw = Map.get(roster, "slots") || Map.get(roster, :slots) || []
-
-    raw
-    |> List.wrap()
-    |> Enum.filter(fn id ->
-      match?({:ok, _}, Ecto.UUID.cast(to_string(id)))
-    end)
-    |> Enum.map(&to_string/1)
-    |> Enum.take(@max_slots)
   end
 end

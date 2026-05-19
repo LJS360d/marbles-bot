@@ -83,6 +83,7 @@ defmodule MarblesWeb.EventLive do
     ~H"""
     <Layouts.app
       flash={@flash}
+      race_state={@race_state}
       current_scope={:event}
       breadcrumbs={@breadcrumbs}
       show_login_modal={@show_login_modal}
@@ -120,7 +121,7 @@ defmodule MarblesWeb.EventLive do
               <p class="text-sm text-base-content/70">You're signed up. See you on the start grid.</p>
             <% @squads == [] -> %>
               <p class="text-sm text-base-content/70">You need a squad first.</p>
-              <.link navigate={~p"/roster"} class="btn btn-primary btn-sm rounded-full">
+              <.link navigate={~p"/squads"} class="btn btn-primary btn-sm rounded-full">
                 Build a squad
               </.link>
             <% true -> %>

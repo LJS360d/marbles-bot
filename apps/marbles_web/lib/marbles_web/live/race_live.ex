@@ -3,9 +3,8 @@ defmodule MarblesWeb.RaceLive do
   Live race viewer.
 
   Subscribes to the race PubSub topic and forwards setup + frame packets
-  to the JS hook (`RaceRenderer`) which handles the actual visualization.
-  Also displays a deterministic textual leaderboard so the LV is useful
-  without JS.
+  to the JS hook (`RaceRenderer`). Shows the player's own marble position
+  during the race, and a full leaderboard overlay when the race ends.
   """
 
   use MarblesWeb, :live_view
@@ -29,6 +28,8 @@ defmodule MarblesWeb.RaceLive do
           end
       end
 
+    current_user_id = socket.assigns[:current_user] && socket.assigns.current_user.id
+
     {:ok,
      socket
      |> assign(:page_title, "Race")
@@ -37,27 +38,50 @@ defmodule MarblesWeb.RaceLive do
      |> assign(:race_id, race_id)
      |> assign(:status, status)
      |> assign(:setup, setup)
-     |> assign(:leaderboard, [])
+     |> assign(:current_user_id, current_user_id)
+     |> assign(:my_marble_rank, nil)
+     |> assign(:total_marbles, 0)
      |> assign(:summary, nil)
      |> assign(:replay_payload_b64, encode_replay(setup))}
   end
 
   @impl true
   def handle_info({:setup, setup}, socket) do
+    encodable = encodable_setup(setup)
+    total = count_marbles(setup)
+
     {:noreply,
      socket
      |> assign(:status, :running)
-     |> assign(:setup, encodable_setup(setup))
-     |> push_event("race:setup", encodable_setup(setup))}
+     |> assign(:setup, encodable)
+     |> assign(:total_marbles, total)
+     |> push_event(
+       "race:setup",
+       Map.put(encodable, :current_user_id, socket.assigns.current_user_id)
+     )}
   end
 
-  def handle_info({:frames, frames}, socket) do
-    leaderboard = leaderboard_from_frames(frames, socket.assigns.leaderboard)
+  def handle_info({:frames, frames, ability_triggers}, socket) do
+    my_rank = my_marble_rank(frames, socket.assigns.current_user_id)
 
-    {:noreply,
-     socket
-     |> assign(:leaderboard, leaderboard)
-     |> push_event("race:frames", %{frames: frames |> Enum.map(&encodable_frame/1)})}
+    socket =
+      socket
+      |> assign(:my_marble_rank, my_rank)
+      |> push_event("race:frames", %{frames: Enum.map(frames, &encodable_frame/1)})
+
+    socket =
+      if ability_triggers != [] do
+        push_event(socket, "race:abilities", %{triggers: ability_triggers})
+      else
+        socket
+      end
+
+    {:noreply, socket}
+  end
+
+  # Backward compat for any old-format broadcasts during dev
+  def handle_info({:frames, frames}, socket) do
+    handle_info({:frames, frames, []}, socket)
   end
 
   def handle_info({:finished, summary}, socket),
@@ -65,21 +89,23 @@ defmodule MarblesWeb.RaceLive do
 
   def handle_info(_other, socket), do: {:noreply, socket}
 
-  defp leaderboard_from_frames([], current), do: current
+  defp my_marble_rank([], _user_id), do: nil
+  defp my_marble_rank(_frames, nil), do: nil
 
-  defp leaderboard_from_frames(frames, _current) do
+  defp my_marble_rank(frames, user_id) do
     last = List.last(frames)
 
-    last.marbles
-    |> Enum.sort_by(& &1.rank)
-    |> Enum.map(fn m ->
-      %{
-        id: m.id,
-        rank: m.rank,
-        status: m.status,
-        progress: m.z
-      }
-    end)
+    Enum.find(last.marbles, fn m -> m.user_id == user_id end)
+    |> case do
+      nil -> nil
+      m -> m.rank
+    end
+  end
+
+  defp count_marbles(nil), do: 0
+
+  defp count_marbles(setup) do
+    Enum.reduce(setup.participants, 0, fn p, acc -> acc + length(p.racers) end)
   end
 
   defp encodable_setup(nil), do: nil
@@ -102,6 +128,7 @@ defmodule MarblesWeb.RaceLive do
         Enum.map(marbles, fn m ->
           %{
             id: m.id,
+            user_id: m.user_id,
             x: m.x,
             y: m.y,
             z: m.z,
@@ -123,11 +150,12 @@ defmodule MarblesWeb.RaceLive do
     ~H"""
     <Layouts.app
       flash={@flash}
+      race_state={@race_state}
       current_scope={:race}
       breadcrumbs={[{"Race", nil}]}
       show_login_modal={@show_login_modal}
     >
-      <section class="space-y-5">
+      <section class="space-y-4">
         <header class="flex items-center justify-between">
           <h1 class="text-2xl font-bold">Race · {String.slice(@race_id, 0, 8)}</h1>
           <span class={[
@@ -146,38 +174,50 @@ defmodule MarblesWeb.RaceLive do
           phx-update="ignore"
           data-race-id={@race_id}
           data-replay-b64={@replay_payload_b64 || ""}
-          class="aspect-video w-full rounded-3xl border border-base-300 bg-black"
+          data-current-user-id={@current_user_id || ""}
+          class="relative aspect-video w-full rounded-3xl border border-base-300 bg-black overflow-hidden"
         >
           <canvas class="h-full w-full block" />
         </div>
 
-        <div class="rounded-3xl border border-base-300 bg-base-100/60 p-5 backdrop-blur">
-          <h2 class="font-semibold mb-3">Live leaderboard</h2>
-          <%= if @leaderboard == [] do %>
-            <p class="text-sm text-base-content/60">Waiting for frames…</p>
-          <% else %>
-            <ol class="space-y-1 text-sm">
-              <li :for={entry <- @leaderboard} class="flex items-center justify-between gap-3">
-                <span class="font-mono">#{entry.rank}</span>
-                <span class="flex-1 truncate">{entry.id}</span>
-                <span class="text-base-content/60">
-                  {Float.round(entry.progress, 1)} m · {entry.status}
-                </span>
-              </li>
-            </ol>
-          <% end %>
+        <%!-- Player's own marble position (replaces per-marble leaderboard) --%>
+        <div
+          :if={@status == :running and @my_marble_rank != nil}
+          class="rounded-3xl border border-base-300 bg-base-100/60 p-4 backdrop-blur flex items-center justify-between panel-bevel"
+        >
+          <span class="text-sm text-base-content/60">Your position</span>
+          <span class="text-2xl font-bold tabular-nums">
+            P{@my_marble_rank}
+            <span class="text-base font-normal text-base-content/60">/ {@total_marbles}</span>
+          </span>
         </div>
 
         <div
-          :if={@summary}
-          class="rounded-3xl border border-base-300 bg-base-100/60 p-5 backdrop-blur"
+          :if={@status == :running and @my_marble_rank == nil}
+          class="text-sm text-base-content/60 text-center py-2"
         >
-          <h2 class="font-semibold mb-3">Final results</h2>
-          <ol class="space-y-1 text-sm">
-            <li :for={f <- @summary.finishers} class="flex items-center justify-between gap-3">
-              <span class="font-mono">#{f.rank}</span>
+          Waiting for race to start…
+        </div>
+
+        <%!-- End-of-race leaderboard overlay --%>
+        <div
+          :if={@summary}
+          class="rounded-3xl border border-base-300 bg-base-100/60 p-5 backdrop-blur panel-bevel"
+        >
+          <h2 class="font-semibold mb-4">Race results</h2>
+          <ol class="space-y-2">
+            <li
+              :for={f <- @summary.finishers}
+              class={[
+                "flex items-center justify-between gap-3 rounded-2xl px-3 py-2 text-sm",
+                f.user_id == @current_user_id && "bg-primary/10 border border-primary/30"
+              ]}
+            >
+              <span class="font-mono text-base-content/60 w-6">{f.rank}</span>
               <span class="flex-1 truncate">{f.user_id}</span>
-              <span class="text-base-content/60">{f.marble_id}</span>
+              <span :if={f.user_id == @current_user_id} class="badge badge-primary badge-xs">
+                You
+              </span>
             </li>
           </ol>
         </div>

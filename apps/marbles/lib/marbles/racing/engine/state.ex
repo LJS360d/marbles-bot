@@ -28,7 +28,8 @@ defmodule Marbles.Racing.Engine.State do
     squads: %{},
     participants: [],
     replay_frames: [],
-    pending_frames: []
+    pending_frames: [],
+    ability_triggers: []
   ]
 
   @spec from_setup(Setup.t(), map()) :: t()
@@ -112,7 +113,8 @@ defmodule Marbles.Racing.Engine.State do
       finished_at: nil,
       __final_stretched: false,
       __coach_buff_until: 0.0,
-      __strategist_until: 0.0
+      __strategist_until: 0.0,
+      __active_abilities: MapSet.new()
     }
   end
 

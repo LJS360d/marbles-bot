@@ -37,6 +37,7 @@ defmodule MarblesWeb.CalendarLive do
     ~H"""
     <Layouts.app
       flash={@flash}
+      race_state={@race_state}
       current_scope={:calendar}
       breadcrumbs={@breadcrumbs}
       show_login_modal={@show_login_modal}

@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="gacha">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -26,10 +26,8 @@
             document.documentElement.setAttribute("data-theme", theme);
           }
         };
-        if (!document.documentElement.hasAttribute("data-theme")) {
-          setTheme(localStorage.getItem("phx:theme") || "system");
-        }
-        window.addEventListener("storage", (e) => e.key === "phx:theme" && setTheme(e.newValue || "system"));
+        setTheme(localStorage.getItem("phx:theme") || "gacha");
+        window.addEventListener("storage", (e) => e.key === "phx:theme" && setTheme(e.newValue || "gacha"));
 
         window.addEventListener("phx:set-theme", (e) => setTheme(e.target.dataset.phxTheme));
       })();
@@ -37,10 +35,5 @@
   </head>
   <body>
     {@inner_content}
-    {live_render(@conn, MarblesWeb.RaceDockLive,
-      id: "race-dock-live",
-      sticky: true,
-      session: %{"user_id" => @conn.assigns[:current_user] && @conn.assigns.current_user.id}
-    )}
   </body>
 </html>

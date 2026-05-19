@@ -4,7 +4,7 @@ defmodule Marbles.EconomyTest do
   alias Marbles.Repo
   alias Marbles.Schema.{Marble, Team}
   alias Marbles.{Accounts, Collection}
-  alias Marbles.Economy.{SpawnRewards, Mining, Upgrades, Admin}
+  alias Marbles.Economy.{SpawnRewards, Mining, MineRoster, Upgrades, Admin}
   alias Marbles.Schema.UserDailyStreak
 
   setup do
@@ -62,7 +62,7 @@ defmodule Marbles.EconomyTest do
     marble: marble
   } do
     assert {:new, um} = Collection.acquire_marble_template(user.id, marble.id)
-    {:ok, _} = Accounts.update_user(user, %{mine_roster: %{"slots" => [to_string(um.id)]}})
+    {:ok, _} = MineRoster.add_user_marble(user.id, um.id)
 
     result = Mining.compute_coins(user.id, 0)
     assert result.coins == 0

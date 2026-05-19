@@ -6,7 +6,7 @@ defmodule Marbles.Racing.Supervisor do
   use Supervisor
 
   alias Marbles.Racing.Engine
-  alias Marbles.Racing.Events.Scheduler, as: EventScheduler
+  alias Marbles.Racing.Events.{CronScheduler, Scheduler}
   alias Marbles.Racing.Queue
 
   @spec start_link(any()) :: Supervisor.on_start()
@@ -19,7 +19,8 @@ defmodule Marbles.Racing.Supervisor do
       Engine.Registry,
       Engine.Supervisor,
       Queue,
-      EventScheduler
+      Scheduler,
+      CronScheduler
     ]
 
     Supervisor.init(children, strategy: :one_for_one)

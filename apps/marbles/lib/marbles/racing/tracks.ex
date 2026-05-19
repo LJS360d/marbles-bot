@@ -86,6 +86,38 @@ defmodule Marbles.Racing.Tracks do
     {Enum.at(list, idx - 1), rng}
   end
 
+  @doc "Lists all DB-defined track rows (including inactive). For admin use."
+  @spec list_db_all() :: [RaceTrack.t()]
+  def list_db_all do
+    Repo.all(from(t in RaceTrack, order_by: [asc: t.name]))
+  end
+
+  @doc "Fetches a DB track row by id."
+  @spec get_db(Ecto.UUID.t()) :: {:ok, RaceTrack.t()} | {:error, :not_found}
+  def get_db(id) do
+    case Repo.get(RaceTrack, id) do
+      nil -> {:error, :not_found}
+      t -> {:ok, t}
+    end
+  end
+
+  @spec create(map()) :: {:ok, RaceTrack.t()} | {:error, Ecto.Changeset.t()}
+  def create(attrs) do
+    %RaceTrack{}
+    |> RaceTrack.changeset(attrs)
+    |> Repo.insert()
+  end
+
+  @spec update(RaceTrack.t(), map()) :: {:ok, RaceTrack.t()} | {:error, Ecto.Changeset.t()}
+  def update(%RaceTrack{} = track, attrs) do
+    track
+    |> RaceTrack.changeset(attrs)
+    |> Repo.update()
+  end
+
+  @spec delete(RaceTrack.t()) :: {:ok, RaceTrack.t()} | {:error, Ecto.Changeset.t()}
+  def delete(%RaceTrack{} = track), do: Repo.delete(track)
+
   defp from_module(mod) do
     %{
       source: :code,

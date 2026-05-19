@@ -3,8 +3,8 @@ defmodule Marbles.Economy.Mining do
 
   import Ecto.Query
   alias Marbles.Repo
-  alias Marbles.Schema.{User, UserMarble, Marble}
-  alias Marbles.Economy.{Upgrades, Effects}
+  alias Marbles.Schema.{UserMarble, Marble}
+  alias Marbles.Economy.{MineRoster, Upgrades, Effects}
 
   @base_offline_hours 36
 
@@ -44,8 +44,7 @@ defmodule Marbles.Economy.Mining do
         }
   def compute_coins(user_id, accrual_seconds)
       when is_integer(accrual_seconds) and accrual_seconds >= 0 do
-    user = Repo.get!(User, user_id)
-    roster_ids = roster_slot_ids(user.mine_roster)
+    roster_ids = MineRoster.list_assigned_user_marble_ids(user_id)
     cap = max_accrual_seconds(user_id)
 
     roster =
@@ -124,13 +123,6 @@ defmodule Marbles.Economy.Mining do
           breakdown: breakdown
         }
     end
-  end
-
-  defp roster_slot_ids(nil), do: []
-
-  defp roster_slot_ids(map) when is_map(map) do
-    ids = Map.get(map, "slots") || Map.get(map, :slots) || []
-    ids |> List.wrap() |> Enum.filter(&is_binary/1) |> Enum.take(5)
   end
 
   defp load_roster(user_id, ids) do

@@ -167,8 +167,12 @@ defmodule MarblesWeb.GachaLive do
       |> assign(:selected_pack_banner_url, selected_pack_banner_url)
 
     ~H"""
-    <Layouts.header current_user={@current_user} />
-    <Layouts.app flash={@flash} current_scope={@current_scope} show_login_modal={@show_login_modal}>
+    <Layouts.app
+      flash={@flash}
+      current_user={@current_user}
+      current_scope={@current_scope}
+      show_login_modal={@show_login_modal}
+    >
       <div id="gacha-page" phx-hook="GachaPage" class="space-y-6">
         <section class="flex items-center justify-end">
           <div
@@ -177,7 +181,7 @@ defmodule MarblesWeb.GachaLive do
             class="inline-flex items-center gap-2 rounded-full border border-primary/35 bg-base-100/95 px-4 py-2 text-sm font-semibold shadow-md"
           >
             <span class="text-base-content/70">Wallet</span>
-            <span class="text-primary">
+            <span class="coin-chip">
               {IntegerDisplay.format(@wallet_currency)} {@coin}
             </span>
           </div>
@@ -254,7 +258,7 @@ defmodule MarblesWeb.GachaLive do
               type="button"
               phx-click="pull"
               phx-value-kind="one"
-              class="rounded-xl border border-base-300 px-4 py-3 text-sm font-medium transition-colors hover:border-primary hover:bg-primary/10"
+              class="rounded-xl border border-base-300 px-4 py-3 text-sm font-medium transition-colors hover:border-primary hover:bg-primary/10 btn-chunky"
             >
               Pull x1
               <span class="text-base-content/70">
@@ -267,7 +271,7 @@ defmodule MarblesWeb.GachaLive do
               type="button"
               phx-click="pull"
               phx-value-kind="ten"
-              class="rounded-xl bg-primary px-4 py-3 text-sm font-medium text-primary-content transition-all hover:brightness-115"
+              class="rounded-xl bg-primary px-4 py-3 text-sm font-medium text-primary-content transition-all hover:brightness-115 btn-chunky"
             >
               Pull x10
               <span class="text-primary-content/80">
@@ -278,202 +282,14 @@ defmodule MarblesWeb.GachaLive do
         </section>
       </div>
 
-      <section
-        :if={@animation_phase in [:running, :recap]}
-        id="gacha-cinematic-overlay"
-        class="fixed inset-0 z-60 isolate"
-      >
-        <div
-          id="gacha-cinematic"
-          phx-hook="GachaCinematic"
-          phx-update="ignore"
-          class="relative z-0 h-full w-full bg-black"
-        >
-        </div>
+      <.cinematic_overlay animation_phase={@animation_phase} latest_result={@latest_result} />
 
-        <button
-          :if={@animation_phase == :running}
-          id="gacha-animation-skip"
-          type="button"
-          phx-click="skip_animation"
-          class={[
-            "absolute right-5 top-5 z-100 flex items-center gap-1.5 rounded-lg border border-white/35",
-            "bg-black/45 px-3 py-2 text-xs font-semibold text-white backdrop-blur-md",
-            "transition-colors hover:border-white/70 hover:bg-black/65"
-          ]}
-        >
-          <.icon name="hero-forward" class="size-4 shrink-0 text-white" /> Skip
-        </button>
-
-        <div
-          :if={@animation_phase == :recap and @latest_result}
-          id="gacha-recap-overlay"
-          class="absolute inset-0 z-40 flex items-center justify-center bg-base-100/35 p-4 sm:p-6"
-        >
-          <div class={[
-            "w-full max-w-5xl max-h-full overflow-y-auto space-y-5 rounded-2xl border",
-            "border-primary/20 bg-base-100/90 text-base-content p-5 shadow-2xl backdrop-blur-md sm:p-6"
-          ]}>
-            <div class="flex items-center justify-end gap-3">
-              <p class="text-sm font-semibold text-primary">
-                + {IntegerDisplay.format(@latest_result.total_dust)} {Currency.dust_emoji()}
-              </p>
-            </div>
-
-            <div class="grid grid-cols-5 gap-5">
-              <article
-                :for={entry <- @latest_result.marbles}
-                id={"recap-marble-#{entry.marble.id}"}
-                class={[
-                  "relative overflow-hidden rounded-xl border border-base-300/70 bg-base-200/55 p-3 backdrop-blur-sm",
-                  entry.marble.rarity == 2 &&
-                    "border-sky-300/55 bg-linear-to-br from-sky-100/65 via-cyan-50/55 to-base-100 shadow-[0_0_16px_rgba(56,189,248,0.24)]",
-                  entry.marble.rarity >= 3 &&
-                    "border-amber-300/60 bg-linear-to-br from-amber-100/70 via-amber-50/60 to-base-100 shadow-[0_0_20px_rgba(251,191,36,0.28)]"
-                ]}
-              >
-                <div
-                  :if={entry.marble.rarity == 2}
-                  class="pointer-events-none absolute inset-0"
-                >
-                  <span class="absolute right-3 top-3 text-sky-300 animate-pulse">✧</span>
-                  <span
-                    class="absolute left-4 bottom-4 text-cyan-300 animate-pulse"
-                    style="animation-delay: 220ms;"
-                  >
-                    ✧
-                  </span>
-                </div>
-                <div
-                  :if={entry.marble.rarity >= 3}
-                  class="pointer-events-none absolute inset-0"
-                >
-                  <span class="absolute left-3 top-3 text-amber-300 animate-ping">✦</span>
-                  <span
-                    class="absolute right-4 top-6 text-yellow-300 animate-ping"
-                    style="animation-delay: 180ms;"
-                  >
-                    ✦
-                  </span>
-                  <span
-                    class="absolute bottom-3 left-1/2 -translate-x-1/2 text-amber-400 animate-ping"
-                    style="animation-delay: 320ms;"
-                  >
-                    ✦
-                  </span>
-                </div>
-                <div class="flex items-center justify-between">
-                  <p class="font-medium">{entry.marble.name}</p>
-                  <span class="text-xs text-base-content/70">
-                    {rarity_stars(entry.marble.rarity)}
-                  </span>
-                </div>
-                <p class="text-xs text-base-content/60">
-                  {if entry.duplicate?,
-                    do: "Duplicate +#{entry.dust} #{Currency.dust_emoji()}",
-                    else: "New"}
-                </p>
-              </article>
-            </div>
-
-            <div class="flex flex-wrap justify-end gap-3">
-              <button
-                id="gacha-pull-again"
-                type="button"
-                phx-click="pull_again"
-                class="rounded-xl bg-primary px-6 py-3 text-base font-semibold text-primary-content hover:brightness-105"
-              >
-                Pull again
-              </button>
-              <button
-                id="gacha-back-to-packs"
-                type="button"
-                phx-click="back_to_packs"
-                class="rounded-xl border border-base-300 px-6 py-3 text-base font-semibold hover:border-primary"
-              >
-                Back to packs
-              </button>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <div :if={@confirm_open and @confirm_preview} id="gacha-confirm-modal" class="relative z-50">
-        <div class="fixed inset-0 bg-black/50" />
-        <div class="fixed inset-0 overflow-y-auto">
-          <div class="flex min-h-full items-center justify-center p-4">
-            <div class="w-full max-w-lg rounded-2xl border border-base-300 bg-base-100 p-6 shadow-xl space-y-5">
-              <div class="space-y-1">
-                <h3 class="text-xl font-semibold">Confirm pull</h3>
-                <p class="text-sm text-base-content/70">
-                  {@confirm_preview.pack.name} — {@confirm_preview.quote.weight} marbles
-                </p>
-              </div>
-
-              <div class="rounded-xl border border-base-300 bg-base-50 p-4 text-sm">
-                <div class="flex items-center justify-between">
-                  <span>Wallet before</span>
-                  <span id="gacha-wallet-before">
-                    {IntegerDisplay.format(@confirm_preview.currency_before)} {@coin}
-                  </span>
-                </div>
-                <div class="flex items-center justify-between">
-                  <span>Cost</span>
-                  <span id="gacha-wallet-cost">
-                    -{IntegerDisplay.format(@confirm_preview.quote.final_price)} {@coin}
-                  </span>
-                </div>
-                <div class="mt-2 border-t border-base-300 pt-2 flex items-center justify-between font-medium">
-                  <span>Wallet after</span>
-                  <span id="gacha-wallet-after">
-                    {IntegerDisplay.format(@confirm_preview.currency_after)} {@coin}
-                  </span>
-                </div>
-              </div>
-
-              <p
-                :if={@confirm_preview.currency_before < @confirm_preview.quote.final_price}
-                class="rounded-lg bg-warning/20 px-3 py-2 text-sm text-warning"
-              >
-                Insufficient currency. Top up before pulling.
-              </p>
-
-              <.form
-                for={@confirm_form}
-                id="gacha-confirm-form"
-                phx-change="confirm_pref_changed"
-                phx-submit="confirm_pull"
-                class="space-y-4"
-              >
-                <.input
-                  field={@confirm_form[:skip_confirm]}
-                  type="checkbox"
-                  label="Don't show this again on this browser"
-                  data-gacha-skip-confirm
-                />
-
-                <div class="flex justify-end gap-3">
-                  <button
-                    id="gacha-cancel-confirm"
-                    type="button"
-                    phx-click="cancel_confirm"
-                    class="rounded-lg border border-base-300 px-4 py-2 text-sm font-medium"
-                  >
-                    Cancel
-                  </button>
-                  <button
-                    id="gacha-confirm-pull"
-                    type="submit"
-                    class="rounded-lg bg-primary px-4 py-2 text-sm font-medium text-primary-content"
-                  >
-                    Confirm pull
-                  </button>
-                </div>
-              </.form>
-            </div>
-          </div>
-        </div>
-      </div>
+      <.confirm_modal
+        confirm_open={@confirm_open}
+        confirm_preview={@confirm_preview}
+        confirm_form={@confirm_form}
+        coin={@coin}
+      />
     </Layouts.app>
     """
   end
@@ -707,4 +523,211 @@ defmodule MarblesWeb.GachaLive do
   @spec pad2(non_neg_integer()) :: String.t()
   defp pad2(value) when is_integer(value) and value < 10, do: "0#{value}"
   defp pad2(value) when is_integer(value), do: Integer.to_string(value)
+
+  attr :animation_phase, :atom, required: true
+  attr :latest_result, :any, default: nil
+
+  defp cinematic_overlay(assigns) do
+    ~H"""
+    <section
+      :if={@animation_phase in [:running, :recap]}
+      id="gacha-cinematic-overlay"
+      class="fixed inset-0 z-60 isolate"
+    >
+      <div
+        id="gacha-cinematic"
+        phx-hook="GachaCinematic"
+        phx-update="ignore"
+        class="relative z-0 h-full w-full bg-black"
+      >
+      </div>
+
+      <button
+        :if={@animation_phase == :running}
+        id="gacha-animation-skip"
+        type="button"
+        phx-click="skip_animation"
+        class={[
+          "absolute right-5 top-5 z-100 flex items-center gap-1.5 rounded-lg border border-white/35",
+          "bg-black/45 px-3 py-2 text-xs font-semibold text-white backdrop-blur-md",
+          "transition-colors hover:border-white/70 hover:bg-black/65"
+        ]}
+      >
+        <.icon name="hero-forward" class="size-4 shrink-0 text-white" /> Skip
+      </button>
+
+      <div
+        :if={@animation_phase == :recap and @latest_result}
+        id="gacha-recap-overlay"
+        class="absolute inset-0 z-40 flex items-center justify-center bg-base-100/35 p-4 sm:p-6"
+      >
+        <div class={[
+          "w-full max-w-5xl max-h-full overflow-y-auto space-y-5 rounded-2xl border",
+          "border-primary/20 bg-base-100/90 text-base-content p-5 shadow-2xl backdrop-blur-md sm:p-6"
+        ]}>
+          <div class="flex items-center justify-end gap-3">
+            <p class="text-sm font-semibold text-primary">
+              + {IntegerDisplay.format(@latest_result.total_dust)} {Currency.dust_emoji()}
+            </p>
+          </div>
+
+          <div class="grid grid-cols-5 gap-5">
+            <article
+              :for={entry <- @latest_result.marbles}
+              id={"recap-marble-#{entry.marble.id}"}
+              class={[
+                "relative overflow-hidden rounded-xl border border-base-300/70 bg-base-200/55 p-3 backdrop-blur-sm",
+                entry.marble.rarity == 2 &&
+                  "border-sky-300/55 bg-linear-to-br from-sky-100/65 via-cyan-50/55 to-base-100 shadow-[0_0_16px_rgba(56,189,248,0.24)]",
+                entry.marble.rarity >= 3 &&
+                  "border-amber-300/60 bg-linear-to-br from-amber-100/70 via-amber-50/60 to-base-100 shadow-[0_0_20px_rgba(251,191,36,0.28)]"
+              ]}
+            >
+              <div :if={entry.marble.rarity == 2} class="pointer-events-none absolute inset-0">
+                <span class="absolute right-3 top-3 text-sky-300 animate-pulse">✧</span>
+                <span
+                  class="absolute left-4 bottom-4 text-cyan-300 animate-pulse"
+                  style="animation-delay: 220ms;"
+                >
+                  ✧
+                </span>
+              </div>
+              <div :if={entry.marble.rarity >= 3} class="pointer-events-none absolute inset-0">
+                <span class="absolute left-3 top-3 text-amber-300 animate-ping">✦</span>
+                <span
+                  class="absolute right-4 top-6 text-yellow-300 animate-ping"
+                  style="animation-delay: 180ms;"
+                >
+                  ✦
+                </span>
+                <span
+                  class="absolute bottom-3 left-1/2 -translate-x-1/2 text-amber-400 animate-ping"
+                  style="animation-delay: 320ms;"
+                >
+                  ✦
+                </span>
+              </div>
+              <div class="flex items-center justify-between">
+                <p class="font-medium">{entry.marble.name}</p>
+                <span class="text-xs text-base-content/70">
+                  {rarity_stars(entry.marble.rarity)}
+                </span>
+              </div>
+              <p class="text-xs text-base-content/60">
+                {if entry.duplicate?,
+                  do: "Duplicate +#{entry.dust} #{Currency.dust_emoji()}",
+                  else: "New"}
+              </p>
+            </article>
+          </div>
+
+          <div class="flex flex-wrap justify-end gap-3">
+            <button
+              id="gacha-pull-again"
+              type="button"
+              phx-click="pull_again"
+              class="rounded-xl bg-primary px-6 py-3 text-base font-semibold text-primary-content hover:brightness-105 btn-chunky"
+            >
+              Pull again
+            </button>
+            <button
+              id="gacha-back-to-packs"
+              type="button"
+              phx-click="back_to_packs"
+              class="rounded-xl border border-base-300 px-6 py-3 text-base font-semibold hover:border-primary"
+            >
+              Back to packs
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+    """
+  end
+
+  attr :confirm_open, :boolean, required: true
+  attr :confirm_preview, :any, default: nil
+  attr :confirm_form, :any, required: true
+  attr :coin, :string, required: true
+
+  defp confirm_modal(assigns) do
+    ~H"""
+    <div :if={@confirm_open and @confirm_preview} id="gacha-confirm-modal" class="relative z-50">
+      <div class="fixed inset-0 bg-black/50" />
+      <div class="fixed inset-0 overflow-y-auto">
+        <div class="flex min-h-full items-center justify-center p-4">
+          <div class="w-full max-w-lg rounded-2xl border border-base-300 bg-base-100 p-6 shadow-xl space-y-5">
+            <div class="space-y-1">
+              <h3 class="text-xl font-semibold">Confirm pull</h3>
+              <p class="text-sm text-base-content/70">
+                {@confirm_preview.pack.name} — {@confirm_preview.quote.weight} marbles
+              </p>
+            </div>
+
+            <div class="rounded-xl border border-base-300 bg-base-50 p-4 text-sm">
+              <div class="flex items-center justify-between">
+                <span>Wallet before</span>
+                <span id="gacha-wallet-before">
+                  {IntegerDisplay.format(@confirm_preview.currency_before)} {@coin}
+                </span>
+              </div>
+              <div class="flex items-center justify-between">
+                <span>Cost</span>
+                <span id="gacha-wallet-cost">
+                  -{IntegerDisplay.format(@confirm_preview.quote.final_price)} {@coin}
+                </span>
+              </div>
+              <div class="mt-2 border-t border-base-300 pt-2 flex items-center justify-between font-medium">
+                <span>Wallet after</span>
+                <span id="gacha-wallet-after">
+                  {IntegerDisplay.format(@confirm_preview.currency_after)} {@coin}
+                </span>
+              </div>
+            </div>
+
+            <p
+              :if={@confirm_preview.currency_before < @confirm_preview.quote.final_price}
+              class="rounded-lg bg-warning/20 px-3 py-2 text-sm text-warning"
+            >
+              Insufficient currency. Top up before pulling.
+            </p>
+
+            <.form
+              for={@confirm_form}
+              id="gacha-confirm-form"
+              phx-change="confirm_pref_changed"
+              phx-submit="confirm_pull"
+              class="space-y-4"
+            >
+              <.input
+                field={@confirm_form[:skip_confirm]}
+                type="checkbox"
+                label="Don't show this again on this browser"
+                data-gacha-skip-confirm
+              />
+
+              <div class="flex justify-end gap-3">
+                <button
+                  id="gacha-cancel-confirm"
+                  type="button"
+                  phx-click="cancel_confirm"
+                  class="rounded-lg border border-base-300 px-4 py-2 text-sm font-medium"
+                >
+                  Cancel
+                </button>
+                <button
+                  id="gacha-confirm-pull"
+                  type="submit"
+                  class="rounded-lg bg-primary px-4 py-2 text-sm font-medium text-primary-content btn-chunky"
+                >
+                  Confirm pull
+                </button>
+              </div>
+            </.form>
+          </div>
+        </div>
+      </div>
+    </div>
+    """
+  end
 end

@@ -1,5 +1,5 @@
 defmodule MarblesWeb.Admin.OwnerEventEditLive do
-  @moduledoc "Owner-only event create / edit form."
+  @moduledoc "Owner-only edit form for a live event run."
 
   use MarblesWeb, :live_view
 
@@ -101,11 +101,12 @@ defmodule MarblesWeb.Admin.OwnerEventEditLive do
     ~H"""
     <Layouts.app
       flash={@flash}
+      current_user={@current_user}
       current_scope={:owner_events}
       breadcrumbs={@breadcrumbs}
       show_login_modal={@show_login_modal}
     >
-      <section class="max-w-3xl space-y-5">
+      <section class="max-w-3xl space-y-6">
         <h1 class="text-2xl font-bold">{if @action == :new, do: "New event", else: "Edit event"}</h1>
 
         <.form

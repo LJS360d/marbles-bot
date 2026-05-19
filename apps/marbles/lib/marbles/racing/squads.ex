@@ -40,7 +40,7 @@ defmodule Marbles.Racing.Squads do
   @spec list_user_squads(Ecto.UUID.t()) :: [UserSquad.t()]
   def list_user_squads(user_id) do
     from(s in UserSquad,
-      where: s.user_id == ^user_id,
+      where: s.user_id == ^user_id and s.purpose == :race,
       order_by: [asc: s.slot_index],
       preload: [slots: ^slots_preload()]
     )

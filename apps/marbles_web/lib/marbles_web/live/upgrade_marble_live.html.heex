@@ -1,0 +1,126 @@
+<Layouts.app flash={@flash} current_scope={@current_scope} breadcrumbs={@breadcrumbs}>
+  <div class="container mx-auto px-4 py-8">
+    <h1 class="text-3xl font-bold mb-2">Upgrade Marble</h1>
+    <p class="text-gray-600 mb-8">
+      Use marble cores to increase your 3-star marbles' power level
+    </p>
+
+    <div class="mb-8 p-4 bg-blue-50 rounded-lg border border-blue-200">
+      <p class="text-sm font-semibold">
+        Marble Cores Available: <span class="text-lg text-blue-600">{@marble_cores}</span>
+      </p>
+    </div>
+
+    <%= if Enum.empty?(@three_stars) do %>
+      <div class="text-center py-12">
+        <p class="text-gray-500 mb-4">You don't have any 3-star marbles yet</p>
+        <a
+          href={~p"/gacha"}
+          class="inline-block px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+        >
+          Go to Gacha
+        </a>
+      </div>
+    <% else %>
+      <div>
+        <h2 class="text-xl font-semibold mb-4">Select a Marble to Upgrade</h2>
+        <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
+          <%= for user_marble <- @three_stars do %>
+            <button
+              phx-click="select_marble"
+              phx-value-user-marble-id={user_marble.id}
+              class="flex flex-col items-center p-4 bg-white rounded-lg shadow hover:shadow-lg transition-shadow border-2 border-gray-200"
+            >
+              <div class="w-12 h-12 bg-linear-to-br from-yellow-300 to-yellow-500 rounded flex items-center justify-center mb-2 text-white font-bold">
+                {String.slice(user_marble.marble.name, 0, 1)}
+              </div>
+              <p class="text-sm font-medium text-center mb-1">{user_marble.marble.name}</p>
+              <p class="text-xs text-gray-500">Lvl {user_marble.level}</p>
+              <p class="text-xs font-semibold text-yellow-600">⭐ 3-Star</p>
+            </button>
+          <% end %>
+        </div>
+      </div>
+    <% end %>
+
+    <%= if @show_modal and @selected_marble do %>
+      <div
+        class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
+        phx-click="close_modal"
+      >
+        <div class="bg-white rounded-lg p-8 max-w-md w-full mx-4" phx-click="stop_propagation">
+          <div class="flex justify-between items-start mb-6">
+            <h2 class="text-2xl font-bold">{@selected_marble.marble.name}</h2>
+            <button
+              phx-click="close_modal"
+              class="text-gray-500 hover:text-gray-700"
+            >
+              <.icon name="hero-x-mark" class="w-6 h-6" />
+            </button>
+          </div>
+
+          <div class="mb-6">
+            <div class="w-24 h-24 bg-linear-to-br from-yellow-300 to-yellow-500 rounded flex items-center justify-center mb-4 text-white text-3xl font-bold">
+              {String.slice(@selected_marble.marble.name, 0, 1)}
+            </div>
+
+            <div class="space-y-3 mb-6">
+              <div class="flex justify-between">
+                <span class="text-sm font-semibold">Level:</span>
+                <span>{@selected_marble.level}</span>
+              </div>
+              <div class="flex justify-between">
+                <span class="text-sm font-semibold">Rarity:</span>
+                <span>⭐ 3-Star</span>
+              </div>
+              <div class="flex justify-between">
+                <span class="text-sm font-semibold">Power Level:</span>
+                <span class="font-bold text-blue-600">
+                  {Float.round(@selected_marble.power_level, 2)}x
+                </span>
+              </div>
+            </div>
+
+            <%= if @upgrade_success do %>
+              <div class="mb-6 p-4 bg-green-50 rounded-lg border border-green-200">
+                <p class="text-sm text-green-700">✓ Upgrade successful! Power level increased.</p>
+              </div>
+            <% end %>
+
+            <%= if @upgrade_error do %>
+              <div class="mb-6 p-4 bg-red-50 rounded-lg border border-red-200">
+                <p class="text-sm text-red-700">{@upgrade_error}</p>
+              </div>
+            <% end %>
+          </div>
+
+          <div class="space-y-3">
+            <button
+              phx-click="upgrade"
+              disabled={@marble_cores == 0 or @upgrade_success}
+              class={[
+                "w-full px-4 py-2 rounded-lg font-medium transition-colors",
+                (@marble_cores == 0 or @upgrade_success) &&
+                  "bg-gray-300 text-gray-500 cursor-not-allowed",
+                (@marble_cores > 0 and not @upgrade_success) &&
+                  "bg-blue-600 text-white hover:bg-blue-700"
+              ]}
+            >
+              <%= if @upgrade_success do %>
+                Upgrade Complete
+              <% else %>
+                Upgrade with Marble Core
+              <% end %>
+            </button>
+            <button
+              phx-click="close_modal"
+              class="w-full px-4 py-2 bg-gray-200 text-gray-800 rounded-lg font-medium hover:bg-gray-300 transition-colors"
+            >
+              Close
+            </button>
+          </div>
+        </div>
+      </div>
+    <% end %>
+  </div>
+</Layouts.app>

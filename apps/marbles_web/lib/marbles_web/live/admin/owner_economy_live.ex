@@ -86,9 +86,9 @@ defmodule MarblesWeb.Admin.OwnerEconomyLive do
   @impl true
   def render(assigns) do
     ~H"""
-    <Layouts.header current_user={@current_user} />
     <Layouts.app
       flash={@flash}
+      current_user={@current_user}
       current_scope={@current_scope}
       breadcrumbs={@breadcrumbs}
     >
@@ -131,8 +131,18 @@ defmodule MarblesWeb.Admin.OwnerEconomyLive do
                 </tr>
               </thead>
               <tbody>
-                <tr :for={row <- @cooldowns}>
-                  <td class="align-middle font-medium">{row.username || "User"}</td>
+                <tr :for={row <- @cooldowns} class={[row.is_bot && "opacity-60"]}>
+                  <td class="align-middle font-medium">
+                    <span class="flex items-center gap-2">
+                      {row.username || "User"}
+                      <span
+                        :if={row.is_bot}
+                        class="badge badge-ghost badge-xs font-mono uppercase tracking-widest"
+                      >
+                        BOT
+                      </span>
+                    </span>
+                  </td>
                   <td class="align-middle">
                     <div class={[
                       "rounded-xl border border-base-300/80 bg-base-100/60 p-3",

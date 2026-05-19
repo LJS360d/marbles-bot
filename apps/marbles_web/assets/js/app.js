@@ -24,14 +24,13 @@ import { Socket } from "phoenix";
 import { LiveSocket } from "phoenix_live_view";
 import { hooks as colocatedHooks } from "phoenix-colocated/marbles_web";
 import topbar from "../vendor/topbar";
-import OwnerAdminMemoryInsights from "./owner_admin_memory_insights.js";
 import { GachaPage, GachaCinematic } from "./gacha_page_hook.js";
 import { DevSandbox } from "./dev_sandbox_hook.js";
 import RaceRenderer from "./race_renderer_hook.js";
-import RaceDock from "./race_dock_hook.js";
 import { MarblePreview } from "./marble_preview_hook.js";
 import { PlinkoScene } from "./plinko_hook.js";
 import { bootstrapDiscordEmbeddedAuth, initializeDiscordUrlMappings } from "./discord_activity_hook.js";
+import BottomTabCarousel from "./bottom_tab_carousel.js";
 
 const csrfToken = document
   .querySelector("meta[name='csrf-token']")
@@ -40,12 +39,11 @@ const liveSocket = new LiveSocket("/live", Socket, {
   longPollFallbackMs: 2500,
   params: { _csrf_token: csrfToken },
   hooks: {
-    OwnerAdminMemoryInsights,
+    BottomTabCarousel,
     GachaPage,
     GachaCinematic,
     DevSandbox,
     RaceRenderer,
-    RaceDock,
     MarblePreview,
     PlinkoScene,
     ...colocatedHooks,

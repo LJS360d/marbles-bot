@@ -241,24 +241,6 @@ defmodule MarblesWeb.Admin.OwnerUserDetailLive do
     Shop.effect_display_name(effect)
   end
 
-  defp roster_slots_count(roster) when is_map(roster) do
-    slots =
-      case Map.get(roster, "slots") do
-        s when is_list(s) ->
-          s
-
-        _ ->
-          case Map.get(roster, :slots) do
-            s when is_list(s) -> s
-            _ -> []
-          end
-      end
-
-    length(slots)
-  end
-
-  defp roster_slots_count(_), do: 0
-
   defp default_effect_key([{_label, key} | _]) when is_binary(key), do: key
   defp default_effect_key(_), do: ""
 
@@ -268,9 +250,9 @@ defmodule MarblesWeb.Admin.OwnerUserDetailLive do
   @impl true
   def render(assigns) do
     ~H"""
-    <Layouts.header current_user={@current_user} />
     <Layouts.app
       flash={@flash}
+      current_user={@current_user}
       current_scope={@current_scope}
       breadcrumbs={@breadcrumbs}
     >
@@ -380,7 +362,7 @@ defmodule MarblesWeb.Admin.OwnerUserDetailLive do
             )} · Longest streak: {IntegerDisplay.format(@streak.longest_streak)}
           </p>
           <p class="mt-1 text-sm text-base-content/70">
-            Mine roster slots: {IntegerDisplay.format(roster_slots_count(@user.mine_roster))} · Full-cap projected payout: {IntegerDisplay.format(
+            Mine roster slots: {IntegerDisplay.format(length(@roster_entries))} · Full-cap projected payout: {IntegerDisplay.format(
               @mine_preview.coins
             )} {Currency.coin_emoji()}
           </p>

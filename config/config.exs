@@ -21,7 +21,36 @@ config :marbles,
         %{item_type: "material", item_id: "marble_core", quantity: 1}
       ]
     }
-  ]
+  ],
+  item_metadata: %{
+    "currency" => %{
+      "coins" => %{
+        description: "Currency used to pull from gacha packs and other transactions",
+        actions: [
+          %{type: :get, label: "Racing", link: "/race"},
+          %{type: :spend, label: "Gacha", link: "/gacha"},
+          %{type: :spend, label: "Shop", link: "/shop"}
+        ]
+      },
+      "dust" => %{
+        description: "Crafting material obtained from duplicate marbles",
+        actions: [
+          %{type: :get, label: "Duplicate Marbles", link: "/roster"},
+          %{type: :spend, label: "Crafting", link: "/craft"},
+          %{type: :spend, label: "Shop", link: "/shop"}
+        ]
+      }
+    },
+    "material" => %{
+      "marble_core" => %{
+        description: "Used to upgrade 3-star marbles and increase their power level",
+        actions: [
+          %{type: :get, label: "Duplicate 3-Star Pull", link: "/gacha"},
+          %{type: :use, label: "Upgrade Marble", link: "/upgrade-marble"}
+        ]
+      }
+    }
+  }
 
 config :marbles, Marbles.Inventory, starter_coins: 1000
 

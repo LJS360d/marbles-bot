@@ -6,7 +6,6 @@ defmodule MarblesWeb.Api.Owner.StatsController do
     snapshot = Marbles.Analytics.AdminDashboard.snapshot()
 
     json(conn, %{
-      memory: snapshot.memory,
       guilds_count: snapshot.guilds_count,
       users_count: snapshot.users_count,
       marbles_count: snapshot.marbles_count,

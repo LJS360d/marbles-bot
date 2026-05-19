@@ -7,6 +7,8 @@ defmodule Marbles.Racing.Replay do
   `race_replays`. Replays are deterministic given `seed + setup`.
   """
 
+  import Ecto.Query
+
   alias Marbles.Repo
   alias Marbles.Racing.Engine.State, as: EngineState
   alias Marbles.Schema.RaceReplay
@@ -43,6 +45,30 @@ defmodule Marbles.Racing.Replay do
           {:error, _} -> {:error, :corrupted}
         end
     end
+  end
+
+  @doc "Lists recent replays with pagination. Returns {entries, total}."
+  @spec list_recent(non_neg_integer(), non_neg_integer()) ::
+          {[RaceReplay.t()], non_neg_integer()}
+  def list_recent(limit \\ 50, offset \\ 0) do
+    base = from(r in RaceReplay)
+    total = Repo.aggregate(base, :count, :id)
+
+    entries =
+      base
+      |> order_by([r], desc: r.inserted_at)
+      |> limit(^limit)
+      |> offset(^offset)
+      |> Repo.all()
+
+    {entries, total}
+  end
+
+  @doc "Deletes a replay by race_id."
+  @spec delete_by_race(Ecto.UUID.t()) :: {non_neg_integer(), nil}
+  def delete_by_race(race_id) do
+    from(r in RaceReplay, where: r.race_id == ^race_id)
+    |> Repo.delete_all()
   end
 
   defp build_payload(state) do

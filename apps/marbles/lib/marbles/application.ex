@@ -13,6 +13,8 @@ defmodule Marbles.Application do
        repos: Application.fetch_env!(:marbles, :ecto_repos), skip: skip_migrations?()},
       {DNSCluster, query: Application.get_env(:marbles, :dns_cluster_query) || :ignore},
       {Phoenix.PubSub, name: Marbles.PubSub},
+      {Task.Supervisor, name: Marbles.AuditTaskSupervisor},
+      Marbles.Audit.Cleanup,
       Marbles.Racing.Supervisor
     ]
 

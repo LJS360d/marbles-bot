@@ -66,6 +66,15 @@ defmodule Marbles.Racing.Engine do
   end
 
   @doc """
+  Admin alias for `finish_now/1`. Semantically meant as "cancel the race"
+  but currently triggers the same fast-forward-to-finish path: the engine
+  ends, payouts run, replay persists. A future iteration may introduce a
+  true cancellation with full wage refunds.
+  """
+  @spec cancel(Ecto.UUID.t()) :: :ok
+  def cancel(race_id), do: finish_now(race_id)
+
+  @doc """
   Adds coins to the live pot of an in-progress race (in-race wagering).
 
   Returns `:ok` and broadcasts `{:pot_updated, %{pot_coins: ..., contributors: ...}}`
@@ -239,18 +248,31 @@ defmodule Marbles.Racing.Engine do
   end
 
   defp apply_per_marble_triggers(state, trigger) do
-    marbles =
-      Enum.map(state.marbles, fn m ->
+    {marbles, new_triggers} =
+      Enum.map_reduce(state.marbles, [], fn m, trigger_acc ->
         squad = Map.fetch!(state.squads, m.user_id)
         ctx_base = %{trigger: trigger, role: :racer, race: race_view(state), meta: %{}}
 
-        Abilities.resolve(trigger, :racer, m, squad)
-        |> Enum.reduce(m, fn mod, acc ->
-          mod.apply(Map.put(ctx_base, :marble, acc), acc)
-        end)
+        firing_mods = Abilities.resolve(trigger, :racer, m, squad)
+        firing_keys = MapSet.new(firing_mods, & &1.key())
+
+        active = Map.get(m, :__active_abilities, MapSet.new())
+        rising = MapSet.difference(firing_keys, active)
+
+        rising_events =
+          Enum.map(rising, fn key ->
+            %{marble_id: m.id, user_id: m.user_id, ability_key: Atom.to_string(key)}
+          end)
+
+        new_m =
+          Enum.reduce(firing_mods, m, fn mod, acc ->
+            mod.apply(Map.put(ctx_base, :marble, acc), acc)
+          end)
+
+        {Map.put(new_m, :__active_abilities, firing_keys), trigger_acc ++ rising_events}
       end)
 
-    %{state | marbles: marbles}
+    %{state | marbles: marbles, ability_triggers: state.ability_triggers ++ new_triggers}
   end
 
   defp apply_coach_triggers(state, trigger) do
@@ -394,8 +416,13 @@ defmodule Marbles.Racing.Engine do
     pending = [hd(state.replay_frames) | state.pending_frames]
 
     if rem(state.tick_index, every) == 0 do
-      PS.broadcast(PubSub, topic(state.race_id), {:frames, Enum.reverse(pending)})
-      %{state | pending_frames: []}
+      PS.broadcast(
+        PubSub,
+        topic(state.race_id),
+        {:frames, Enum.reverse(pending), state.ability_triggers}
+      )
+
+      %{state | pending_frames: [], ability_triggers: []}
     else
       %{state | pending_frames: pending}
     end

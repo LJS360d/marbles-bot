@@ -8,11 +8,13 @@ defmodule Marbles.Schema.UserMarble do
           id: Ecto.UUID.t() | nil,
           level: integer(),
           experience: integer(),
+          power_level: float(),
           meta: map(),
           user_id: Ecto.UUID.t() | nil,
           marble_id: Ecto.UUID.t() | nil,
           user: Ecto.Association.NotLoaded.t() | map(),
           marble: Ecto.Association.NotLoaded.t() | map(),
+          upgrades: Ecto.Association.NotLoaded.t() | [map()],
           inserted_at: NaiveDateTime.t() | nil,
           updated_at: NaiveDateTime.t() | nil
         }
@@ -20,6 +22,7 @@ defmodule Marbles.Schema.UserMarble do
   schema "user_marbles" do
     field :level, :integer, default: 1
     field :experience, :integer, default: 0
+    field :power_level, :float, default: 1.0
 
     # Metadata for addons, custom skins, or temporary buffs
     # e.g., %{"equipped_skin" => "gold_lustre", "bonus_speed" => 5}
@@ -27,13 +30,14 @@ defmodule Marbles.Schema.UserMarble do
 
     belongs_to :user, Marbles.Schema.User
     belongs_to :marble, Marbles.Schema.Marble
+    has_many :upgrades, Marbles.Schema.MarbleUpgrade
 
     timestamps()
   end
 
   def changeset(user_marble, attrs) do
     user_marble
-    |> cast(attrs, [:level, :experience, :meta, :user_id, :marble_id])
+    |> cast(attrs, [:level, :experience, :power_level, :meta, :user_id, :marble_id])
     |> validate_required([:user_id, :marble_id])
     |> unique_constraint([:user_id, :marble_id], name: :user_marbles_user_id_marble_id_index)
   end

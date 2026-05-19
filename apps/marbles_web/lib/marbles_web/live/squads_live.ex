@@ -1,4 +1,4 @@
-defmodule MarblesWeb.RosterLive do
+defmodule MarblesWeb.SquadsLive do
   @moduledoc """
   Squad builder, mining roster assignment, and collection browser.
   """
@@ -32,6 +32,7 @@ defmodule MarblesWeb.RosterLive do
        |> assign(:collection, marbles)
        |> assign(:collection_total, total)
        |> assign(:mine_marbles, mine_marbles)
+       |> assign(:roster_tab, :squads)
        |> assign(:show_marble_modal, false)
        |> assign(:marble_modal, nil)
        |> assign(:preview_texture_url, nil)
@@ -80,6 +81,17 @@ defmodule MarblesWeb.RosterLive do
   end
 
   def handle_event("cancel_edit", _params, socket), do: {:noreply, reset_editor(socket)}
+
+  def handle_event("set_roster_tab", %{"tab" => tab}, socket) do
+    tab_atom =
+      case tab do
+        "squads" -> :squads
+        "collection" -> :collection
+        _ -> :squads
+      end
+
+    {:noreply, assign(socket, :roster_tab, tab_atom)}
+  end
 
   def handle_event("set_role", %{"role" => role_str}, socket) do
     socket =
@@ -296,6 +308,7 @@ defmodule MarblesWeb.RosterLive do
     ~H"""
     <Layouts.app
       flash={@flash}
+      race_state={@race_state}
       current_scope={:roster}
       breadcrumbs={@breadcrumbs}
       show_login_modal={@show_login_modal}
@@ -334,9 +347,34 @@ defmodule MarblesWeb.RosterLive do
         <% else %>
           <%= if @editing_slot == nil do %>
             <.mine_section mine_marbles={@mine_marbles} mine_add_options={@mine_add_options} />
-          <% end %>
 
-          <%= if @editing_slot do %>
+            <div class="tabs tabs-boxed w-fit" role="tablist">
+              <button
+                id="tab-squads"
+                role="tab"
+                phx-click="set_roster_tab"
+                phx-value-tab="squads"
+                class={["tab", @roster_tab == :squads && "tab-active"]}
+              >
+                Squads
+              </button>
+              <button
+                id="tab-collection"
+                role="tab"
+                phx-click="set_roster_tab"
+                phx-value-tab="collection"
+                class={["tab", @roster_tab == :collection && "tab-active"]}
+              >
+                Collection <span class="ml-1 badge badge-sm">{@collection_total}</span>
+              </button>
+            </div>
+
+            <%= if @roster_tab == :squads do %>
+              <.squad_grid squads={@squads} max_slots={@max_slots} />
+            <% else %>
+              <.collection_grid collection={@collection} />
+            <% end %>
+          <% else %>
             <.editor
               slot={@editing_slot}
               name={@editor_name}
@@ -347,8 +385,6 @@ defmodule MarblesWeb.RosterLive do
               preview_texture_url={@preview_texture_url}
               squad={@editing_squad}
             />
-          <% else %>
-            <.squad_grid squads={@squads} max_slots={@max_slots} />
           <% end %>
         <% end %>
       </section>
@@ -529,6 +565,85 @@ defmodule MarblesWeb.RosterLive do
     """
   end
 
+  attr :collection, :list, required: true
+
+  defp collection_grid(assigns) do
+    ~H"""
+    <div id="collection-grid" class="grid gap-3 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
+      <%= for um <- @collection do %>
+        <article
+          id={"coll-card-#{um.id}"}
+          class="group rounded-2xl border border-base-300 bg-base-100/60 backdrop-blur overflow-hidden flex flex-col"
+        >
+          <%!-- Texture thumbnail --%>
+          <div class="relative h-24 bg-base-200/60 flex items-center justify-center overflow-hidden">
+            <%= if texture_url = marble_card_texture_url(um) do %>
+              <img
+                src={texture_url}
+                alt={um.marble.name}
+                class="h-full w-full object-contain group-hover:scale-105 transition-transform duration-200"
+              />
+            <% else %>
+              <.rarity_orb rarity={um.marble.rarity} />
+            <% end %>
+            <span class="absolute top-1.5 right-1.5 badge badge-xs badge-neutral opacity-80">
+              ★{um.marble.rarity}
+            </span>
+          </div>
+
+          <%!-- Info row --%>
+          <div class="flex items-center justify-between gap-2 px-3 py-2">
+            <div class="min-w-0">
+              <p class="font-semibold text-sm truncate">{um.marble.name}</p>
+              <p class="text-[11px] text-base-content/60">
+                {role_label_short(um.marble.role)} · Lv.{um.level}
+              </p>
+            </div>
+            <button
+              type="button"
+              phx-click="open_marble_info"
+              phx-value-user_marble_id={um.id}
+              id={"coll-info-#{um.id}"}
+              class="btn btn-ghost btn-xs shrink-0"
+              aria-label="Marble details"
+            >
+              <.icon name="hero-information-circle" class="size-4" />
+            </button>
+          </div>
+        </article>
+      <% end %>
+    </div>
+    """
+  end
+
+  attr :rarity, :integer, required: true
+
+  defp rarity_orb(assigns) do
+    color =
+      case assigns.rarity do
+        r when r >= 5 -> "from-yellow-400 to-orange-500"
+        4 -> "from-purple-400 to-indigo-500"
+        3 -> "from-blue-400 to-cyan-500"
+        _ -> "from-slate-400 to-slate-600"
+      end
+
+    assigns = assign(assigns, :color, color)
+
+    ~H"""
+    <div class={["size-12 rounded-full bg-linear-to-br opacity-80", @color]} />
+    """
+  end
+
+  defp marble_card_texture_url(%{marble: marble}) do
+    Assets.marble_texture_url(marble)
+  end
+
+  defp role_label_short(nil), do: "—"
+  defp role_label_short(:athlete), do: "Racer"
+  defp role_label_short(:coach), do: "Coach"
+  defp role_label_short(r) when is_atom(r), do: r |> Atom.to_string() |> String.capitalize()
+  defp role_label_short(r) when is_binary(r), do: String.capitalize(r)
+
   defp role_label(:racer_1), do: "Racer 1"
   defp role_label(:racer_2), do: "Racer 2"
   defp role_label(:racer_3), do: "Racer 3"
@@ -636,18 +751,30 @@ defmodule MarblesWeb.RosterLive do
                     phx-value-user_marble_id={um.id}
                     id={"pick-#{um.id}"}
                     class={[
-                      "flex-1 rounded-xl px-3 py-2 text-left text-sm transition",
+                      "flex-1 rounded-xl px-2 py-1.5 text-left text-sm transition flex items-center gap-2",
                       pick_used?(um.id, @picks) && "bg-primary/15",
                       not pick_used?(um.id, @picks) && "hover:bg-base-200/40"
                     ]}
                   >
-                    <div class="flex items-center justify-between gap-1">
-                      <span class="font-medium truncate">{um.marble.name}</span>
-                      <span class="badge badge-xs badge-outline">★{um.marble.rarity}</span>
+                    <%!-- Inline texture thumbnail --%>
+                    <%= if thumb = marble_card_texture_url(um) do %>
+                      <img
+                        src={thumb}
+                        alt=""
+                        class="size-9 rounded-lg object-contain shrink-0 bg-base-200/60"
+                      />
+                    <% else %>
+                      <div class="size-9 rounded-lg bg-base-200/60 shrink-0 flex items-center justify-center text-xs font-bold text-base-content/40">
+                        ★{um.marble.rarity}
+                      </div>
+                    <% end %>
+                    <div class="min-w-0">
+                      <div class="flex items-center justify-between gap-1">
+                        <span class="font-medium truncate">{um.marble.name}</span>
+                        <span class="badge badge-xs badge-outline shrink-0">★{um.marble.rarity}</span>
+                      </div>
+                      <p class="text-xs text-base-content/60">Lv. {um.level}</p>
                     </div>
-                    <p class="text-xs text-base-content/60 mt-0.5">
-                      Lv. {um.level}
-                    </p>
                   </button>
                   <button
                     type="button"

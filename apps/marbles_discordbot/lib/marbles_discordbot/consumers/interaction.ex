@@ -710,9 +710,6 @@ defmodule MarblesDiscordbot.Consumers.Interaction do
               end
 
             %{type: 4, data: %{content: "**Mine roster**\n#{lines}", flags: 64}}
-
-          _ ->
-            %{type: 4, data: %{content: "Could not load roster.", flags: 64}}
         end
 
       "add" ->

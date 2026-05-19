@@ -137,7 +137,14 @@ defmodule MarblesWeb.HomeLive do
   @impl true
   def render(assigns) do
     ~H"""
-    <Layouts.app flash={@flash} current_scope={nil} show_login_modal={@show_login_modal}>
+    <Layouts.app
+      flash={@flash}
+      race_state={@race_state}
+      current_user={@current_user}
+      current_scope={:home}
+      show_login_modal={@show_login_modal}
+    >
+      <Layouts.profile_mini_card current_user={@current_user} />
       <div id="home-page" class="relative isolate min-h-svh">
         <div
           aria-hidden="true"
@@ -162,23 +169,20 @@ defmodule MarblesWeb.HomeLive do
             >
               <div class="flex flex-wrap items-center gap-4 text-sm">
                 <span class="text-base-content/60">Wallet</span>
-                <span class="font-mono font-semibold text-primary">
-                  {@wallet.coins}
-                  <span class="text-xs font-normal text-base-content/60">
-                    {Currency.coin_emoji()}
-                  </span>
+                <span class="coin-chip">
+                  {@wallet.coins} {Currency.coin_emoji()}
                 </span>
-                <span class="font-mono font-semibold text-secondary">
-                  {@wallet.dust}
-                  <span class="text-xs font-normal text-base-content/60">
-                    {Currency.dust_emoji()}
-                  </span>
+                <span
+                  class="coin-chip"
+                  style="background: linear-gradient(135deg, oklch(72% 0.18 288) 0%, oklch(60% 0.22 290) 100%); color: oklch(96% 0.01 288);"
+                >
+                  {@wallet.dust} {Currency.dust_emoji()}
                 </span>
               </div>
             </div>
 
             <div class="grid gap-6 lg:grid-cols-2">
-              <section class="rounded-3xl border border-base-300 bg-base-100/60 p-6 backdrop-blur space-y-3">
+              <section class="rounded-3xl border border-base-300 bg-base-100/60 p-6 backdrop-blur space-y-3 panel-bevel">
                 <h2 class="text-sm font-semibold uppercase tracking-wider text-base-content/60">
                   Daily reward
                 </h2>
@@ -189,7 +193,7 @@ defmodule MarblesWeb.HomeLive do
                   <.link
                     navigate={~p"/daily"}
                     id="home-claim-daily"
-                    class="btn btn-primary btn-sm rounded-full"
+                    class="btn btn-primary btn-sm rounded-full btn-chunky"
                   >
                     Play Plinko →
                   </.link>
@@ -203,14 +207,14 @@ defmodule MarblesWeb.HomeLive do
                 <% end %>
               </section>
 
-              <section class="rounded-3xl border border-base-300 bg-base-100/60 p-6 backdrop-blur space-y-3">
+              <section class="rounded-3xl border border-base-300 bg-base-100/60 p-6 backdrop-blur space-y-3 panel-bevel">
                 <h2 class="text-sm font-semibold uppercase tracking-wider text-base-content/60">
                   Mining roster
                 </h2>
                 <%= if @mine_marbles == [] do %>
                   <p class="text-sm text-base-content/70">
                     No marbles assigned. Add them from your
-                    <.link navigate={~p"/roster"} class="link">roster →</.link>
+                    <.link navigate={~p"/squads"} class="link">roster →</.link>
                   </p>
                 <% else %>
                   <ul class="space-y-2 text-sm">
@@ -262,7 +266,7 @@ defmodule MarblesWeb.HomeLive do
           </div>
 
           <nav class="flex flex-wrap justify-center gap-3 pt-4">
-            <.link navigate={~p"/roster"} class="btn btn-ghost btn-sm rounded-full">
+            <.link navigate={~p"/squads"} class="btn btn-ghost btn-sm rounded-full">
               <.icon name="hero-user-group" class="size-4" /> Roster
             </.link>
             <.link navigate={~p"/gacha"} class="btn btn-ghost btn-sm rounded-full">
@@ -370,7 +374,7 @@ defmodule MarblesWeb.HomeLive do
         <button
           type="button"
           phx-click={Phoenix.LiveView.JS.dispatch("phx:race-dock:open")}
-          class="btn btn-sm btn-primary rounded-full"
+          class="btn btn-sm btn-primary rounded-full btn-chunky"
         >
           Open queue <.icon name="hero-arrow-right" class="size-4" />
         </button>

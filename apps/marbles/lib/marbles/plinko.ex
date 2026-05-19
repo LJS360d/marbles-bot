@@ -36,7 +36,8 @@ defmodule Marbles.Plinko do
 
   @type roll_result :: %{
           slot: slot(),
-          marble: map() | nil
+          marble: map() | nil,
+          seed: non_neg_integer()
         }
 
   @spec slots() :: [slot()]
@@ -56,17 +57,20 @@ defmodule Marbles.Plinko do
   """
   @spec roll(Ecto.UUID.t() | nil) :: roll_result()
   def roll(user_id \\ nil) do
-    slot = sample_slot()
+    seed = :crypto.strong_rand_bytes(4) |> :binary.decode_unsigned()
+    slot = sample_slot(seed)
     marble = if user_id, do: pick_marble(user_id), else: nil
-    %{slot: slot, marble: marble}
+    %{slot: slot, marble: marble, seed: seed}
   end
 
-  @spec sample_slot() :: slot()
-  defp sample_slot do
+  @spec sample_slot(non_neg_integer()) :: slot()
+  defp sample_slot(seed) do
+    rng = :rand.seed_s(:exsss, {seed, 0, 0})
     # std_dev ~1.4 keeps ~85% of mass in the three central slots
     std_dev = 1.4
-    u1 = max(:rand.uniform(), 1.0e-10)
-    u2 = :rand.uniform()
+    {u1_raw, rng} = :rand.uniform_s(rng)
+    u1 = max(u1_raw, 1.0e-10)
+    {u2, _rng} = :rand.uniform_s(rng)
     z = :math.sqrt(-2.0 * :math.log(u1)) * :math.cos(2.0 * :math.pi() * u2)
     idx = (@center_slot + z * std_dev) |> round() |> max(0) |> min(@num_slots - 1)
     Enum.at(@slots, idx)

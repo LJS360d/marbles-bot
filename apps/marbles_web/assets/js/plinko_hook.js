@@ -1,4 +1,5 @@
 import * as THREE from "three";
+import * as CANNON from "cannon-es";
 
 // ─── Board constants ──────────────────────────────────────────────────────────
 const NUM_ROWS = 6;
@@ -6,13 +7,19 @@ const NUM_SLOTS = 7;
 const SLOT_SPACING = 1.0;
 const ROW_SPACING = 0.85;
 const PEG_RADIUS = 0.07;
-const PEG_HEIGHT = 0.22;
 const MARBLE_RADIUS = 0.19;
 const ROW_TOP_Y = 2.5;
 const SLOT_Y = ROW_TOP_Y - NUM_ROWS * ROW_SPACING - 0.65;
 const MARBLE_START_Y = ROW_TOP_Y + 1.4;
+// Physics pegs extend along z — tall enough to always catch the marble
+const PEG_HEIGHT_PHYS = 3.0;
+// Gentle horizontal force (N) biasing ball toward target slot each physics step
+const GUIDE_FORCE = 0.9;
 
-// Row r has (r + 3) pegs, centered at x = 0, spacing 1.0
+function slotX(slotId) {
+  return (slotId - (NUM_SLOTS - 1) / 2) * SLOT_SPACING;
+}
+
 function pegPositionsForRow(row) {
   const count = row + 3;
   const start = -((count - 1) / 2.0);
@@ -22,61 +29,111 @@ function pegPositionsForRow(row) {
   }));
 }
 
-// Slot x centers: slot 0 = x = -3, slot 6 = x = 3
-function slotX(slotId) {
-  return (slotId - (NUM_SLOTS - 1) / 2) * SLOT_SPACING;
+// ─── Seeded RNG (mulberry32) ──────────────────────────────────────────────────
+function mulberry32(seed) {
+  let s = seed >>> 0;
+  return () => {
+    s = (s + 0x6d2b79f5) >>> 0;
+    let t = Math.imul(s ^ (s >>> 15), 1 | s);
+    t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+  };
 }
 
-// ─── Path generation ──────────────────────────────────────────────────────────
-// Generates a list of ±1 step decisions (right = +1, left = -1) such that
-// the marble starts at x=0 and ends at slotX(targetSlot).
-// Uses weighted randomness so path looks natural but always arrives correctly.
-function generatePath(targetSlot) {
-  let rightsLeft = targetSlot;          // rights needed to reach target slot
-  let leftsLeft = NUM_ROWS - targetSlot; // lefts needed
-  const steps = [];
+// ─── Physics simulation ───────────────────────────────────────────────────────
+function runSimulation(seed, targetSlot) {
+  const rng = mulberry32(seed);
+  const targetX = slotX(targetSlot);
 
-  for (let i = 0; i < NUM_ROWS; i++) {
-    const canRight = rightsLeft > 0;
-    const canLeft = leftsLeft > 0;
-    let goRight;
+  const world = new CANNON.World({ gravity: new CANNON.Vec3(0, -9.82, 0) });
 
-    if (canRight && canLeft) {
-      // Weighted toward the correct direction but not fully deterministic
-      const rightWeight = rightsLeft / (rightsLeft + leftsLeft);
-      goRight = Math.random() < rightWeight;
-    } else {
-      goRight = canRight;
-    }
+  const marbleMaterial = new CANNON.Material("marble");
+  const staticMaterial = new CANNON.Material("static");
+  world.addContactMaterial(
+    new CANNON.ContactMaterial(marbleMaterial, staticMaterial, {
+      restitution: 0.55,
+      friction: 0.15,
+    }),
+  );
 
-    steps.push(goRight ? 1 : -1);
-    if (goRight) rightsLeft--; else leftsLeft--;
-  }
-
-  return steps;
-}
-
-// Convert step decisions into world-space marble positions along the path.
-// Returns array of {x, y} checkpoints the marble passes through.
-function buildCheckpoints(steps) {
-  const checkpoints = [{ x: 0, y: MARBLE_START_Y }];
-  let x = 0;
+  // Pegs — cylinder oriented along z axis (same as Three.js peg.rotation.x = PI/2)
+  const pegShape = new CANNON.Cylinder(PEG_RADIUS, PEG_RADIUS, PEG_HEIGHT_PHYS, 8);
+  const pegQuat = new CANNON.Quaternion();
+  pegQuat.setFromAxisAngle(new CANNON.Vec3(1, 0, 0), Math.PI / 2);
 
   for (let r = 0; r < NUM_ROWS; r++) {
-    const rowY = ROW_TOP_Y - r * ROW_SPACING;
-    // Arrive just above peg
-    checkpoints.push({ x, y: rowY + MARBLE_RADIUS + PEG_RADIUS + 0.05 });
-    // Bounce: shift half a slot in the chosen direction
-    x += steps[r] * 0.5;
-    // Exit peg going down
-    checkpoints.push({ x, y: rowY - MARBLE_RADIUS - PEG_RADIUS - 0.1 });
+    for (const { x, y } of pegPositionsForRow(r)) {
+      const body = new CANNON.Body({ mass: 0, material: staticMaterial });
+      body.addShape(pegShape, new CANNON.Vec3(), pegQuat);
+      body.position.set(x, y, 0);
+      world.addBody(body);
+    }
   }
 
-  // Final fall into slot
-  checkpoints.push({ x, y: SLOT_Y + MARBLE_RADIUS + 0.05 });
-  checkpoints.push({ x, y: SLOT_Y - 0.15 });
+  // Slot dividers
+  const divShape = new CANNON.Box(new CANNON.Vec3(0.025, 0.5, 1.5));
+  for (let i = 0; i <= NUM_SLOTS; i++) {
+    const x = (i - NUM_SLOTS / 2) * SLOT_SPACING;
+    const body = new CANNON.Body({ mass: 0, material: staticMaterial });
+    body.addShape(divShape);
+    body.position.set(x, SLOT_Y + 0.45, 0);
+    world.addBody(body);
+  }
 
-  return checkpoints;
+  // Floor
+  const floorBody = new CANNON.Body({ mass: 0, material: staticMaterial });
+  floorBody.addShape(new CANNON.Plane());
+  floorBody.quaternion.setFromAxisAngle(new CANNON.Vec3(1, 0, 0), -Math.PI / 2);
+  floorBody.position.set(0, SLOT_Y - 0.55, 0);
+  world.addBody(floorBody);
+
+  // Marble — drop close to targetX with small seeded jitter
+  const initX = targetX + (rng() - 0.5) * 0.3;
+  const marbleBody = new CANNON.Body({
+    mass: 1,
+    material: marbleMaterial,
+    linearDamping: 0.01,
+    angularDamping: 0.6,
+  });
+  marbleBody.addShape(new CANNON.Sphere(MARBLE_RADIUS));
+  marbleBody.position.set(initX, MARBLE_START_Y, 0);
+
+  world.addBody(marbleBody);
+
+  const DT = 1 / 120;
+  const MAX_STEPS = 600; // 5 simulated seconds
+  const VISUAL_EVERY = 2; // record at ~60 fps visual
+  const frames = [];
+
+  for (let i = 0; i < MAX_STEPS; i++) {
+    // Apply gentle horizontal guidance toward target while marble is above slot area
+    if (marbleBody.position.y > SLOT_Y + MARBLE_RADIUS * 2) {
+      const dx = targetX - marbleBody.position.x;
+      marbleBody.applyForce(new CANNON.Vec3(dx * GUIDE_FORCE, 0, 0));
+    }
+
+    // Manual 2D constraint: keep marble in xy plane
+    marbleBody.velocity.z = 0;
+    marbleBody.position.z = 0;
+    marbleBody.angularVelocity.x = 0;
+    marbleBody.angularVelocity.y = 0;
+
+    world.step(DT);
+
+    if (i % VISUAL_EVERY === 0) {
+      frames.push({ x: marbleBody.position.x, y: marbleBody.position.y });
+    }
+
+    // Early exit: marble settled
+    const speed = Math.sqrt(
+      marbleBody.velocity.x ** 2 + marbleBody.velocity.y ** 2,
+    );
+    if (marbleBody.position.y < SLOT_Y + 0.1 && speed < 0.08 && i > 120) {
+      break;
+    }
+  }
+
+  return frames;
 }
 
 // ─── Texture helper ───────────────────────────────────────────────────────────
@@ -87,27 +144,19 @@ function loadMarbleTexture(url, onLoad) {
     const canonical = /^https?:\/\//i.test(url)
       ? new URL(url).href
       : new URL(url, window.location.origin).href;
-
-    loader.load(
-      canonical,
-      (tex) => {
-        tex.colorSpace = THREE.SRGBColorSpace;
-        tex.flipY = true;
-        onLoad(tex);
-      },
-      undefined,
-      () => onLoad(null),
-    );
+    loader.load(canonical, (tex) => {
+      tex.colorSpace = THREE.SRGBColorSpace;
+      onLoad(tex);
+    }, undefined, () => onLoad(null));
   } catch {
     onLoad(null);
   }
 }
 
-// ─── Scene builder ────────────────────────────────────────────────────────────
+// ─── Three.js scene ───────────────────────────────────────────────────────────
 function buildScene() {
   const scene = new THREE.Scene();
 
-  // Lights
   scene.add(new THREE.AmbientLight(0xffffff, 0.6));
   const key = new THREE.DirectionalLight(0xffffff, 1.2);
   key.position.set(3, 5, 4);
@@ -119,31 +168,24 @@ function buildScene() {
   rim.position.set(0, SLOT_Y + 1, 3);
   scene.add(rim);
 
-  // Board background plane
   const bgGeo = new THREE.PlaneGeometry(8.5, 10);
-  const bgMat = new THREE.MeshStandardMaterial({
-    color: 0x0d0d1a,
-    roughness: 0.9,
-    metalness: 0.1,
-  });
+  const bgMat = new THREE.MeshStandardMaterial({ color: 0x0d0d1a, roughness: 0.9, metalness: 0.1 });
   const bg = new THREE.Mesh(bgGeo, bgMat);
   bg.position.z = -0.4;
   scene.add(bg);
 
-  // Pegs
-  const pegGeo = new THREE.CylinderGeometry(PEG_RADIUS, PEG_RADIUS, PEG_HEIGHT, 12);
+  const pegGeo = new THREE.CylinderGeometry(PEG_RADIUS, PEG_RADIUS, 0.22, 12);
   const pegMat = new THREE.MeshStandardMaterial({ color: 0xaabbdd, metalness: 0.7, roughness: 0.3 });
 
   for (let r = 0; r < NUM_ROWS; r++) {
     for (const { x, y } of pegPositionsForRow(r)) {
       const peg = new THREE.Mesh(pegGeo, pegMat);
       peg.position.set(x, y, 0);
-      peg.rotation.x = Math.PI / 2; // cylinder along z-axis (toward camera)
+      peg.rotation.x = Math.PI / 2;
       scene.add(peg);
     }
   }
 
-  // Slot dividers (thin vertical bars at bottom)
   const slotColors = [0x4455aa, 0x5566cc, 0x8844ee, 0xcc3399, 0x8844ee, 0x5566cc, 0x4455aa];
   const dividerGeo = new THREE.BoxGeometry(0.04, 0.9, 0.1);
   const dividerY = SLOT_Y + 0.45;
@@ -156,8 +198,8 @@ function buildScene() {
     scene.add(div);
   }
 
-  // Slot floor indicators (colored bands)
   const floorGeo = new THREE.BoxGeometry(SLOT_SPACING - 0.06, 0.06, 0.15);
+  const slotMeshes = [];
 
   for (let s = 0; s < NUM_SLOTS; s++) {
     const mat = new THREE.MeshStandardMaterial({
@@ -168,11 +210,11 @@ function buildScene() {
     });
     const floor = new THREE.Mesh(floorGeo, mat);
     floor.position.set(slotX(s), SLOT_Y - 0.4, 0);
-    floor.userData.slotId = s;
     scene.add(floor);
+    slotMeshes.push({ mesh: floor, mat });
   }
 
-  return scene;
+  return { scene, slotMeshes };
 }
 
 // ─── Hook ─────────────────────────────────────────────────────────────────────
@@ -191,30 +233,30 @@ export const PlinkoScene = {
     this._camera.position.set(0, 0.5, 9.5);
     this._camera.lookAt(0, 0.5, 0);
 
-    this._scene = buildScene();
+    const { scene, slotMeshes } = buildScene();
+    this._scene = scene;
+    this._slotMeshes = slotMeshes;
 
-    // Marble mesh (added to scene, starts above board)
+    // Marble mesh
     const marbleGeo = new THREE.SphereGeometry(MARBLE_RADIUS, 40, 40);
-    this._marbleMat = new THREE.MeshStandardMaterial({
-      color: 0x6b7280,
-      roughness: 0.3,
-      metalness: 0.1,
-    });
+    this._marbleMat = new THREE.MeshStandardMaterial({ color: 0x6b7280, roughness: 0.3, metalness: 0.1 });
     this._marble = new THREE.Mesh(marbleGeo, this._marbleMat);
     this._marble.position.set(0, MARBLE_START_Y, 0.25);
     this._scene.add(this._marble);
 
-    this._animState = "idle"; // idle | dropping | done
-    this._animCheckpoints = null;
-    this._animProgress = 0;
-    this._animCheckpointIdx = 0;
+    this._mode = "idle"; // idle | replay | done
+    this._replayFrames = null;
+    this._replayStartTime = null;
     this._targetSlotId = null;
+    this._lastTime = null;
+    this._marbleRz = 0;
+    this._prevFrameX = 0;
 
     this._onResize = () => this._resize();
     window.addEventListener("resize", this._onResize);
 
-    this.handleEvent("plinko:drop", ({ slot, texture_url }) => {
-      this._startDrop(slot, texture_url);
+    this.handleEvent("plinko:drop", ({ slot, seed, texture_url }) => {
+      this._startDrop(slot, seed, texture_url);
     });
 
     this._resize();
@@ -235,21 +277,17 @@ export const PlinkoScene = {
     this._camera.updateProjectionMatrix();
   },
 
-  _startDrop(targetSlot, textureUrl) {
-    this._animState = "dropping";
+  _startDrop(targetSlot, seed, textureUrl) {
+    this._mode = "simulating";
     this._targetSlotId = targetSlot;
 
-    const steps = generatePath(targetSlot);
-    this._animCheckpoints = buildCheckpoints(steps);
-    this._animCheckpointIdx = 0;
-    this._animProgress = 0;
-    this._lastTime = null;
-
-    // Reset marble to start position
+    // Reset marble
     this._marble.position.set(0, MARBLE_START_Y, 0.25);
     this._marble.visible = true;
+    this._marbleRz = 0;
+    this._prevFrameX = 0;
 
-    // Load texture if provided
+    // Load texture while simulation runs (fast sync loop)
     loadMarbleTexture(textureUrl, (tex) => {
       if (tex) {
         this._marbleMat.map = tex;
@@ -260,49 +298,21 @@ export const PlinkoScene = {
       }
       this._marbleMat.needsUpdate = true;
     });
-  },
 
-  _updateAnimation(dt) {
-    if (this._animState !== "dropping") return;
-    const checkpoints = this._animCheckpoints;
-    if (!checkpoints || this._animCheckpointIdx >= checkpoints.length - 1) return;
-
-    const i = this._animCheckpointIdx;
-    const from = checkpoints[i];
-    const to = checkpoints[i + 1];
-
-    // Ease in-out per segment, faster in middle rows
-    const segmentDuration = i === 0 ? 0.38 : i >= checkpoints.length - 3 ? 0.32 : 0.18;
-    this._animProgress += dt / segmentDuration;
-
-    if (this._animProgress >= 1.0) {
-      this._animProgress = 0;
-      this._animCheckpointIdx++;
-
-      if (this._animCheckpointIdx >= checkpoints.length - 1) {
-        // Snap to final position
-        const last = checkpoints[checkpoints.length - 1];
-        this._marble.position.set(last.x, last.y, 0.25);
-        this._animState = "done";
-        this._highlightSlot(this._targetSlotId);
-        this.pushEvent("plinko:done", {});
-        return;
-      }
-    }
-
-    const t = easeInOut(this._animProgress);
-    const x = from.x + (to.x - from.x) * t;
-    const y = from.y + (to.y - from.y) * t;
-    this._marble.position.set(x, y, 0.25);
-    this._marble.rotation.z -= dt * 4.5 * (to.x - from.x > 0 ? 1 : -1);
+    // Run fast-forward physics simulation synchronously
+    const frames = runSimulation(seed, targetSlot);
+    this._replayFrames = frames;
+    this._replayStartTime = null;
+    this._mode = "replay";
   },
 
   _highlightSlot(slotId) {
-    this._scene.traverse((obj) => {
-      if (obj.userData.slotId === slotId) {
-        obj.material.emissiveIntensity = 1.0;
-      }
-    });
+    for (const { mat } of this._slotMeshes) {
+      mat.emissiveIntensity = 0.3;
+    }
+    if (slotId >= 0 && slotId < this._slotMeshes.length) {
+      this._slotMeshes[slotId].mat.emissiveIntensity = 1.2;
+    }
   },
 
   _loop() {
@@ -310,18 +320,36 @@ export const PlinkoScene = {
       const dt = this._lastTime != null ? Math.min((ts - this._lastTime) / 1000, 0.1) : 0;
       this._lastTime = ts;
 
-      if (this._animState === "idle") {
+      if (this._mode === "idle") {
         this._marble.rotation.y += dt * 0.6;
-      }
+      } else if (this._mode === "replay") {
+        if (this._replayStartTime === null) this._replayStartTime = ts;
 
-      this._updateAnimation(dt);
+        const elapsed = ts - this._replayStartTime;
+        // ~60fps recorded frames → each frame is ~16.67ms
+        const frameIdx = Math.min(
+          Math.floor(elapsed / (1000 / 60)),
+          this._replayFrames.length - 1,
+        );
+        const frame = this._replayFrames[frameIdx];
+
+        // Rolling rotation based on horizontal movement
+        const dz = frame.x - this._prevFrameX;
+        this._marbleRz -= dz * 3.0;
+        this._prevFrameX = frame.x;
+
+        this._marble.position.set(frame.x, frame.y, 0.25);
+        this._marble.rotation.z = this._marbleRz;
+
+        if (frameIdx >= this._replayFrames.length - 1) {
+          this._mode = "done";
+          this._highlightSlot(this._targetSlotId);
+          this.pushEvent("plinko:done", {});
+        }
+      }
 
       this._renderer.render(this._scene, this._camera);
       this._loop();
     });
   },
 };
-
-function easeInOut(t) {
-  return t < 0.5 ? 2 * t * t : -1 + (4 - 2 * t) * t;
-}

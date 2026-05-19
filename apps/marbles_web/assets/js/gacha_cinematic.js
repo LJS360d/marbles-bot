@@ -257,7 +257,7 @@ const GachaCinematic = {
       el.dataset.gachaCinematicLoading = "";
       el.className =
         "pointer-events-auto absolute inset-0 z-30 flex flex-col items-center justify-center gap-4 bg-black/75 text-white";
-      el.innerHTML = `<div class="h-12 w-12 rounded-full border-2 border-white/20 border-t-white animate-spin" aria-hidden="true"></div><p class="text-sm font-medium tracking-wide text-white/90">Loading scene…</p>`;
+      el.innerHTML = `<div class="h-12 w-12 rounded-full border-2 border-white/20 border-t-white animate-spin" aria-hidden="true"></div>`;
       this.el.appendChild(el);
     }
     return el;
@@ -303,8 +303,7 @@ const GachaCinematic = {
     if (this.legendaryOverlayEl) return;
     const wrap = document.createElement("div");
     wrap.dataset.gachaLegendaryOverlay = "";
-    wrap.className =
-      "pointer-events-none absolute inset-0 z-30 opacity-0 transition-opacity duration-150";
+    wrap.className = "pointer-events-none absolute inset-0 z-30 opacity-0 transition-opacity duration-150";
     wrap.innerHTML = `<div data-gacha-legendary-flicker class="absolute inset-0 bg-black opacity-0"></div><div class="absolute inset-0 flex flex-col items-center justify-center gap-5 px-6 text-center"><img data-gacha-legendary-logo alt="Team logo" class="hidden h-28 w-28 rounded-full border border-amber-200/60 bg-black/35 p-2 shadow-[0_0_34px_rgba(251,191,36,0.45)]"/><p data-gacha-legendary-stars class="text-5xl font-bold tracking-[0.32em] text-amber-300 drop-shadow-[0_0_20px_rgba(251,191,36,0.8)] opacity-0">★★★</p></div>`;
     this.el.appendChild(wrap);
     this.legendaryOverlayEl = wrap;
@@ -315,7 +314,9 @@ const GachaCinematic = {
 
   hideLegendaryOverlay(forceRemove = false) {
     if (!this.legendaryOverlayEl) return;
-    gsap.killTweensOf([this.legendaryOverlayEl, this.legendaryFlickerEl, this.legendaryStarsEl].filter(Boolean));
+    gsap.killTweensOf(
+      [this.legendaryOverlayEl, this.legendaryFlickerEl, this.legendaryStarsEl].filter(Boolean),
+    );
     if (this.legendaryFlickerEl) {
       this.legendaryFlickerEl.style.animation = "none";
       this.legendaryFlickerEl.style.opacity = "0";
@@ -716,7 +717,7 @@ const GachaCinematic = {
 
     const totalDist = Math.max(1e-4, spawn.distanceTo(rollCross));
     const rarity = Number(entry?.rarity) || 1;
-    const durationSec = Math.max(0.26, (0.34 - rarity * 0.012));
+    const durationSec = Math.max(0.26, 0.34 - rarity * 0.012);
     const spinScale = (1.05 * totalDist) / radius;
     const proxy = { t: 0 };
     this.marbleRollProxy = proxy;
@@ -938,7 +939,10 @@ const GachaCinematic = {
     const spawnDistance = Math.max(1.95, tunnelDepth * 0.82);
     const rollY = startLine.y - 0.9;
     this.trackRollY = rollY;
-    this.marbleSpawnPoint = startLine.clone().addScaledVector(tunnelDir, spawnDistance).setY(rollY + 0.04);
+    this.marbleSpawnPoint = startLine
+      .clone()
+      .addScaledVector(tunnelDir, spawnDistance)
+      .setY(rollY + 0.04);
     this.raceLightFocus = avgLight.clone();
   },
 

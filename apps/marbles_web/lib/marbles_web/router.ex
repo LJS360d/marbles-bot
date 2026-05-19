@@ -1,6 +1,8 @@
 defmodule MarblesWeb.Router do
   use MarblesWeb, :router
 
+  import Phoenix.LiveDashboard.Router
+
   pipeline :browser do
     plug :accepts, ["html"]
     plug :fetch_session
@@ -56,15 +58,29 @@ defmodule MarblesWeb.Router do
       on_mount: [{MarblesWeb.Live.AuthHooks, :assign_current_user}] do
       live "/", HomeLive, :index
       live "/daily", PlinkoLive, :index
+      live "/plinko", PlinkoLive, :index
       live "/gacha", GachaLive, :index
       live "/calendar", CalendarLive, :index
       live "/events/:id", EventLive, :show
       live "/race/:id", RaceLive, :show
+
+      live "/races", RacesLive, :index
+      live "/races/calendar", CalendarLive, :index
+      live "/races/race/:id", RaceLive, :show
+      live "/races/event/:id", EventLive, :show
+
+      live "/mine", MiningLive, :index
+      live "/shop", ShopLive, :index
     end
 
     live_session :authed_pages,
       on_mount: [{MarblesWeb.Live.AuthHooks, :assign_current_user}] do
-      live "/roster", RosterLive, :index
+      live "/squads", SquadsLive, :index
+
+      live "/inventory", InventoryLive, :index
+      live "/upgrade-marble", UpgradeMarbleLive, :index
+      live "/profile", ProfileLive, :index
+      live "/profile/upgrade", UpgradeMarbleLive, :index
     end
   end
 
@@ -108,6 +124,24 @@ defmodule MarblesWeb.Router do
       live "/events", OwnerEventsLive, :index
       live "/events/new", OwnerEventEditLive, :new
       live "/events/:id/edit", OwnerEventEditLive, :edit
+      live "/templates", OwnerEventTemplatesLive, :index
+      live "/templates/new", OwnerEventTemplateEditLive, :new
+      live "/templates/:id/edit", OwnerEventTemplateEditLive, :edit
+      live "/schedules", OwnerSchedulesLive, :index
+      live "/schedules/new", OwnerScheduleEditLive, :new
+      live "/schedules/:id/edit", OwnerScheduleEditLive, :edit
+      live "/tracks", OwnerTracksLive, :index
+      live "/tracks/new", OwnerTrackEditLive, :new
+      live "/tracks/:id/edit", OwnerTrackEditLive, :edit
+      live "/weather", OwnerWeatherLive, :index
+      live "/abilities", OwnerAbilitiesLive, :index
+      live "/upgrades", OwnerUpgradesLive, :index
+      live "/queue", OwnerQueueLive, :index
+      live "/replays", OwnerReplaysLive, :index
+      live "/effects", OwnerEffectsLive, :index
+      live "/analytics", OwnerAnalyticsLive, :index
+      live "/audit-log", OwnerAuditLive, :index
+      live "/broadcast", BroadcastLive, :index
     end
 
     live_session :owner_guilds,
@@ -118,25 +152,11 @@ defmodule MarblesWeb.Router do
       live "/guilds", GuildListLive, :index
       live "/guilds/:guild_id", GuildDetailLive, :show
     end
-  end
 
-  scope "/broadcast", MarblesWeb do
-    pipe_through [:browser, :auth, :require_owner]
-
-    live_session :broadcast,
-      on_mount: [{MarblesWeb.Live.AuthHooks, :require_owner}] do
-      live "/", BroadcastLive, :index
-    end
+    live_dashboard "/system", metrics: MarblesWeb.Telemetry
   end
 
   if Application.compile_env(:marbles_web, :dev_routes) do
-    # If you want to use the LiveDashboard in production, you should put
-    # it behind authentication and allow only admins to access it.
-    # If your application does not have an admins-only section yet,
-    # you can use Plug.BasicAuth to set up some basic authentication
-    # as long as you are also using SSL (which you should anyway).
-    import Phoenix.LiveDashboard.Router
-
     scope "/dev", MarblesWeb do
       pipe_through [:browser, :auth]
 
@@ -144,13 +164,6 @@ defmodule MarblesWeb.Router do
         on_mount: [{MarblesWeb.Live.AuthHooks, :assign_current_user}] do
         live "/sandbox", Dev.SandboxLive, :index
       end
-    end
-
-    scope "/dev" do
-      pipe_through :browser
-
-      live_dashboard "/dashboard", metrics: MarblesWeb.Telemetry
-      forward "/mailbox", Plug.Swoosh.MailboxPreview
     end
   end
 end

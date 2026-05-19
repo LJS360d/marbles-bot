@@ -6,6 +6,7 @@ defmodule Marbles.Economy.Admin do
   alias Marbles.Repo
 
   alias Marbles.Schema.{
+    RaceQueueBot,
     ShopItem,
     UserDailyStreak,
     UserEffect,
@@ -68,14 +69,17 @@ defmodule Marbles.Economy.Admin do
         on: i.user_id == u.id and i.platform == "discord",
         left_join: d in UserDailyStreak,
         on: d.user_id == u.id,
-        order_by: [asc: i.username, asc: u.id],
+        left_join: b in RaceQueueBot,
+        on: b.user_id == u.id,
+        order_by: [asc: not is_nil(b.id), asc: i.username, asc: u.id],
         select: %{
           id: u.id,
           username: coalesce(i.username, u.display_name),
           currency: coalesce(w.coins, 0),
           dust: coalesce(w.dust, 0),
           last_daily_at: d.last_claimed_at,
-          streak: d.current_streak
+          streak: d.current_streak,
+          is_bot: not is_nil(b.id)
         }
       )
 

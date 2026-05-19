@@ -4,7 +4,7 @@ defmodule Marbles.Leaderboards do
   import Ecto.Query
   alias Marbles.Inventory
   alias Marbles.Repo
-  alias Marbles.Schema.{User, UserIdentity, UserInventory, UserMarble}
+  alias Marbles.Schema.{RaceQueueBot, User, UserIdentity, UserInventory, UserMarble}
 
   @type row :: %{rank: pos_integer(), user_id: Ecto.UUID.t(), label: String.t(), score: integer()}
 
@@ -18,6 +18,7 @@ defmodule Marbles.Leaderboards do
       )
 
     from(u in User,
+      as: :user,
       left_join: c in subquery(coins_subquery),
       on: c.user_id == u.id,
       left_join: i in UserIdentity,
@@ -30,6 +31,7 @@ defmodule Marbles.Leaderboards do
         score: coalesce(c.quantity, 0)
       }
     )
+    |> exclude_bots()
     |> Repo.all()
     |> with_ranks()
   end
@@ -44,6 +46,7 @@ defmodule Marbles.Leaderboards do
 
     from(s in subquery(sub),
       join: u in User,
+      as: :user,
       on: u.id == s.user_id,
       left_join: i in UserIdentity,
       on: i.user_id == u.id and i.platform == "discord",
@@ -55,6 +58,7 @@ defmodule Marbles.Leaderboards do
         score: s.cnt
       }
     )
+    |> exclude_bots()
     |> Repo.all()
     |> with_ranks()
   end
@@ -72,6 +76,7 @@ defmodule Marbles.Leaderboards do
 
     from(s in subquery(sub),
       join: u in User,
+      as: :user,
       on: u.id == s.user_id,
       left_join: i in UserIdentity,
       on: i.user_id == u.id and i.platform == "discord",
@@ -83,10 +88,16 @@ defmodule Marbles.Leaderboards do
         score: s.best
       }
     )
+    |> exclude_bots()
     |> Repo.all()
     |> with_ranks()
   end
 
   defp with_ranks(rows),
     do: Enum.with_index(rows, 1) |> Enum.map(fn {m, i} -> Map.put(m, :rank, i) end)
+
+  defp exclude_bots(query) do
+    bot_ids = from(b in RaceQueueBot, select: b.user_id)
+    where(query, [user: u], u.id not in subquery(bot_ids))
+  end
 end

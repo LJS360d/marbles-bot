@@ -19,6 +19,8 @@ defmodule Marbles.Schema.Event do
     field :config, :map, default: %{}
     field :active, :boolean, default: true
 
+    belongs_to :template, Marbles.Schema.EventTemplate
+    belongs_to :cloned_from, __MODULE__, foreign_key: :cloned_from_id
     has_many :registrations, Marbles.Schema.EventRegistration, foreign_key: :event_id
 
     timestamps()
@@ -34,6 +36,10 @@ defmodule Marbles.Schema.Event do
           event_type: :scheduled_race | :tournament | :special_event | nil,
           config: map() | nil,
           active: boolean() | nil,
+          template_id: Ecto.UUID.t() | nil,
+          cloned_from_id: Ecto.UUID.t() | nil,
+          template: Ecto.Association.NotLoaded.t() | Marbles.Schema.EventTemplate.t() | nil,
+          cloned_from: Ecto.Association.NotLoaded.t() | t() | nil,
           registrations: Ecto.Association.NotLoaded.t() | [Marbles.Schema.EventRegistration.t()],
           inserted_at: NaiveDateTime.t() | nil,
           updated_at: NaiveDateTime.t() | nil
@@ -49,7 +55,9 @@ defmodule Marbles.Schema.Event do
       :banner_path,
       :event_type,
       :config,
-      :active
+      :active,
+      :template_id,
+      :cloned_from_id
     ])
     |> validate_required([:name, :start_time, :end_time, :event_type])
     |> validate_datetime_order()

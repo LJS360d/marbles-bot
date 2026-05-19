@@ -1,9 +1,7 @@
 defmodule MarblesWeb.Admin.OwnerPackBuilderLive do
   use MarblesWeb, :live_view
   alias Marbles.Packs
-  alias Marbles.Catalog
   alias Marbles.Schema.Pack
-  alias Marbles.Storage
 
   @impl true
   def mount(_params, _session, socket) do
@@ -17,11 +15,6 @@ defmodule MarblesWeb.Admin.OwnerPackBuilderLive do
         {"Pack", nil}
       ])
       |> assign(:wide, true)
-      |> assign(:file_picker_open, false)
-      |> assign(:file_picker_path, "")
-      |> assign(:file_picker_entries, [])
-      |> assign(:file_picker_move_from, nil)
-      |> allow_upload(:bucket_file, accept: :any, max_entries: 1)
 
     {:ok, socket}
   end
@@ -55,9 +48,6 @@ defmodule MarblesWeb.Admin.OwnerPackBuilderLive do
           assign(socket, pack: pack, form: form, marble_ids: marble_ids, rule_rows: rule_rows)
       end
 
-    marbles = Catalog.list_marbles(per_page: 500) |> elem(0)
-    teams = Catalog.list_teams()
-
     copy_rule_options =
       Packs.list_all_packs(order: :name)
       |> Enum.map(&{&1.name, &1.id})
@@ -74,112 +64,21 @@ defmodule MarblesWeb.Admin.OwnerPackBuilderLive do
 
     socket =
       socket
-      |> assign(:marbles, marbles)
-      |> assign(:teams, teams)
-      |> assign(:marble_search, "")
-      |> assign(:marble_filter_team_id, nil)
-      |> assign(:marble_filter_rarity, nil)
-      |> assign(:filtered_marbles, apply_marble_filters(marbles, "", nil, nil))
       |> assign(:copy_rule_options, copy_rule_options)
       |> assign(:copy_rule_pack_id, default_copy_rule_pack_id)
       |> assign(:copy_rule_dialog_open, false)
-      |> assign_new(:file_picker_open, fn -> false end)
-      |> assign_new(:file_picker_path, fn -> "" end)
-      |> assign_new(:file_picker_entries, fn -> [] end)
-      |> assign_new(:file_picker_move_from, fn -> nil end)
 
     {:noreply, socket}
   end
 
-  defp load_file_picker_entries(socket) do
-    path = socket.assigns.file_picker_path || ""
-
-    case Storage.list_path(path) do
-      {:ok, entries} ->
-        assign(socket, :file_picker_entries, entries)
-
-      {:error, _} ->
-        assign(socket, :file_picker_entries, [])
-    end
+  @impl true
+  def handle_info({:file_picker_selected, "banner-picker", path}, socket) do
+    changeset = socket.assigns.form.source |> Ecto.Changeset.put_change(:banner_path, path)
+    {:noreply, assign(socket, :form, to_form(changeset, as: "pack"))}
   end
 
-  defp upload_error_message({:http_error, _status, %{body: body}}) when is_binary(body) do
-    case Regex.run(~r/<Message>(.*?)<\/Message>/s, body) do
-      [_, msg] -> String.trim(msg)
-      _ -> "Access Denied"
-    end
-  end
-
-  defp upload_error_message({:http_error, status, _}), do: "HTTP #{status}"
-  defp upload_error_message(other), do: inspect(other)
-
-  defp file_picker_breadcrumbs(path) do
-    bucket_name = Application.get_env(:marbles, :s3_bucket) || "root"
-
-    if path == "" or path == nil do
-      [{"", bucket_name}]
-    else
-      parts = path |> String.split("/", trim: true)
-
-      [
-        {"", bucket_name}
-        | Enum.with_index(parts)
-          |> Enum.map(fn {p, i} -> {Enum.take(parts, i + 1) |> Enum.join("/"), p} end)
-      ]
-    end
-  end
-
-  defp offer_date_input(nil), do: ""
-
-  defp offer_date_input(%DateTime{} = dt) do
-    dt |> DateTime.shift_zone!("Etc/UTC") |> DateTime.to_date() |> Date.to_iso8601()
-  rescue
-    _ -> ""
-  end
-
-  defp offer_date_input(_), do: ""
-
-  defp rule_rows_from_rules(rules) do
-    Enum.map(rules, fn r ->
-      scope =
-        cond do
-          r.apply_1x && r.apply_10x -> "both"
-          r.apply_1x -> "1x_only"
-          true -> "10x_only"
-        end
-
-      %{
-        effect_type: r.effect_type,
-        discount_percent: r.discount_percent,
-        min_rarity: r.min_rarity || 3,
-        scope: scope,
-        trigger_type: r.trigger_type,
-        lifetime_max_uses: r.lifetime_max_uses || "",
-        period_unit: r.period_unit || "day",
-        every_n_pulls: r.every_n_pulls || 10,
-        starts_at: offer_date_input(r.starts_at),
-        ends_at: offer_date_input(r.ends_at)
-      }
-    end)
-  end
-
-  defp safe_get_pack(""), do: :error
-
-  defp safe_get_pack(pack_id) when is_binary(pack_id) do
-    try do
-      {:ok, Packs.get_pack!(pack_id)}
-    rescue
-      Ecto.NoResultsError -> :error
-    end
-  end
-
-  defp apply_marble_filters(marbles, search, team_id, rarity) do
-    marbles
-    |> Enum.filter(fn m ->
-      (search == "" or String.contains?(String.downcase(m.name), String.downcase(search))) and
-        (is_nil(team_id) or (m.team_id && m.team_id == team_id)) and
-        (is_nil(rarity) or m.rarity == rarity)
-    end)
+  def handle_info({:marble_selection_changed, ids}, socket) do
+    {:noreply, assign(socket, :marble_ids, ids)}
   end
 
   @impl true
@@ -319,181 +218,48 @@ defmodule MarblesWeb.Admin.OwnerPackBuilderLive do
     end
   end
 
-  @impl true
-  def handle_event("toggle_marble", %{"id" => id}, socket) do
-    ids = socket.assigns.marble_ids
-    marble_ids = if id in ids, do: List.delete(ids, id), else: [id | ids]
-    {:noreply, assign(socket, marble_ids: marble_ids)}
+  defp offer_date_input(nil), do: ""
+
+  defp offer_date_input(%DateTime{} = dt) do
+    dt |> DateTime.shift_zone!("Etc/UTC") |> DateTime.to_date() |> Date.to_iso8601()
+  rescue
+    _ -> ""
   end
 
-  @impl true
-  def handle_event("marble_filter", params, socket) do
-    q = Map.get(params, "q", "") || ""
+  defp offer_date_input(_), do: ""
 
-    team_id =
-      case params["team_id"] do
-        "" -> nil
-        id -> id
-      end
-
-    rarity =
-      case params["rarity"] do
-        "" -> nil
-        r -> String.to_integer(r)
-      end
-
-    marbles = socket.assigns.marbles
-
-    {:noreply,
-     socket
-     |> assign(:marble_search, q)
-     |> assign(:marble_filter_team_id, team_id)
-     |> assign(:marble_filter_rarity, rarity)
-     |> assign(:filtered_marbles, apply_marble_filters(marbles, q, team_id, rarity))}
-  end
-
-  @impl true
-  def handle_event("file_picker_validate", _params, socket) do
-    {:noreply, socket}
-  end
-
-  @impl true
-  def handle_event("select_all_shown", _params, socket) do
-    ids = Enum.map(socket.assigns.filtered_marbles, & &1.id)
-    current = socket.assigns.marble_ids
-    marble_ids = Enum.uniq(ids ++ current)
-    {:noreply, assign(socket, marble_ids: marble_ids)}
-  end
-
-  @impl true
-  def handle_event("deselect_all_shown", _params, socket) do
-    remove_ids = MapSet.new(Enum.map(socket.assigns.filtered_marbles, & &1.id))
-    marble_ids = Enum.reject(socket.assigns.marble_ids, &(&1 in remove_ids))
-    {:noreply, assign(socket, marble_ids: marble_ids)}
-  end
-
-  @impl true
-  def handle_event("select_all_team", %{"team_id" => team_id}, socket) do
-    team_ids = Enum.filter(socket.assigns.marbles, &(&1.team_id == team_id)) |> Enum.map(& &1.id)
-    marble_ids = Enum.uniq((socket.assigns.marble_ids || []) ++ team_ids)
-    {:noreply, assign(socket, marble_ids: marble_ids)}
-  end
-
-  @impl true
-  def handle_event("deselect_all_team", %{"team_id" => team_id}, socket) do
-    remove_ids =
-      MapSet.new(
-        Enum.filter(socket.assigns.marbles, &(&1.team_id == team_id))
-        |> Enum.map(& &1.id)
-      )
-
-    marble_ids = Enum.reject(socket.assigns.marble_ids, &(&1 in remove_ids))
-    {:noreply, assign(socket, marble_ids: marble_ids)}
-  end
-
-  @impl true
-  def handle_event("open_file_picker", _params, socket) do
-    current = Ecto.Changeset.get_field(socket.assigns.form.source, :banner_path) || ""
-    dir = if current == "", do: "", else: Path.dirname(current)
-
-    {:noreply,
-     socket
-     |> assign(:file_picker_open, true)
-     |> assign(:file_picker_path, dir)
-     |> assign(:file_picker_move_from, nil)
-     |> load_file_picker_entries()}
-  end
-
-  @impl true
-  def handle_event("close_file_picker", _params, socket) do
-    socket = assign(socket, :file_picker_open, false)
-
-    socket =
-      Enum.reduce(socket.assigns.uploads.bucket_file.entries, socket, fn entry, s ->
-        Phoenix.LiveView.cancel_upload(s, :bucket_file, entry.ref)
-      end)
-
-    {:noreply, socket}
-  end
-
-  @impl true
-  def handle_event("file_picker_navigate", %{"path" => path}, socket) do
-    {:noreply,
-     socket
-     |> assign(:file_picker_path, path)
-     |> assign(:file_picker_move_from, nil)
-     |> load_file_picker_entries()}
-  end
-
-  @impl true
-  def handle_event("file_picker_select", %{"path" => path}, socket) do
-    changeset = socket.assigns.form.source |> Ecto.Changeset.put_change(:banner_path, path)
-
-    socket =
-      socket
-      |> assign(:form, to_form(changeset, as: "pack"))
-      |> assign(:file_picker_open, false)
-
-    socket =
-      Enum.reduce(socket.assigns.uploads.bucket_file.entries, socket, fn entry, s ->
-        Phoenix.LiveView.cancel_upload(s, :bucket_file, entry.ref)
-      end)
-
-    {:noreply, socket}
-  end
-
-  @impl true
-  def handle_event("file_picker_confirm_upload", _params, socket) do
-    path_prefix = socket.assigns.file_picker_path || ""
-    dest_path = if path_prefix == "", do: "", else: path_prefix
-
-    result =
-      consume_uploaded_entries(socket, :bucket_file, fn %{path: tmp_path}, entry ->
-        filename = entry.client_name |> Path.basename()
-        dest = if dest_path == "", do: filename, else: Path.join(dest_path, filename)
-        binary = File.read!(tmp_path)
-
-        case Storage.put_file(binary, dest) do
-          {:ok, _} -> {:ok, dest}
-          {:error, reason} -> {:ok, {:error, reason}}
+  defp rule_rows_from_rules(rules) do
+    Enum.map(rules, fn r ->
+      scope =
+        cond do
+          r.apply_1x && r.apply_10x -> "both"
+          r.apply_1x -> "1x_only"
+          true -> "10x_only"
         end
-      end)
 
-    socket =
-      case Enum.find(result, &match?({:error, _}, &1)) do
-        {:error, reason} ->
-          put_flash(socket, :error, "Upload failed: #{upload_error_message(reason)}")
-
-        nil ->
-          socket
-      end
-      |> load_file_picker_entries()
-
-    {:noreply, socket}
+      %{
+        effect_type: r.effect_type,
+        discount_percent: r.discount_percent,
+        min_rarity: r.min_rarity || 3,
+        scope: scope,
+        trigger_type: r.trigger_type,
+        lifetime_max_uses: r.lifetime_max_uses || "",
+        period_unit: r.period_unit || "day",
+        every_n_pulls: r.every_n_pulls || 10,
+        starts_at: offer_date_input(r.starts_at),
+        ends_at: offer_date_input(r.ends_at)
+      }
+    end)
   end
 
-  @impl true
-  def handle_event("file_picker_move", %{"from" => from, "to" => to}, socket) do
-    case Storage.move(from, to) do
-      :ok ->
-        {:noreply,
-         socket
-         |> assign(:file_picker_move_from, nil)
-         |> load_file_picker_entries()}
+  defp safe_get_pack(""), do: :error
 
-      {:error, _} ->
-        {:noreply, put_flash(socket, :error, "Move failed.")}
+  defp safe_get_pack(pack_id) when is_binary(pack_id) do
+    try do
+      {:ok, Packs.get_pack!(pack_id)}
+    rescue
+      Ecto.NoResultsError -> :error
     end
-  end
-
-  @impl true
-  def handle_event("file_picker_set_move_from", %{"path" => path}, socket) do
-    {:noreply, assign(socket, :file_picker_move_from, path)}
-  end
-
-  @impl true
-  def handle_event("file_picker_clear_move", _params, socket) do
-    {:noreply, assign(socket, :file_picker_move_from, nil)}
   end
 
   defp parse_offer_int(nil, d), do: d
@@ -514,9 +280,9 @@ defmodule MarblesWeb.Admin.OwnerPackBuilderLive do
   @impl true
   def render(assigns) do
     ~H"""
-    <Layouts.header current_user={@current_user} />
     <Layouts.app
       flash={@flash}
+      current_user={@current_user}
       current_scope={@current_scope}
       breadcrumbs={@breadcrumbs}
     >
@@ -542,13 +308,13 @@ defmodule MarblesWeb.Admin.OwnerPackBuilderLive do
                 class="input w-full rounded-r-none"
               />
             </div>
-            <button
-              type="button"
-              phx-click="open_file_picker"
-              class="btn btn-outline border-base-content/20 btn-md gap-1.5 mt-[25px] rounded-l-none"
-            >
-              <.icon name="hero-folder-open" class="w-4 h-4" /> Browse
-            </button>
+            <div class="mt-[25px]">
+              <.live_component
+                module={MarblesWeb.Components.FilePicker}
+                id="banner-picker"
+                current_path={Ecto.Changeset.get_field(@form.source, :banner_path) || ""}
+              />
+            </div>
           </div>
           <p class="text-xs text-base-content/60">
             File path in the assets bucket (not full URL). Use Browse to pick or upload.
@@ -726,124 +492,11 @@ defmodule MarblesWeb.Admin.OwnerPackBuilderLive do
           <.link navigate={~p"/admin/owner/packs"} class="btn btn-ghost">Cancel</.link>
         </div>
 
-        <div class="fieldset border-t border-base-300 pt-6 mt-6" id="pack-marbles-fieldset">
-          <span class="label mb-1">Marbles in pack</span>
-          <p class="text-sm text-base-content/70 mb-2">
-            {length(@marble_ids)} selected. Search and filter below, or use quick actions.
-          </p>
-          <form
-            phx-change="marble_filter"
-            id="marble-filter-form"
-            class="flex flex-wrap items-center gap-2 mb-2"
-          >
-            <input
-              type="text"
-              name="q"
-              value={@marble_search}
-              phx-debounce="150"
-              placeholder="Search by name..."
-              class="input input-bordered input-sm w-44"
-            />
-            <select
-              name="team_id"
-              class="select select-bordered select-sm w-44"
-            >
-              <option value="">All teams</option>
-              <option
-                :for={t <- @teams}
-                value={t.id}
-                selected={@marble_filter_team_id == t.id}
-              >
-                {t.name}
-              </option>
-            </select>
-            <select
-              name="rarity"
-              class="select select-bordered select-sm w-28"
-            >
-              <option value="">All rarities</option>
-              <option value="1" selected={@marble_filter_rarity == 1}>R1</option>
-              <option value="2" selected={@marble_filter_rarity == 2}>R2</option>
-              <option value="3" selected={@marble_filter_rarity == 3}>R3</option>
-            </select>
-            <button type="button" phx-click="select_all_shown" class="btn btn-ghost btn-sm">
-              Select all shown
-            </button>
-            <button type="button" phx-click="deselect_all_shown" class="btn btn-ghost btn-sm">
-              Deselect all shown
-            </button>
-            <div class="dropdown dropdown-end">
-              <label tabindex="0" class="btn btn-ghost btn-sm">Add whole team</label>
-              <ul
-                tabindex="0"
-                class="dropdown-content menu z-10 rounded-box bg-base-200 p-2 shadow min-w-56 max-h-72 overflow-y-auto text-sm"
-              >
-                <li :for={t <- @teams}>
-                  <button
-                    type="button"
-                    phx-click="select_all_team"
-                    phx-value-team_id={t.id}
-                    class="py-2 px-3"
-                  >
-                    {t.name}
-                  </button>
-                </li>
-              </ul>
-            </div>
-            <div class="dropdown dropdown-end">
-              <label tabindex="0" class="btn btn-ghost btn-sm">Remove whole team</label>
-              <ul
-                tabindex="0"
-                class="dropdown-content menu z-10 rounded-box bg-base-200 p-2 shadow min-w-56 max-h-72 overflow-y-auto text-sm"
-              >
-                <li :for={t <- @teams}>
-                  <button
-                    type="button"
-                    phx-click="deselect_all_team"
-                    phx-value-team_id={t.id}
-                    class="py-2 px-3"
-                  >
-                    {t.name}
-                  </button>
-                </li>
-              </ul>
-            </div>
-          </form>
-          <div class="max-h-[min(28rem,72vh)] overflow-y-auto rounded border border-base-300 p-2">
-            <div class="grid grid-cols-2 gap-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6">
-              <%= for m <- @filtered_marbles do %>
-                <label
-                  for={"marble-#{m.id}"}
-                  class={[
-                    "flex min-h-20 cursor-pointer flex-col gap-1 rounded-lg border px-2 py-2 text-left transition",
-                    "hover:border-primary/40 hover:bg-base-200/70",
-                    if(m.id in @marble_ids,
-                      do: "border-primary bg-primary/10",
-                      else: "border-base-300 bg-base-100"
-                    )
-                  ]}
-                >
-                  <div class="flex items-start gap-2">
-                    <input
-                      type="checkbox"
-                      id={"marble-#{m.id}"}
-                      value={m.id}
-                      checked={m.id in @marble_ids}
-                      phx-click="toggle_marble"
-                      phx-value-id={m.id}
-                      class="mt-0.5 shrink-0"
-                    />
-                    <span class="line-clamp-2 text-sm font-medium leading-snug">{m.name}</span>
-                  </div>
-                  <span class="pl-6 text-[11px] text-base-content/55 tabular-nums">R{m.rarity}</span>
-                  <span :if={m.team} class="pl-6 text-[11px] text-base-content/45 line-clamp-1">
-                    {m.team.name}
-                  </span>
-                </label>
-              <% end %>
-            </div>
-          </div>
-        </div>
+        <.live_component
+          module={MarblesWeb.Components.MarbleSelector}
+          id="marble-selector"
+          selected_ids={@marble_ids}
+        />
       </div>
 
       <div :if={@copy_rule_dialog_open} id="copy-rules-modal" class="modal modal-open" role="dialog">
@@ -876,125 +529,6 @@ defmodule MarblesWeb.Admin.OwnerPackBuilderLive do
         </div>
         <div class="modal-backdrop">
           <button type="button" phx-click="close_copy_rules_dialog">close</button>
-        </div>
-      </div>
-
-      <div :if={@file_picker_open} id="file-picker-modal" class="modal modal-open" role="dialog">
-        <div class="modal-box max-w-2xl max-h-[80vh] flex flex-col">
-          <h3 class="font-semibold text-lg mb-2">Choose file from bucket</h3>
-          <div class="flex flex-wrap gap-1 mb-2">
-            <%= for {path, name} <- file_picker_breadcrumbs(@file_picker_path) do %>
-              <button
-                type="button"
-                phx-click="file_picker_navigate"
-                phx-value-path={path}
-                class="btn btn-ghost btn-xs"
-              >
-                {name}
-              </button>
-              <.icon :if={path != ""} name="hero-chevron-right" class="w-3 h-3 self-center" />
-            <% end %>
-          </div>
-          <div class="flex-1 overflow-auto rounded border border-base-300 mb-2">
-            <table class="table table-xs">
-              <tbody>
-                <tr :for={e <- @file_picker_entries}>
-                  <td class="py-1">
-                    <%= if e.type == :directory do %>
-                      <div class="flex items-center justify-between gap-2">
-                        <button
-                          type="button"
-                          phx-click="file_picker_navigate"
-                          phx-value-path={e.path}
-                          class="flex items-center gap-1 hover:underline"
-                        >
-                          <.icon name="hero-folder" class="w-4 h-4" />
-                          {e.name}
-                        </button>
-                        <button
-                          :if={@file_picker_move_from != nil}
-                          type="button"
-                          phx-click="file_picker_move"
-                          phx-value-from={@file_picker_move_from}
-                          phx-value-to={Path.join(e.path, Path.basename(@file_picker_move_from))}
-                          class="btn btn-ghost btn-xs"
-                        >
-                          Move here
-                        </button>
-                      </div>
-                    <% else %>
-                      <div class="flex items-center justify-between gap-2">
-                        <span class="flex items-center gap-1">
-                          <.icon name="hero-document" class="w-4 h-4" />
-                          {e.name}
-                        </span>
-                        <div class="flex gap-1">
-                          <button
-                            type="button"
-                            phx-click="file_picker_select"
-                            phx-value-path={e.path}
-                            class="btn btn-primary btn-xs"
-                          >
-                            Select
-                          </button>
-                          <button
-                            :if={@file_picker_move_from == nil}
-                            type="button"
-                            phx-click="file_picker_set_move_from"
-                            phx-value-path={e.path}
-                            class="btn btn-ghost btn-xs"
-                          >
-                            Move
-                          </button>
-                        </div>
-                      </div>
-                    <% end %>
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-          <div :if={@file_picker_move_from != nil} class="alert alert-info py-1 mb-2">
-            <span>Moving: {@file_picker_move_from}</span>
-            <button type="button" phx-click="file_picker_clear_move" class="btn btn-ghost btn-xs">
-              Cancel move
-            </button>
-          </div>
-          <form
-            id="file-picker-upload"
-            phx-change="file_picker_validate"
-            phx-submit="file_picker_confirm_upload"
-            class="flex flex-wrap items-end gap-2"
-          >
-            <div class="form-control">
-              <label class="label py-0">
-                <span class="label-text">Upload to current folder</span>
-              </label>
-              <.live_file_input
-                upload={@uploads.bucket_file}
-                class="file-input file-input-bordered file-input-sm w-full max-w-xs"
-              />
-            </div>
-            <button
-              type="submit"
-              class="btn btn-sm btn-primary"
-              disabled={Enum.empty?(@uploads.bucket_file.entries)}
-            >
-              Upload
-            </button>
-          </form>
-          <div class="modal-action">
-            <button type="button" phx-click="close_file_picker" class="btn">Close</button>
-          </div>
-        </div>
-        <div class="modal-backdrop" phx-drop-target={@uploads.bucket_file.ref}>
-          <button
-            type="button"
-            phx-click="close_file_picker"
-            class="btn btn-sm btn-circle absolute right-2 top-2"
-          >
-            ✕
-          </button>
         </div>
       </div>
     </Layouts.app>

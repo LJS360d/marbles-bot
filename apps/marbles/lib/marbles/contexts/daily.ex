@@ -158,7 +158,8 @@ defmodule Marbles.Daily do
         streak: new_streak,
         items: items,
         plinko_slot: plinko.slot,
-        plinko_marble: plinko.marble
+        plinko_marble: plinko.marble,
+        plinko_seed: plinko.seed
       }
     end)
   end

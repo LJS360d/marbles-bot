@@ -14,7 +14,6 @@ defmodule MarblesWeb.Admin.OwnerAdminLive do
       |> assign(:page_title, "Owner admin")
       |> assign(:current_scope, :owner_admin)
       |> assign(:breadcrumbs, [{"Owner", ~p"/admin/owner"}])
-      |> assign(:memory_insights_enabled, true)
       |> assign(:guilds_insights_sort, params["guilds_sort"] || "channels_desc")
       |> assign(:guilds_insights_page, parse_page(params["guilds_page"]))
       |> load_dashboard()
@@ -54,19 +53,6 @@ defmodule MarblesWeb.Admin.OwnerAdminLive do
   end
 
   @impl true
-  @spec handle_info(:tick_memory, Phoenix.LiveView.Socket.t()) ::
-          {:noreply, Phoenix.LiveView.Socket.t()}
-  def handle_info(:tick_memory, socket) do
-    if socket.assigns[:memory_insights_enabled] do
-      Process.send_after(self(), :tick_memory, 5_000)
-    end
-
-    memory_breakdown = AdminDashboard.memory_breakdown(:erlang.memory())
-
-    {:noreply, assign(socket, :memory_breakdown, memory_breakdown)}
-  end
-
-  @impl true
   @spec handle_info({:admin_dashboard, :stats_updated}, Phoenix.LiveView.Socket.t()) ::
           {:noreply, Phoenix.LiveView.Socket.t()}
   def handle_info({:admin_dashboard, :stats_updated}, socket) do
@@ -84,36 +70,6 @@ defmodule MarblesWeb.Admin.OwnerAdminLive do
   @impl true
   @spec handle_event(String.t(), map(), Phoenix.LiveView.Socket.t()) ::
           {:noreply, Phoenix.LiveView.Socket.t()}
-  def handle_event("toggle_memory_insights", _params, socket) do
-    enabled = !socket.assigns[:memory_insights_enabled]
-
-    socket =
-      socket
-      |> assign(:memory_insights_enabled, enabled)
-      |> then(fn s ->
-        if enabled,
-          do: push_event(s, "persist_memory_insights", %{enabled: true}),
-          else: push_event(s, "persist_memory_insights", %{enabled: false})
-      end)
-
-    if enabled, do: send(self(), :tick_memory)
-    {:noreply, socket}
-  end
-
-  @impl true
-  def handle_event("memory_insights_init", %{"enabled" => enabled}, socket) do
-    socket = assign(socket, :memory_insights_enabled, enabled)
-
-    socket =
-      if enabled,
-        do: push_event(socket, "persist_memory_insights", %{enabled: true}),
-        else: push_event(socket, "persist_memory_insights", %{enabled: false})
-
-    if enabled, do: send(self(), :tick_memory)
-    {:noreply, socket}
-  end
-
-  @impl true
   def handle_event("guilds_insights_sort", %{"sort" => sort}, socket) do
     {:noreply, push_patch(socket, to: ~p"/admin/owner?guilds_sort=#{sort}&guilds_page=1")}
   end
@@ -130,7 +86,6 @@ defmodule MarblesWeb.Admin.OwnerAdminLive do
       )
 
     socket
-    |> assign(:memory_breakdown, snapshot.memory_breakdown)
     |> assign(:guilds_count, snapshot.guilds_count)
     |> assign(:users_count, snapshot.users_count)
     |> assign(:pulls_today, snapshot.pulls_today)
@@ -148,13 +103,13 @@ defmodule MarblesWeb.Admin.OwnerAdminLive do
   @impl true
   def render(assigns) do
     ~H"""
-    <Layouts.header current_user={@current_user} />
     <Layouts.app
       flash={@flash}
+      current_user={@current_user}
       current_scope={@current_scope}
       breadcrumbs={@breadcrumbs}
     >
-      <div class="space-y-6 sm:space-y-8" id="owner-admin-root" phx-hook="OwnerAdminMemoryInsights">
+      <div class="space-y-6 sm:space-y-8" id="owner-admin-root">
         <h1 class="text-2xl font-semibold text-base-content">Owner admin</h1>
 
         <section class="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3">
@@ -204,46 +159,13 @@ defmodule MarblesWeb.Admin.OwnerAdminLive do
             <p class="text-sm font-medium text-base-content/70">Teams</p>
             <p class="mt-1 text-2xl font-semibold">{@teams_count}</p>
           </.link>
-        </section>
-
-        <section
-          :if={@memory_insights_enabled}
-          class="rounded-xl border border-base-300 bg-base-200 p-4 shadow-sm sm:p-6"
-        >
-          <div class="flex items-center justify-between gap-2">
-            <h2 class="text-lg font-semibold text-base-content">Memory</h2>
-            <label class="flex cursor-pointer items-center gap-2 text-sm">
-              <input
-                type="checkbox"
-                checked
-                phx-click="toggle_memory_insights"
-                class="toggle toggle-sm"
-              />
-              <span>Gathering</span>
-            </label>
-          </div>
-          <div class="mt-4">
-            <.memory_stacked_bar breakdown={@memory_breakdown} />
-          </div>
-          <p class="mt-2 text-xs text-base-content/60">
-            BEAM total {@memory_breakdown.beam_total_mb} MB · Processes {@memory_breakdown.process_mb} · Atom {@memory_breakdown.atom_mb} · Binary {@memory_breakdown.binary_mb} · Code {@memory_breakdown.code_mb} · ETS {@memory_breakdown.ets_mb} · System {@memory_breakdown.system_mb} MB
-          </p>
-        </section>
-
-        <section
-          :if={!@memory_insights_enabled}
-          class="rounded-xl border border-base-300 bg-base-200 p-4 shadow-sm sm:p-6"
-        >
-          <div class="flex items-center justify-between gap-2">
-            <h2 class="text-lg font-semibold text-base-content">Memory</h2>
-            <label class="flex cursor-pointer items-center gap-2 text-sm">
-              <input type="checkbox" phx-click="toggle_memory_insights" class="toggle toggle-sm" />
-              <span>Gathering</span>
-            </label>
-          </div>
-          <p class="mt-2 text-sm text-base-content/60">
-            Memory insights are paused. Enable to resume.
-          </p>
+          <.link
+            navigate={~p"/admin/owner/system"}
+            class="rounded-xl border border-base-300 bg-base-200 p-4 shadow-sm transition-colors hover:bg-base-300"
+          >
+            <p class="text-sm font-medium text-base-content/70">System</p>
+            <p class="mt-1 text-base font-semibold">Phoenix LiveDashboard →</p>
+          </.link>
         </section>
 
         <section class="rounded-xl border border-base-300 bg-base-200 p-4 shadow-sm sm:p-6">
@@ -331,42 +253,6 @@ defmodule MarblesWeb.Admin.OwnerAdminLive do
         </section>
       </div>
     </Layouts.app>
-    """
-  end
-
-  attr :breakdown, :map, required: true
-
-  def memory_stacked_bar(assigns) do
-    b = assigns.breakdown
-    beam_mb = max(b.beam_total_mb, 1)
-
-    segments = [
-      {"Processes", b.process_mb, "bg-primary"},
-      {"Atom", b.atom_mb, "bg-secondary"},
-      {"Binary", b.binary_mb, "bg-accent"},
-      {"Code", b.code_mb, "bg-info"},
-      {"ETS", b.ets_mb, "bg-warning"},
-      {"System", b.system_mb, "bg-base-content/30"}
-    ]
-
-    assigns = assign(assigns, :segments, segments)
-    assigns = assign(assigns, :beam_mb, beam_mb)
-
-    ~H"""
-    <div class="flex items-center gap-3">
-      <div class="h-6 min-w-0 flex-1 overflow-hidden rounded bg-base-300 flex">
-        <%= for {label, mb, color} <- @segments do %>
-          <% pct = if @beam_mb > 0, do: min(100, div(mb * 100, @beam_mb)), else: 0 %>
-          <div
-            :if={pct > 0}
-            class={["h-full min-w-0.5 transition-all", color]}
-            style={"width: #{max(pct, 0.5)}%"}
-            title={"#{label} #{mb} MB"}
-          />
-        <% end %>
-      </div>
-      <span class="w-14 shrink-0 text-right text-sm font-medium">{@beam_mb} MB</span>
-    </div>
     """
   end
 end

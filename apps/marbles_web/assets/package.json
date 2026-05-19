@@ -1,6 +1,8 @@
 {
   "name": "marbles_web_assets",
   "dependencies": {
+    "@babylonjs/core": "^9.6.2",
+    "@babylonjs/loaders": "^9.6.2",
     "@discord/embedded-app-sdk": "^2.4.1",
     "cannon-es": "^0.20.0",
     "gsap": "^3.15.0",

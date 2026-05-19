@@ -56,6 +56,33 @@ defmodule Marbles.Racing.Queue do
   @spec user_topic(Ecto.UUID.t()) :: String.t()
   def user_topic(user_id), do: "queue:user:#{user_id}"
 
+  # --- Admin API (owner-only) ---
+
+  @doc "Lists all currently queued entries with metadata. For admin view."
+  @spec admin_list_entries() :: [map()]
+  def admin_list_entries, do: GenServer.call(__MODULE__, :admin_list_entries)
+
+  @doc """
+  Removes a user from the queue and refunds their wage. Returns :ok or
+  {:error, :not_queued}.
+  """
+  @spec admin_kick(Ecto.UUID.t()) :: :ok | {:error, :not_queued}
+  def admin_kick(user_id), do: GenServer.call(__MODULE__, {:admin_kick, user_id})
+
+  @doc """
+  Forces match attempt on a bracket regardless of min_party / wait time.
+  Returns :ok or {:error, :empty_bracket}.
+  """
+  @spec admin_force_start(integer()) :: :ok | {:error, :empty_bracket | :insufficient_setup}
+  def admin_force_start(bracket), do: GenServer.call(__MODULE__, {:admin_force_start, bracket})
+
+  @doc """
+  Manually injects up to N bots into a bracket. Returns the number injected.
+  """
+  @spec admin_fill_bots(integer(), pos_integer()) :: {:ok, non_neg_integer()}
+  def admin_fill_bots(bracket, count),
+    do: GenServer.call(__MODULE__, {:admin_fill_bots, bracket, count})
+
   # --- GenServer ---
 
   defmodule Entry do
@@ -130,6 +157,92 @@ defmodule Marbles.Racing.Queue do
       %{entry: entry, bracket: bracket} ->
         {:reply, %{wage: entry.wage, bracket: bracket, joined_at: entry.joined_at}, state}
     end
+  end
+
+  def handle_call(:admin_list_entries, _from, state) do
+    now = System.monotonic_time(:millisecond)
+
+    rows =
+      Enum.flat_map(state.brackets, fn {bucket, entries} ->
+        Enum.map(entries, fn %Entry{} = e ->
+          %{
+            user_id: e.user_id,
+            squad_id: e.squad_id,
+            elo: e.elo,
+            wage: e.wage,
+            bot: e.bot,
+            bracket: bucket,
+            waited_ms: now - e.joined_at
+          }
+        end)
+      end)
+      |> Enum.sort_by(&{&1.bracket, -&1.waited_ms})
+
+    {:reply, rows, state}
+  end
+
+  def handle_call({:admin_kick, user_id}, _from, state) do
+    case Map.get(state.by_user, user_id) do
+      nil ->
+        {:reply, {:error, :not_queued}, state}
+
+      %{entry: %Entry{wage: wage, bot: bot}} ->
+        if not bot, do: Wallet.credit(user_id, %{coins: wage})
+        state = remove_user(state, user_id)
+        PS.broadcast(Marbles.PubSub, user_topic(user_id), {:left, :admin_kick})
+        broadcast_stats(state)
+        {:reply, :ok, state}
+    end
+  end
+
+  def handle_call({:admin_force_start, bucket}, _from, state) do
+    case Map.get(state.brackets, bucket, []) do
+      [] ->
+        {:reply, {:error, :empty_bracket}, state}
+
+      entries ->
+        chosen = Enum.take(entries, state.config.max_party)
+
+        if length(chosen) < state.config.min_party do
+          state = form_race(chosen, state)
+          {:reply, :ok, state}
+        else
+          state = form_race(chosen, state)
+          {:reply, :ok, state}
+        end
+    end
+  end
+
+  def handle_call({:admin_fill_bots, bucket, count}, _from, state) do
+    bot_accounts = BotFill.load_accounts()
+    state = %{state | bot_accounts: bot_accounts}
+
+    {state, injected} =
+      Enum.reduce_while(1..count, {state, 0}, fn _, {st, n} ->
+        case pick_free_bot(st.bot_accounts, st.by_user) do
+          nil ->
+            {:halt, {st, n}}
+
+          acc ->
+            entries = Map.get(st.brackets, bucket, [])
+            wage = average_human_wage(entries, st.config.base_wage)
+            elo = bucket * st.config.bracket_step + div(st.config.bracket_step, 2)
+
+            entry = %Entry{
+              user_id: acc.user_id,
+              squad_id: acc.squad_id,
+              elo: elo,
+              wage: wage,
+              joined_at: System.monotonic_time(:millisecond),
+              bot: true
+            }
+
+            {:cont, {put_entry(st, entry, broadcast_user: false), n + 1}}
+        end
+      end)
+
+    broadcast_stats(state)
+    {:reply, {:ok, injected}, attempt_match(state)}
   end
 
   defp do_enqueue(user_id, squad_id, opts, state) do

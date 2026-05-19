@@ -73,6 +73,7 @@ defmodule MarblesWeb.PlinkoLive do
               |> assign(:result, result)
               |> push_event("plinko:drop", %{
                 slot: result.plinko_slot.id,
+                seed: result.plinko_seed,
                 texture_url: marble_texture_url(result.plinko_marble),
                 marble_name: marble_name(result.plinko_marble)
               })
@@ -110,7 +111,7 @@ defmodule MarblesWeb.PlinkoLive do
   @impl true
   def render(assigns) do
     ~H"""
-    <Layouts.app flash={@flash} current_scope={nil}>
+    <Layouts.app flash={@flash} race_state={@race_state} current_scope={nil}>
       <div id="plinko-page" class="relative isolate min-h-svh">
         <div
           aria-hidden="true"
@@ -186,7 +187,7 @@ defmodule MarblesWeb.PlinkoLive do
                   type="button"
                   phx-click="drop"
                   id="plinko-drop-btn"
-                  class="btn btn-primary rounded-full px-10 text-base"
+                  class="btn btn-primary rounded-full px-10 text-base btn-chunky"
                 >
                   <.icon name="hero-arrow-down-circle" class="size-5" /> Drop!
                 </button>
@@ -207,7 +208,7 @@ defmodule MarblesWeb.PlinkoLive do
 
   defp result_card(assigns) do
     ~H"""
-    <div class="rounded-3xl border border-base-300 bg-base-100/70 p-6 backdrop-blur w-full space-y-4">
+    <div class="rounded-3xl border border-base-300 bg-base-100/70 p-6 backdrop-blur w-full space-y-4 panel-bevel">
       <div class="flex items-center justify-between">
         <div>
           <p class="text-xs uppercase tracking-widest text-base-content/50">Plinko result</p>
@@ -228,7 +229,7 @@ defmodule MarblesWeb.PlinkoLive do
       <div class="space-y-2 text-sm">
         <div class="flex justify-between items-center">
           <span class="text-base-content/60">Total coins</span>
-          <span class="font-mono font-bold text-primary text-lg">
+          <span class="coin-chip text-lg">
             {IntegerDisplay.format(@result.coins)} {Currency.coin_emoji()}
           </span>
         </div>

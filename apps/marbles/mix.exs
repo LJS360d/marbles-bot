@@ -45,7 +45,8 @@ defmodule Marbles.MixProject do
       {:ecto_sqlite3, ">= 0.0.0"},
       {:jason, "~> 1.2"},
       {:swoosh, "~> 1.16"},
-      {:req, "~> 0.5"}
+      {:req, "~> 0.5"},
+      {:crontab, "~> 1.1"}
     ]
   end
 

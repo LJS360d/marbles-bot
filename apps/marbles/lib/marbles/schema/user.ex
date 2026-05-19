@@ -9,7 +9,6 @@ defmodule Marbles.Schema.User do
           display_name: String.t() | nil,
           currency: integer(),
           dust: integer(),
-          mine_roster: map(),
           role: role(),
           last_marble_id: Ecto.UUID.t() | nil,
           identities: Ecto.Association.NotLoaded.t() | [map()],
@@ -24,7 +23,6 @@ defmodule Marbles.Schema.User do
     field :display_name, :string
     field :currency, :integer, virtual: true, default: 0
     field :dust, :integer, virtual: true, default: 0
-    field :mine_roster, :map, default: %{}
     field :role, Ecto.Enum, values: [:regular, :server_admin, :owner], default: :regular
 
     belongs_to :last_marble, Marbles.Schema.Marble, type: :binary_id
@@ -41,7 +39,6 @@ defmodule Marbles.Schema.User do
     user
     |> cast(attrs, [
       :display_name,
-      :mine_roster,
       :role,
       :last_marble_id
     ])

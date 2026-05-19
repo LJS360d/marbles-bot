@@ -12,6 +12,7 @@ defmodule Marbles.Schema.UserSquadSlot do
           id: Ecto.UUID.t() | nil,
           squad_id: Ecto.UUID.t() | nil,
           role: role() | nil,
+          position: non_neg_integer() | nil,
           user_marble_id: Ecto.UUID.t() | nil,
           squad: Ecto.Association.NotLoaded.t() | Marbles.Schema.UserSquad.t() | nil,
           user_marble: Ecto.Association.NotLoaded.t() | Marbles.Schema.UserMarble.t() | nil,
@@ -21,6 +22,7 @@ defmodule Marbles.Schema.UserSquadSlot do
 
   schema "user_squad_slots" do
     field :role, Ecto.Enum, values: @roles
+    field :position, :integer
 
     belongs_to :squad, Marbles.Schema.UserSquad
     belongs_to :user_marble, Marbles.Schema.UserMarble
@@ -41,7 +43,18 @@ defmodule Marbles.Schema.UserSquadSlot do
     |> validate_required([:squad_id, :role, :user_marble_id])
     |> validate_inclusion(:role, @roles)
     |> unique_constraint([:squad_id, :role],
-      name: :user_squad_slots_squad_id_role_index
+      name: :user_squad_slots_squad_role_idx
+    )
+  end
+
+  @spec mine_slot_changeset(t() | %__MODULE__{}, map()) :: Ecto.Changeset.t()
+  def mine_slot_changeset(slot, attrs) do
+    slot
+    |> cast(attrs, [:squad_id, :position, :user_marble_id])
+    |> validate_required([:squad_id, :position, :user_marble_id])
+    |> validate_number(:position, greater_than_or_equal_to: 0)
+    |> unique_constraint([:squad_id, :position],
+      name: :user_squad_slots_squad_position_idx
     )
   end
 end

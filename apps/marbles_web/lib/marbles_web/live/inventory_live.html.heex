@@ -1,0 +1,119 @@
+<Layouts.app flash={@flash} current_scope={@current_scope} breadcrumbs={@breadcrumbs}>
+  <div class="container mx-auto px-4 py-8">
+    <h1 class="text-3xl font-bold mb-8">Inventory</h1>
+
+    <% grouped_items = @items |> Enum.group_by(& &1.item_type) %>
+
+    <div class="space-y-8">
+      <%= for {item_type, items} <- grouped_items do %>
+        <div>
+          <h2 class="text-lg font-semibold mb-3 uppercase tracking-widest text-base-content/50">
+            {item_type}
+          </h2>
+          <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3">
+            <%= for item <- items do %>
+              <button
+                phx-click="select_item"
+                phx-value-item-type={item.item_type}
+                phx-value-item-id={item.item_id}
+                class="group flex flex-col items-center gap-2 p-4 rounded-xl border border-base-300 bg-base-200 hover:border-primary/60 hover:bg-base-200/80 transition-all"
+              >
+                <div class="w-14 h-14 rounded-lg bg-base-300 flex items-center justify-center text-2xl font-bold text-base-content/60 group-hover:text-primary transition-colors">
+                  {String.slice(item.item_id, 0, 2) |> String.upcase()}
+                </div>
+                <p class="text-xs font-medium text-center text-base-content capitalize leading-tight">
+                  {String.replace(item.item_id, "_", " ")}
+                </p>
+                <p class="text-sm font-bold text-primary">{item.quantity}</p>
+              </button>
+            <% end %>
+          </div>
+        </div>
+      <% end %>
+    </div>
+  </div>
+
+  <%= if @show_modal and @selected_item do %>
+    <div id="inventory-item-modal" class="relative z-50">
+      <div class="fixed inset-0 bg-black/60 backdrop-blur-sm" phx-click="close_modal" />
+      <div class="fixed inset-0 overflow-y-auto pointer-events-none">
+        <div class="flex min-h-full items-center justify-center p-4 pointer-events-none">
+          <div class="w-full max-w-md rounded-2xl border border-base-300 bg-base-100 shadow-2xl pointer-events-auto">
+            <%!-- Header --%>
+            <div class="flex items-start gap-5 p-6 border-b border-base-300">
+              <div class="shrink-0 w-24 h-24 rounded-xl bg-base-300 flex items-center justify-center text-4xl font-black text-base-content/50">
+                {String.slice(@selected_item.item_id, 0, 2) |> String.upcase()}
+              </div>
+              <div class="flex-1 min-w-0 pt-1">
+                <div class="flex items-start justify-between gap-2">
+                  <h2 class="text-xl font-bold capitalize leading-tight">
+                    {String.replace(@selected_item.item_id, "_", " ")}
+                  </h2>
+                  <button
+                    phx-click="close_modal"
+                    class="shrink-0 text-base-content/40 hover:text-base-content transition-colors"
+                  >
+                    <.icon name="hero-x-mark" class="w-5 h-5" />
+                  </button>
+                </div>
+                <p class="text-xs text-base-content/50 uppercase tracking-widest mt-0.5">
+                  {@selected_item.item_type}
+                </p>
+                <p class="text-sm text-base-content/70 mt-2 leading-relaxed">
+                  {MarblesWeb.InventoryLive.Helpers.get_item_description(
+                    @selected_item.item_type,
+                    @selected_item.item_id
+                  )}
+                </p>
+                <div class="mt-3">
+                  <span class="text-2xl font-bold text-primary">{@selected_item.quantity}</span>
+                  <span class="text-xs text-base-content/50 ml-1">owned</span>
+                </div>
+              </div>
+            </div>
+
+            <%!-- Actions --%>
+            <% actions =
+              MarblesWeb.InventoryLive.Helpers.get_item_actions(
+                @selected_item.item_type,
+                @selected_item.item_id,
+                @item_metadata
+              ) %>
+
+            <div class="p-6 space-y-4">
+              <%= if Enum.empty?(actions) do %>
+                <p class="text-center text-base-content/40 text-sm py-4">No actions available</p>
+              <% else %>
+                <% grouped_actions = Enum.group_by(actions, & &1.type) %>
+
+                <%= for {type, type_actions} <- grouped_actions do %>
+                  <div>
+                    <p class="text-xs font-semibold uppercase tracking-widest mb-2 text-base-content/40">
+                      {action_type_label(type)}
+                    </p>
+                    <div class="space-y-1.5">
+                      <%= for action <- type_actions do %>
+                        <a
+                          href={action.link}
+                          class={[
+                            "flex items-center gap-3 w-full px-4 py-2.5 rounded-lg font-medium text-sm transition-colors",
+                            type == :get && "bg-success/10 text-success hover:bg-success/20",
+                            type == :use && "bg-primary/10 text-primary hover:bg-primary/20",
+                            type == :spend && "bg-warning/10 text-warning hover:bg-warning/20"
+                          ]}
+                        >
+                          <span>{action.label}</span>
+                          <.icon name="hero-arrow-right" class="w-4 h-4 ml-auto opacity-60" />
+                        </a>
+                      <% end %>
+                    </div>
+                  </div>
+                <% end %>
+              <% end %>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  <% end %>
+</Layouts.app>

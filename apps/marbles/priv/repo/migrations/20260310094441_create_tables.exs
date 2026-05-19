@@ -14,7 +14,7 @@ defmodule Marbles.Repo.Migrations.CreateTables do
       add :id, :string, primary_key: true
       add :name, :string, null: false
       add :guild_id, references(:guilds, type: :string, on_delete: :delete_all), null: false
-      add :spawn_rate, :float, default: 0.0, null: false
+      add :spawn_rate, :float, null: false, default: 0.0
       timestamps()
     end
 
@@ -45,7 +45,6 @@ defmodule Marbles.Repo.Migrations.CreateTables do
     create table(:users, primary_key: false) do
       add :id, :binary_id, primary_key: true
       add :display_name, :string
-      add :mine_roster, :map, default: %{}, null: false
       add :role, :string, null: false, default: "regular"
       add :last_marble_id, references(:marbles, type: :binary_id, on_delete: :nilify_all)
       timestamps()
@@ -54,15 +53,15 @@ defmodule Marbles.Repo.Migrations.CreateTables do
     create table(:user_race_stats, primary_key: false) do
       add :id, :binary_id, primary_key: true
       add :user_id, references(:users, type: :binary_id, on_delete: :delete_all), null: false
-      add :elo, :integer, default: 1000, null: false
-      add :race_wins, :integer, default: 0, null: false
-      add :race_losses, :integer, default: 0, null: false
-      add :races_entered, :integer, default: 0, null: false
-      add :total_currency_won, :integer, default: 0, null: false
-      add :total_currency_wagered, :integer, default: 0, null: false
-      add :highest_elo, :integer, default: 1000, null: false
-      add :current_streak, :integer, default: 0, null: false
-      add :best_streak, :integer, default: 0, null: false
+      add :elo, :integer, null: false, default: 1000
+      add :race_wins, :integer, null: false, default: 0
+      add :race_losses, :integer, null: false, default: 0
+      add :races_entered, :integer, null: false, default: 0
+      add :total_currency_won, :integer, null: false, default: 0
+      add :total_currency_wagered, :integer, null: false, default: 0
+      add :highest_elo, :integer, null: false, default: 1000
+      add :current_streak, :integer, null: false, default: 0
+      add :best_streak, :integer, null: false, default: 0
       timestamps()
     end
 
@@ -85,8 +84,8 @@ defmodule Marbles.Repo.Migrations.CreateTables do
       add :name, :string, null: false
       add :description, :text
       add :cost, :integer, default: 0
-      add :start_date, :date, null: true
-      add :end_date, :date, null: true
+      add :start_date, :date
+      add :end_date, :date
       add :banner_path, :string
       timestamps()
     end
@@ -139,7 +138,7 @@ defmodule Marbles.Repo.Migrations.CreateTables do
       add :id, :binary_id, primary_key: true
       add :type, :string, null: false
       add :filename, :string, null: false
-      add :version, :integer, default: 1
+      add :version, :integer, null: false, default: 1
       add :marble_id, references(:marbles, type: :binary_id, on_delete: :delete_all), null: false
       timestamps()
     end
@@ -149,10 +148,10 @@ defmodule Marbles.Repo.Migrations.CreateTables do
 
     create table(:user_marbles, primary_key: false) do
       add :id, :binary_id, primary_key: true
-      add :user_id, references(:users, type: :binary_id, on_delete: :delete_all)
-      add :marble_id, references(:marbles, type: :binary_id, on_delete: :delete_all)
-      add :level, :integer, default: 1
-      add :experience, :integer, default: 0
+      add :user_id, references(:users, type: :binary_id, on_delete: :delete_all), null: false
+      add :marble_id, references(:marbles, type: :binary_id, on_delete: :delete_all), null: false
+      add :level, :integer, null: false, default: 1
+      add :experience, :integer, null: false, default: 0
       add :meta, :map, default: %{}
       timestamps()
     end
@@ -180,7 +179,7 @@ defmodule Marbles.Repo.Migrations.CreateTables do
       add :scope, :string, null: false, default: "account"
       add :guild_id, :string
       add :expires_at, :utc_datetime_usec, null: false
-      add :meta, :map, default: %{}, null: false
+      add :meta, :map, null: false, default: %{}
       timestamps()
     end
 
@@ -212,8 +211,8 @@ defmodule Marbles.Repo.Migrations.CreateTables do
       add :id, :binary_id, primary_key: true
       add :user_id, references(:users, type: :binary_id, on_delete: :delete_all), null: false
       add :last_claimed_at, :utc_datetime_usec
-      add :current_streak, :integer, default: 0
-      add :longest_streak, :integer, default: 0
+      add :current_streak, :integer, null: false, default: 0
+      add :longest_streak, :integer, null: false, default: 0
       timestamps()
     end
 
@@ -225,7 +224,7 @@ defmodule Marbles.Repo.Migrations.CreateTables do
       add :user_id, references(:users, type: :binary_id, on_delete: :delete_all), null: false
       add :item_type, :string, null: false
       add :item_id, :string, null: false
-      add :quantity, :integer, default: 1
+      add :quantity, :integer, null: false, default: 1
       add :meta, :map, default: %{}
       timestamps()
     end
@@ -248,6 +247,21 @@ defmodule Marbles.Repo.Migrations.CreateTables do
     create index(:analytics_events, [:event_type, :inserted_at])
     create index(:analytics_events, [:guild_id, :inserted_at])
 
+    create table(:event_templates, primary_key: false) do
+      add :id, :binary_id, primary_key: true
+      add :name, :string, null: false
+      add :description, :text
+      add :banner_path, :string
+      add :event_type, :string, null: false, default: "scheduled_race"
+      add :config, :map, default: %{}
+      add :default_duration_seconds, :integer, null: false, default: 3600
+      add :active, :boolean, null: false, default: true
+      timestamps()
+    end
+
+    create index(:event_templates, [:active])
+    create index(:event_templates, [:event_type])
+
     create table(:events, primary_key: false) do
       add :id, :binary_id, primary_key: true
       add :name, :string, null: false
@@ -257,21 +271,24 @@ defmodule Marbles.Repo.Migrations.CreateTables do
       add :banner_path, :string
       add :event_type, :string, null: false, default: "scheduled_race"
       add :config, :map, default: %{}
-      add :active, :boolean, default: true
+      add :active, :boolean, null: false, default: true
+      add :template_id, references(:event_templates, type: :binary_id, on_delete: :nilify_all)
+      add :cloned_from_id, references(:events, type: :binary_id, on_delete: :nilify_all)
       timestamps()
     end
 
     create index(:events, [:start_time])
     create index(:events, [:active])
     create index(:events, [:event_type])
+    create index(:events, [:template_id])
 
     create table(:event_registrations, primary_key: false) do
       add :id, :binary_id, primary_key: true
       add :event_id, references(:events, type: :binary_id, on_delete: :delete_all), null: false
       add :user_id, references(:users, type: :binary_id, on_delete: :delete_all), null: false
-      add :status, :string, default: "registered"
+      add :status, :string, null: false, default: "registered"
       add :final_position, :integer
-      add :payout, :integer, default: 0
+      add :payout, :integer, null: false, default: 0
       timestamps()
     end
 
@@ -284,7 +301,7 @@ defmodule Marbles.Repo.Migrations.CreateTables do
       add :user_id, references(:users, type: :binary_id, on_delete: :delete_all), null: false
       add :title, :string, null: false
       add :body, :text, null: false
-      add :type, :string, default: "info"
+      add :type, :string, null: false, default: "info"
       add :data, :map, default: %{}
       add :read_at, :utc_datetime_usec
       add :expires_at, :utc_datetime_usec
@@ -304,13 +321,13 @@ defmodule Marbles.Repo.Migrations.CreateTables do
       add :start_positions, :map, default: %{}
       add :checkpoints, :map, default: %{}
       add :finish_line, :map, default: %{}
-      add :length_meters, :float, default: 1000.0
-      add :laps, :integer, default: 1
-      add :grid_size, :integer, default: 24
+      add :length_meters, :float, null: false, default: 1000.0
+      add :laps, :integer, null: false, default: 1
+      add :grid_size, :integer, null: false, default: 24
       add :weather_bias, :map, default: %{}
-      add :difficulty, :integer, default: 1
-      add :max_players, :integer, default: 100
-      add :active, :boolean, default: true
+      add :difficulty, :integer, null: false, default: 1
+      add :max_players, :integer, null: false, default: 100
+      add :active, :boolean, null: false, default: true
       timestamps()
     end
 
@@ -329,12 +346,18 @@ defmodule Marbles.Repo.Migrations.CreateTables do
       add :id, :binary_id, primary_key: true
       add :user_id, references(:users, type: :binary_id, on_delete: :delete_all), null: false
       add :name, :string, null: false
-      add :slot_index, :integer, null: false, default: 0
+      add :purpose, :string, null: false, default: "race"
+      add :slot_index, :integer
       timestamps()
     end
 
     create index(:user_squads, [:user_id])
     create unique_index(:user_squads, [:user_id, :slot_index])
+
+    create unique_index(:user_squads, [:user_id],
+             where: "purpose = 'mine'",
+             name: :user_squads_user_mine_idx
+           )
 
     create table(:user_squad_slots, primary_key: false) do
       add :id, :binary_id, primary_key: true
@@ -342,7 +365,8 @@ defmodule Marbles.Repo.Migrations.CreateTables do
       add :squad_id, references(:user_squads, type: :binary_id, on_delete: :delete_all),
         null: false
 
-      add :role, :string, null: false
+      add :role, :string
+      add :position, :integer
 
       add :user_marble_id, references(:user_marbles, type: :binary_id, on_delete: :delete_all),
         null: false
@@ -351,8 +375,17 @@ defmodule Marbles.Repo.Migrations.CreateTables do
     end
 
     create index(:user_squad_slots, [:squad_id])
-    create unique_index(:user_squad_slots, [:squad_id, :role])
     create index(:user_squad_slots, [:user_marble_id])
+
+    create unique_index(:user_squad_slots, [:squad_id, :role],
+             where: "role IS NOT NULL",
+             name: :user_squad_slots_squad_role_idx
+           )
+
+    create unique_index(:user_squad_slots, [:squad_id, :position],
+             where: "position IS NOT NULL",
+             name: :user_squad_slots_squad_position_idx
+           )
 
     create table(:race_queue_bots, primary_key: false) do
       add :id, :binary_id, primary_key: true
@@ -426,7 +459,7 @@ defmodule Marbles.Repo.Migrations.CreateTables do
 
       add :version, :integer, null: false, default: 1
       add :payload, :text, null: false
-      add :inserted_at, :utc_datetime_usec, null: false, default: fragment("CURRENT_TIMESTAMP")
+      timestamps(updated_at: false)
     end
 
     create unique_index(:race_replays, [:race_id])
@@ -442,5 +475,58 @@ defmodule Marbles.Repo.Migrations.CreateTables do
 
     create index(:race_event_pools, [:event_id])
     create unique_index(:race_event_pools, [:event_id, :pool_index])
+
+    create table(:event_schedules, primary_key: false) do
+      add :id, :binary_id, primary_key: true
+
+      add :template_id,
+          references(:event_templates, type: :binary_id, on_delete: :delete_all),
+          null: false
+
+      add :cron_expr, :string, null: false
+      add :next_run_at, :utc_datetime_usec
+      add :last_run_at, :utc_datetime_usec
+      add :active, :boolean, null: false, default: true
+      add :advance_seconds, :integer, null: false, default: 3600
+      timestamps()
+    end
+
+    create index(:event_schedules, [:template_id])
+    create index(:event_schedules, [:active, :next_run_at])
+
+    alter table(:user_marbles) do
+      add :power_level, :float, null: false, default: 1.0
+    end
+
+    create table(:marble_upgrades, primary_key: false) do
+      add :id, :binary_id, primary_key: true
+
+      add :user_marble_id, references(:user_marbles, type: :binary_id, on_delete: :delete_all),
+        null: false
+
+      add :upgrade_type, :string, null: false
+      add :meta, :map, default: %{}
+      timestamps()
+    end
+
+    create index(:marble_upgrades, [:user_marble_id])
+    create index(:marble_upgrades, [:upgrade_type])
+
+    create table(:audit_logs, primary_key: false) do
+      add :id, :binary_id, primary_key: true
+      add :actor_id, references(:users, type: :binary_id, on_delete: :nilify_all)
+      add :action, :string, null: false
+      add :target_type, :string
+      add :target_id, :string
+      add :before, :map
+      add :after, :map
+      add :metadata, :map, default: %{}
+      add :inserted_at, :utc_datetime_usec, null: false
+    end
+
+    create index(:audit_logs, [:actor_id])
+    create index(:audit_logs, [:target_type, :target_id])
+    create index(:audit_logs, [:inserted_at])
+    create index(:audit_logs, [:action])
   end
 end
