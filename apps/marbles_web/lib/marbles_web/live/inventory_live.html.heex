@@ -93,8 +93,8 @@
                     </p>
                     <div class="space-y-1.5">
                       <%= for action <- type_actions do %>
-                        <a
-                          href={action.link}
+                        <.link
+                          navigate={action.link}
                           class={[
                             "flex items-center gap-3 w-full px-4 py-2.5 rounded-lg font-medium text-sm transition-colors",
                             type == :get && "bg-success/10 text-success hover:bg-success/20",
@@ -104,7 +104,7 @@
                         >
                           <span>{action.label}</span>
                           <.icon name="hero-arrow-right" class="w-4 h-4 ml-auto opacity-60" />
-                        </a>
+                        </.link>
                       <% end %>
                     </div>
                   </div>

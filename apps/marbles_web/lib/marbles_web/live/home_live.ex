@@ -243,7 +243,7 @@ defmodule MarblesWeb.HomeLive do
               tagline="Matchmade · ELO bracketed · 4–8 players"
             />
             <.cta_card
-              href={~p"/calendar"}
+              navigate={~p"/calendar"}
               kind="secondary"
               icon="hero-calendar"
               title="Calendar"
@@ -292,7 +292,7 @@ defmodule MarblesWeb.HomeLive do
     """
   end
 
-  attr :href, :string, required: true
+  attr :navigate, :string, required: true
   attr :kind, :string, required: true
   attr :icon, :string, required: true
   attr :title, :string, required: true
@@ -301,7 +301,7 @@ defmodule MarblesWeb.HomeLive do
   defp cta_card(assigns) do
     ~H"""
     <.link
-      href={@href}
+      navigate={@navigate}
       class={[
         "group relative flex flex-col gap-3 overflow-hidden rounded-3xl border p-8 transition-transform hover:-translate-y-0.5",
         @kind == "primary" &&

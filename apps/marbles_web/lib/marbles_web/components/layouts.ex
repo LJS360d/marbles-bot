@@ -91,15 +91,20 @@ defmodule MarblesWeb.Layouts do
           >
             <ol class="flex flex-nowrap items-center gap-1.5">
               <li>
-                <a href={~p"/"} class="hover:text-base-content whitespace-nowrap transition-colors">
+                <.link
+                  navigate={~p"/"}
+                  class="hover:text-base-content whitespace-nowrap transition-colors"
+                >
                   Home
-                </a>
+                </.link>
               </li>
               <%= for {label, path} <- @breadcrumbs do %>
                 <li class="flex items-center gap-1.5 whitespace-nowrap">
                   <span class="text-base-content/50" aria-hidden="true">/</span>
                   <%= if path do %>
-                    <a href={path} class="hover:text-base-content transition-colors">{label}</a>
+                    <.link navigate={path} class="hover:text-base-content transition-colors">
+                      {label}
+                    </.link>
                   <% else %>
                     <span class="text-base-content font-medium" aria-current="page">{label}</span>
                   <% end %>
@@ -234,12 +239,14 @@ defmodule MarblesWeb.Layouts do
     ~H"""
     <nav :if={@items != []} class="mb-4 text-sm text-base-content/70" aria-label="Breadcrumb">
       <ol class="flex flex-wrap items-center gap-1.5">
-        <li><a href={~p"/"} class="hover:text-base-content transition-colors">Home</a></li>
+        <li>
+          <.link navigate={~p"/"} class="hover:text-base-content transition-colors">Home</.link>
+        </li>
         <%= for {label, path} <- @items do %>
           <li class="flex items-center gap-1.5">
             <span class="text-base-content/50" aria-hidden="true">/</span>
             <%= if path do %>
-              <a href={path} class="hover:text-base-content transition-colors">{label}</a>
+              <.link navigate={path} class="hover:text-base-content transition-colors">{label}</.link>
             <% else %>
               <span class="text-base-content font-medium" aria-current="page">{label}</span>
             <% end %>
@@ -290,8 +297,8 @@ defmodule MarblesWeb.Layouts do
         >
           <%= for {path, scope, icon, label} <- @tab_items do %>
             <li class="snap-center flex-none basis-1/5">
-              <a
-                href={path}
+              <.link
+                navigate={path}
                 id={"bottom-tab-#{scope}"}
                 data-scope={to_string(scope)}
                 class={[
@@ -313,7 +320,7 @@ defmodule MarblesWeb.Layouts do
                     @race_state == :in_race && "bg-error animate-pulse"
                   ]}
                 />
-              </a>
+              </.link>
             </li>
           <% end %>
         </ul>
@@ -340,8 +347,8 @@ defmodule MarblesWeb.Layouts do
     <aside class="hidden md:flex flex-col w-64 shrink-0 fixed top-0 left-0 h-svh z-30 border-r border-base-300 bg-base-200">
       <nav class="flex-1 overflow-y-auto p-3 pt-4 space-y-0.5">
         <%= for {path, scope, icon, label} <- @tab_items do %>
-          <a
-            href={path}
+          <.link
+            navigate={path}
             id={"public-sidebar-#{scope}"}
             class={[
               "flex items-center gap-3 rounded-lg px-3 py-2 text-sm transition-colors relative",
@@ -360,7 +367,7 @@ defmodule MarblesWeb.Layouts do
                 @race_state == :in_race && "bg-error animate-pulse"
               ]}
             />
-          </a>
+          </.link>
         <% end %>
       </nav>
     </aside>
@@ -371,19 +378,19 @@ defmodule MarblesWeb.Layouts do
 
   def profile_mini_card(assigns) do
     ~H"""
-    <a
+    <.link
       :if={@current_user}
-      href={~p"/profile"}
+      navigate={~p"/profile"}
       id="profile-mini-card"
       class="inline-flex items-center gap-2 rounded-full bg-base-100/95 backdrop-blur border border-base-300 px-2 py-1.5 shadow hover:shadow-md transition-shadow"
     >
       <div class="size-7 rounded-full bg-base-300 flex items-center justify-center text-xs font-semibold">
         {String.first(Marbles.Accounts.primary_display_name(@current_user) || "?")}
       </div>
-      <span class="text-xs font-medium pr-1 max-w-[8rem] truncate">
+      <span class="text-xs font-medium pr-1 max-w-32 truncate">
         {Marbles.Accounts.primary_display_name(@current_user)}
       </span>
-    </a>
+    </.link>
     <a
       :if={!@current_user}
       href={~p"/login"}
@@ -462,10 +469,10 @@ defmodule MarblesWeb.Layouts do
 
     <aside class="fixed top-0 left-0 z-40 h-svh w-64 -translate-x-full peer-checked:translate-x-0 md:translate-x-0 transition-transform duration-200 ease-out bg-base-200 border-r border-base-300 flex flex-col">
       <div class="flex items-center justify-between p-4 border-b border-base-300">
-        <a href={~p"/admin/owner"} class="flex items-center gap-2">
+        <.link navigate={~p"/admin/owner"} class="flex items-center gap-2">
           <.icon name="hero-shield-check" class="size-5 text-primary" />
           <span class="font-semibold">Owner</span>
-        </a>
+        </.link>
         <label
           for="admin-sidebar-toggle"
           class="flex h-8 w-8 cursor-pointer items-center justify-center rounded-full hover:bg-base-300 md:hidden"
@@ -487,8 +494,8 @@ defmodule MarblesWeb.Layouts do
             <ul class="mt-1 space-y-0.5">
               <%= for {path, scope, icon, label} <- items do %>
                 <li>
-                  <a
-                    href={path}
+                  <.link
+                    navigate={path}
                     id={"sidebar-#{scope}"}
                     class={[
                       "flex items-center gap-2 rounded-lg px-3 py-1.5 text-sm transition-colors",
@@ -499,7 +506,7 @@ defmodule MarblesWeb.Layouts do
                   >
                     <.icon name={icon} class="size-4 shrink-0" />
                     <span>{label}</span>
-                  </a>
+                  </.link>
                 </li>
               <% end %>
             </ul>
@@ -533,12 +540,12 @@ defmodule MarblesWeb.Layouts do
             </button>
           </form>
         </div>
-        <a
-          href={~p"/"}
+        <.link
+          navigate={~p"/"}
           class="block text-center text-xs text-base-content/60 hover:text-base-content transition-colors"
         >
           ← Back to game
-        </a>
+        </.link>
       </div>
     </aside>
     """
@@ -549,13 +556,13 @@ defmodule MarblesWeb.Layouts do
   def header(assigns) do
     ~H"""
     <header class="sticky top-0 z-40 flex items-center justify-between gap-4 border-b border-base-300 bg-base-100/95 backdrop-blur px-4 py-3 sm:px-6 lg:px-8 md:mb-4">
-      <a
-        href={~p"/"}
+      <.link
+        navigate={~p"/"}
         class="flex h-10 w-10 items-center justify-center rounded-full hover:bg-base-200 transition-colors"
         aria-label="Home"
       >
         <.icon name="hero-home" class="size-6 text-base-content/80" />
-      </a>
+      </.link>
       <div class="flex items-center gap-2">
         <.theme_toggle />
         <input type="checkbox" id="nav-drawer" class="peer sr-only" />
@@ -584,12 +591,12 @@ defmodule MarblesWeb.Layouts do
           </div>
           <ul class="flex flex-col gap-1 p-4 md:flex-row md:items-center md:gap-3 md:p-0">
             <li>
-              <a
-                href={~p"/gacha"}
+              <.link
+                navigate={~p"/gacha"}
                 class="block rounded-lg px-3 py-2 hover:bg-base-200 md:inline-block md:px-2 md:py-1 md:text-sm"
               >
                 Gacha
-              </a>
+              </.link>
             </li>
             <%= if @current_user do %>
               <li class="md:hidden">
@@ -599,22 +606,22 @@ defmodule MarblesWeb.Layouts do
               </li>
               <%= if admin_or_owner?(@current_user) do %>
                 <li>
-                  <a
-                    href={~p"/admin"}
+                  <.link
+                    navigate={~p"/admin"}
                     class="block rounded-lg px-3 py-2 hover:bg-base-200 md:inline-block md:px-2 md:py-1 md:text-sm"
                   >
                     Admin
-                  </a>
+                  </.link>
                 </li>
               <% end %>
               <%= if owner?(@current_user) do %>
                 <li>
-                  <a
-                    href={~p"/admin/owner"}
+                  <.link
+                    navigate={~p"/admin/owner"}
                     class="block rounded-lg px-3 py-2 hover:bg-base-200 md:inline-block md:px-2 md:py-1 md:text-sm"
                   >
                     Owner
-                  </a>
+                  </.link>
                 </li>
               <% end %>
               <li>

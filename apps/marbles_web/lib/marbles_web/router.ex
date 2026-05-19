@@ -54,7 +54,7 @@ defmodule MarblesWeb.Router do
     get "/auth/:provider/callback", AuthController, :callback
     delete "/logout", AuthController, :logout
 
-    live_session :public_pages,
+    live_session :app_pages,
       on_mount: [{MarblesWeb.Live.AuthHooks, :assign_current_user}] do
       live "/", HomeLive, :index
       live "/daily", PlinkoLive, :index
@@ -71,12 +71,8 @@ defmodule MarblesWeb.Router do
 
       live "/mine", MiningLive, :index
       live "/shop", ShopLive, :index
-    end
 
-    live_session :authed_pages,
-      on_mount: [{MarblesWeb.Live.AuthHooks, :assign_current_user}] do
       live "/squads", SquadsLive, :index
-
       live "/inventory", InventoryLive, :index
       live "/upgrade-marble", UpgradeMarbleLive, :index
       live "/profile", ProfileLive, :index

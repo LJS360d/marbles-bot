@@ -160,7 +160,7 @@ defmodule MarblesWeb.Admin.OwnerReplaysLive do
       <div :if={@detail} class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50">
         <div class="w-full max-w-3xl rounded-2xl bg-base-100 p-5 shadow-xl space-y-3">
           <div class="flex items-center justify-between">
-            <h2 class="text-lg font-semibold font-mono text-sm">Replay {@detail.race_id}</h2>
+            <h2 class="font-semibold font-mono text-sm">Replay {@detail.race_id}</h2>
             <button phx-click="close_detail" class="btn btn-ghost btn-sm">
               <.icon name="hero-x-mark" class="size-4" />
             </button>
