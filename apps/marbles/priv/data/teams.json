@@ -1056,6 +1056,48 @@
       {
         "assets": [
           {
+            "filename": "/assets/marbles/mercedes-benz-eq/standard/thumbnail.avif",
+            "type": "thumbnail"
+          },
+          {
+            "filename": "/assets/marbles/mercedes-benz-eq/standard/splash.avif",
+            "type": "splash"
+          }
+        ],
+        "base_stats": {
+          "bounce": 14,
+          "friction": 11,
+          "mass": 15
+        },
+        "name": "Mercedes-Benz EQ",
+        "rarity": 1,
+        "role": "athlete",
+        "texturePath": "/assets/marbles/mercedes-benz-eq/standard/texture.webp"
+      },
+      {
+        "assets": [
+          {
+            "filename": "/assets/marbles/jelle-bakker/standard/thumbnail.avif",
+            "type": "thumbnail"
+          },
+          {
+            "filename": "/assets/marbles/jelle-bakker/standard/splash.avif",
+            "type": "splash"
+          }
+        ],
+        "base_stats": {
+          "bounce": 14,
+          "friction": 11,
+          "mass": 15
+        },
+        "name": "Jelle Bakker",
+        "rarity": 1,
+        "role": "athlete",
+        "texturePath": "/assets/marbles/jelle-bakker/standard/texture.webp"
+      },
+      {
+        "assets": [
+          {
             "filename": "/assets/marbles/ghost-plasma/standard/thumbnail.avif",
             "type": "thumbnail"
           },
@@ -2109,27 +2151,6 @@
         "rarity": 1,
         "role": "athlete",
         "texturePath": "/assets/marbles/eve/standard/texture.webp"
-      },
-      {
-        "assets": [
-          {
-            "filename": "/assets/marbles/mercedes-benz-eq/standard/thumbnail.avif",
-            "type": "thumbnail"
-          },
-          {
-            "filename": "/assets/marbles/mercedes-benz-eq/standard/splash.avif",
-            "type": "splash"
-          }
-        ],
-        "base_stats": {
-          "bounce": 14,
-          "friction": 11,
-          "mass": 15
-        },
-        "name": "Mercedes-Benz EQ",
-        "rarity": 1,
-        "role": "athlete",
-        "texturePath": "/assets/marbles/mercedes-benz-eq/standard/texture.webp"
       },
       {
         "assets": [
@@ -5567,27 +5588,6 @@
         "rarity": 2,
         "role": "athlete",
         "texturePath": "/assets/marbles/green-eye/standard/texture.webp"
-      },
-      {
-        "assets": [
-          {
-            "filename": "/assets/marbles/jelle-bakker/standard/thumbnail.avif",
-            "type": "thumbnail"
-          },
-          {
-            "filename": "/assets/marbles/jelle-bakker/standard/splash.avif",
-            "type": "splash"
-          }
-        ],
-        "base_stats": {
-          "bounce": 14,
-          "friction": 11,
-          "mass": 15
-        },
-        "name": "Jelle Bakker",
-        "rarity": 1,
-        "role": "athlete",
-        "texturePath": "/assets/marbles/jelle-bakker/standard/texture.webp"
       },
       {
         "assets": [
