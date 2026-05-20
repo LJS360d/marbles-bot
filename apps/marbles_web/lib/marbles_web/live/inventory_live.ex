@@ -16,7 +16,6 @@ defmodule MarblesWeb.InventoryLive do
        socket
        |> assign(:page_title, "Inventory")
        |> assign(:current_scope, :inventory)
-       |> assign(:breadcrumbs, [{"Inventory", nil}])
        |> assign(:items, items)
        |> assign(:item_metadata, item_metadata)
        |> assign(:selected_item, nil)

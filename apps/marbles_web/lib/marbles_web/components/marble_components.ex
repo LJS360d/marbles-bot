@@ -5,6 +5,10 @@ defmodule MarblesWeb.MarbleComponents do
 
   import MarblesWeb.CoreComponents
 
+  @spec rarity_stars(integer() | nil) :: String.t()
+  def rarity_stars(r) when is_integer(r) and r > 0, do: String.duplicate("⭐", r)
+  def rarity_stars(_), do: "⭐"
+
   @spec marble_info_payload(map() | nil) :: map() | nil
   def marble_info_payload(nil), do: nil
 
@@ -49,7 +53,7 @@ defmodule MarblesWeb.MarbleComponents do
           <div>
             <h3 class="text-lg font-bold">{@marble.name}</h3>
             <p class="text-xs uppercase tracking-wider text-base-content/60">
-              {@marble.edition || "—"} · {format_role(@marble.role)} · ★{@marble.rarity}
+              {@marble.edition || "—"} · {format_role(@marble.role)} · {rarity_stars(@marble.rarity)}
             </p>
           </div>
           <button

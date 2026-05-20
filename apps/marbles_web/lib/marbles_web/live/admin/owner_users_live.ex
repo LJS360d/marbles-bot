@@ -9,7 +9,7 @@ defmodule MarblesWeb.Admin.OwnerUsersLive do
     socket =
       socket
       |> assign(:page_title, "Users")
-      |> assign(:current_scope, :owner_admin)
+      |> assign(:current_scope, :owner_users)
       |> assign(:breadcrumbs, [{"Owner", ~p"/admin/owner"}, {"Users", nil}])
       |> assign(:wide, true)
       |> assign(:page, 1)

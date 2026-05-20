@@ -32,7 +32,7 @@ defmodule MarblesWeb.Admin.GuildListLive do
       "Guilds",
       [{"Owner", ~p"/admin/owner"}, {"Guilds", nil}],
       "No guilds yet.",
-      :owner_admin
+      :owner_guilds
     }
   end
 

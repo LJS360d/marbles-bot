@@ -23,7 +23,6 @@ defmodule MarblesWeb.UpgradeMarbleLive do
        socket
        |> assign(:page_title, "Upgrade Marble")
        |> assign(:current_scope, :upgrade_marble)
-       |> assign(:breadcrumbs, [{"Upgrade Marble", nil}])
        |> assign(:three_stars, three_stars)
        |> assign(:marble_cores, marble_cores)
        |> assign(:selected_marble, nil)

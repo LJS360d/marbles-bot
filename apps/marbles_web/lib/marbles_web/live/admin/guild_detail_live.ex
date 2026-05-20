@@ -27,7 +27,7 @@ defmodule MarblesWeb.Admin.GuildDetailLive do
 
   defp scope_pair(socket) do
     case socket.assigns.guild_route_scope do
-      :owner -> {:owner_admin, :owner}
+      :owner -> {:owner_guilds, :owner}
       _ -> {:guild_admin, :server}
     end
   end

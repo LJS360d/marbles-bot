@@ -8,7 +8,7 @@ defmodule MarblesWeb.Admin.OwnerTeamEditLive do
     {:ok,
      socket
      |> assign(:page_title, "Edit team")
-     |> assign(:current_scope, :owner_admin)
+     |> assign(:current_scope, :owner_teams)
      |> assign(:wide, true)
      |> assign(:breadcrumbs, [
        {"Owner", ~p"/admin/owner"},

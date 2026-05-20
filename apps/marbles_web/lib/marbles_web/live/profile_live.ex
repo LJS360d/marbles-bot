@@ -46,6 +46,7 @@ defmodule MarblesWeb.ProfileLive do
     <Layouts.app
       flash={@flash}
       race_state={@race_state}
+      current_race_id={@current_race_id}
       current_user={@current_user}
       current_scope={@current_scope}
       show_login_modal={@show_login_modal}

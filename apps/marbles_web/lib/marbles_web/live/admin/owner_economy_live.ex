@@ -10,7 +10,7 @@ defmodule MarblesWeb.Admin.OwnerEconomyLive do
     {:ok,
      socket
      |> assign(:page_title, "Economy")
-     |> assign(:current_scope, :owner_admin)
+     |> assign(:current_scope, :owner_economy)
      |> assign(:breadcrumbs, [{"Owner", ~p"/admin/owner"}, {"Economy", nil}])
      |> assign(:page, 1)
      |> load_data()}

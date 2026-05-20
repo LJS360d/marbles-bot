@@ -19,8 +19,9 @@ defmodule Marbles.Racing.Engine do
 
   alias Marbles.PubSub
   alias Marbles.Racing.Abilities
-  alias Marbles.Racing.Engine.{Registry, Setup, State}
+  alias Marbles.Racing.Engine.{Registry, Setup, State, UserIndex}
   alias Marbles.Racing.Abilities.TeamSignature
+  alias Marbles.Racing.Queue
   alias Phoenix.PubSub, as: PS
 
   @default_tick_ms 33
@@ -56,6 +57,16 @@ defmodule Marbles.Racing.Engine do
       :error -> false
     end
   end
+
+  @doc """
+  Looks up the in-flight race a user is currently in, if any.
+
+  Returns `nil` if the user is not racing. Backed by the
+  `Engine.UserIndex` ETS table; entries auto-clear when the engine
+  process for the race terminates.
+  """
+  @spec find_user_race(Ecto.UUID.t()) :: Ecto.UUID.t() | nil
+  def find_user_race(user_id), do: UserIndex.find(user_id)
 
   @spec finish_now(Ecto.UUID.t()) :: :ok
   def finish_now(race_id) do
@@ -122,7 +133,29 @@ defmodule Marbles.Racing.Engine do
     Process.send_after(self(), :tick, state.config.tick_ms)
     Process.send_after(self(), :hard_timeout, state.config.hard_timeout_ms)
     PS.broadcast(PubSub, topic(setup.race_id), {:setup, State.public_setup(state)})
+    UserIndex.put_many(participant_user_ids(state), setup.race_id)
     {:ok, state}
+  end
+
+  @impl true
+  def terminate(_reason, %State{race_id: race_id} = state) do
+    users = participant_user_ids(state)
+    UserIndex.remove_race(race_id)
+
+    Enum.each(users, fn user_id ->
+      PS.broadcast(PubSub, Queue.user_topic(user_id), {:race_finished, race_id})
+    end)
+
+    :ok
+  end
+
+  def terminate(_reason, _state), do: :ok
+
+  defp participant_user_ids(%State{marbles: marbles}) do
+    marbles
+    |> Enum.map(& &1.user_id)
+    |> Enum.reject(&is_nil/1)
+    |> Enum.uniq()
   end
 
   @impl true

@@ -8,7 +8,7 @@ defmodule MarblesWeb.Admin.OwnerPackBuilderLive do
     socket =
       socket
       |> assign(:page_title, "Pack")
-      |> assign(:current_scope, :owner_admin)
+      |> assign(:current_scope, :owner_packs)
       |> assign(:breadcrumbs, [
         {"Owner", ~p"/admin/owner"},
         {"Packs", ~p"/admin/owner/packs"},

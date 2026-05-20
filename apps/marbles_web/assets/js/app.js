@@ -31,6 +31,7 @@ import { MarblePreview } from "./marble_preview_hook.js";
 import { PlinkoScene } from "./plinko_hook.js";
 import { bootstrapDiscordEmbeddedAuth, initializeDiscordUrlMappings } from "./discord_activity_hook.js";
 import BottomTabCarousel from "./bottom_tab_carousel.js";
+import RaceNotify from "./race_notify_hook.js";
 
 const csrfToken = document
   .querySelector("meta[name='csrf-token']")
@@ -40,6 +41,7 @@ const liveSocket = new LiveSocket("/live", Socket, {
   params: { _csrf_token: csrfToken },
   hooks: {
     BottomTabCarousel,
+    RaceNotify,
     GachaPage,
     GachaCinematic,
     DevSandbox,

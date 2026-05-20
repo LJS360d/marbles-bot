@@ -103,7 +103,10 @@ defmodule MarblesWeb.Router do
     pipe_through [:browser, :auth, :require_owner]
 
     live_session :owner_admin,
-      on_mount: [{MarblesWeb.Live.AuthHooks, :require_owner}] do
+      on_mount: [
+        {MarblesWeb.Live.AuthHooks, :require_owner},
+        {MarblesWeb.Live.GuildScope, :owner_guilds}
+      ] do
       live "/", OwnerAdminLive, :index
       live "/users", OwnerUsersLive, :index
       live "/users/:id", OwnerUserDetailLive, :show
@@ -138,13 +141,6 @@ defmodule MarblesWeb.Router do
       live "/analytics", OwnerAnalyticsLive, :index
       live "/audit-log", OwnerAuditLive, :index
       live "/broadcast", BroadcastLive, :index
-    end
-
-    live_session :owner_guilds,
-      on_mount: [
-        {MarblesWeb.Live.AuthHooks, :require_owner},
-        {MarblesWeb.Live.GuildScope, :owner_guilds}
-      ] do
       live "/guilds", GuildListLive, :index
       live "/guilds/:guild_id", GuildDetailLive, :show
     end

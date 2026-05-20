@@ -169,6 +169,8 @@ defmodule MarblesWeb.GachaLive do
     ~H"""
     <Layouts.app
       flash={@flash}
+      race_state={@race_state}
+      current_race_id={@current_race_id}
       current_user={@current_user}
       current_scope={@current_scope}
       show_login_modal={@show_login_modal}
@@ -449,12 +451,6 @@ defmodule MarblesWeb.GachaLive do
 
   defp pull_price_label(%{final_price: final_price}, coin),
     do: "(#{IntegerDisplay.format(final_price)} #{coin})"
-
-  defp rarity_stars(rarity) when is_integer(rarity) and rarity > 0 do
-    String.duplicate("⭐", rarity)
-  end
-
-  defp rarity_stars(_), do: "⭐"
 
   defp animation_payload(result) do
     %{

@@ -29,8 +29,8 @@ defmodule MarblesWeb.Admin.OwnerAnalyticsLive do
         _ -> {7, 86_400, "day"}
       end
 
-    now = DateTime.utc_now()
-    from_dt = DateTime.add(now, -bucket_count * bucket_seconds, :second)
+    now = NaiveDateTime.utc_now() |> NaiveDateTime.truncate(:second)
+    from_dt = NaiveDateTime.add(now, -bucket_count * bucket_seconds, :second)
 
     rows =
       from(a in AnalyticsEvent,
@@ -54,7 +54,7 @@ defmodule MarblesWeb.Admin.OwnerAnalyticsLive do
   end
 
   defp bucket_for(ts, from_dt, bucket_seconds) do
-    diff = DateTime.diff(ts, from_dt, :second)
+    diff = NaiveDateTime.diff(ts, from_dt, :second)
     div(diff, bucket_seconds)
   end
 

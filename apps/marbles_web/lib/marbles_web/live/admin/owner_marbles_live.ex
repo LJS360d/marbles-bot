@@ -9,7 +9,7 @@ defmodule MarblesWeb.Admin.OwnerMarblesLive do
     socket =
       socket
       |> assign(:page_title, "Marbles")
-      |> assign(:current_scope, :owner_admin)
+      |> assign(:current_scope, :owner_marbles)
       |> assign(:breadcrumbs, [{"Owner", ~p"/admin/owner"}, {"Marbles", nil}])
       |> assign(:page, 1)
       |> assign(:sort, "name")

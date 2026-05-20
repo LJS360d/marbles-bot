@@ -7,7 +7,7 @@ defmodule MarblesWeb.Admin.OwnerShopItemsLive do
     {:ok,
      socket
      |> assign(:page_title, "Shop items")
-     |> assign(:current_scope, :owner_admin)
+     |> assign(:current_scope, :owner_shop_items)
      |> assign(:breadcrumbs, [
        {"Owner", ~p"/admin/owner"},
        {"Economy", ~p"/admin/owner/economy"},

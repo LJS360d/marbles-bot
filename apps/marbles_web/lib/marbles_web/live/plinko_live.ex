@@ -111,7 +111,12 @@ defmodule MarblesWeb.PlinkoLive do
   @impl true
   def render(assigns) do
     ~H"""
-    <Layouts.app flash={@flash} race_state={@race_state} current_scope={nil}>
+    <Layouts.app
+      flash={@flash}
+      race_state={@race_state}
+      current_race_id={@current_race_id}
+      current_scope={nil}
+    >
       <div id="plinko-page" class="relative isolate min-h-svh">
         <div
           aria-hidden="true"

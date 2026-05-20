@@ -1,12 +1,11 @@
 defmodule MarblesWeb.SquadsLive do
   @moduledoc """
-  Squad builder, mining roster assignment, and collection browser.
+  Squad builder and collection browser.
   """
 
   use MarblesWeb, :live_view
 
   alias Marbles.{Assets, Collection}
-  alias Marbles.Economy.MineRoster
   alias Marbles.Racing.Squads
   alias Marbles.Schema.UserSquad
 
@@ -19,19 +18,16 @@ defmodule MarblesWeb.SquadsLive do
       unlock = Squads.ensure_unlock(user.id)
       squads = Squads.list_user_squads(user.id)
       {marbles, total} = Collection.list_user_inventory(user.id, page: 1, per_page: 200)
-      mine_marbles = MineRoster.list_assigned_user_marbles(user.id)
 
       {:ok,
        socket
        |> assign(:page_title, "Roster")
        |> assign(:current_scope, :roster)
        |> assign(:show_login_modal, false)
-       |> assign(:breadcrumbs, [{"Roster", nil}])
        |> assign(:max_slots, unlock.max_slots)
        |> assign(:squads, squads)
        |> assign(:collection, marbles)
        |> assign(:collection_total, total)
-       |> assign(:mine_marbles, mine_marbles)
        |> assign(:roster_tab, :squads)
        |> assign(:show_marble_modal, false)
        |> assign(:marble_modal, nil)
@@ -155,43 +151,6 @@ defmodule MarblesWeb.SquadsLive do
      |> assign(:marble_modal, nil)}
   end
 
-  def handle_event("add_mine_slot", %{"user_marble_id" => ""}, socket), do: {:noreply, socket}
-
-  def handle_event("add_mine_slot", %{"user_marble_id" => id}, socket) do
-    user = socket.assigns.current_user
-
-    case MineRoster.add_user_marble(user.id, id) do
-      {:ok, _} ->
-        {:noreply,
-         socket
-         |> put_flash(:info, "Marble added to mining roster.")
-         |> assign(:mine_marbles, MineRoster.list_assigned_user_marbles(user.id))}
-
-      {:error, :roster_full} ->
-        {:noreply, put_flash(socket, :error, "Mining roster is full (max 5).")}
-
-      {:error, :already_in_roster} ->
-        {:noreply, put_flash(socket, :error, "Already mining that marble.")}
-
-      {:error, :not_found} ->
-        {:noreply, put_flash(socket, :error, "Marble not found.")}
-    end
-  end
-
-  def handle_event("remove_mine", %{"user_marble_id" => id}, socket) do
-    user = socket.assigns.current_user
-
-    case MineRoster.remove_user_marble(user.id, id) do
-      {:ok, _} ->
-        {:noreply,
-         socket
-         |> assign(:mine_marbles, MineRoster.list_assigned_user_marbles(user.id))}
-
-      {:error, :not_found} ->
-        {:noreply, put_flash(socket, :error, "Not in mining roster.")}
-    end
-  end
-
   def handle_event("save_squad", _params, socket) do
     user = socket.assigns.current_user
     picks = socket.assigns.editor_picks
@@ -226,8 +185,7 @@ defmodule MarblesWeb.SquadsLive do
   end
 
   defp find_user_marble(socket, id) do
-    Enum.find(socket.assigns.collection, &(&1.id == id)) ||
-      Enum.find(socket.assigns.mine_marbles, &(&1.id == id))
+    Enum.find(socket.assigns.collection, &(&1.id == id))
   end
 
   defp marble_matches_role?(collection, user_marble_id, role) do
@@ -303,14 +261,12 @@ defmodule MarblesWeb.SquadsLive do
 
   @impl true
   def render(assigns) do
-    assigns = assign(assigns, :mine_add_options, mine_add_candidates(assigns))
-
     ~H"""
     <Layouts.app
       flash={@flash}
       race_state={@race_state}
-      current_scope={:roster}
-      breadcrumbs={@breadcrumbs}
+      current_race_id={@current_race_id}
+      current_scope={:squads}
       show_login_modal={@show_login_modal}
     >
       <.marble_info_modal
@@ -320,22 +276,18 @@ defmodule MarblesWeb.SquadsLive do
         on_close="close_marble_info"
       />
 
-      <section class="space-y-6">
+      <section class="space-y-4">
         <header class="flex flex-wrap items-end justify-between gap-3">
           <div>
-            <h1 class="text-3xl font-bold">Race Roster</h1>
-            <p class="text-sm text-base-content/70">
+            <h1 class="text-2xl font-bold">Race Roster</h1>
+            <p class="text-xs text-base-content/70">
               {length(@squads)} / {@max_slots} squad slots used.
             </p>
           </div>
           <div class="flex gap-2">
-            <button
-              type="button"
-              phx-click={Phoenix.LiveView.JS.dispatch("phx:race-dock:open")}
-              class="btn btn-primary btn-sm rounded-full"
-            >
+            <.link navigate={~p"/races"} class="btn btn-primary btn-sm rounded-full">
               <.icon name="hero-bolt" class="size-4" /> Quick Race
-            </button>
+            </.link>
             <.link navigate={~p"/calendar"} class="btn btn-ghost btn-sm rounded-full">
               <.icon name="hero-calendar" class="size-4" /> Calendar
             </.link>
@@ -346,8 +298,6 @@ defmodule MarblesWeb.SquadsLive do
           <.empty_collection_state />
         <% else %>
           <%= if @editing_slot == nil do %>
-            <.mine_section mine_marbles={@mine_marbles} mine_add_options={@mine_add_options} />
-
             <div class="tabs tabs-boxed w-fit" role="tablist">
               <button
                 id="tab-squads"
@@ -389,79 +339,6 @@ defmodule MarblesWeb.SquadsLive do
         <% end %>
       </section>
     </Layouts.app>
-    """
-  end
-
-  defp mine_add_candidates(assigns) do
-    in_mine = assigns.mine_marbles |> Enum.map(& &1.id) |> MapSet.new()
-
-    Enum.filter(assigns.collection, fn um ->
-      not MapSet.member?(in_mine, um.id)
-    end)
-  end
-
-  attr :mine_marbles, :list, required: true
-  attr :mine_add_options, :list, required: true
-
-  defp mine_section(assigns) do
-    ~H"""
-    <section class="rounded-3xl border border-base-300 bg-base-100/60 p-5 backdrop-blur space-y-4">
-      <div class="flex flex-wrap items-end justify-between gap-3">
-        <div>
-          <h2 class="text-lg font-bold">Mining roster</h2>
-          <p class="text-sm text-base-content/60">
-            Up to 5 marbles earn passive coins toward your daily claim.
-          </p>
-        </div>
-        <form :if={@mine_add_options != []} phx-change="add_mine_slot" id="mine-add-form">
-          <label class="text-xs uppercase tracking-wider text-base-content/60">Add marble</label>
-          <select
-            name="user_marble_id"
-            class="select select-bordered select-sm w-full max-w-xs mt-1"
-          >
-            <option value="">Choose…</option>
-            <option :for={um <- @mine_add_options} value={um.id}>
-              {um.marble.name} · Lv.{um.level}
-            </option>
-          </select>
-        </form>
-      </div>
-
-      <%= if @mine_marbles == [] do %>
-        <p class="text-sm text-base-content/60">No marbles mining yet.</p>
-      <% else %>
-        <ul class="grid gap-2 sm:grid-cols-2">
-          <li
-            :for={um <- @mine_marbles}
-            class="flex items-center justify-between gap-2 rounded-2xl border border-base-300 bg-base-200/20 px-3 py-2 text-sm"
-          >
-            <div class="min-w-0">
-              <p class="font-medium truncate">{um.marble.name}</p>
-              <p class="text-xs text-base-content/60">Lv.{um.level} · ★{um.marble.rarity}</p>
-            </div>
-            <div class="flex shrink-0 gap-1">
-              <button
-                type="button"
-                phx-click="open_marble_info"
-                phx-value-user_marble_id={um.id}
-                class="btn btn-ghost btn-xs"
-                aria-label="Info"
-              >
-                <.icon name="hero-information-circle" class="size-4" />
-              </button>
-              <button
-                type="button"
-                phx-click="remove_mine"
-                phx-value-user_marble_id={um.id}
-                class="btn btn-ghost btn-xs text-error"
-              >
-                Remove
-              </button>
-            </div>
-          </li>
-        </ul>
-      <% end %>
-    </section>
     """
   end
 
@@ -587,7 +464,7 @@ defmodule MarblesWeb.SquadsLive do
               <.rarity_orb rarity={um.marble.rarity} />
             <% end %>
             <span class="absolute top-1.5 right-1.5 badge badge-xs badge-neutral opacity-80">
-              ★{um.marble.rarity}
+              {rarity_stars(um.marble.rarity)}
             </span>
           </div>
 
@@ -765,13 +642,15 @@ defmodule MarblesWeb.SquadsLive do
                       />
                     <% else %>
                       <div class="size-9 rounded-lg bg-base-200/60 shrink-0 flex items-center justify-center text-xs font-bold text-base-content/40">
-                        ★{um.marble.rarity}
+                        {rarity_stars(um.marble.rarity)}
                       </div>
                     <% end %>
                     <div class="min-w-0">
                       <div class="flex items-center justify-between gap-1">
                         <span class="font-medium truncate">{um.marble.name}</span>
-                        <span class="badge badge-xs badge-outline shrink-0">★{um.marble.rarity}</span>
+                        <span class="badge badge-xs badge-outline shrink-0">
+                          {rarity_stars(um.marble.rarity)}
+                        </span>
                       </div>
                       <p class="text-xs text-base-content/60">Lv. {um.level}</p>
                     </div>

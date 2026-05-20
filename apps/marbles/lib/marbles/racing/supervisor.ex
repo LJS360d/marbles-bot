@@ -17,6 +17,7 @@ defmodule Marbles.Racing.Supervisor do
     children = [
       {Task.Supervisor, name: Marbles.Racing.TaskSupervisor},
       Engine.Registry,
+      Engine.UserIndex,
       Engine.Supervisor,
       Queue,
       Scheduler,

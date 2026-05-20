@@ -37,6 +37,7 @@ defmodule MarblesWeb.Layouts do
   attr :current_scope, :any, default: nil
   attr :current_user, :any, default: nil
   attr :race_state, :atom, default: :idle
+  attr :current_race_id, :any, default: nil
   attr :breadcrumbs, :list, default: [], doc: "list of {label, path} or {label, nil} for current"
   attr :show_login_modal, :boolean, default: false, doc: "whether to show the login modal"
   slot :inner_block, required: true
@@ -139,6 +140,11 @@ defmodule MarblesWeb.Layouts do
     <div :if={not @is_admin} class="flex min-h-svh">
       <.public_sidebar current_scope={@current_scope} race_state={@race_state} />
       <main class={["flex-1 min-w-0 md:ml-64", @show_bottom_nav && "pb-16 md:pb-0"]}>
+        <.race_in_progress_banner
+          race_state={@race_state}
+          current_race_id={@current_race_id}
+          current_scope={@current_scope}
+        />
         <div class={["space-y-4", @container_width]}>
           <div
             :if={@discord_activity_enabled}
@@ -165,6 +171,8 @@ defmodule MarblesWeb.Layouts do
     />
 
     <.flash_group flash={@flash} />
+
+    <div id="race-notify-hook" phx-hook="RaceNotify" phx-update="ignore" class="hidden"></div>
 
     <!-- Login Modal -->
     <div id="login-modal" data-show-modal={@show_login_modal} class="relative z-50 hidden">
@@ -228,6 +236,30 @@ defmodule MarblesWeb.Layouts do
             </div>
           </div>
         </div>
+      </div>
+    </div>
+    """
+  end
+
+  attr :race_state, :atom, default: :idle
+  attr :current_race_id, :any, default: nil
+  attr :current_scope, :any, default: nil
+
+  defp race_in_progress_banner(assigns) do
+    ~H"""
+    <div
+      :if={(@race_state == :in_race and @current_race_id) && @current_scope != :race}
+      class="sticky top-0 z-30 border-b border-orange-500/40 bg-orange-500/15 backdrop-blur px-4 py-2"
+    >
+      <div class="flex items-center gap-3 max-w-screen-2xl mx-auto">
+        <span class="size-2.5 rounded-full bg-orange-500 animate-pulse shrink-0" />
+        <span class="text-sm font-medium text-orange-400">Your squad is racing</span>
+        <.link
+          navigate={~p"/race/#{@current_race_id}"}
+          class="ml-auto btn btn-warning btn-xs rounded-full"
+        >
+          Watch <.icon name="hero-arrow-right" class="size-3" />
+        </.link>
       </div>
     </div>
     """
@@ -317,7 +349,7 @@ defmodule MarblesWeb.Layouts do
                   class={[
                     "absolute top-1.5 right-1.5 size-2 rounded-full ring-2 ring-base-100",
                     @race_state == :queued && "bg-success animate-pulse",
-                    @race_state == :in_race && "bg-error animate-pulse"
+                    @race_state == :in_race && "bg-orange-500 animate-pulse"
                   ]}
                 />
               </.link>
@@ -352,8 +384,14 @@ defmodule MarblesWeb.Layouts do
             id={"public-sidebar-#{scope}"}
             class={[
               "flex items-center gap-3 rounded-lg px-3 py-2 text-sm transition-colors relative",
-              @current_scope == scope && "bg-primary/15 text-primary font-medium",
-              @current_scope != scope &&
+              (scope == :race and @race_state == :in_race) &&
+                "bg-orange-500/20 text-orange-400 font-semibold animate-pulse",
+              (scope == :race and @race_state == :queued and @current_scope != scope) &&
+                "bg-success/10 text-success",
+              (not (scope == :race and @race_state in [:queued, :in_race]) and
+                 @current_scope == scope) && "bg-primary/15 text-primary font-medium",
+              (not (scope == :race and @race_state in [:queued, :in_race]) and
+                 @current_scope != scope) &&
                 "text-base-content/70 hover:bg-base-300 hover:text-base-content"
             ]}
           >
@@ -364,7 +402,7 @@ defmodule MarblesWeb.Layouts do
               class={[
                 "ml-auto size-2 rounded-full ring-2 ring-base-200",
                 @race_state == :queued && "bg-success animate-pulse",
-                @race_state == :in_race && "bg-error animate-pulse"
+                @race_state == :in_race && "bg-orange-500 animate-pulse"
               ]}
             />
           </.link>

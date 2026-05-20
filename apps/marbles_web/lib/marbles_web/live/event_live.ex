@@ -35,8 +35,7 @@ defmodule MarblesWeb.EventLive do
          |> assign(:event, event)
          |> assign(:squads, squads)
          |> assign(:selected_squad_id, default_squad_id(squads))
-         |> assign(:already_registered?, already?)
-         |> assign(:breadcrumbs, [{"Calendar", ~p"/calendar"}, {event.name, nil}])}
+         |> assign(:already_registered?, already?)}
 
       {:error, _} ->
         {:ok, socket |> put_flash(:error, "Event not found") |> redirect(to: ~p"/calendar")}
@@ -84,13 +83,13 @@ defmodule MarblesWeb.EventLive do
     <Layouts.app
       flash={@flash}
       race_state={@race_state}
+      current_race_id={@current_race_id}
       current_scope={:event}
-      breadcrumbs={@breadcrumbs}
       show_login_modal={@show_login_modal}
     >
-      <section class="grid gap-6 lg:grid-cols-3">
-        <article class="lg:col-span-2 rounded-3xl border border-base-300 bg-base-100/60 p-6 backdrop-blur space-y-3">
-          <h1 class="text-3xl font-bold">{@event.name}</h1>
+      <section class="grid gap-4 lg:grid-cols-3 py-4">
+        <article class="lg:col-span-2 rounded-3xl border border-base-300 bg-base-100/60 p-4 backdrop-blur space-y-2">
+          <h1 class="text-2xl font-bold">{@event.name}</h1>
           <p class="text-sm text-base-content/60">
             {Calendar.strftime(@event.start_time, "%a %b %d · %H:%M UTC")} → {Calendar.strftime(
               @event.end_time,
@@ -109,8 +108,8 @@ defmodule MarblesWeb.EventLive do
           </div>
         </article>
 
-        <aside class="rounded-3xl border border-base-300 bg-base-100/60 p-6 backdrop-blur space-y-3">
-          <h2 class="text-lg font-semibold">Sign up</h2>
+        <aside class="rounded-3xl border border-base-300 bg-base-100/60 p-4 backdrop-blur space-y-2">
+          <h2 class="text-base font-semibold">Sign up</h2>
           <%= cond do %>
             <% @current_user == nil -> %>
               <p class="text-sm text-base-content/70">Log in to sign up.</p>

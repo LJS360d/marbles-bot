@@ -35,19 +35,29 @@ defmodule MarblesWeb.Live.AuthHooks do
   end
 
   defp assign_race_state(socket) do
-    state =
-      case socket.assigns[:current_user] do
-        nil -> :idle
-        user -> Queue.user_status(user.id)
+    user = socket.assigns[:current_user]
+
+    {state, race_id} =
+      case user do
+        nil ->
+          {:idle, nil}
+
+        user ->
+          case Engine.find_user_race(user.id) do
+            nil ->
+              case Queue.user_status(user.id) do
+                :idle -> {:idle, nil}
+                %{} -> {:queued, nil}
+              end
+
+            race_id ->
+              {:in_race, race_id}
+          end
       end
 
-    state =
-      case state do
-        :idle -> :idle
-        %{} -> :queued
-      end
-
-    assign(socket, :race_state, state)
+    socket
+    |> assign(:race_state, state)
+    |> assign(:current_race_id, race_id)
   end
 
   defp maybe_attach_queue_listener(socket) do
@@ -68,20 +78,34 @@ defmodule MarblesWeb.Live.AuthHooks do
             {:halt,
              s
              |> assign(:race_state, :queued)
+             |> assign(:current_race_id, nil)
              |> put_flash(:info, "Queued. We'll let you know when your race starts.")}
 
           {:matched, race_id}, s ->
+            s =
+              s
+              |> assign(:race_state, :in_race)
+              |> assign(:current_race_id, race_id)
+              |> push_event("race:notify", %{race_id: race_id})
+
             if Engine.engine_running?(race_id) do
-              {:halt,
-               s
-               |> assign(:race_state, :in_race)
-               |> put_flash(:info, "Your race is starting!")}
+              {:halt, put_flash(s, :info, "Your race is starting!")}
             else
-              {:halt, assign(s, :race_state, :in_race)}
+              {:halt, s}
             end
 
           {:left, _reason}, s ->
-            {:halt, assign(s, :race_state, :idle)}
+            {:halt,
+             s
+             |> assign(:race_state, :idle)
+             |> assign(:current_race_id, nil)}
+
+          {:race_finished, race_id}, s ->
+            {:halt,
+             s
+             |> assign(:race_state, :idle)
+             |> assign(:current_race_id, nil)
+             |> put_flash(:info, "Your race finished. Replay: /race/#{race_id}")}
 
           _msg, s ->
             {:cont, s}

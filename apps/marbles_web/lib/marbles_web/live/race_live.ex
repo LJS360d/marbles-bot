@@ -151,8 +151,8 @@ defmodule MarblesWeb.RaceLive do
     <Layouts.app
       flash={@flash}
       race_state={@race_state}
+      current_race_id={@current_race_id}
       current_scope={:race}
-      breadcrumbs={[{"Race", nil}]}
       show_login_modal={@show_login_modal}
     >
       <section class="space-y-4">

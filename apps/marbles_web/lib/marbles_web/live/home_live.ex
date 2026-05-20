@@ -10,16 +10,13 @@ defmodule MarblesWeb.HomeLive do
   alias Marbles.Economy.MineRoster
   alias Marbles.Economy.Wallet
   alias Marbles.Packs
-  alias Marbles.Racing
-  alias Marbles.Racing.{Events, Queue}
-  alias Marbles.Schema.UserRaceStat
+  alias Marbles.Racing.Events
   alias Phoenix.PubSub
 
   @impl true
   @spec mount(map(), map(), Phoenix.LiveView.Socket.t()) :: {:ok, Phoenix.LiveView.Socket.t()}
   def mount(_params, _session, socket) do
     if connected?(socket) do
-      PubSub.subscribe(Marbles.PubSub, Queue.public_topic())
       PubSub.subscribe(Marbles.PubSub, Events.Runner.public_topic())
     end
 
@@ -30,10 +27,8 @@ defmodule MarblesWeb.HomeLive do
       |> assign(:page_title, "Marbles")
       |> assign(:current_scope, nil)
       |> assign(:show_login_modal, false)
-      |> assign(:queue_stats, Racing.queue_stats())
       |> assign(:featured_event, fetch_featured_event())
       |> assign(:featured_pack, fetch_featured_pack())
-      |> assign(:user_elo, fetch_user_elo(user))
       |> assign_user_dashboard(user)
 
     {:ok, socket}
@@ -84,9 +79,6 @@ defmodule MarblesWeb.HomeLive do
   end
 
   @impl true
-  def handle_info({:queue_stats, stats}, socket),
-    do: {:noreply, assign(socket, :queue_stats, stats)}
-
   def handle_info({:event_started, _id}, socket),
     do: {:noreply, assign(socket, :featured_event, fetch_featured_event())}
 
@@ -109,18 +101,6 @@ defmodule MarblesWeb.HomeLive do
     end
   end
 
-  defp fetch_user_elo(nil), do: nil
-
-  defp fetch_user_elo(user) do
-    case Marbles.Repo.get_by(UserRaceStat, user_id: user.id) do
-      %UserRaceStat{elo: elo} -> elo
-      nil -> 1000
-    end
-  end
-
-  defp user_bracket(nil, _step), do: nil
-  defp user_bracket(elo, step), do: div(elo, step)
-
   defp fmt_eta(sec) when sec <= 0, do: "now"
 
   defp fmt_eta(sec) when sec < 3600 do
@@ -140,6 +120,7 @@ defmodule MarblesWeb.HomeLive do
     <Layouts.app
       flash={@flash}
       race_state={@race_state}
+      current_race_id={@current_race_id}
       current_user={@current_user}
       current_scope={:home}
       show_login_modal={@show_login_modal}
@@ -151,8 +132,8 @@ defmodule MarblesWeb.HomeLive do
           class="pointer-events-none absolute inset-0 -z-10 bg-[radial-gradient(80rem_40rem_at_50%_-20%,oklch(72%_0.18_280/0.35),transparent),radial-gradient(60rem_40rem_at_120%_50%,oklch(75%_0.15_30/0.25),transparent)]"
         />
 
-        <section class="mx-auto flex max-w-7xl flex-col gap-10 px-4 py-10 sm:py-14 md:px-8">
-          <header class="flex flex-col items-center gap-5 text-center sm:gap-7">
+        <section class="mx-auto flex max-w-7xl flex-col gap-6 px-4 py-4 sm:py-6 md:px-8">
+          <header class="flex flex-col items-center gap-3 text-center sm:gap-4">
             <div class="flex items-center gap-3">
               <span class="size-3 rounded-full bg-primary/80 animate-pulse" />
               <span class="text-xs uppercase tracking-[0.4em] text-base-content/60">
@@ -181,9 +162,9 @@ defmodule MarblesWeb.HomeLive do
               </div>
             </div>
 
-            <div class="grid gap-6 lg:grid-cols-2">
-              <section class="rounded-3xl border border-base-300 bg-base-100/60 p-6 backdrop-blur space-y-3 panel-bevel">
-                <h2 class="text-sm font-semibold uppercase tracking-wider text-base-content/60">
+            <div class="grid gap-4 lg:grid-cols-2">
+              <section class="rounded-3xl border border-base-300 bg-base-100/60 p-4 backdrop-blur space-y-2 panel-bevel">
+                <h2 class="text-xs font-semibold uppercase tracking-wider text-base-content/60">
                   Daily reward
                 </h2>
                 <%= if @daily_status.claimable do %>
@@ -207,8 +188,8 @@ defmodule MarblesWeb.HomeLive do
                 <% end %>
               </section>
 
-              <section class="rounded-3xl border border-base-300 bg-base-100/60 p-6 backdrop-blur space-y-3 panel-bevel">
-                <h2 class="text-sm font-semibold uppercase tracking-wider text-base-content/60">
+              <section class="rounded-3xl border border-base-300 bg-base-100/60 p-4 backdrop-blur space-y-2 panel-bevel">
+                <h2 class="text-xs font-semibold uppercase tracking-wider text-base-content/60">
                   Mining roster
                 </h2>
                 <%= if @mine_marbles == [] do %>
@@ -221,7 +202,7 @@ defmodule MarblesWeb.HomeLive do
                     <li :for={um <- @mine_marbles} class="flex items-center justify-between gap-2">
                       <span class="font-medium truncate">{um.marble.name}</span>
                       <span class="text-xs text-base-content/60 font-mono">
-                        Lv.{um.level} · ★{um.marble.rarity}
+                        Lv.{um.level} · {rarity_stars(um.marble.rarity)}
                       </span>
                     </li>
                   </ul>
@@ -230,13 +211,9 @@ defmodule MarblesWeb.HomeLive do
             </div>
           <% end %>
 
-          <div class="grid gap-6 md:grid-cols-2">
-            <.cta_button
-              click={
-                if @current_user,
-                  do: Phoenix.LiveView.JS.dispatch("phx:race-dock:open"),
-                  else: Phoenix.LiveView.JS.navigate(~p"/login")
-              }
+          <div class="grid gap-4 md:grid-cols-2">
+            <.cta_card
+              navigate={~p"/races"}
               kind="primary"
               icon="hero-bolt"
               title="Quick Race"
@@ -251,12 +228,7 @@ defmodule MarblesWeb.HomeLive do
             />
           </div>
 
-          <.queue_strip
-            stats={@queue_stats}
-            user_bracket={user_bracket(@user_elo, @queue_stats.bracket_step)}
-          />
-
-          <div class="grid gap-6 lg:grid-cols-3">
+          <div class="grid gap-4 lg:grid-cols-3">
             <div class="lg:col-span-2">
               <.featured_event_card event={@featured_event} />
             </div>
@@ -303,7 +275,7 @@ defmodule MarblesWeb.HomeLive do
     <.link
       navigate={@navigate}
       class={[
-        "group relative flex flex-col gap-3 overflow-hidden rounded-3xl border p-8 transition-transform hover:-translate-y-0.5",
+        "group relative flex flex-col gap-2 overflow-hidden rounded-3xl border p-5 transition-transform hover:-translate-y-0.5",
         @kind == "primary" &&
           "bg-linear-to-br from-primary/30 via-primary/15 to-transparent border-primary/40",
         @kind == "secondary" &&
@@ -311,114 +283,15 @@ defmodule MarblesWeb.HomeLive do
       ]}
     >
       <div class="absolute right-0 top-0 size-32 -translate-y-12 translate-x-12 rounded-full bg-white/10 blur-3xl transition-transform group-hover:translate-x-8 group-hover:-translate-y-8" />
-      <div class="flex items-center gap-3 text-3xl font-bold tracking-tight">
-        <.icon name={@icon} class="size-8" />
+      <div class="flex items-center gap-2 text-2xl font-bold tracking-tight">
+        <.icon name={@icon} class="size-6" />
         {@title}
       </div>
-      <p class="text-sm text-base-content/80">{@tagline}</p>
-      <div class="mt-4 flex items-center gap-2 text-sm font-medium opacity-80 transition-opacity group-hover:opacity-100">
+      <p class="text-xs text-base-content/80">{@tagline}</p>
+      <div class="mt-2 flex items-center gap-1 text-xs font-medium opacity-80 transition-opacity group-hover:opacity-100">
         Enter <.icon name="hero-arrow-right" class="size-4" />
       </div>
     </.link>
-    """
-  end
-
-  attr :click, :any, required: true
-  attr :kind, :string, required: true
-  attr :icon, :string, required: true
-  attr :title, :string, required: true
-  attr :tagline, :string, required: true
-
-  defp cta_button(assigns) do
-    ~H"""
-    <button
-      type="button"
-      phx-click={@click}
-      class={[
-        "group relative flex flex-col gap-3 overflow-hidden rounded-3xl border p-8 text-left transition-transform hover:-translate-y-0.5",
-        @kind == "primary" &&
-          "bg-linear-to-br from-primary/30 via-primary/15 to-transparent border-primary/40",
-        @kind == "secondary" &&
-          "bg-linear-to-br from-secondary/30 via-secondary/15 to-transparent border-secondary/40"
-      ]}
-    >
-      <div class="absolute right-0 top-0 size-32 -translate-y-12 translate-x-12 rounded-full bg-white/10 blur-3xl transition-transform group-hover:translate-x-8 group-hover:-translate-y-8" />
-      <div class="flex items-center gap-3 text-3xl font-bold tracking-tight">
-        <.icon name={@icon} class="size-8" />
-        {@title}
-      </div>
-      <p class="text-sm text-base-content/80">{@tagline}</p>
-      <div class="mt-4 flex items-center gap-2 text-sm font-medium opacity-80 transition-opacity group-hover:opacity-100">
-        Open dock <.icon name="hero-arrow-right" class="size-4" />
-      </div>
-    </button>
-    """
-  end
-
-  attr :stats, :map, required: true
-  attr :user_bracket, :any, default: nil
-
-  defp queue_strip(assigns) do
-    ~H"""
-    <section
-      id="queue-strip"
-      class="overflow-hidden rounded-3xl border border-base-300 bg-base-100/60 p-5 backdrop-blur"
-    >
-      <div class="flex items-center justify-between gap-4">
-        <div>
-          <p class="text-xs uppercase tracking-[0.3em] text-base-content/60">Live queue</p>
-          <p class="text-3xl font-black">
-            {@stats.total} <span class="text-sm font-normal text-base-content/60">in queue</span>
-          </p>
-        </div>
-        <button
-          type="button"
-          phx-click={Phoenix.LiveView.JS.dispatch("phx:race-dock:open")}
-          class="btn btn-sm btn-primary rounded-full btn-chunky"
-        >
-          Open queue <.icon name="hero-arrow-right" class="size-4" />
-        </button>
-      </div>
-      <div class="mt-4 flex flex-wrap gap-2">
-        <%= if map_size(@stats.brackets) == 0 do %>
-          <span class="text-sm text-base-content/60">No players in queue. Be the first.</span>
-        <% else %>
-          <%= for {bracket, count} <- Enum.sort_by(@stats.brackets, &elem(&1, 0)) do %>
-            <.bracket_chip
-              bracket={bracket}
-              count={count}
-              step={@stats.bracket_step}
-              highlight={@user_bracket == bracket}
-            />
-          <% end %>
-        <% end %>
-      </div>
-    </section>
-    """
-  end
-
-  attr :bracket, :integer, required: true
-  attr :count, :integer, required: true
-  attr :step, :integer, required: true
-  attr :highlight, :boolean, default: false
-
-  defp bracket_chip(assigns) do
-    assigns =
-      assign(
-        assigns,
-        :range,
-        "#{assigns.bracket * assigns.step}–#{(assigns.bracket + 1) * assigns.step - 1}"
-      )
-
-    ~H"""
-    <div class={[
-      "rounded-full border px-3 py-1 text-xs",
-      @highlight && "border-primary bg-primary/20 text-primary-content",
-      not @highlight && "border-base-300"
-    ]}>
-      <span class="font-mono">ELO {@range}</span>
-      <span class="ml-2 font-semibold">{@count}</span>
-    </div>
     """
   end
 
@@ -435,9 +308,9 @@ defmodule MarblesWeb.HomeLive do
 
   defp featured_event_card(assigns) do
     ~H"""
-    <section class="rounded-3xl border border-base-300 bg-base-100/60 p-6 backdrop-blur">
+    <section class="rounded-3xl border border-base-300 bg-base-100/60 p-4 backdrop-blur">
       <p class="text-xs uppercase tracking-[0.3em] text-base-content/60">Next event</p>
-      <h2 class="mt-2 text-2xl font-bold">{@event.name}</h2>
+      <h2 class="mt-1 text-xl font-bold">{@event.name}</h2>
       <p class="mt-2 text-sm text-base-content/70">
         {Calendar.strftime(@event.start_time, "%a %b %d · %H:%M UTC")} → {Calendar.strftime(
           @event.end_time,
@@ -481,9 +354,9 @@ defmodule MarblesWeb.HomeLive do
 
   defp featured_pack_card(assigns) do
     ~H"""
-    <section class="rounded-3xl border border-base-300 bg-base-100/60 p-6 backdrop-blur">
+    <section class="rounded-3xl border border-base-300 bg-base-100/60 p-4 backdrop-blur">
       <p class="text-xs uppercase tracking-[0.3em] text-base-content/60">Featured pack</p>
-      <h3 class="mt-2 text-xl font-semibold">{@pack.name}</h3>
+      <h3 class="mt-1 text-lg font-semibold">{@pack.name}</h3>
       <p :if={@pack.description} class="mt-2 line-clamp-3 text-sm text-base-content/70">
         {@pack.description}
       </p>
